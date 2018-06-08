@@ -1,0 +1,4 @@
+Date,Reference No,Project Code,Supplier Code,Werehouse Code,Product Code,Expiry Date,Net Unit Cost,Quantity,Variant ID,Product Discount,Product Tax,Order Discount,Shipping,Order Tax,Payment Term
+11/23/2017 8:27,REF/SAMPLE/A00001,KC-ELEC,SUP/00001,pp,NK019,11/23/2017,800,1,7,10%,VAT10,10%,20,VAT10,1
+11/23/2017 8:27,REF/SAMPLE/A00001,KC-ELEC,SUP/00001,pp,NK020,11/23/2017,350,1,7,10%,VAT10,10%,20,VAT10,1
+11/23/2017 8:27,REF/SAMPLE/A00001,KC-ELEC,SUP/00001,pp,NK020,11/23/2017,0,1,7,0%,NT,10%,20,VAT10,1
