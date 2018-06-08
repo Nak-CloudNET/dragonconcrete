@@ -1568,25 +1568,16 @@ class Purchases extends MY_Controller
         if ($warehouse_id) {
 			
             $this->datatables
-                ->select("purchases.id, date, reference_no,order_ref,request_ref,COALESCE(erp_companies.company,erp_companies.name), purchases.status, grand_total, paid, (grand_total-paid) as balance, payment_status")
+                ->select("id, date, reference_no,order_ref,request_ref, supplier, status, grand_total, paid, (grand_total-paid) as balance, payment_status")
                 ->from('purchases')
-                ->join('companies','purchases.supplier_id=companies.id','LEFT')
 				->where('payment_status !=','paid')
-				->where('purchases.status !=','returned')
+				->where('status !=','returned')
                 ->where('warehouse_id', $warehouse_id);
         } else {
 			$this->datatables
-                ->select("purchases.id, date, reference_no,order_ref,request_ref,
-                    (case when (erp_companies.company='' or erp_companies.company=null)
-                            then erp_companies.name
-                        else
-                             erp_companies.company
-                        end) as company
-                    ,
-                     purchases.status, grand_total, paid, (grand_total-paid) as balance, payment_status")
+                ->select("id, date, reference_no,order_ref,request_ref, supplier, status, grand_total, paid, (grand_total-paid) as balance, payment_status")
                 ->from('purchases')
-                ->join('companies','purchases.supplier_id=companies.id','LEFT')
-				->where('purchases.status !=','returned')
+				->where('status !=','returned')
 				->where('payment_status !=','paid');
 			if(isset($_REQUEST['d'])){
 				$date_c = date('Y-m-d', strtotime('+3 months'));

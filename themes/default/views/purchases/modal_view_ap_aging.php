@@ -151,9 +151,8 @@ function row_status($x){
                         <tbody>
                         <?php
                         $this->db
-                        ->select("purchases.id, date, reference_no, if(erp_companies.company IS NULL or erp_companies.company='',erp_companies.name,erp_companies.company) as supplier, purchases.status, grand_total, paid, (grand_total-paid) as balance, payment_status")
+                        ->select("id, date, reference_no, supplier, status, grand_total, paid, (grand_total-paid) as balance, payment_status")
                         ->from('purchases')
-                        ->join('companies', 'companies.id=purchases.supplier_id', 'left')
                         ->where('payment_status !=','paid')
                         ->where('supplier_id', $supplier_id);
                         

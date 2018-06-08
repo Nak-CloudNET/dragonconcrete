@@ -2158,12 +2158,11 @@ class Accounts_model extends CI_Model
         if($condition=='supplier'){
             
             $q = $this->db->select("purchases.supplier_id,
-                        if(erp_companies.company IS NULL or erp_companies.company='',erp_companies.name,erp_companies.company) as supplier,
+                        purchases.supplier,
                         '".$start_date."' AS start_date,
                         '".$end_date."' AS end_date,
                         '".$balance2."' AS balance ", false)
             ->from("purchases")
-            ->join('companies', 'companies.id=purchases.supplier_id', 'left')
             ->where("1 = 1 ".$w."")
             ->group_by("supplier_id")
             ->order_by("supplier", "asc")

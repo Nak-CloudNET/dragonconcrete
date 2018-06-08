@@ -177,8 +177,8 @@
 													<th class="col-md-4"><?= lang("product_name"); ?></th>
 												<?php } ?>
 												<th class="col-md-2"><?= lang("quantity"); ?></th>
-												<!-- <th class="col-md-2"><?= lang("piece"); ?></th>
-												<th class="col-md-2"><?= lang("wpiece"); ?></th> -->
+												<th class="col-md-2"><?= lang("piece"); ?></th>
+												<th class="col-md-2"><?= lang("wpiece"); ?></th>
 												<th class="col-md-2"><?= lang("quantity received"); ?></th>
 												<th class="col-md-2"><?= lang("balance"); ?></th>
 												<th class="col-md-1" style="width: 30px !important; text-align: center;"><i class="fa fa-trash-o col-md-1"
@@ -230,6 +230,13 @@
 															
 															<td id="quantity" style="text-align:center;">'.$this->erp->formatDecimal($order_items->quantity).'</td>
 															
+															<td>
+																<input type="text" class="piece" value ="'.$this->erp->formatDecimal($quantity_rec['piece']).'"name="piece[]" style="width: 150px; height: 30px;text-align:center;">
+																<input type="hidden" class="cur_piece" value ="'.$this->erp->formatDecimal((($quantity_bal + $quantity_reci)/$quantity_rec['wpiece'])).'"name="cur_piece[]" style="width: 150px; height: 30px;text-align:center;">
+															</td>
+															<td>
+																<input type="text" class="wpiece" value ="'.$this->erp->formatDecimal($quantity_rec['wpiece']).'"name="wpiece[]" style="width: 150px; height: 30px;text-align:center; pointer-events: none;">
+															</td>
 															
 															<td>
 																<input type="hidden" value="'.$this->erp->formatDecimal($qty).'" name="quantity[]" id="quantity-x">

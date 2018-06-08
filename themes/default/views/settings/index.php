@@ -756,18 +756,6 @@ $ps = array('0' => lang("disable"), '1' => lang("enable"));
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-4">
-                            <div class="form-group">
-                                <?= lang("default_driver", "default_driver"); ?>
-                                <?php
-									$driver[] = '';
-									foreach($drivers as $dr) {
-										$driver[$dr->id] = $dr->name;
-									}
-									echo form_dropdown('default_driver', $driver, ($settings->default_driver?$settings->default_driver:''), 'class="form-control input-tip" id="default_driver"');
-								?>
-                            </div>
-                        </div>
 						</fieldset>
 
 						<fieldset class="scheduler-border">
