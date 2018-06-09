@@ -1524,10 +1524,10 @@ ORDER BY
 	
 	public function getPurchaseing($date)
     {
-        $this->db->select("date, reference_no, supplier, status, total_discount, grand_total, paid, (grand_total-paid) as balance, payment_status")
+        $this->db->select("date, reference_no, IF(erp_companies.company = '', erp_companies.name, erp_companies.company) AS supplier, purchases.status, total_discount, grand_total, paid, (grand_total-paid) as balance, payment_status")
 			->where("date >=", $date.' 00:00:00')
 			->where("date <=", $date.' 23:55:00');
-
+			$this->db->join('companies','companies.id=purchases.supplier_id','LEFT');
         $q = $this->db->get('purchases');
         if ($q->num_rows() > 0) {
             return $q->result();
@@ -1624,7 +1624,7 @@ ORDER BY
 	
 	public function getMonthPurchaseing($date, $warehouse_id = NULL, $year = NULL, $month = NULL)
     {
-        $this->db->select("date, reference_no, supplier, total_discount, status, grand_total, paid, (grand_total-paid) as balance, payment_status");
+        $this->db->select("date, reference_no, IF(erp_companies.company = '', erp_companies.name, erp_companies.company) AS supplier, total_discount, purchases.status, grand_total, paid, (grand_total-paid) as balance, payment_status");
 				
 		if($date) {
             $this->db->where('purchases.date', $date);
@@ -1635,7 +1635,7 @@ ORDER BY
             $this->db->where('purchases.date <=', $year.'-'.$month.'-'.$last_day.' 23:59:59');
 			
         }
-		
+		$this->db->join('companies','companies.id=purchases.supplier_id','LEFT');
         $q = $this->db->get('purchases');
         if ($q->num_rows() > 0) {
             return $q->result();
