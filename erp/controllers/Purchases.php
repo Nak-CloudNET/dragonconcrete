@@ -3411,12 +3411,12 @@ class Purchases extends MY_Controller
             $this->load->library('datatables');
 			$this->datatables
 			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, due_date, reference_no, " . 
-						 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
+						 $this->db->dbprefix('warehouses') . ".name as wname, IF(erp_companies.company = '', erp_companies.name, erp_companies.company) AS supplier ,
 						 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".payment_status", FALSE)
                 ->from('purchases')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
                 ->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
-				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
+				->join('companies', 'companies.id = purchases.supplier_id', 'left')
 				->where(array('purchases.status' => 'received', 'purchases.payment_status <>' => 'paid'))
                 ->group_by('purchases.id');
 			
