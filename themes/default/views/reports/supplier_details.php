@@ -156,7 +156,8 @@
 							$grand = 0 ;
 							$gqty = 0;
 							$wid = $this->reports_model->getWareByUserID();
-							$this->db->select("erp_purchases.supplier_id,supplier,SUM(erp_purchase_items.quantity) as qty");
+							$this->db->select("erp_purchases.supplier_id,if(erp_companies.company IS NULL or erp_companies.company='',erp_companies.name,erp_companies.company) as supplier,SUM(erp_purchase_items.quantity) as qty");
+							$this->db->join('companies', 'companies.id=purchases.supplier_id', 'left');
 							$this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
 							if($supplier){
 								$this->db->where("erp_purchases.supplier_id",$supplier);

@@ -1,4 +1,3 @@
-
 <div class="box">
     <div class="box-header">
         <h2 class="blue"><i class="fa-fw fa fa-plus"></i><?= lang('add_delivery'); ?></h2>
@@ -84,7 +83,7 @@
 									foreach($drivers as $dr) {
 										$driver[$dr->id] = $dr->name;
 									}
-									echo form_dropdown('delivery_by', $driver, '', 'class="form-control input-tip" id="delivery_by" required="required"');
+									echo form_dropdown('delivery_by', $driver, ($Settings->default_driver?$Settings->default_driver:''), 'class="form-control input-tip" id="delivery_by" required="required"');
 								?>
                             </div>
                         </div>
@@ -110,8 +109,8 @@
 												
 												
 												<th class="col-md-2"><?= lang("quantity"); ?></th>
-												<th class="col-md-2"><?= lang("piece"); ?></th>
-												<th class="col-md-2"><?= lang("wpiece"); ?></th>
+												<!-- <th class="col-md-2"><?= lang("piece"); ?></th>
+												<th class="col-md-2"><?= lang("wpiece"); ?></th> -->
 												<th class="col-md-2"><?= lang("quantity_received"); ?></th>
 												<th class="col-md-2"><?= lang("balance"); ?></th>
 												<th class="col-md-1" style="width: 30px !important; text-align: center;"><i class="fa fa-trash-o col-md-1"
@@ -180,13 +179,8 @@
 															<input type="hidden" value="'.$this->erp->formatDecimal($bqty).'" name="bquantity[]" id="bquantity">
 															<input type="hidden" value="'.($unit_qty!=""?$this->erp->formatDecimal($delivery['quantity_received']*$unit_qty->qty_unit):$this->erp->formatDecimal($delivery['quantity_received'])).'" name="rquantity[]" id="rquantity">
 															<input type="hidden" value="'.$this->erp->formatDecimal($real_qty).'" name="real_qty" id="real_qty">
-															<td>
-																<input type="text" class="piece" value ="'.$this->erp->formatDecimal($delivery['piece'] - ($delivery['quantity_received']/$delivery['wpiece'])).'"name="piece[]" style="width: 150px; height: 30px;text-align:center;">
-																<input type="hidden" class="cur_piece" value ="'.$this->erp->formatDecimal($delivery['piece'] - ($delivery['quantity_received']/$delivery['wpiece'])).'"name="cur_piece[]" style="width: 150px; height: 30px;text-align:center;">
-															</td>
-															<td>
-																<input type="text" class="wpiece" value ="'.$this->erp->formatDecimal($delivery['wpiece']).'"name="wpiece[]" style="width: 150px; height: 30px;text-align:center; pointer-events: none;">
-															</td>
+							
+															
 															<td>
 																<input type="text" class="quantity_received" value ="'.$this->erp->formatDecimal($bqty).'"name="quantity_received[]" id="quantity_received" style="width: 150px; height: 30px;text-align:center;">
 																<input type="hidden" class="cur_quantity_received" value ="'.$this->erp->formatDecimal($bqty).'"name="cur_quantity_received[]" id="cur_quantity_received" style="width: 150px; height: 30px;text-align:center;">
@@ -335,14 +329,12 @@
 			localStorage.removeItem('delivery_items');
 		}
 		
-		<?php if($deliveries) {?>
-			localStorage.setItem('delivery_by', '<?= $deliveries->delivery_by ?>');
-			
-			
-        <?php } ?>
-		if (delivery_by = localStorage.getItem('delivery_by')) {
+		if(delivery_by = localStorage.getItem('delivery_by')) {
             $('#delivery_by').val(delivery_by);
         }
+        $('#delivery_by').on('change',function(){
+        	localStorage.setItem('delivery_by', $(this).val());
+        });
 		
 		$('#slref').attr('readonly', true);
 		$('#ref_st').on('ifChanged', function() {

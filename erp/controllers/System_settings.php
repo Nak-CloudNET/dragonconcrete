@@ -207,7 +207,8 @@ class system_settings extends MY_Controller
                 'supplier_code_prefix'              => $this->input->post('supplier_code_prefix'),
                 'employee_code_prefix'              => $this->input->post('employee_code_prefix'),
 				'allow_change_date' 				=> $this->input->post('allow_change_date'),
-				'increase_stock_import' 			=> $this->input->post('increase_stock_import')
+				'increase_stock_import' 			=> $this->input->post('increase_stock_import'),
+                'default_driver'                    => $this->input->post('default_driver')
             );
 			//$this->erp->print_arrays($data);
             if ($this->input->post('smtp_pass')) {
@@ -226,6 +227,7 @@ class system_settings extends MY_Controller
             redirect("system_settings");
         } else {
             $this->data['error'] 			= validation_errors();
+            $this->data['drivers']          = $this->site->getDrivers();
             $this->data['billers'] 			= $this->site->getAllCompanies('biller');
             $this->data['settings'] 		= $this->settings_model->getSettings();
             $this->data['currencies'] 		= $this->settings_model->getAllCurrencies();

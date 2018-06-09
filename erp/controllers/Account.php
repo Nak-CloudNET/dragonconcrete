@@ -1515,7 +1515,7 @@ class Account extends MY_Controller
 			->group_by('purchases.supplier_id');
 		} else {
 			$this->datatables
-			->select("purchases.id, companies.name,
+			->select("purchases.id, if(erp_companies.company IS NULL or erp_companies.company='',erp_companies.name,erp_companies.company) as name,
 				SUM(
 					IFNULL(grand_total, 0)
 				) AS grand_total,
@@ -2504,12 +2504,13 @@ class Account extends MY_Controller
 			->select($this->db->dbprefix('payments') . ".id as pid, 
 				" . $this->db->dbprefix('purchases') . ".date,
 				" . $this->db->dbprefix('purchases') . ".reference_no as payment_ref,
-				" . $this->db->dbprefix('purchases') . ".supplier as purchase_ref,
+				if(" . $this->db->dbprefix('companies') . ".company IS NULL or " . $this->db->dbprefix('companies') . ".company=''," . $this->db->dbprefix('companies') . ".name,erp_companies.company) as purchase_ref,
 				" . $this->db->dbprefix('payments') . ".paid_by,
 				" . $this->db->dbprefix('payments') . ".note,
 				" . $this->db->dbprefix('payments') . ".amount, 
 				'paid' as payment_status")
 			->from('purchases')
+			->join('companies', 'companies.id=purchases.supplier_id', 'left')
 			->where('purchases.paid != 0')
 			->JOIN('payments','purchases.id=payments.purchase_id','left');
                 //->group_by('purchases.id');

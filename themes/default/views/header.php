@@ -1444,7 +1444,7 @@
 													</li>   
 													</ul>
 												</li> -->
-												<li class="mm_profit_report">
+											<!--	<li class="mm_profit_report">
 														<a class="dropmenu" href="#">
 															<i class="fa fa-money"></i>
 															<span class="text"> <?= lang('profit_report'); ?> </span>
@@ -1455,7 +1455,7 @@
 																		<a href="<?= site_url('reports/profit_loss') ?>">
 																			<i class="fa fa-money"></i><span class="text"> <?= lang('profit_and_loss'); ?></span>
 																		</a>
-																	</li>
+																	</li> 
 													<li id="reports_payments">
 																	<a href="<?= site_url('reports/payments') ?>">
 																			<i class="fa fa-money"></i><span class="text"> <?= lang('payments_report'); ?></span>
@@ -1466,9 +1466,9 @@
 															<a href="<?= site_url('reports/register') ?>">
 																<i class="fa fa-money"></i><span class="text"> <?= lang('register_report'); ?></span>
 															</a>
-														</li>
+														</li> 
 													</ul>
-												</li>
+												</li> -->
 												<li class="mm_product_report">
 												<a class="dropmenu" href="#">
 													<i class="fa fa-barcode"></i>
@@ -1580,21 +1580,21 @@
 																			<i class="fa fa-barcode"></i><span class="text"> <?= lang('convert_report'); ?></span>
 																		</a>
 																	</li>
-																	<li id="reports_track_costs">
+																<!--	<li id="reports_track_costs">
 																		<a href="<?= site_url('reports/track_costs') ?>">
 																			<i class="fa fa-dollar"></i><span class="text"> <?= lang('track_costs'); ?></span>
 																		</a>
-																	</li>
-																	<li id="reports_supplier_by_items">
+																	</li> -->
+																<!--	<li id="reports_supplier_by_items">
 																		<a href="<?= site_url('reports/supplier_by_items') ?>">
 																			<i class="fa fa-barcode"></i><span class="text"> <?= lang('supplier_products'); ?></span>
 																		</a>
-																	</li>																
-																	<li id="reports_customer_products">
+																	</li>	-->															
+																<!--	<li id="reports_customer_products">
 																		<a href="<?= site_url('reports/customer_products') ?>">
 																			<i class="fa fa-barcode"></i><span class="text"> <?= lang('product_customers'); ?></span>
 																		</a>
-																	</li>
+																	</li> -->
 																</ul>
 															</li>
 												<li class="mm_sale_report">
@@ -1666,11 +1666,11 @@
 																<i class="fa fa-users"></i><span class="text"> <?= lang('saleman_report'); ?></span>
 															</a>
 														</li>-->
-                                                        <li id="reports_shops">
+                                                   <!--     <li id="reports_shops">
 															<a href="<?= site_url('reports/shops') ?>">
 																<i class="fa fa-building"></i><span class="text"> <?= lang('biller_report'); ?></span>
 															</a>
-														</li>
+														</li> -->
                                                       <!--  <li id="reports_project_manager_report">
                                                             <a href="<?= site_url('reports/project_manager_report') ?>">
                                                                 <i class="fa fa-building"></i><span class="text"> <?= lang('project_manager_report'); ?></span>
@@ -2628,7 +2628,7 @@
 										<?php } ?>
 										
 										<?php if($GP['report_profit-index']){ ?>
-										<li class="mm_profit_report">
+									<!--	<li class="mm_profit_report">
 											<a class="dropmenu" href="#">
 												<i class="fa fa-money"></i>
 												<span class="text"> <?= lang('profit_report'); ?> </span>
@@ -2640,26 +2640,26 @@
 													<a href="<?= site_url('reports/profit_loss') ?>">
 														<i class="fa fa-money"></i><span class="text"> <?= lang('profit_and_loss'); ?></span>
 													</a>
-												</li>
+												</li> 
 
                                                 <?php if ($GP['report_profit-payments']) { ?>
 												<li id="reports_payments">
 													<a href="<?= site_url('reports/payments') ?>">
 														<i class="fa fa-money"></i><span class="text"> <?= lang('payments_report'); ?></span>
 													</a>
-												</li>
+												</li> 
                                                 <?php } ?>
 
 												<?php if (POS) { ?>
-												<!--<li id="reports_register">
+												<li id="reports_register">
 													<a href="<?= site_url('reports/register') ?>">
 														<i class="fa fa-money"></i><span class="text"> <?= lang('register_report'); ?></span>
 													</a>
-												</li>-->
+												</li>
 												<?php } ?>
 
 											</ul>
-										</li>
+										</li> -->
 										<?php } ?>
 										
 										<?php if($GP['product_report-index']){ ?>
@@ -2898,11 +2898,11 @@
 													</li>-->
 												<?php } ?>
 												<?php if($GP['sale_report-project']){ ?>	
-													<li id="reports_shops">
+												<!--	<li id="reports_shops">
 														<a href="<?= site_url('reports/shops') ?>">
 															<i class="fa fa-building"></i><span class="text"> <?= lang('biller_report'); ?></span>
 														</a>
-													</li>
+													</li> -->
                                                 <?php } ?>
                                                 <?php if($GP['sale_report-project_manager']){ ?>
                                                     <li id="reports_project_manager_report">

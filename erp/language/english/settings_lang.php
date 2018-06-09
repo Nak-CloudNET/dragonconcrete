@@ -512,3 +512,4 @@ $lang["add_term"]									= "Add Term";
 $lang["define_term_updated"]						= "Define Term Updated";
 $lang["increase_stock_import"]						= "Increase Stock On Import";
 $lang["sale_report-saleman_detail"]					= "Report Saleman Detail";
+$lang["default_driver"]								= "Default Driver";

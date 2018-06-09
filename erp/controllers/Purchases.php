@@ -1568,16 +1568,25 @@ class Purchases extends MY_Controller
         if ($warehouse_id) {
 			
             $this->datatables
-                ->select("id, date, reference_no,order_ref,request_ref, supplier, status, grand_total, paid, (grand_total-paid) as balance, payment_status")
+                ->select("purchases.id, date, reference_no,order_ref,request_ref,COALESCE(erp_companies.company,erp_companies.name), purchases.status, grand_total, paid, (grand_total-paid) as balance, payment_status")
                 ->from('purchases')
+                ->join('companies','purchases.supplier_id=companies.id','LEFT')
 				->where('payment_status !=','paid')
-				->where('status !=','returned')
+				->where('purchases.status !=','returned')
                 ->where('warehouse_id', $warehouse_id);
         } else {
 			$this->datatables
-                ->select("id, date, reference_no,order_ref,request_ref, supplier, status, grand_total, paid, (grand_total-paid) as balance, payment_status")
+                ->select("purchases.id, date, reference_no,order_ref,request_ref,
+                    (case when (erp_companies.company='' or erp_companies.company=null)
+                            then erp_companies.name
+                        else
+                             erp_companies.company
+                        end) as company
+                    ,
+                     purchases.status, grand_total, paid, (grand_total-paid) as balance, payment_status")
                 ->from('purchases')
-				->where('status !=','returned')
+                ->join('companies','purchases.supplier_id=companies.id','LEFT')
+				->where('purchases.status !=','returned')
 				->where('payment_status !=','paid');
 			if(isset($_REQUEST['d'])){
 				$date_c = date('Y-m-d', strtotime('+3 months'));
@@ -3402,12 +3411,12 @@ class Purchases extends MY_Controller
             $this->load->library('datatables');
 			$this->datatables
 			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, due_date, reference_no, " . 
-						 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
+						 $this->db->dbprefix('warehouses') . ".name as wname, IF(erp_companies.company = '', erp_companies.name, erp_companies.company) AS supplier ,
 						 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".payment_status", FALSE)
                 ->from('purchases')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
                 ->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
-				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
+				->join('companies', 'companies.id = purchases.supplier_id', 'left')
 				->where(array('purchases.status' => 'received', 'purchases.payment_status <>' => 'paid'))
                 ->group_by('purchases.id');
 			
