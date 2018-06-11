@@ -1354,7 +1354,7 @@ class Site extends CI_Model
 				$q = $this->db->get_where('order_ref',$condition, 1);
 			}
 		}else{
-			
+
 			if ($this->Settings->reference_format == 4 || $this->Settings->reference_format == 5) {
 				$q = $this->db->get('order_ref', 1);
 				
@@ -1664,6 +1664,7 @@ class Site extends CI_Model
 	                $ref_no .= date('ym') . "/" . sprintf("%05s", $ref->{$field});
 	            }elseif ($this->Settings->reference_format == 2) {
 	                $ref_no .= date('Y') . "/" . sprintf("%05s", $ref->{$field});
+
 	            } elseif ($this->Settings->reference_format == 3) {
 	                $ref_no .= date('Y/m') . "/" . sprintf("%05s", $ref->{$field});
 	            } elseif ($this->Settings->reference_format == 4) {
@@ -1793,6 +1794,7 @@ class Site extends CI_Model
 				return FALSE;
 
             } elseif ($this->get_setting()->reference_format == 2) {
+
                 $this->db
                     ->select('order_ref.*')
                     ->from('order_ref')

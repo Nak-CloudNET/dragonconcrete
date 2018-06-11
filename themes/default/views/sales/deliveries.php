@@ -163,6 +163,7 @@
 				var b=false;
 				var k = false;
 				$.each($("input[name='val[]']:checked"), function(){
+
 					/*var parent = $(this).parent().parent().parent().parent();
 					var refer_s = parent.find('td:nth-child(4)').html();
 					var status = parent.find('td:nth-child(8)').html();
@@ -184,8 +185,9 @@
 					items[i] = {'delivery_id': $(this).val()};
 					i++;
 					//first++;
+
 				});
-				
+
 				$.ajax({
 					type: 'get',
 					url: site.base_url+'sales/checkrefer',
@@ -445,7 +447,7 @@ function checkbox2(x) {
     return '<center><input class="checkbox multi-select2" type="checkbox" name="val[]" value="' + x + '" /></center>';
 }
  $("#add_sale_combine_deliveries").click(function(){
-	 
+
 	$('sale_order .sale_order_delivery_link').each(function() {
 		var tr         = $(this).parent().parent().parent();
 	    var chk_so_num = tr.find(".so_num").html();
