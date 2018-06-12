@@ -123,6 +123,7 @@
 									echo form_input('name', '', 'class="form-control" id="name"  placeholder="' . lang("select_name") . '"');
 								} ?>
 						</div>
+						
 						<script type="text/javascript">
 							$(document).ready(function () {
 
@@ -290,6 +291,14 @@
 <?= $modal_js ?>
 <script type="text/javascript">
 	
+	$(document).keypress(function(event){
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if(keycode == '13'){
+			$("#checkSave").trigger("click");
+		}
+		
+	});
+
 	$("#customer_invoice_no").select2("destroy").empty().attr("placeholder", "<?= lang('select_customer_invoice') ?>").select2({
 		placeholder: "<?= lang('select_customer_invoice') ?>", data: [
 			{id: '', text: 'None'},

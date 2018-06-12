@@ -5179,8 +5179,7 @@ class Sales_model extends CI_Model
 									erp_delivery_items
 								WHERE
 									erp_delivery_items.product_id = erp_sale_order_items.product_id
-								AND
-									erp_delivery_items.wpiece = erp_sale_order_items.wpiece
+								
 								AND
 									erp_delivery_items.delivery_id IN ('.$iids.')
 							), 0) AS dqty_received,

@@ -7289,6 +7289,7 @@ class Sales extends MY_Controller
 
     function delivery_actions($wh = null)
     {
+
         /*if (!$this->Owner) {
             $this->session->set_flashdata('warning', lang('access_denied'));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -7296,14 +7297,13 @@ class Sales extends MY_Controller
         if($wh){
             $wh = explode('-', $wh);
         }
-        //$this->erp->print_arrays($wh);
-
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
-
         $str = $this->input->post("status_");
-        
+
         if ($this->form_validation->run() == true) {
+
             if($str == "1"){
+
                 if (!empty($_POST['val'])){
                 if ($this->input->post('form_action') == 'delete') {
                     foreach ($_POST['val'] as $id) {
@@ -7312,7 +7312,7 @@ class Sales extends MY_Controller
                     $this->session->set_flashdata('message', lang("deliveries_deleted"));
                     redirect($_SERVER["HTTP_REFERER"]);
                 }
-                
+
                 if ($this->input->post('form_action') == 'completed_delivery') {
                     foreach ($_POST['val'] as $id) {
                         $this->sales_model->completedDeliveries($id);
@@ -7320,10 +7320,9 @@ class Sales extends MY_Controller
                     $this->session->set_flashdata('message', lang("deliveries_completed"));
                     redirect($_SERVER["HTTP_REFERER"]);
                 }
-                
+
                 if ($this->input->post('form_action') == 'add_sale_combine_deliveries') {
                     $delivery_id = $_POST['val'];
-                  
                     if ($delivery_id){
                         
                         $sale_order = $this->sales_model->getDeliveriesByIDs($delivery_id);
@@ -7613,13 +7612,10 @@ class Sales extends MY_Controller
                 
                 if ($this->input->post('form_action') == 'add_sale_combine_deliveries') {
                     $delivery_id = $_POST['val'];
-                   
+
                     if ($delivery_id){
                         
                         $sale_order = $this->sales_model->getDeliveriesByIDs($delivery_id);
-                        
-                        
-                        //$this->erp->print_arrays($sale_order);
                         $this->data['sale_order'] = $sale_order;
                         $this->data['refer'] = $sale_order->sale_reference_no;
                         $items = $this->sales_model->getDeliveryItemsByItemIds($delivery_id);
@@ -7712,6 +7708,7 @@ class Sales extends MY_Controller
                             }
                             $c++;
                         }
+                        //$this->erp->print_arrays($pr);
                         $this->data['sale_order_items'] = json_encode($pr);
                         
                         if ($this->session->userdata('biller_id')) {

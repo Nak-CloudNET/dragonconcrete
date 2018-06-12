@@ -617,6 +617,7 @@ class Sale_order extends MY_Controller
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['reference'] = $this->site->getReference('sao',$biller_id);
+
 			}else{
 				$biller_id = $this->session->userdata('biller_id');
 				$this->data['reference'] = $this->site->getReference('sao',$biller_id);

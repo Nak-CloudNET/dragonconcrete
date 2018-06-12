@@ -9,19 +9,19 @@
 	  display: table;
 	  table-layout: fixed;
 	}
-</style> 
+</style>
 
 <script type="text/javascript">
     var count = 1, an = 1, product_variant = 0, DT = <?= $Settings->default_tax_rate ?>,
         product_tax = 0, invoice_tax = 0, total_discount = 0, total = 0, allow_discount = <?= ($Owner || $Admin || $this->session->userdata('allow_discount')) ? 1 : 0; ?>,
         tax_rates = <?php echo json_encode($tax_rates); ?>;
-	
+
     $(document).ready(function () {
-		
-		
+
+
 		var test2 = '<?=$this->session->userdata('remove_s2');?>';
 		if (test2 == '1') {
-			
+
 				if (localStorage.getItem('slitems')) {
 					localStorage.removeItem('slitems');
 				}
@@ -57,7 +57,7 @@
 				}
 				 if (localStorage.getItem('sldate')) {
 					localStorage.removeItem('sldate');
-				} 
+				}
 				if (localStorage.getItem('slstatus')) {
 					localStorage.removeItem('slstatus');
 				}
@@ -127,9 +127,15 @@
         localStorage.setItem('slcustomer', '<?= $sale_order->customer_id ?>');
         localStorage.setItem('slbiller', '<?= $sale_order->biller_id ?>');
         localStorage.setItem('slwarehouse', '<?= $sale_order->warehouse_id ?>');
+
+        <?php } ?>
+
 		<?php if(isset($quote)){ ?>
         localStorage.setItem('slnote', '<?= str_replace(array("\r", "\n"), "", $this->erp->decode_html($quote->note)); ?>');
 		<?php } ?>
+
+
+
         localStorage.setItem('sldiscount', '<?= $sale_order->order_discount_id ?>');
         localStorage.setItem('sltax2', '<?= $sale_order->order_tax_id ?>');
         localStorage.setItem('slshipping', '<?= $sale_order->shipping ?>');
@@ -145,27 +151,26 @@
 		localStorage.setItem('sale_order_ref', '<?= $sale_order->reference_no ?>');
 		localStorage.setItem('grand_total', '<?= $sale_order->grand_total ?>');
 		localStorage.setItem('saleman', '<?= $sale_order->saleman_by ?>');
-		/*
+
 		<?php if($delivery_id) {
 			if($sale_order->delivery_status == 'completed') { ?>
-				localStorage.setItem('slsale_status', 'pending');
+				//localStorage.setItem('slsale_status', 'pending');
 		<?php }else { ?>
-				localStorage.setItem('slsale_status', 'completed');
-		<?php } 
-		} ?>
-		*/
-		
+				//localStorage.setItem('slsale_status', 'completed');
+		<?php } ?>
+
+
 		<?php if(isset($sale_order_id)) { ?>
 			$('#slnote').val('<?=$sale_order->note?>');
 			$('#slinnote').val('<?=$sale_order->staff_note?>');
 		<?php  } ?>
-		
+
 		$("#slbiller").prop('readonly', true);
 		$("#saleman").prop('readonly', true);
 		$("#slarea").prop('readonly', true);
 		$("#so_ref").show();
 		$("#so_deposit").hide();
-		
+
         <?php }else if(isset($quote_ID)){ ?>
 			localStorage.setItem('quote_ID', '<?= $quote_ID ?>');
 			localStorage.setItem('sldate', '<?= $this->erp->hrld($quotes->date) ?>');
@@ -181,18 +186,18 @@
 			$("#saleman").prop('readonly', true);
 			$("#slarea").prop('readonly', true);
 			$("#qu_ref").show();
-			
+
 		<?php }else { ?>
 			$("#so_deposit").show();
 		<?php } ?>
-		
+
 		<?php if(isset($delivery_id)){ ?>
 			localStorage.setItem('slsale_status','pending');
 		<?php }else{ ?>
 			localStorage.setItem('slsale_status','completed');
 		<?php } ?>
-		
-		
+
+
         <?php if($this->input->get('customer')) { ?>
         if (!localStorage.getItem('slitems')) {
             localStorage.setItem('slcustomer', <?=$this->input->get('customer');?>);
@@ -234,9 +239,9 @@
 
 		if (slsale_status = localStorage.getItem('slsale_status')) {
             $('#slsale_status').val(slsale_status);
-        } 
-		
-		<?php 
+        }
+
+		<?php
 			if(isset($so_deposit)){
 				if($sale_order->payment_status == 'partial' || $sale_order->payment_status == 'paid') { ?>
 				localStorage.setItem('paid_by_1', 'deposit');
@@ -245,17 +250,17 @@
 				$('#payments').css('display','block');
 				$("#dp_details").html('<?=$this->erp->formatDecimal($so_deposit->deposit_amt);?>');
 				$(".paid_by").trigger("change");
-				
+
 				$(".amount").val('<?=$so_deposit->deposit_amt;?>');
 				$("#payment_note_1").val('<?=$so_deposit->note;?>');
-				
+
 		<?php
 			}
 		} ?>
-		
+
 		 $(document).on('change', '#slarea', function (e) {
             localStorage.setItem('#slarea', '<?= (isset($sale_order->group_areas_id)?$sale_order->group_areas_id:"") ?>');
-        }); 
+        });
 		if(quote_ID = localStorage.getItem('quote_ID')){
 			$("#quote_id").val(quote_ID);
 		}
@@ -265,11 +270,11 @@
 		if (po = localStorage.getItem('po')) {
             $('#po').val(po);
         }
-		
+
         if (group_area = localStorage.getItem('slarea')) {
             $('#slarea').val(group_area);
-        } 
-	
+        }
+
 		if (delivery_by = localStorage.getItem('delivery_by')) {
             $('#delivery_by').val(delivery_by);
         }
@@ -285,12 +290,12 @@
         if (slbiller = localStorage.getItem('slbiller')) {
             $('#slbiller').val(slbiller);
         }
-        
+
 		if (!localStorage.getItem('slrefnote')) {
             localStorage.setItem('slrefnote', '<?=$slnumber?>');
         }
-	
-		
+
+
         if (!localStorage.getItem('sltax2')) {
             localStorage.setItem('sltax2', <?=$Settings->default_tax_rate2;?>);
         }
@@ -298,7 +303,7 @@
         $('.bootbox').on('hidden.bs.modal', function (e) {
             $('#add_item').focus();
         });
-		
+
         $('#payment_date').datetimepicker({
             format: site.dateFormats.js_ldate,
             fontAwesome: true,
@@ -307,9 +312,9 @@
             autoclose: 1,
             minView: 2
         }).datetimepicker('update', new Date());
-		
-		
-		
+
+
+
         $("#add_item").autocomplete({
             source: function (request, response) {
                 if (!$('#slcustomer').val()) {
@@ -382,7 +387,7 @@
             },
             select: function (event, ui) {
                 event.preventDefault();
-				
+
                 if (ui.item.id !== 0) {
 					var product_type = ui.item.row.type;
 					if (product_type == 'digital') {
@@ -407,14 +412,14 @@
 						if (row)
 							$(this).val('');
 					}
-                    
+
                 } else {
                     //audio_error.play();
                     bootbox.alert('<?= lang('no_match_found') ?>');
                 }
             }
         });
-		
+
         $(document).on('change', '#gift_card_no', function () {
             var cn = $(this).val() ? $(this).val() : '';
             if (cn != '') {
@@ -438,7 +443,7 @@
                 });
             }
         });
-        
+
 		$('#add_item').bind('keypress', function (e) {
             if (e.keyCode == 13) {
                 e.preventDefault();
@@ -446,26 +451,11 @@
             }
         });
 
-       /* $("#add_sale").click(function () {
-            var slnote = $("#slnote");
-            var general_saleman = $("#general_saleman").val();
 
-            if (general_saleman == 11  slnote.val() == "") {
-                    $('#note').css('border', '1px solid rgb(174, 13, 13)');
-                    $('#slnote_span').text('Please enter your name');
-                    $('#slnote_span').css('padding-left', '2%');
-                    $('#slnote_span').css('color', 'rgb(174, 13, 13)');
-                    $('#slnote_span').css('font-weight', 'bold');
-                return false;
-            }
-
-            return true;
-
-        });*/
 
     });
-	
-	
+
+
 </script>
 
 <div class="box">
@@ -479,28 +469,28 @@
                 <p class="introtext"><?php echo lang('enter_info'); ?></p>
                 <?php
                 $attrib = array('data-toggle' => 'validator', 'role' => 'form','id' => 'form');
-                
+
                 if (isset($quote_id)) {
-                   echo form_open_multipart("sales/add/0/0/".$quote_id, $attrib);
+                    echo form_open_multipart("sales/add/0/0/".$quote_id, $attrib);
                 }else if(isset($sale_order_id)) {
-					echo form_open_multipart("sales/add/".$sale_order_id, $attrib);
-				}else{
-					echo form_open_multipart("sales/add", $attrib);
-				}
+                    echo form_open_multipart("sales/add/".$sale_order_id, $attrib);
+                }else{
+                    echo form_open_multipart("sales/add", $attrib);
+                }
                 ?>
                 <div class="row">
                     <div class="col-lg-12">
                         <?php if ($Owner || $Admin || $Settings->allow_change_date == 1) { ?>
                             <div class="col-md-4">
                                 <div class="form-group">
-									<?= lang("date", "sldate"); ?>
-									<div class="controls">
-										 <?php echo form_input('date', (isset($_POST['date']) ? $_POST['date'] : ""), 'class="form-control input-tip datetime" id="sldate" required="required"'); ?>
-									</div>	
-								</div>
+                                    <?= lang("date", "sldate"); ?>
+                                    <div class="controls">
+                                        <?php echo form_input('date', (isset($_POST['date']) ? $_POST['date'] : ""), 'class="form-control input-tip datetime" id="sldate" required="required"'); ?>
+                                    </div>
+                                </div>
                             </div>
                         <?php } ?>
-						<!--
+                        <!--
 						<div class="col-md-4">
                             <div class="form-group">
                                 <?= lang("reference_no", "slref"); ?>
@@ -508,53 +498,53 @@
                             </div>
                         </div>
 						-->
-						<div class="col-md-4">
-							<?= lang("reference_no", "slref"); ?>
-							<div style="float:left;width:100%;">
-								<div class="form-group">
-									<div class="input-group">  
-											<?php echo form_input('reference_no', $reference?$reference:"",'  class="form-control input-tip" id="slref"'); ?>
-											<input type="hidden"  name="temp_reference_no"  id="temp_reference_no" value="<?= $reference?$reference:"" ?>" />
-											<input type="hidden"  name="quote_id"  id="quote_id" value="" />
-											<div class="input-group-addon no-print" style="padding: 2px 5px;background-color:white;">
-												<input type="checkbox" name="ref_status" id="ref_st" value="1" style="margin-top:3px;">
-											</div>
-									</div>
-								</div>
-							</div>
+                        <div class="col-md-4">
+                            <?= lang("reference_no", "slref"); ?>
+                            <div style="float:left;width:100%;">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <?php echo form_input('reference_no', $reference?$reference:"",'  class="form-control input-tip" id="slref"'); ?>
+                                        <input type="hidden"  name="temp_reference_no"  id="temp_reference_no" value="<?= $reference?$reference:"" ?>" />
+                                        <input type="hidden"  name="quote_id"  id="quote_id" value="" />
+                                        <div class="input-group-addon no-print" style="padding: 2px 5px;background-color:white;">
+                                            <input type="checkbox" name="ref_status" id="ref_st" value="1" style="margin-top:3px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-						
-						<div class="col-md-4" id="so_ref" style="display:none;">
-							<div class="form-group">
-								<?= lang("so_no", "soref"); ?>
-								<?php echo form_input('so_reference_no', (isset($refer)?$refer: $sale_order->reference_no), 'class="form-control input-tip" id="soref" readonly '); ?>
-								<?php echo form_hidden('delivery_id_update',(isset($delivery_id)?$delivery_id:0) , 'class="form-control input-tip" id="delivery_id_update"'); ?>
-								<?php echo form_hidden('so_id', (isset($sale_order->sale_id)?$sale_order->sale_id:0), 'class="form-control input-tip" id="so_id"'); ?>
-								<?php echo form_hidden('d_type', $type, 'class="form-control input-tip" id="d_type"'); ?>
-								<?php echo form_hidden('type_id', $type_id, 'class="form-control input-tip" id="type_id"'); ?>
-							</div>
-						</div>
-						<div class="col-md-4" id="so_deposit" style="display:none;">
-							<div class="form-group">
-								<?= lang("so_no", "sono"); ?>
-								<?php
-								$so[""] = "";
-								foreach ($so_nos as $so_no) {
-									$so[$so_no->id] = $so_no->reference_no;
-								}
-								echo form_dropdown('sono', $so, (isset($_POST['sono']) ? $_POST['sono'] : ''), 'id="sono" data-placeholder="' . lang("select") . ' ' . lang("so_no") . '" class="form-control input-tip select" style="width:100%;"');
-								?>
-							</div>
-						</div>
-						
-						<div class="clearfix"></div>
-						
-						<div class="col-md-4" id="qu_ref" style="display:none;">
-							<div class="form-group">
-								<?= lang("quotation_no", "quref"); ?>
-								<?php echo form_input('quote_reference_no','', 'class="form-control input-tip" id="quref" readonly '); ?>
-							</div>
-						</div>
+
+                        <div class="col-md-4" id="so_ref" style="display:none;">
+                            <div class="form-group">
+                                <?= lang("so_no", "soref"); ?>
+                                <?php echo form_input('so_reference_no', (isset($refer)?$refer: $sale_order->reference_no), 'class="form-control input-tip" id="soref" readonly '); ?>
+                                <?php echo form_hidden('delivery_id_update',(isset($delivery_id)?$delivery_id:0) , 'class="form-control input-tip" id="delivery_id_update"'); ?>
+                                <?php echo form_hidden('so_id', (isset($sale_order->sale_id)?$sale_order->sale_id:0), 'class="form-control input-tip" id="so_id"'); ?>
+                                <?php echo form_hidden('d_type', $type, 'class="form-control input-tip" id="d_type"'); ?>
+                                <?php echo form_hidden('type_id', $type_id, 'class="form-control input-tip" id="type_id"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-md-4" id="so_deposit" style="display:none;">
+                            <div class="form-group">
+                                <?= lang("so_no", "sono"); ?>
+                                <?php
+                                $so[""] = "";
+                                foreach ($so_nos as $so_no) {
+                                    $so[$so_no->id] = $so_no->reference_no;
+                                }
+                                echo form_dropdown('sono', $so, (isset($_POST['sono']) ? $_POST['sono'] : ''), 'id="sono" data-placeholder="' . lang("select") . ' ' . lang("so_no") . '" class="form-control input-tip select" style="width:100%;"');
+                                ?>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="col-md-4" id="qu_ref" style="display:none;">
+                            <div class="form-group">
+                                <?= lang("quotation_no", "quref"); ?>
+                                <?php echo form_input('quote_reference_no','', 'class="form-control input-tip" id="quref" readonly '); ?>
+                            </div>
+                        </div>
                         <?php if ($Owner || $Admin || !$this->session->userdata('biller_id')) { ?>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -583,7 +573,7 @@
                             </div>
                         <?php } ?>
 
-						<!--<div class="col-md-4">
+                        <!--<div class="col-md-4">
                             <div class="form-group">
                                 <?= lang("Reference_Note", "slrefnote"); ?>
                                 <?php echo form_input('reference_note', (isset($_POST['reference_note']) ? $_POST['reference_note'] : $ponumber), 'class="form-control input-tip" id="slrefnote"'); ?>
@@ -594,19 +584,19 @@
                         <div class="col-md-12">
                             <div class="panel panel-warning">
                                 <div
-                                    class="panel-heading"><?= lang('please_select_these_before_adding_product') ?></div>
+                                        class="panel-heading"><?= lang('please_select_these_before_adding_product') ?></div>
                                 <div class="panel-body" style="padding: 5px;">
-									<?php if($setting->credit_limit == 1) {?>
-										<input type="hidden" id="credit_limit"/>
-										<input type="hidden" id="cust_balance"/>
-										<input type="hidden" id="hide_grand"/>									
-									<?php }?>
+                                    <?php if($setting->credit_limit == 1) {?>
+                                        <input type="hidden" id="credit_limit"/>
+                                        <input type="hidden" id="cust_balance"/>
+                                        <input type="hidden" id="hide_grand"/>
+                                    <?php }?>
                                     <?php if ($Owner || $Admin || !$this->session->userdata('warehouse_id')) { ?>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <?= lang("warehouse", "slwarehouse"); ?>
                                                 <?php
-                                                 $wh[''] = '';
+                                                $wh[''] = '';
                                                 foreach ($warehouses as $warehouse) {
                                                     $wh[$warehouse->id] = $warehouse->name;
                                                 }
@@ -619,7 +609,7 @@
                                             <div class="form-group">
                                                 <?= lang("warehouse", "slwarehouse"); ?>
                                                 <?php
-                                                 $wh[''] = '';
+                                                $wh[''] = '';
                                                 foreach ($warehouses as $warehouse) {
                                                     $wh[$warehouse->id] = $warehouse->name;
                                                 }
@@ -627,63 +617,63 @@
                                                 ?>
                                             </div>
                                         </div>
-                                    <?php } ?>  
-									                              
-									<div class="col-md-4">
-										<div class="form-group">
-										<?= lang("saleman", "saleman"); ?>
-										<select name="saleman" id="saleman" class="form-control saleman">
-											<?php
-												foreach($agencies as $agency){
-													if($this->session->userdata('username') == $agency->username){
-														echo '<option value="'.$this->session->userdata('user_id').'" selected>'.lang($this->session->userdata('username')).'</option>';
-													}else{
-														echo '<option value="'.$agency->id.'">'.$agency->username.'</option>';
-													}
-												}
-											?>
-										</select>
-										<?php
-										/*$sm[''] = '';
-										foreach($agencies as $agency){
-											$sm[$agency->id] = $agency->username;
-										}
-										echo form_dropdown('saleman', $sm, (isset($_POST['saleman']) ? $_POST['saleman'] : ''), 'id="slsaleman" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("saleman") . '" style="width:100%;" ');*/
-										?>
-										</div>
+                                    <?php } ?>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <?= lang("saleman", "saleman"); ?>
+                                            <select name="saleman" id="saleman" class="form-control saleman">
+                                                <?php
+                                                foreach($agencies as $agency){
+                                                    if($this->session->userdata('username') == $agency->username){
+                                                        echo '<option value="'.$this->session->userdata('user_id').'" selected>'.lang($this->session->userdata('username')).'</option>';
+                                                    }else{
+                                                        echo '<option value="'.$agency->id.'">'.$agency->username.'</option>';
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                            <?php
+                                            /*$sm[''] = '';
+                                            foreach($agencies as $agency){
+                                                $sm[$agency->id] = $agency->username;
+                                            }
+                                            echo form_dropdown('saleman', $sm, (isset($_POST['saleman']) ? $_POST['saleman'] : ''), 'id="slsaleman" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("saleman") . '" style="width:100%;" ');*/
+                                            ?>
+                                        </div>
                                     </div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<?= lang("group_area", "group_area"); ?>
-											<?php
-											 $ar[''] = '';
-											foreach ($areas as $area) {
-												$ar[$area->areas_g_code] = $area->areas_group;
-											}
-											echo form_dropdown('area',$ar, (isset($_POST['area']) ? $_POST['area'] : ''), 'id="slarea" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("group_area") . '" required="required" style="width:100%;" ');
-											?>
-										</div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <?= lang("group_area", "group_area"); ?>
+                                            <?php
+                                            $ar[''] = '';
+                                            foreach ($areas as $area) {
+                                                $ar[$area->areas_g_code] = $area->areas_group;
+                                            }
+                                            echo form_dropdown('area',$ar, (isset($_POST['area']) ? $_POST['area'] : ''), 'id="slarea" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("group_area") . '" required="required" style="width:100%;" ');
+                                            ?>
+                                        </div>
                                     </div>
-									
-									<?php if($setting->bill_to == 1) { ?>
-									<div class="col-md-4">
-										<div class="form-group">
-											<?= lang("bill_to", "bill_to"); ?>
-											<?php echo form_input('bill_to', '', 'class="form-control input-tip" id="bill_to"'); ?>
-										</div>
-									</div>
-									<?php } ?>
-                                    
-									<?php if($setting->show_po) { ?>
-									<div class="col-md-4">
-										<div class="form-group">
-											<?= lang("po", "po"); ?>
-											<?php echo form_input('po', '', 'class="form-control input-tip" id="po"'); ?>
-										</div>
-									</div>
-									<?php } ?>   
-									
-									<div class="col-md-4">
+
+                                    <?php if($setting->bill_to == 1) { ?>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <?= lang("bill_to", "bill_to"); ?>
+                                                <?php echo form_input('bill_to', '', 'class="form-control input-tip" id="bill_to"'); ?>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+                                    <?php if($setting->show_po) { ?>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <?= lang("po", "po"); ?>
+                                                <?php echo form_input('po', '', 'class="form-control input-tip" id="po"'); ?>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <?= lang("customer", "slcustomer"); ?>
                                             <?php if ($Owner || $Admin || $GP['customers-add']) { ?><div class="input-group"><?php } ?>
@@ -692,18 +682,18 @@
                                                 ?>
                                                 <?php if ($Owner || $Admin || $GP['customers-add']) { ?>
 
-												<div class="input-group-addon no-print" style="padding: 2px 5px; border-left: 0;">
-													<a href="#" id="view-customer" class="external" data-toggle="modal" data-target="#myModal">
-														<i class="fa fa-2x fa-user" id="addIcon"></i>
-													</a>
-												</div>
+                                                <div class="input-group-addon no-print" style="padding: 2px 5px; border-left: 0;">
+                                                    <a href="#" id="view-customer" class="external" data-toggle="modal" data-target="#myModal">
+                                                        <i class="fa fa-2x fa-user" id="addIcon"></i>
+                                                    </a>
+                                                </div>
 
                                                 <div class="input-group-addon no-print" style="padding: 2px 5px;"><a
-                                                        href="<?= site_url('customers/add/sale'); ?>" id="add-customer"
-                                                        class="external" data-toggle="modal" data-target="#myModal"><i
-                                                            class="fa fa-2x fa-plus-circle" id="addIcon"></i></a></div>
+                                                            href="<?= site_url('customers/add/sale'); ?>" id="add-customer"
+                                                            class="external" data-toggle="modal" data-target="#myModal"><i
+                                                                class="fa fa-2x fa-plus-circle" id="addIcon"></i></a></div>
                                             </div>
-                                            <?php } ?>
+                                        <?php } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -717,27 +707,27 @@
                                         <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
                                             <i class="fa fa-2x fa-barcode addIcon"></i></div>
                                         <?php
-										
-										if($this->input->get('addsales')){
-											
-											$q = $this->db->get_where('erp_products',array('id'=>$this->input->get('addsales')),1);
-											$pcode = $q->row()->code;
-											
-										}
-										echo form_input('add_item',(isset($pcode)?$pcode:''), 'class="form-control input-lg" id="add_item" placeholder="' . lang("add_product_to_order") . '"'); ?>
+
+                                        if($this->input->get('addsales')){
+
+                                            $q = $this->db->get_where('erp_products',array('id'=>$this->input->get('addsales')),1);
+                                            $pcode = $q->row()->code;
+
+                                        }
+                                        echo form_input('add_item',(isset($pcode)?$pcode:''), 'class="form-control input-lg" id="add_item" placeholder="' . lang("add_product_to_order") . '"'); ?>
                                         <?php if ($Owner || $Admin || $GP['products-add']) { ?>
-                                        <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
-                                            <a href="#" id="addManually" class="tip" title="<?= lang('add_product_manually') ?>">
-                                                <i class="fa fa-2x fa-plus-circle addIcon" id="addIcon"></i>
-                                            </a>
-											<a href="<?= site_url('sales/add');?>" class="gos" ></a>
-                                        </div>
+                                            <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
+                                                <a href="#" id="addManually" class="tip" title="<?= lang('add_product_manually') ?>">
+                                                    <i class="fa fa-2x fa-plus-circle addIcon" id="addIcon"></i>
+                                                </a>
+                                                <a href="<?= site_url('sales/add');?>" class="gos" ></a>
+                                            </div>
                                         <?php } if ($Owner || $Admin || $GP['sales-add_gift_card']) { ?>
-                                        <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
-                                            <a href="#" id="sellGiftCard" class="tip" title="<?= lang('sell_gift_card') ?>">
-                                               <i class="fa fa-2x fa-credit-card addIcon" id="addIcon"></i>
-                                            </a>
-                                        </div>
+                                            <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
+                                                <a href="#" id="sellGiftCard" class="tip" title="<?= lang('sell_gift_card') ?>">
+                                                    <i class="fa fa-2x fa-credit-card addIcon" id="addIcon"></i>
+                                                </a>
+                                            </div>
                                         <?php } ?>
                                     </div>
                                 </div>
@@ -754,17 +744,17 @@
                                            class="table items table-striped table-bordered table-condensed table-hover">
                                         <thead>
                                         <tr>
-											<th class=""><?= lang("no"); ?></th>
-											<?php if($setting->show_code == 1 && $setting->separate_code == 1) { ?>
-												<th class="col-md-2"><?= lang("product_code"); ?></th>
-												<th class="col-md-4"><?= lang("product_name"); ?></th>
-											<?php } ?>
+                                            <th class=""><?= lang("no"); ?></th>
+                                            <?php if($setting->show_code == 1 && $setting->separate_code == 1) { ?>
+                                                <th class="col-md-2"><?= lang("product_code"); ?></th>
+                                                <th class="col-md-4"><?= lang("product_name"); ?></th>
+                                            <?php } ?>
                                             <?php if($setting->show_code == 1 && $setting->separate_code == 0) { ?>
-												<th class="col-md-4"><?= lang("product_name") . " (" . lang("product_code") . ")"; ?></th>
-											<?php } ?>
-											<?php if($setting->show_code == 0) { ?>
-												<th class="col-md-4"><?= lang("product_name"); ?></th>
-											<?php } ?>
+                                                <th class="col-md-4"><?= lang("product_name") . " (" . lang("product_code") . ")"; ?></th>
+                                            <?php } ?>
+                                            <?php if($setting->show_code == 0) { ?>
+                                                <th class="col-md-4"><?= lang("product_name"); ?></th>
+                                            <?php } ?>
                                             <?php
                                             if ($Settings->product_serial) {
                                                 echo '<th class="col-md-2">' . lang("serial_no") . '</th>';
@@ -774,7 +764,7 @@
                                                 <th class="col-md-1"><?= lang("unit_price"); ?></th>
                                             <?php } ?>
                                             <th class="col-md-1"><?= lang("quantity"); ?></th>
-											
+
                                             <th class="col-md-1"><?= lang("qoh"); ?></th>
                                             <?php
                                             if ($Settings->product_discount || ($Owner || $Admin || $this->session->userdata('allow_discount'))) {
@@ -802,124 +792,124 @@
                             </div>
                         </div>
 
-						<div class="col-sm-12">
-							<?php if ($Owner || $Admin || $this->session->userdata('allow_discount')) { ?>
-								<div class="col-sm-4">
-									<div class="form-group">
-										<?= lang("order_discount", "sldiscount"); ?>
-										<?php echo form_input('order_discount', '', 'class="form-control input-tip" id="sldiscount"'); ?>
-									</div>
-								</div>
-							<?php } ?>
+                        <div class="col-sm-12">
+                            <?php if ($Owner || $Admin || $this->session->userdata('allow_discount')) { ?>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <?= lang("order_discount", "sldiscount"); ?>
+                                        <?php echo form_input('order_discount', '', 'class="form-control input-tip" id="sldiscount"'); ?>
+                                    </div>
+                                </div>
+                            <?php } ?>
 
-							<div class="col-sm-4">
-								<div class="form-group">
-									<?= lang("shipping", "slshipping"); ?>
-									<?php echo form_input('shipping', '', 'class="form-control input-tip" id="slshipping"'); ?>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <?= lang("shipping", "slshipping"); ?>
+                                    <?php echo form_input('shipping', '', 'class="form-control input-tip" id="slshipping"'); ?>
 
-								</div>
-							</div>
-							
-							<?php if ($Settings->tax2) { ?>
-								<div class="col-sm-4">
-									<div class="form-group">
-										<?= lang("order_tax", "sltax2"); ?>
-										<?php
-										$tr[""] = "";
-										foreach ($tax_rates as $tax) {
-											$tr[$tax->id] = $tax->name;
-										}
-										echo form_dropdown('order_tax', $tr, (isset($_POST['order_tax']) ? $_POST['order_tax'] : $Settings->default_tax_rate2), 'id="sltax2" data-placeholder="' . lang("select") . ' ' . lang("order_tax") . '" class="form-control input-tip select" style="width:100%;"');
-										?>
-									</div>
-								</div>
-							<?php } ?>
-							
-						</div>
-						<div class="col-sm-12">
-							
-							<div class="col-sm-4">
-								<div class="form-group">
-									<?= lang("delivery_by", "delivery_by"); ?>
-									<?php
-										$driver[''] = '';
-										foreach($drivers as $dr) {
-											$driver[$dr->id] = $dr->name;
-										}
-										echo form_dropdown('delivery_by', $driver, '', 'class="form-control input-tip" id="delivery_by"');
-									?>
-								</div>
-							</div>
-							<div class="col-sm-4">
-								<div class="form-group">
-									<?= lang("payment_term", "slpayment_term"); ?>
-									<?php
-										$ptr[""] = "";
-										foreach ($payment_term as $term) {
-											$ptr[$term->id] = $term->description;
-										}
-										echo form_dropdown('payment_term', $ptr,isset($sale_order->payment_term)?$sale_order->payment_term:"", 'id="slpayment_term" data-placeholder="' . lang("payment_term_tip") .  '" class="form-control input-tip select" style="width:100%;"');
-										//echo form_input('payment_term',$ptr,'11', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('payment_term_tip') . '" id="slpayment_term"'); ?>
-								</div>
-							</div>
-							<?php
-								if(isset($delivery_id)){
-									echo '<input type="hidden" name="sale_status" id="slsale_status" value="pending" required="required" />';
-								}else{
-									echo '<input type="hidden" name="sale_status" id="slsale_status" value="completed" required="required" />';
-								}
-							?>
-							<!--
+                                </div>
+                            </div>
+
+                            <?php if ($Settings->tax2) { ?>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <?= lang("order_tax", "sltax2"); ?>
+                                        <?php
+                                        $tr[""] = "";
+                                        foreach ($tax_rates as $tax) {
+                                            $tr[$tax->id] = $tax->name;
+                                        }
+                                        echo form_dropdown('order_tax', $tr, (isset($_POST['order_tax']) ? $_POST['order_tax'] : $Settings->default_tax_rate2), 'id="sltax2" data-placeholder="' . lang("select") . ' ' . lang("order_tax") . '" class="form-control input-tip select" style="width:100%;"');
+                                        ?>
+                                    </div>
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                        <div class="col-sm-12">
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <?= lang("delivery_by", "delivery_by"); ?>
+                                    <?php
+                                    $driver[''] = '';
+                                    foreach($drivers as $dr) {
+                                        $driver[$dr->id] = $dr->name;
+                                    }
+                                    echo form_dropdown('delivery_by', $driver, '', 'class="form-control input-tip" id="delivery_by"');
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <?= lang("payment_term", "slpayment_term"); ?>
+                                    <?php
+                                    $ptr[""] = "";
+                                    foreach ($payment_term as $term) {
+                                        $ptr[$term->id] = $term->description;
+                                    }
+                                    echo form_dropdown('payment_term', $ptr,isset($sale_order->payment_term)?$sale_order->payment_term:"", 'id="slpayment_term" data-placeholder="' . lang("payment_term_tip") .  '" class="form-control input-tip select" style="width:100%;"');
+                                    //echo form_input('payment_term',$ptr,'11', 'class="form-control tip" data-trigger="focus" data-placement="top" title="' . lang('payment_term_tip') . '" id="slpayment_term"'); ?>
+                                </div>
+                            </div>
+                            <?php
+                            if(isset($delivery_id)){
+                                echo '<input type="hidden" name="sale_status" id="slsale_status" value="pending" required="required" />';
+                            }else{
+                                echo '<input type="hidden" name="sale_status" id="slsale_status" value="completed" required="required" />';
+                            }
+                            ?>
+                            <!--
 							<div class="col-sm-4">
 								<div class="form-group">
 									<?= lang("payment_status", "slpayment_status"); ?>
 									<?php $pst = array('due' => lang('due'), 'partial' => lang('partial'), 'paid' => lang('paid'));
-									echo form_dropdown('payment_status', $pst, '', 'class="form-control input-tip" required="required" id="slpayment_status"'); ?>
+                            echo form_dropdown('payment_status', $pst, '', 'class="form-control input-tip" required="required" id="slpayment_status"'); ?>
 
 								</div>
 							</div>
 							-->
-						</div>
-						<div class="col-sm-12">
-							<div class="col-sm-4">
-								<div class="form-group">
-									<?= lang("document", "document") ?>
-									<input id="document" type="file" name="document" data-show-upload="false" data-show-preview="false" class="form-control file">
-									<input type="hidden" value="<?=(isset($sale_order->attachment)?$sale_order->attachment:"")?>" name="attachment">
-									<?php if(!empty($sale_order->attachment)){?>
-									<a target="_blank" href="<?php echo $this->config->base_url()?>files/<?=$sale_order->attachment?>"
-										class="btn btn-primary pull-left"><i class="fa fa-download"></i> Download  File</a>
-									<?php } ?>
-								</div>
-							</div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <?= lang("document", "document") ?>
+                                    <input id="document" type="file" name="document" data-show-upload="false" data-show-preview="false" class="form-control file">
+                                    <input type="hidden" value="<?=(isset($sale_order->attachment)?$sale_order->attachment:"")?>" name="attachment">
+                                    <?php if(!empty($sale_order->attachment)){?>
+                                        <a target="_blank" href="<?php echo $this->config->base_url()?>files/<?=$sale_order->attachment?>"
+                                           class="btn btn-primary pull-left"><i class="fa fa-download"></i> Download  File</a>
+                                    <?php } ?>
+                                </div>
+                            </div>
 
-							<div class="col-sm-4">
-								<div class="form-group">
-								
-									<?= lang("document", "document") ?>
-									<input id="document1" type="file" name="document1"  data-show-upload="false" data-show-preview="false" class="form-control file">
-									<input type="hidden" value="<?=(isset($sale_order->attachment1)?$sale_order->attachment1:"")?>" name="attachment">
-									<?php if(!empty($sale_order->attachment1)){?>
-									<a target="_blank" href="<?php echo $this->config->base_url()?>files/<?=$sale_order->attachment1?>"
-										class="btn btn-primary pull-left"><i class="fa fa-download"></i> Download  File</a>
-									<?php } ?>
-								</div>
-							</div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
 
-							<div class="col-sm-4">
-								<div class="form-group">
-									<?= lang("document", "document") ?>
-									<input id="document2" type="file" name="document2" data-show-upload="false" data-show-preview="false" class="form-control file">
-									<input type="hidden" value="<?=(isset($sale_order->attachment2)?$sale_order->attachment2:"")?>" name="attachment2">
-									<?php if(!empty($sale_order->attachment2)){?>
-									<a target="_blank" href="<?php echo $this->config->base_url()?>files/<?=$sale_order->attachment2?>"
-										class="btn btn-primary pull-left"><i class="fa fa-download"></i> Download  File</a>
-									<?php } ?>
-								</div>
-							</div>
+                                    <?= lang("document", "document") ?>
+                                    <input id="document1" type="file" name="document1"  data-show-upload="false" data-show-preview="false" class="form-control file">
+                                    <input type="hidden" value="<?=(isset($sale_order->attachment1)?$sale_order->attachment1:"")?>" name="attachment">
+                                    <?php if(!empty($sale_order->attachment1)){?>
+                                        <a target="_blank" href="<?php echo $this->config->base_url()?>files/<?=$sale_order->attachment1?>"
+                                           class="btn btn-primary pull-left"><i class="fa fa-download"></i> Download  File</a>
+                                    <?php } ?>
+                                </div>
+                            </div>
 
-						</div>
-						<div class="clearfix"></div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <?= lang("document", "document") ?>
+                                    <input id="document2" type="file" name="document2" data-show-upload="false" data-show-preview="false" class="form-control file">
+                                    <input type="hidden" value="<?=(isset($sale_order->attachment2)?$sale_order->attachment2:"")?>" name="attachment2">
+                                    <?php if(!empty($sale_order->attachment2)){?>
+                                        <a target="_blank" href="<?php echo $this->config->base_url()?>files/<?=$sale_order->attachment2?>"
+                                           class="btn btn-primary pull-left"><i class="fa fa-download"></i> Download  File</a>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="clearfix"></div>
 
                         <div id="payments" style="display: none;">
                             <div class="col-md-12">
@@ -930,7 +920,7 @@
                                                 <div class="form-group">
                                                     <?= lang("payment_reference_no", "payment_reference_no"); ?>
                                                     <?= form_input('payment_reference_no', (isset($_POST['payment_reference_no']) ? $_POST['payment_reference_no'] : $payment_ref), 'class="form-control tip" id="payment_reference_no" required="required"'); ?>
-													<input type="hidden" name="type" value="sdfsdf">
+                                                    <input type="hidden" name="type" value="sdfsdf">
                                                 </div>
                                             </div>
                                             <div class="col-sm-4">
@@ -950,19 +940,19 @@
                                             <div class="col-sm-4" style="display:none">
                                                 <div class="form-group">
                                                     <?= lang("paying_by", "paid_by_1"); ?>
-                                                    <select name="paid_by" id="paid_by_1" class="form-control paid_by"> 
-														<option value="cash"><?= lang("cash"); ?></option>
-														<option value="western union"><?= lang("Western_Union"); ?></option>
-														<option value="bank transfer"><?= lang("Bank_Transfer"); ?></option>
-														<option value="cheque"><?= lang("cheque"); ?></option>
-														<option value="other"><?= lang("other"); ?></option>
-														<option value="deposit"><?= lang("deposit"); ?></option>
-														<option value="depreciation"><?= lang("loan"); ?></option>
-														 <option value="gift_card"><?= lang("gift_card"); ?></option>
+                                                    <select name="paid_by" id="paid_by_1" class="form-control paid_by">
+                                                        <option value="cash"><?= lang("cash"); ?></option>
+                                                        <option value="western union"><?= lang("Western_Union"); ?></option>
+                                                        <option value="bank transfer"><?= lang("Bank_Transfer"); ?></option>
+                                                        <option value="cheque"><?= lang("cheque"); ?></option>
+                                                        <option value="other"><?= lang("other"); ?></option>
+                                                        <option value="deposit"><?= lang("deposit"); ?></option>
+                                                        <option value="depreciation"><?= lang("loan"); ?></option>
+                                                        <option value="gift_card"><?= lang("gift_card"); ?></option>
                                                     </select>
                                                 </div>
                                             </div>
-											<!--
+                                            <!--
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <?= lang("payment_date", "payment_date"); ?>
@@ -971,19 +961,19 @@
                                             </div>
 											-->
                                         </div>
-										<div class="row" style="display:none">
-											<div class="col-sm-4" id="bank_acc">
-												<div class="form-group">
-													<?= lang("bank_account", "bank_account_1"); ?>
-													<?php $bank = array('' => '');
-													foreach($bankAccounts as $bankAcc) {
-														$bank[$bankAcc->accountcode] = $bankAcc->accountcode . ' | '. $bankAcc->accountname;
-													}
-													echo form_dropdown('bank_account', $bank, '', 'id="bank_account_1" class="ba form-control kb-pad bank_account" required="required"');
-													?>
-												</div>
-											</div>
-										</div>
+                                        <div class="row" style="display:none">
+                                            <div class="col-sm-4" id="bank_acc">
+                                                <div class="form-group">
+                                                    <?= lang("bank_account", "bank_account_1"); ?>
+                                                    <?php $bank = array('' => '');
+                                                    foreach($bankAccounts as $bankAcc) {
+                                                        $bank[$bankAcc->accountcode] = $bankAcc->accountcode . ' | '. $bankAcc->accountname;
+                                                    }
+                                                    echo form_dropdown('bank_account', $bank, '', 'id="bank_account_1" class="ba form-control kb-pad bank_account" required="required"');
+                                                    ?>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="clearfix"></div>
                                         <div class="pcc_1" style="display:none;">
                                             <div class="row">
@@ -1007,7 +997,7 @@
                                                                 placeholder="<?= lang('card_type') ?>">
                                                             <option value="Visa"><?= lang("Visa"); ?></option>
                                                             <option
-                                                                value="MasterCard"><?= lang("MasterCard"); ?></option>
+                                                                    value="MasterCard"><?= lang("MasterCard"); ?></option>
                                                             <option value="Amex"><?= lang("Amex"); ?></option>
                                                             <option value="Discover"><?= lang("Discover"); ?></option>
                                                         </select>
@@ -1036,86 +1026,86 @@
                                                 </div>
                                             </div>
                                         </div>
-										
-										<div class="form-group dp" style="display: block;">
-											<!--
+
+                                        <div class="form-group dp" style="display: block;">
+                                            <!--
 											<?= lang("customer", "customer1"); ?>
 													<?php
-													$customers1[] = array();
-													foreach($customers as $customer){
-														$customers1[$customer->id] = $customer->name;
-													}
-												echo form_dropdown('customer', $customers1, '' , 'class="form-control" id="customer1"');
-											?>
+                                            $customers1[] = array();
+                                            foreach($customers as $customer){
+                                                $customers1[$customer->id] = $customer->name;
+                                            }
+                                            echo form_dropdown('customer', $customers1, '' , 'class="form-control" id="customer1"');
+                                            ?>
 											-->
-											<?= lang("deposit_amount", "deposit_amount"); ?>
-											
-											<div id="dp_details"></div>
-										</div>
-										
-										<!-- loan add by chin -->
-										<div class="depreciation_1" style="display:none;">
-											<div class="form-group">
-												<?= lang("depre_term", "depreciation_1"); ?>
-											</div>
-											<div class="row">
-												<div class="col-md-3">
-													<div class="form-group">
-														<input name="depreciation_rate1" type="text" id="depreciation_rate_1"
-															   class="form-control depreciation_rate1"
-															   placeholder="<?= lang('rate (%)') ?>"/>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
+                                            <?= lang("deposit_amount", "deposit_amount"); ?>
 
-														<input name="depreciation_term" type="text" id="depreciation_term_1"
-															   class="form-control kb-pad" value=""
-															   placeholder="<?= lang('term (month)') ?>"/>
-														<input type="hidden" id="current_date" class="current_date" class="current_date[]" value="<?php echo date('m/d/Y'); ?>" />
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<select name="depreciation_type" id="depreciation_type_1"
-																class="form-control depreciation_type"
-																placeholder="<?= lang('payment type') ?>">
-															<option value=""> &nbsp; </option>
-															<option value="1"><?= lang("Normal"); ?></option>
-															<option value="2"><?= lang("Custom"); ?></option>
-															<option value="3"><?= lang("Fixed"); ?></option>
-															<option value="4"><?= lang("Normal(Fixed)"); ?></option>
-														</select>
-														<!-- <input type="text" id="pcc_type_1" class="form-control" placeholder="<?= lang('card_type') ?>" />-->
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group" id="print_" style="display:none">
-														<button type="button" class="btn btn-primary col-md-12 print_depre" id="print_depre" style="margin-bottom:5px;"><i class="fa fa-print"> &nbsp; </i>
-															<?= lang('Print') ?>
-														</button>
-														<button type="button" class="btn btn-primary col-md-12 export_depre" id="export_depre" style="margin-bottom:5px;"><i class="fa fa-file-excel-o"> &nbsp; </i>
-																<?= lang('export') ?>
-															</button>
-														<div style="clear:both; height:15px;"></div>
-													</div>
-												 </div>
-											</div>
-											<div class="form-group">
+                                            <div id="dp_details"></div>
+                                        </div>
 
-												<div class="dep_tbl" style="display:none;">
-													<table border="1" width="100%" class="table table-bordered table-condensed tbl_dep" id="tbl_dep">
-														<tbody>
+                                        <!-- loan add by chin -->
+                                        <div class="depreciation_1" style="display:none;">
+                                            <div class="form-group">
+                                                <?= lang("depre_term", "depreciation_1"); ?>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <input name="depreciation_rate1" type="text" id="depreciation_rate_1"
+                                                               class="form-control depreciation_rate1"
+                                                               placeholder="<?= lang('rate (%)') ?>"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
 
-														</tbody>
-													</table>
-													<table id="export_tbl" width="70%" style="display:none;">
+                                                        <input name="depreciation_term" type="text" id="depreciation_term_1"
+                                                               class="form-control kb-pad" value=""
+                                                               placeholder="<?= lang('term (month)') ?>"/>
+                                                        <input type="hidden" id="current_date" class="current_date" class="current_date[]" value="<?php echo date('m/d/Y'); ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <select name="depreciation_type" id="depreciation_type_1"
+                                                                class="form-control depreciation_type"
+                                                                placeholder="<?= lang('payment type') ?>">
+                                                            <option value=""> &nbsp; </option>
+                                                            <option value="1"><?= lang("Normal"); ?></option>
+                                                            <option value="2"><?= lang("Custom"); ?></option>
+                                                            <option value="3"><?= lang("Fixed"); ?></option>
+                                                            <option value="4"><?= lang("Normal(Fixed)"); ?></option>
+                                                        </select>
+                                                        <!-- <input type="text" id="pcc_type_1" class="form-control" placeholder="<?= lang('card_type') ?>" />-->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group" id="print_" style="display:none">
+                                                        <button type="button" class="btn btn-primary col-md-12 print_depre" id="print_depre" style="margin-bottom:5px;"><i class="fa fa-print"> &nbsp; </i>
+                                                            <?= lang('Print') ?>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary col-md-12 export_depre" id="export_depre" style="margin-bottom:5px;"><i class="fa fa-file-excel-o"> &nbsp; </i>
+                                                            <?= lang('export') ?>
+                                                        </button>
+                                                        <div style="clear:both; height:15px;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
 
-													</table>
-												</div>
-											</div>
-										</div>
-										<!-- end loan -->
+                                                <div class="dep_tbl" style="display:none;">
+                                                    <table border="1" width="100%" class="table table-bordered table-condensed tbl_dep" id="tbl_dep">
+                                                        <tbody>
+
+                                                        </tbody>
+                                                    </table>
+                                                    <table id="export_tbl" width="70%" style="display:none;">
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end loan -->
 
                                         <div class="pcheque_1" style="display:none;">
                                             <div class="form-group"><?= lang("cheque_no", "cheque_no_1"); ?>
@@ -1135,19 +1125,19 @@
                         </div>
 
                         <input type="hidden" name="total_items" value="" id="total_items" required="required"/>
-						<input type="hidden" id="exchange_rate" value="<?= $exchange_rate->rate ?>">
-						
+                        <input type="hidden" id="exchange_rate" value="<?= $exchange_rate->rate ?>">
+
                         <div class="row" id="bt">
                             <div class="col-md-12">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <?= lang("sale_note", "slnote"); ?><span id="slnote_span"></span>
                                         <div id="note">
-                                        <?php if ($this->session->userdata('group_id') == 11) { ?>
-                                        	<?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control" id="slnote" style="margin-top: 10px; height: 100px;" required="required"'); ?>
-                                        <?php } else { ?>
-											<?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control" id="slnote" style="margin-top: 10px; height: 100px;"'); ?>
-                                        <?php } ?>
+                                            <?php if ($this->session->userdata('group_id') == 11) { ?>
+                                                <?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control" id="slnote" style="margin-top: 10px; height: 100px;" required="required"'); ?>
+                                            <?php } else { ?>
+                                                <?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control" id="slnote" style="margin-top: 10px; height: 100px;"'); ?>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -1163,10 +1153,10 @@
                         </div>
                         <div class="col-md-12">
                             <div class="fprom-group">
-								<?php echo form_submit('add_sale', lang("submit"), 'id="add_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0; display:none;"'); ?>
+                                <?php echo form_submit('add_sale', lang("submit"), 'id="add_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0; display:none;"'); ?>
                                 <button type="button" class="btn btn-primary" id="before_sub"><?= lang('submit') ?></button>
                                 <button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
-							</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1176,7 +1166,7 @@
                             <td><?= lang('items') ?> <span class="totals_val pull-right" id="titems">0</span></td>
                             <td><?= lang('total') ?> <span class="totals_val pull-right" id="total">0.00</span></td>
                             <?php if ($Owner || $Admin || $this->session->userdata('allow_discount')) { ?>
-                            <td><?= lang('order_discount') ?> <span class="totals_val pull-right" id="tds">0.00</span></td>
+                                <td><?= lang('order_discount') ?> <span class="totals_val pull-right" id="tds">0.00</span></td>
                             <?php }?>
                             <td><?= lang('shipping') ?> <span class="totals_val pull-right" id="tship">0.00</span></td>
                             <?php if ($Settings->tax2) { ?>
@@ -1322,88 +1312,6 @@
     </div>
 </div>
 
-<!--<div class="modal" id="mModal" tabindex="-1" role="dialog" aria-labelledby="mModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"><i
-                            class="fa fa-2x">&times;</i></span><span class="sr-only"><?=lang('close');?></span></button>
-                <h4 class="modal-title" id="mModalLabel"><?= lang('add_product_manually') ?></h4>
-            </div>
-            <div class="modal-body" id="pr_popover_content">
-                <form class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label for="mcode" class="col-sm-4 control-label"><?= lang('product_code') ?> *</label>
-
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="mcode">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="mname" class="col-sm-4 control-label"><?= lang('product_name') ?> *</label>
-
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="mname">
-                        </div>
-                    </div>
-                    <?php if ($Settings->tax1) { ?>
-                        <div class="form-group">
-                            <label for="mtax" class="col-sm-4 control-label"><?= lang('product_tax') ?> *</label>
-
-                            <div class="col-sm-8">
-                                <?php
-                                $tr[""] = "";
-                                foreach ($tax_rates as $tax) {
-                                    $tr[$tax->id] = $tax->name;
-                                }
-                                echo form_dropdown('mtax', $tr, "", 'id="mtax" class="form-control input-tip select" style="width:100%;"');
-                                ?>
-                            </div>
-                        </div>
-                    <?php } ?>
-                    <div class="form-group">
-                        <label for="mquantity" class="col-sm-4 control-label"><?= lang('quantity') ?> *</label>
-
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="mquantity">
-                        </div>
-                    </div>
-					
-                    <?php if ($Settings->product_discount && ($Owner || $Admin || $this->session->userdata('allow_discount'))) { ?>
-                        <div class="form-group">
-                            <label for="mdiscount"
-                                   class="col-sm-4 control-label"><?= lang('product_discount') ?></label>
-
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="mdiscount">
-                            </div>
-                        </div>
-                    <?php } ?>
-                    <div class="form-group">
-                        <label for="mprice" class="col-sm-4 control-label"><?= lang('unit_price') ?> *</label>
-
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="mprice">
-                        </div>
-                    </div>
-                    <table class="table table-bordered table-striped">
-                        <tr>
-                            <th style="width:25%;"><?= lang('net_unit_price'); ?></th>
-                            <th style="width:25%;"><span id="mnet_price"></span></th>
-                            <th style="width:25%;"><?= lang('product_tax'); ?></th>
-                            <th style="width:25%;"><span id="mpro_tax"></span></th>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="addItemManually"><?= lang('submit') ?></button>
-            </div>
-        </div>
-    </div>
-</div>
--->
-
 <div class="modal" id="gcModal" tabindex="-1" role="dialog" aria-labelledby="mModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1458,19 +1366,19 @@
 <script type="text/javascript">
 
 	var $biller = $("#slbiller");
-		$(window).load(function(){ 
+		$(window).load(function(){
 		$('#paid_by_1').select2().trigger("change");
-		
 
-			
+
+
 		//$('#document1').trigger('change');
-		
+
 		$('#slpayment_status').trigger('change');
 		$('#amount_1').trigger('change');
 		billerChange();
-			
+
 		});
-		
+
 	$("#slref").attr('readonly','readonly');
 	$('#ref_st').on('ifChanged', function() {
 	  if ($(this).is(':checked')) {
@@ -1480,11 +1388,11 @@
 		$("#slref").prop('readonly', true);
 		var temp = $("#temp_reference_no").val();
 		$("#slref").val(temp);
-		
+
 	  }
 	});
-	
-		
+
+
     $(document).ready(function () {
 		 $("#subcategory").select2("destroy").empty().attr("placeholder", "<?= lang('select_category_to_load') ?>").select2({
             placeholder: "<?= lang('select_category_to_load') ?>", data: [
@@ -1526,8 +1434,8 @@
             }
             $('#modal-loading').hide();
         });
-		
-		
+
+
         $('#gccustomer').select2({
             minimumInputLength: 1,
             ajax: {
@@ -1569,7 +1477,7 @@
         });
 
 		$('#before_sub').click(function (e) {
-			
+
 			e.preventDefault();
 			var message = '';
 			var help = false;
@@ -1599,24 +1507,24 @@
 					}else {
 						return false;
 					}
-			}			
-			
+			}
+
 			<?php if($setting->credit_limit == 1) {?>
 			var payment_status = $("#slpayment_status").val();
-			if(payment_status == 'due' || payment_status == 'partial'){				
+			if(payment_status == 'due' || payment_status == 'partial'){
 				var customer_id = $('#slcustomer').val();
 				var c_balance= localStorage.getItem('cust_balance');
-				var c_limit= localStorage.getItem('credit_limit');												
-				var cust_balance = $('#total_balance').val()-0;				
-				cust_balance+= parseFloat(c_balance);				
-				if(c_limit >= 0 && c_limit < cust_balance){					
+				var c_limit= localStorage.getItem('credit_limit');
+				var cust_balance = $('#total_balance').val()-0;
+				cust_balance+= parseFloat(c_balance);
+				if(c_limit >= 0 && c_limit < cust_balance){
 					if (confirm("This customer has over credit limit ("+(cust_balance - c_limit)+"$)!\n Your Balance is "+cust_balance+"$\n Your Credit Balance is "+parseFloat(c_limit)+"$\n Click (OK) if you want to continue  Or Click (Cancel) if you want to Cancel Adding.") == true) {
-						
+
 					} else {
-						
+
 						return false;
 					}
-					
+
 				}
 			}
 			<?php } ?>
@@ -1657,7 +1565,7 @@
                     });
                 }
             }
-			
+
         });
 
     });
@@ -1676,7 +1584,7 @@
                     var opt = '<option value="' + b_id + '">' + code + '-'+ name + '</option>';
                     $("#slwarehouse").append(opt);
                 });
-				
+
                 $('#slwarehouse option[selected="selected"]').each(
                     function() {
                         //$(this).removeAttr('selected');
@@ -1684,7 +1592,7 @@
                 );
 				//$('#slwarehouse').val($('#slwarehouse option:first-child').val()).trigger('change');
                 //$("#slwarehouse").select2("val", "<?=$Settings->default_warehouse;?>");
-				
+
 				if(slwarehouse = localStorage.getItem('slwarehouse')){
 					$('#slwarehouse').select2("val", slwarehouse);
 				}else{
@@ -1692,7 +1600,7 @@
 				}
             }
         });
-		
+
 		$.ajax({
             url: '<?= base_url() ?>sales/getReferenceByProject/so/'+id,
             dataType: 'json',
@@ -1701,14 +1609,14 @@
 				$("#temp_reference_no").val(data);
             }
         });
-		
+
     }
 
     var $warehouse = $('#slwarehouse');
 		$warehouse.change(function (e) {
 			localStorage.setItem('slwarehouse', $(this).val());
     });
-	
+
 
 		$('#print_depre').click(function () {
 			PopupPayments();
@@ -1923,28 +1831,28 @@
 			var issued_date = $('.current_date').val();
 			/*mywindow.document.write('<table class="table-condensed" style="width:95%; font-family:Verdana,Geneva,sans-serif; font-size:12px; padding-bottom:10px;">'+
 										'<tr>'+
-											'<td width="15%"><b style="font-size:18px;"><?= lang('Depreciation List') ?></b></td>'+
+											'<td width="15%"><b style="font-size:18px;"></b></td>'+
 											'<td width="35%"></td>'+
-											'<td width="15%"><?= lang('To') ?></td>'+
-											'<td width="35%"><?= lang(": ") ?></td>'+
-										'</tr>'+
-										'<tr>'+
-											'<td><?= lang('Invoice No ') ?></td>'+
-											'<td><?= lang(": ") ?></td>'+
-											'<td><?= lang('Contact Person') ?></td>'+
-											'<td><?= lang(": ") ?></td>'+
-										'</tr>'+
-										'<tr>'+
-											'<td><?= lang('Issued Date ') ?></td>'+
-											'<td><?= lang(": ") ?>'+ issued_date +'</td>'+
-											'<td><?= lang('HP') ?></td>'+
-											'<td><?= lang(": ") ?></td>'+
+											'<td width="15%"></td>'+
+											'<td width="35%"></td>'+
 										'</tr>'+
 										'<tr>'+
 											'<td></td>'+
 											'<td></td>'+
-											'<td><?= lang('Address') ?></td>'+
-											'<td><?= lang(": ") ?></td>'+
+											'<td></td>'+
+											'<td> </td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td> </td>'+
+											'<td> </td>'+
+											'<td> </td>'+
+											'<td> </td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td></td>'+
+											'<td></td>'+
+											'<td> </td>'+
+											'<td> </td>'+
 										'</tr>'+
 									'</table><br/>'
 								  );*/
@@ -2123,10 +2031,10 @@
                 {id: '', text: '<?= lang('select_area_to_load') ?>'}
             ]
         });
-				
+
         $('#slarea').change(function () {
            var v = $(this).val();
-            $('#modal-loading').show();			
+            $('#modal-loading').show();
             if (v) {
                 $.ajax({
                     type: "get",
@@ -2140,7 +2048,7 @@
                                 data: scdata
                             });
                         }else{
-							
+
 							$("#slcustomer").select2("destroy").empty().attr("placeholder", "<?= lang('select_customer') ?>").select2({
                                 placeholder: "<?= lang('select_category_to_load') ?>",
                                 data: 'not found'
@@ -2159,16 +2067,16 @@
                 });
             }
             $('#modal-loading').hide();
-        }).trigger('change');       
-		 
+        }).trigger('change');
+
     });
-	
+
 	$(window).load(function(){
 		var al = '<?php echo $this->input->get('addsales');?>';
-		//$("slarea").trigger('change'); 
+		//$("slarea").trigger('change');
 		if(al){
 			var test = $("#add_item").val();
-		
+
 				$.ajax({
 					type: 'get',
 					url: '<?= site_url('sales/suggestionsSale'); ?>',
@@ -2183,16 +2091,16 @@
 							comment = data[i];
 							add_invoice_item(comment);
 						  }
-						 $("#add_item").val('');	
+						 $("#add_item").val('');
 						var url = $(".gos").attr('href');
 						window.location.href = url;
 					}
-				});   
-				
-	
+				});
+
+
 		}
     });
-	
-	
-	
+
+
+
 </script>

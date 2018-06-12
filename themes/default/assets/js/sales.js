@@ -1884,6 +1884,7 @@ function loadItems() {
 		var no=1;
 		$.each(slitems, function () {
 			var item = this;
+			//console.log(this);
 			var item_id 		= site.settings.item_addition == 1 ? item.item_id : item.id;
 			slitems[item_id] 	= item;
 			var qty_received 	= (item.row.received > 0) ? item.row.received : item.row.qty;
