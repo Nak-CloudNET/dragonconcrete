@@ -51,6 +51,10 @@
                 height: 27.7cm !important;
                 margin: 0 auto !important;
             }
+            .table thead > tr > th {
+                background-color: #444 !important;
+                color: #FFF !important;
+            }
             #textcenter {
                 margin-left:-150px !important;
             }
@@ -70,6 +74,10 @@
         }
         .trtd table th, td {
             padding: 5px;
+        }
+        thead th, th {
+            background-color:#323233;
+            color:#fff;
         }
     </style>
 </head>
@@ -141,14 +149,14 @@ color: rgba(0, 0, 0, 0.3) !important;
             <div><br/></div>
             <div class="-table-responsive">
                 <table class="table table-bordered table-striped" style="width: 100%;">
-                    <thead  style="font-size: 13px;">
+                    <thead style="height:50px;font-size: 13px;">
                     <tr>
-                        <th style="text-align:center; width:70px;">Item/ប្រការ</th>
-                        <th style="text-align:center; width:220px;">Delivery Date/ថ្ងៃបញ្ចេញទំនិញ</th>
-                        <th style="text-align:center;​ width:180px;">Typer of Concrete /ប្រភេទ</th>
-                        <th style="text-align:center;">Quantity/ចំនួន</th>
-                        <th style="text-align:center;">Unit Price/តំលៃរាយ</th>
-                        <th style="text-align:center; width: 130px;">Amount/តំលៃសរុប</th>
+                        <th style="vertical-align:middle;text-align:center; width:70px;">Item/ប្រការ</th>
+                        <th style="vertical-align:middle;text-align:center; width:220px;">Delivery Date/ថ្ងៃបញ្ចេញទំនិញ</th>
+                        <th style="vertical-align:middle;text-align:center;​ width:180px;">Typer of Concrete /ប្រភេទ</th>
+                        <th style="vertical-align:middle;text-align:center;">Quantity/ចំនួន</th>
+                        <th style="vertical-align:middle;text-align:center;">Unit Price/តំលៃរាយ</th>
+                        <th style="vertical-align:middle;text-align:center; width: 130px;">Amount/តំលៃសរុប</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -192,21 +200,21 @@ color: rgba(0, 0, 0, 0.3) !important;
                         <tr>
 
                             <td colspan="2" rowspan="3" style="text-align:left; font-size: 11px;">បញ្ជាក់៖<br><?php echo nl2br($bill->invoice)?></td>
-                            <td  style="text-align:right;">សរុប/Sub Total</td>
-                            <td ><?=$this->erp->formatDecimal($tqty);?></td>
+                            <td  style="text-align:right;"><b>សរុប/Sub Total</b></td>
+                            <td ><b><?=$this->erp->formatDecimal($tqty);?></b></td>
                             <td></td>
 
-                            <td  style="text-align:right;"><?=$this->erp->formatMoney($stotal);?> $</td>
+                            <td  style="text-align:right;"><b><?=$this->erp->formatMoney($stotal);?> $</b></td>
 
                         </tr>
                         <tr>
-                            <td  colspan="3" style="text-align:right;​">ចំនួនទឹកប្រាក់ដែលមិនទាន់បានបង់ពីមុន/Unpaid previous period  USD</td>
+                            <td  colspan="3" style="text-align:right;​"><b>ចំនួនទឹកប្រាក់ដែលមិនទាន់បានបង់ពីមុន/Unpaid previous period  USD</b></td>
                             <td   ></td>
 
                         </tr>
                         <tr>
-                            <td  colspan="3"​ style="text-align:right;" >ចំនួនទឹកប្រាក់សរុប/Grand total  USD</td>
-                            <td   style="text-align:right;" ><?=$this->erp->formatMoney($stotal);?> $</td>
+                            <td  colspan="3"​ style="text-align:right;" ><b>ចំនួនទឹកប្រាក់សរុប/Grand total  USD</b></td>
+                            <td   style="text-align:right;" ><b><?=$this->erp->formatMoney($stotal);?> $</b></td>
 
                         </tr>
                     </tbody>
