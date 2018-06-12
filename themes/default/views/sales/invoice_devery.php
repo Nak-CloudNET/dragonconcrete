@@ -93,9 +93,7 @@ color: rgba(0, 0, 0, 0.3) !important;
                 <h2 style="margin-top: -10px !important; margin-bottom: 0px !important"><?= lang("Invoice"); ?></h2>
             </div>
             <div class="col-xs-3"></div>
-
             <div class="clearfix"></div>
-            <br>
             <br>
             <br>
             <br>
