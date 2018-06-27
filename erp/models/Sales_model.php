@@ -40,7 +40,7 @@ class Sales_model extends CI_Model
 				}
 			}
         } else {
-            $this->db->where("(products.track_quantity = 0 OR warehouses_products.quantity > 0) AND warehouses_products.warehouse_id = '" . $warehouse_id . "' AND "
+            $this->db->where(" warehouses_products.warehouse_id = '" . $warehouse_id . "' AND "
                 . "(name LIKE '%" . $term . "%' OR code LIKE '%" . $term . "%' OR  concat(name, ' (', code, ')') LIKE '%" . $term . "%') AND inactived <> 1");
 			if($this->Owner || $this->admin){
 				if($warehouse_id != ""){
