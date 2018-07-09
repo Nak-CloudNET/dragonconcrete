@@ -2737,6 +2737,7 @@ class Account extends MY_Controller
 	
 	function save_journal()
 	{
+
 		$account_code 		= $this->input->post('account_section');
 		$biller_id 			= $this->input->post('biller_id');
 		$reference_no 		= ($this->input->post('reference')? $this->input->post('reference') : $this->site->getReference('jr',$biller_id));
