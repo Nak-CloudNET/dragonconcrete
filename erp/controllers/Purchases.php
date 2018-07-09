@@ -6841,7 +6841,8 @@ class Purchases extends MY_Controller
 				'sale_id' 		=> $this->input->post('customer_invoice_no'),
 				'customer_id' 	=> $this->input->post('customer_invoice')
             );
-			
+
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -6879,7 +6880,7 @@ class Purchases extends MY_Controller
 			$this->data['currency'] = $this->site->getCurrency();
 			$this->data['customers'] = $this->site->getCustomers();
 			$this->data['invoices'] = $this->site->getCustomerInvoices();
-			
+
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['reference_no'] = $this->site->getReference('ex',$biller_id);
