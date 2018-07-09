@@ -449,6 +449,7 @@
 										<?php
 											if(isset($top_bom)){
 												foreach($top_bom as $top){
+												    //$this->erp->print_arrays($top_bom[1]->quantity);
 										?>
 											<tr>
 												<td>	
@@ -476,7 +477,7 @@
 														}
 													?>
 												</td>
-												<td><input type='text' required='required' class='quantity form-control input-tip' value='<?= $this->erp->formatQuantity($top->quantity);?>' name='bom_from_items_qty[]' /></td>
+												<td><input type='text' required='required' class='quantity form-control input-tip' value='<?= $this->erp->formatDecimal($top->quantity);?>' name='bom_from_items_qty[]' /></td>
 												
 												<td><i style="cursor:pointer;" title="Remove" id="1449892339552" class="fa fa-times tip pointer sldel"></i></td>
 											</tr>
