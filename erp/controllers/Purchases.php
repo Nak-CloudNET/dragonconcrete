@@ -6817,7 +6817,7 @@ class Purchases extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-			
+
             $data_payment = array(
                             'date'          => $date,
 							'biller_id'     => $this->input->post('biller'),
@@ -6830,7 +6830,7 @@ class Purchases extends MY_Controller
                         );
             $data = array(
                 'date' 			=> $date,
-                'reference' 	=> $this->input->post('reference') ? $this->input->post('reference') : $this->site->getReference('ex',$this->input->post('biller')),
+                'reference' 	=> $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('ex',$this->input->post('biller')),
 				//'amount'  	=> $this->input->post('amount'),
                 'amount' 		=> $this->input->post('amount'),
                 'created_by'	=> $this->session->userdata('user_id'),
@@ -6884,6 +6884,7 @@ class Purchases extends MY_Controller
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['reference_no'] = $this->site->getReference('ex',$biller_id);
+
 			} else {
 				$biller_id = $this->session->userdata('biller_id');
 				$this->data['reference_no'] = $this->site->getReference('ex',$biller_id);

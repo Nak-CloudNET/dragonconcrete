@@ -150,25 +150,19 @@
 <?= $modal_js ?>
 <script type="text/javascript" charset="UTF-8">
 
-	$("#slref").attr('readonly', true);
+    $("#slref").attr('readonly','readonly');
+    $('#ref_st').on('ifChanged', function() {
+        if ($(this).is(':checked')) {
+            $("#slref").prop('readonly', false);
+            $("#slref").val("");
+        }else{
+            $("#slref").prop('readonly', true);
+            var temp = $("#temp_reference_no").val();
+            $("#slref").val(temp);
 
-	$('#ref_st').on('ifChanged', function() {
-	  if ($(this).is(':checked')) {
-		$("#slref").attr('readonly', false);
-		$("#slref").val("");
-
-	  }else{
-
-        $("#slref").attr('readonly', true);
-		var temp = $("#temp_reference_no").val();
-		$("#slref").val(temp);
-
-	  }
-	});
-
-	$("#slref").change(function(){
-        alert($(this).val());
+        }
     });
+
 
 	$("#customer_invoice_no").select2("destroy").empty().attr("placeholder", "<?= lang('select_customer_invoice') ?>").select2({
 		placeholder: "<?= lang('select_customer_invoice') ?>", data: [

@@ -2782,7 +2782,6 @@ class Purchases_model extends CI_Model
 
     public function addExpense($data = array(), $payment = array())
     {
-		$this->erp->print_arrays($data);
 
         if ($this->db->insert('expenses', $data)) {
             $expense_id = $this->db->insert_id();
