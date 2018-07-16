@@ -166,6 +166,7 @@ color: rgba(0, 0, 0, 0.3) !important;
                         $tqty = 0;
 
                         foreach($rows as $row){
+                            //$this->erp->print_arrays($row);
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
 
                         ?>
@@ -173,14 +174,14 @@ color: rgba(0, 0, 0, 0.3) !important;
                             <td><?=$i?></td>
                             <td><?=$this->erp->hrsd($row->date);?></td>
                             <td style="text-align:left;"><?=$row->product_name?></td>
-                            <td><?=$this->erp->formatDecimal($row->quantity_received);?></td>
+                            <td><?=$this->erp->formatDecimal($row->quantity);?></td>
                             <td><?=$this->erp->formatMoney($unit_price->unit_price)?> $</td>
-                            <td style="text-align:right;"><?=$this->erp->formatMoney($row->quantity_received*$unit_price->unit_price)?> $</td>
+                            <td style="text-align:right;"><?=$this->erp->formatMoney($row->quantity*$unit_price->unit_price)?> $</td>
                         </tr>
                         <?php
                         $i++;
-                        $tqty +=$row->quantity_received;
-                        $stotal +=$row->quantity_received*$unit_price->unit_price;
+                        $tqty +=$row->quantity;
+                        $stotal +=$row->quantity*$unit_price->unit_price;
                         }
                         for($k = 0;$k<12;$k++){
                         ?>

@@ -1000,7 +1000,7 @@ class Sales_model extends CI_Model
     }
 	public function getAllInvoiceItem($product_id)
     {
-        $this->db->select('sale_items.*,erp_sales.customer,erp_sales.reference_no,erp_users.username as name') 
+        $this->db->select('sale_items.*,erp_sales.customer,erp_sales.reference_no,erp_users.username as name')
 		    ->join('erp_sales','erp_sales.id=erp_sale_items.sale_id','LEFT')
 			->join('erp_users','erp_users.id=erp_sales.created_by','LEFT')
             ->order_by('quantity', 'DESC');
@@ -5425,6 +5425,22 @@ class Sales_model extends CI_Model
 			foreach($q->result() as $row){
 				$data[] = $row;
 				
+			}
+			return $data;
+		}
+		return false;
+	}
+	public function getAllSaleByDeliveryIDs($id){
+		$this->db->select('erp_sale_items.*,erp_deliveries.date')
+        ->join('erp_deliveries','erp_deliveries.sale_id=erp_sale_items.sale_id ','left')
+		->where(array('erp_sale_items.sale_id'=>$id))
+        ->group_by('erp_sale_items.id')
+        ->order_by('erp_sale_items.unit_price DESC');
+		$q = $this->db->get('erp_sale_items');
+		if($q->num_rows() > 0){
+			foreach($q->result() as $row){
+				$data[] = $row;
+
 			}
 			return $data;
 		}

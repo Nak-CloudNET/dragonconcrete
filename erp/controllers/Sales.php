@@ -14975,7 +14975,7 @@ class Sales extends MY_Controller
 
 		$this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
 		$this->data['ref'] = $this->sales_model->getDeliveryRefIDBill($id);
-		$this->data['rows'] = $this->sales_model->getAllSaleByDeliveryID($id);
+		$this->data['rows'] = $this->sales_model->getAllSaleByDeliveryIDs($id);
         $this->data['idd'] = $id;
 
         $this->load->view($this->theme .'sales/invoice_devery',$this->data);

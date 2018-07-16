@@ -187,7 +187,7 @@
 						$free = lang('free');
 						$product_unit = '';
 						$total = 0;
-						
+                            //$this->erp->print_arrays($row);
 						if($row->variant){
 							$product_unit = $row->variant;
 						}else{
