@@ -5432,7 +5432,7 @@ class Sales_model extends CI_Model
 	}
 	public function getAllSaleByDeliveryIDs($id){
 		$this->db->select('erp_sale_items.*,erp_deliveries.date')
-        ->join('erp_deliveries','erp_deliveries.sale_id=erp_sale_items.sale_id ','left')
+        ->join('erp_deliveries','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
 		->where(array('erp_sale_items.sale_id'=>$id))
         ->group_by('erp_sale_items.id')
         ->order_by('erp_sale_items.unit_price DESC');
