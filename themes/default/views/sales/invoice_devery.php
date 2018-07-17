@@ -74,6 +74,7 @@
         }
         .trtd table th, td {
             padding: 5px;
+            border-radius: 5px !important;
         }
         thead th, th {
             background-color:#323233;
@@ -108,7 +109,7 @@ color: rgba(0, 0, 0, 0.3) !important;
             <br>
             <div class="row padding10" style="margin-top: -20px !important">
                 <div class="col-xs-6" id="customer" style="float: left;font-size:14px; margin-top: -30px !important">
-                    <table class="trtd" style="width:100%;border:solid 1px #000;">
+                    <table class="trtd" style="width:100%;border: 1px solid #000000">
                         <tr>
                             <td>Customer</td>
                             <td>: <b><?=$invs->customer;?></b></td>
