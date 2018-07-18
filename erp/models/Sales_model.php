@@ -5446,6 +5446,28 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
+	public function getAllSaleCombiByDeliveryIDs($id){
+		$this->db->select('erp_sale_items.id,erp_sale_items.product_id,
+	                       erp_sale_items.product_code,
+	                       erp_sale_items.product_name,
+	                       SUM(erp_sale_items.quantity)as quantity,
+	                       erp_sale_items.unit_price, 
+	                       erp_deliveries.date')
+        ->join('erp_deliveries','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
+		->where(array('erp_sale_items.sale_id'=>$id))
+        ->group_by('erp_sale_items.product_name')
+        ->group_by('erp_deliveries.date')
+        ->order_by('erp_sale_items.unit_price DESC');
+		$q = $this->db->get('erp_sale_items');
+		if($q->num_rows() > 0){
+			foreach($q->result() as $row){
+				$data[] = $row;
+
+			}
+			return $data;
+		}
+		return false;
+	}
 	public function getAllSaleByDeliveryStateID($id){
 		$this->db->select('erp_deliveries.*,erp_delivery_items.product_id,erp_delivery_items.delivery_id,erp_delivery_items.product_name,SUM(`erp_delivery_items`.`quantity_received`) as quantity_received')
 		->join('erp_deliveries','erp_deliveries.id=erp_delivery_items.delivery_id ','left')

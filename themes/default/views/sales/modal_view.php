@@ -562,6 +562,12 @@
                                 <span class="hidden-sm hidden-xs"><?= lang('invoice_delivery') ?></span>
                             </a>
                         </div>
+						<div class="btn-group">
+                            <a href="<?= site_url('sales/invoice_combine_item/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('invoice_combine_item') ?>">
+                                <i class="fa fa-download"></i>
+                                <span class="hidden-sm hidden-xs"><?= lang('Invoice_Combine_Item') ?></span>
+                            </a>
+                        </div>
 					<!--	<div class="btn-group">
                             <a href="<?= site_url('sales/sales_invoice_a5/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('sales_invoice_a5') ?>">
                                 <i class="fa fa-download"></i>

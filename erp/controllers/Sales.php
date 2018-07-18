@@ -14980,7 +14980,19 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme .'sales/invoice_devery',$this->data);
     }
-	
+
+	function invoice_combine_item($id)
+    {
+		$this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
+
+		$this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
+		$this->data['ref'] = $this->sales_model->getDeliveryRefIDBill($id);
+		$this->data['rows'] = $this->sales_model->getAllSaleCombiByDeliveryIDs($id);
+        $this->data['idd'] = $id;
+
+        $this->load->view($this->theme .'sales/invoice_combine_item',$this->data);
+    }
+
 	function invoice_deveryStatement($id)
     {   
         $this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
