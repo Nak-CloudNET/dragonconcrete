@@ -31,9 +31,7 @@
 	if ($this->input->post('types')) {
 		$v .= "&types=" . $this->input->post('types');
 	}
-	if ($this->input->post('area')) {
-		$v .= "&area=" . $this->input->post('area');
-	}
+
 
 	if (isset($biller_id)) {
 		$v .= "&biller_id=" . $biller_id;
