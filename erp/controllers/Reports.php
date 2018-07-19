@@ -4616,7 +4616,6 @@ class Reports extends MY_Controller
         $this->data['users'] = $this->reports_model->getStaff();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
 		$this->data['customer_groups'] = $this->companies_model->getAllCustomerGroups();
-        $this->data['areas'] 			= $this->site->getArea();
 		$this->data['customers'] = $this->site->getCustomers();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report')));
         $meta = array('page_title' => lang('sales_report'), 'bc' => $bc);
@@ -4686,11 +4685,7 @@ class Reports extends MY_Controller
         } else {
             $serial = NULL;
         }
-        if ($this->input->get('area')) {
-            $area = $this->input->get('area');
-        } else {
-            $area = NULL;
-        }
+
 		
 		if ($this->input->get('types')) {
             $types = $this->input->get('types');
@@ -4866,8 +4861,7 @@ class Reports extends MY_Controller
 				erp_sales.date, 
 				reference_no, 
 				biller, 
-				customer,
-				erp_group_areas.areas_group, 				
+				customer, 				
 				grand_total,
 				paid, 
 				(erp_sales.grand_total - erp_sales.paid) as balance,
@@ -4876,7 +4870,6 @@ class Reports extends MY_Controller
 				->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
 				->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
 				->join('companies', 'companies.id=sales.customer_id','left')
-				->join('group_areas', 'group_areas.areas_g_code=sales.group_areas_id','left')
 				->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
 				->group_by('sales.id');
             
@@ -4908,9 +4901,6 @@ class Reports extends MY_Controller
             }
             if ($warehouse) {
                 $this->datatables->where('sales.warehouse_id', $warehouse);
-            }
-            if ($area) {
-                $this->datatables->where('sales.group_areas_id', $area);
             }
 			if ($types) {
                 $this->db->where('sales.pos', $types);

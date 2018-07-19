@@ -69,7 +69,6 @@
 			},
 			null,
 			null,
-			null,
 			{"mRender": currencyFormat},
             {"mRender": currencyFormat},
 			null,
@@ -78,22 +77,20 @@
                 var gtotal = 0, paid = 0, balance = 0, qtotal = 0 ,quantity=0;
                 for (var i = 0; i < aaData.length; i++) {
 
-                    gtotal += parseFloat(aaData[aiDisplay[i]][6]);
-                    paid += parseFloat(aaData[aiDisplay[i]][7]);
-					balance += parseFloat(aaData[aiDisplay[i]][8]);
+                    gtotal += parseFloat(aaData[aiDisplay[i]][5]);
+                    paid += parseFloat(aaData[aiDisplay[i]][6]);
+					balance += parseFloat(aaData[aiDisplay[i]][7]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[6].innerHTML = currencyFormat(parseFloat(gtotal));
-                nCells[7].innerHTML = currencyFormat(parseFloat(paid));
-				nCells[8].innerHTML = currencyFormat(parseFloat(balance));
+                nCells[5].innerHTML = currencyFormat(parseFloat(gtotal));
+                nCells[6].innerHTML = currencyFormat(parseFloat(paid));
+				nCells[7].innerHTML = currencyFormat(parseFloat(balance));
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('reference_no');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('areas_group');?>]", filter_type: "text", data: []},
-
             {column_number: 8, filter_default_label: "[<?=lang('status');?>]", filter_type: "text", data: []},
         ], "footer");
     });
@@ -319,18 +316,7 @@
 								?>
 							</div>
 						</div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <?= lang("group_area", "group_area"); ?>
-                                <?php
-                                $ar[''] = '';
-                                foreach ($areas as $area) {
-                                    $ar[$area->areas_g_code] = $area->areas_group;
-                                }
-                                echo form_dropdown('area',$ar, (isset($_POST['area']) ? $_POST['area'] : ''), 'id="slarea" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("group_area") . '" style="width:100%;" ');
-                                ?>
-                            </div>
-                        </div>
+
 
                     </div>
                     <div class="form-group">
@@ -354,7 +340,6 @@
                             <th><?= lang("reference_no"); ?></th>
                             <th><?= lang("biller"); ?></th>
                             <th><?= lang("customer"); ?></th>
-                            <th><?= lang("Group_Area"); ?></th>
                             <th><?= lang("grand_total"); ?></th>
                             <th><?= lang("paid"); ?></th>
                             <th><?= lang("balance"); ?></th>
