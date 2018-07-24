@@ -22048,7 +22048,8 @@ function salesDetail_actions(){
         $this->page_construct('reports/product_grossmargin', $meta, $this->data);
     }
 
-	function inventoryInoutReport($pdf,$excel,$product,$category,$warehouse,$from_date,$to_date){
+	function inventoryInoutReport($pdf, $excel, $product, $category, $warehouse, $from_date, $to_date)
+    {
 		$wid =$this->reports_model->getWareByUserID();
         if ($pdf || $excel) {
             if($product == 0){
@@ -22095,6 +22096,12 @@ function salesDetail_actions(){
             $this->excel->getActiveSheet()->setTitle('inventory_inout');
             $this->excel->getActiveSheet()->SetCellValue('A1', 'Location / Category / Item');
             $this->excel->getActiveSheet()->SetCellValue('B1', lang("begin"));
+            if ($pdf) {
+                $styleArray = array(
+                    'borders' => array('allborders' => array('style' => PHPExcel_Style_Border::BORDER_THIN))
+                );
+                $this->excel->getDefaultStyle()->applyFromArray($styleArray);
+            }
             //**In part
             if($k){
                 $this->excel->getActiveSheet()->SetCellValue('C1', lang("in"));
@@ -22144,7 +22151,7 @@ function salesDetail_actions(){
             $this->excel->getActiveSheet()->getStyle('A1'.':'.$alphabet1[$b])->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $this->excel->getActiveSheet()->getStyle('A2'.':'.$alphabet3[$b])->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             //Set style bold for all column in hearder excel
-            $this->excel->getActiveSheet()->getStyle('A1'. $row.':'.$alphabet1[$b].$row)->getFont()->setBold(true);
+            $this->excel->getActiveSheet()->getStyle('A1'. $row .':'.$alphabet1[$b].$row)->getFont()->setBold(true);
             $this->excel->getActiveSheet()->getStyle('A2'. $row.':'.$alphabet3[$b].$row)->getFont()->setBold(true);
             //merge cell for A1->A2 and B1-B2 and set style center
             $this->excel->getActiveSheet()->mergeCells('A1'.':A2');
@@ -22367,10 +22374,6 @@ function salesDetail_actions(){
             $filename = lang('inventory_inout '). date('Y_m_d_H_i_s');
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             if ($pdf) {
-                $styleArray = array(
-                    'borders' => array('allborders' => array('style' => PHPExcel_Style_Border::BORDER_THIN))
-                );
-                $this->excel->getDefaultStyle()->applyFromArray($styleArray);
                 $this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
                 require_once(APPPATH . "third_party" . DIRECTORY_SEPARATOR . "MPDF" . DIRECTORY_SEPARATOR . "mpdf.php");
                 $rendererName = PHPExcel_Settings::PDF_RENDERER_MPDF;
@@ -22395,7 +22398,6 @@ function salesDetail_actions(){
                 header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                 header('Cache-Control: max-age=0');
 
-    
                 ob_clean();
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                 $objWriter->save('php://output');
