@@ -480,6 +480,76 @@ class Sale_order_model extends CI_Model
         }
         return FALSE;
 	}
-	
+
+    public function getProductNames($term, $warehouse_id, $standard, $combo, $digital, $service, $category, $limit = 100)
+    {
+        $this->db->select('products.id, start_date, end_date, code, name, type, cost, warehouses_products.product_id, warehouses_products.quantity AS qoh, warehouses_products.quantity, price, tax_rate, tax_method, image, promotion, promo_price, product_details, details, subcategory_id, cf1, COALESCE((SELECT GROUP_CONCAT(sp.`serial_number`) FROM erp_serial as sp WHERE sp.product_id='.$this->db->dbprefix('products').'.id), "") as sep')
+            ->join('warehouses_products', 'warehouses_products.product_id=products.id', 'left')
+            ->group_by('products.id');
+        if ($this->Settings->overselling) {
+            $this->db->where("(name LIKE '%" . $term . "%' OR code LIKE '%" . $term . "%' OR  concat(name, ' (', code, ')') LIKE '%" . $term . "%') AND inactived <> 1");
+            if($this->Owner || $this->Admin){
+                if($warehouse_id != ""){
+                    $this->db->where("warehouses_products.warehouse_id",$warehouse_id);
+                }
+            }else{
+                if($standard != ""){
+                    $this->db->where("products.type <> 'standard' ");
+                }
+                if($combo != ""){
+                    $this->db->where("products.type <> 'combo' ");
+                }
+                if($digital != ""){
+                    $this->db->where("products.type <> 'digital' ");
+                }
+                if($service != ""){
+                    $this->db->where("products.type <> 'service' ");
+                }
+                if($category != ""){
+                    $this->db->where("products.category_id NOT IN (".$category.") ");
+                }
+                if($warehouse_id != ""){
+                    $this->db->where("warehouses_products.warehouse_id",$warehouse_id);
+                }
+            }
+        } else {
+            $this->db->where("warehouses_products.warehouse_id = '" . $warehouse_id . "' AND "
+                . "(name LIKE '%" . $term . "%' OR code LIKE '%" . $term . "%' OR  concat(name, ' (', code, ')') LIKE '%" . $term . "%') AND inactived <> 1");
+            if($this->Owner || $this->admin){
+                if($warehouse_id != ""){
+                    $this->db->where("warehouses_products.warehouse_id",$warehouse_id);
+                }
+            }else{
+                if($standard != ""){
+                    $this->db->where("products.type <> 'standard' ");
+                }
+                if($combo != ""){
+                    $this->db->where("products.type <> 'combo' ");
+                }
+                if($digital != ""){
+                    $this->db->where("products.type <> 'digital' ");
+                }
+                if($service != ""){
+                    $this->db->where("products.type <> 'service' ");
+                }
+                if($category != ""){
+                    $this->db->where("products.category_id NOT IN (".$category.") ");
+                }
+                if($warehouse_id != ""){
+                    $this->db->where("warehouses_products.warehouse_id",$warehouse_id);
+                }
+
+            }
+        }
+        $this->db->limit($limit);
+        $q = $this->db->get('products');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+    }
+
 	
 }

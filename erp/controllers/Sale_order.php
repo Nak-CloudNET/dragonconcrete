@@ -2678,9 +2678,10 @@ class Sale_order extends MY_Controller
         $customer = $this->site->getCompanyByID($customer_id);
         $customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 		$user_setting = $this->site->getUserSetting($this->session->userdata('user_id'));
-        $rows = $this->sales_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category);
+        $rows = $this->sale_order_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category);
 		
         if ($rows) {
+
             foreach ($rows as $row) {
                 $option = FALSE;
                 $row->quantity = 0;
@@ -2803,11 +2804,14 @@ class Sale_order extends MY_Controller
                     $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,'group_price'=>$group_price,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent,'makeup_cost_percent'=>$percent->percent);
                 }
             }
-		
+
             echo json_encode($pr);
+
         } else {
+
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
+
     }
 
 	function suggests()

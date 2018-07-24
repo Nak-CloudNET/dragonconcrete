@@ -187,7 +187,7 @@
 						$free = lang('free');
 						$product_unit = '';
 						$total = 0;
-						
+                            //$this->erp->print_arrays($row);
 						if($row->variant){
 							$product_unit = $row->variant;
 						}else{
@@ -560,6 +560,12 @@
                             <a href="<?= site_url('sales/invoice_devery/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('invoice_delivery') ?>">
                                 <i class="fa fa-download"></i>
                                 <span class="hidden-sm hidden-xs"><?= lang('invoice_delivery') ?></span>
+                            </a>
+                        </div>
+						<div class="btn-group">
+                            <a href="<?= site_url('sales/invoice_combine_item/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('invoice_combine_item') ?>">
+                                <i class="fa fa-download"></i>
+                                <span class="hidden-sm hidden-xs"><?= lang('Invoice_Combine_Item') ?></span>
                             </a>
                         </div>
 					<!--	<div class="btn-group">

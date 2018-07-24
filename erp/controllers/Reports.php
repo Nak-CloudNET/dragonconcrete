@@ -4685,6 +4685,7 @@ class Reports extends MY_Controller
         } else {
             $serial = NULL;
         }
+
 		
 		if ($this->input->get('types')) {
             $types = $this->input->get('types');
@@ -4868,7 +4869,7 @@ class Reports extends MY_Controller
 				->from('sales')
 				->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
 				->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-				->join('companies', 'companies.id=sales.customer_id','left')                
+				->join('companies', 'companies.id=sales.customer_id','left')
 				->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
 				->group_by('sales.id');
             

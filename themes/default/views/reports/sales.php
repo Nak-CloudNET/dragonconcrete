@@ -31,7 +31,8 @@
 	if ($this->input->post('types')) {
 		$v .= "&types=" . $this->input->post('types');
 	}
-	
+
+
 	if (isset($biller_id)) {
 		$v .= "&biller_id=" . $biller_id;
 	}
@@ -61,11 +62,11 @@
                 return nRow;
             },
             "aoColumns": [
-			{"bSortable": false, "mRender": checkbox}, 
-			{"mRender": fld}, 
+			{"bSortable": false, "mRender": checkbox},
+			{"mRender": fld},
 			{
 				"sWidth": "17%"
-			}, 
+			},
 			null,
 			null,
 			{"mRender": currencyFormat},
@@ -75,12 +76,12 @@
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var gtotal = 0, paid = 0, balance = 0, qtotal = 0 ,quantity=0;
                 for (var i = 0; i < aaData.length; i++) {
-					 
+
                     gtotal += parseFloat(aaData[aiDisplay[i]][5]);
                     paid += parseFloat(aaData[aiDisplay[i]][6]);
 					balance += parseFloat(aaData[aiDisplay[i]][7]);
                 }
-                var nCells = nRow.getElementsByTagName('th');  
+                var nCells = nRow.getElementsByTagName('th');
                 nCells[5].innerHTML = currencyFormat(parseFloat(gtotal));
                 nCells[6].innerHTML = currencyFormat(parseFloat(paid));
 				nCells[7].innerHTML = currencyFormat(parseFloat(balance));
@@ -89,8 +90,7 @@
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('reference_no');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []}, 
-			 
+            {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
             {column_number: 8, filter_default_label: "[<?=lang('status');?>]", filter_type: "text", data: []},
         ], "footer");
     });
@@ -190,7 +190,7 @@
 				</li>
             </ul>
         </div>
-		
+
     </div>
 
     <div style="display: none;">
@@ -306,7 +306,7 @@
 								</div>
 							</div>
                         </div>
-						
+
 						<div class="col-sm-4">
 							<div class="form-group">
 								<?= lang("type", "type"); ?>
@@ -316,7 +316,8 @@
 								?>
 							</div>
 						</div>
-						
+
+
                     </div>
                     <div class="form-group">
                         <div
@@ -338,7 +339,7 @@
                             <th><?= lang("date"); ?></th>
                             <th><?= lang("reference_no"); ?></th>
                             <th><?= lang("biller"); ?></th>
-                            <th><?= lang("customer"); ?></th> 
+                            <th><?= lang("customer"); ?></th>
                             <th><?= lang("grand_total"); ?></th>
                             <th><?= lang("paid"); ?></th>
                             <th><?= lang("balance"); ?></th>
@@ -358,7 +359,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>  
+                            <th></th>
                             <th><?= lang("grand_total"); ?></th>
                             <th><?= lang("paid"); ?></th>
                             <th><?= lang("balance"); ?></th>
@@ -374,7 +375,7 @@
 <script type="text/javascript" src="<?= $assets ?>js/html2canvas.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-		
+
         // $('#pdf').click(function (event) {
             // event.preventDefault();
             // window.location.href = "<?=site_url('reports/getSalesReport/pdf/?v=1'.$v)?>";
@@ -385,7 +386,7 @@
             // window.location.href = "<?=site_url('reports/getSalesReport/0/xls/?v=1'.$v)?>";
             // return false;
         // });
-		
+
         $('#image').click(function (event) {
             event.preventDefault();
             html2canvas($('.box'), {

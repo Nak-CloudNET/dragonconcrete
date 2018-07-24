@@ -64,6 +64,7 @@
 						<div class="form-group">
 							<label class="control-label" for="biller"><?= lang("biller"); ?></label>
 							<?php
+
 							$bl[""] = "";
 							foreach ($billers as $biller) {
 								$bl[$biller->id] = $biller->company != '-' ?$biller->code .'-'. $biller->company : $biller->name;
@@ -454,6 +455,7 @@
 		});
 		$("#calDebit").text(formatMoney(v_debit));
 	}
+
 	function AutoCredit(){
 		var v_credit = 0;
 		var j = 1;
@@ -532,7 +534,6 @@
 			}
 			
 			if($("#biller option:selected").val() <= 0){
-				alert('Project is required');
 				return false;
 			}
 		});

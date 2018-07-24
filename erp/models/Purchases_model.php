@@ -2782,7 +2782,7 @@ class Purchases_model extends CI_Model
 
     public function addExpense($data = array(), $payment = array())
     {
-		
+
         if ($this->db->insert('expenses', $data)) {
             $expense_id = $this->db->insert_id();
             if ($this->site->getReference('ex',$data['biller_id']) == $data['reference']) {
