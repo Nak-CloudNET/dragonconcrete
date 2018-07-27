@@ -3932,15 +3932,16 @@ class Sales_model extends CI_Model
                         $item = array(
                             'product_id' 		=> $delivery_item['product_id'],
                             'product_name' 		=> $delivery_item['product_name'],
-                            'product_type' 		=> $getproduct->type,
+                            'transaction_type' 	=> $getproduct->type,
                             'option_id' 		=> $delivery_item['option_id'],
                             'warehouse_id' 		=> $delivery_item['warehouse_id'],
                             'quantity' 			=> $delivery_item['quantity_received'],
                             'net_unit_price' 	=> $getitem->net_unit_price,
                             'unit_price' 		=> $getitem->unit_price
                         );
-                        $item_costs = $this->site->item_costing($item);
 
+                        $item_costs = $this->site->item_costing($item);
+                    	
                         foreach ($item_costs as $item_cost) {
                             $item_cost['delivery_item_id'] = $delivery_item_id;
                             $item_cost['delivery_id'] = $delivery_id;
@@ -3949,8 +3950,10 @@ class Sales_model extends CI_Model
                             }
                             unset($item_cost['transaction_type']);
                             unset($item_cost['transaction_id']);
-                            unset($item_cost['status']);
-                            //$option_id = $item_cost['option_id'];
+
+                            unset($item_cost['product_name']);
+                            unset($item_cost['warehouse_id']);
+                            unset($item_cost['product_type']);
 
                             if(! isset($item_cost['pi_overselling'])) {
                                 $this->db->insert('costing', $item_cost);
