@@ -89,7 +89,7 @@
         <div class="col-lg-12">
 
             <div class="col-xs-10 text-center" style="margin-bottom:20px;">
-                <div id="textcenter" style="padding-left:250px; text-align:center;position: absolute;top: 500px;z-index:1;-webkit-transform: rotate(0deg);
+                <div id="textcenter" style="padding-left:250px; text-align:center;position: absolute;top: 500px;z-index:1;-webkit-transform: rotate(350deg);
                     -moz-transform: rotate(350deg);-o-transform: rotate(350deg);writing-mode: lr-tb;">
 			<span style="font-size:40px;font-family:Khmer OS;
                     color: rgba(0, 0, 0, 0.3) !important;
@@ -97,7 +97,7 @@
                 </div>
             </div>
 
-            <div class="col-xs-6 text-center">
+            <div class="col-xs-12 text-center">
                 <h2 style="font-family: Khmer M1"><?= lang("invoice_kh"); ?></h2>
                 <h2 style="margin-top: -10px !important; margin-bottom: 0px !important"><?= lang("Invoice"); ?></h2>
             </div>
