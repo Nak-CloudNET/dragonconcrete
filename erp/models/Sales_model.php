@@ -5502,6 +5502,8 @@ class Sales_model extends CI_Model
                             erp_deliveries.date,
                             "%Y-%m-%d"
                           ) AS date1,
+                          erp_sale_items.item_tax,
+                          erp_sale_items.discount,
                           erp_delivery_items.quantity_received')
 
             ->join('erp_sale_items','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
