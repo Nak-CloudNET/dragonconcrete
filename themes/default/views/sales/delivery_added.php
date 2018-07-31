@@ -87,6 +87,16 @@
 								?>
                             </div>
                         </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group" style="">
+                                <?php echo form_input('add_item_location',(isset($_POST['add_item_location'])?$_POST['add_item_location']:''), 'class="form-control" id="add_item_location" placeholder="' . lang("select location") . '"'); ?>
+
+                            </div>
+
+
+                        </div>
+
                         <div class="clearfix"></div>
                         
                         <div class="col-md-12">
@@ -324,7 +334,60 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-		
+        $("#add_item_location").autocomplete({
+            source: function (request, response) {
+                var test = request.term;
+                $.ajax({
+                    type: 'get',
+                    url: '<?= site_url('customers/getDeliveryLocations'); ?>',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            autoFocus: false,
+            delay: 200,
+            response: function (event, ui) {
+
+                if ($(this).val().length >= 16 && ui.content[0].id == 0) {
+                    bootbox.alert('<?= lang('no_match_found') ?>', function () {
+                        $('#add_item_location').focus();
+                    });
+                    $(this).removeClass('ui-autocomplete-loading');
+                    $(this).removeClass('ui-autocomplete-loading');
+                }
+                else if (ui.content.length == 1 && ui.content[0].id != 0) {
+                    ui.item = ui.content[0];
+
+
+                    $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', ui);
+                    $(this).autocomplete('close');
+                    $(this).removeClass('ui-autocomplete-loading');
+                }
+                else if (ui.content.length == 1 && ui.content[0].id == 0) {
+                    bootbox.alert('<?= lang('no_match_found') ?>', function () {
+                        $('#add_item_location').focus();
+                    });
+                    $(this).removeClass('ui-autocomplete-loading');
+                }
+
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                if (ui.item.id !== 0) {
+                    $(this).val(ui.item.value);
+                } else {
+                    bootbox.alert('<?= lang('no_match_found') ?>');
+                }
+            }
+        });
+
+
 		if (localStorage.getItem('delivery_items')) {
 			localStorage.removeItem('delivery_items');
 		}
@@ -544,6 +607,7 @@
 		});
 		
 		$('#editItem').click(function () {
+
 		    var row = $('#' + $('#item_id').val());
 			var item_id = $('#item_id').val();
 			var pro_name = $('#pro_name').val();

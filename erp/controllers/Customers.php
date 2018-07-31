@@ -480,7 +480,30 @@ class Customers extends MY_Controller
         
         echo json_encode($rows);
     }
-	
+
+
+    function getDeliveryLocations($term = NULL, $limit = NULL)
+    {
+        if ($this->input->get('term')) {
+            $term = $this->input->get('term', TRUE);
+        }
+        if (strlen($term) < 1) {
+            return FALSE;
+        }
+        $q = $this->db->select('*')
+            ->from('erp_deliveries')
+            ->where('sale_id','3')
+            ->where(" (erp_deliveries.location LIKE '%" . $term . "%' ) ")
+            ->get();
+       $data = [];
+       foreach ($q->result() as $row){
+           $data[] = array('id' => $row->id, 'label' => $row->location );
+       }
+
+       echo json_encode($data);
+    }
+
+
 	function balance_suggest($term = NULL, $limit = NULL)
     {
         // $this->erp->checkPermissions('index');

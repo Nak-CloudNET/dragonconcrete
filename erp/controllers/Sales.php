@@ -9747,7 +9747,8 @@ class Sales extends MY_Controller
         $customer 		= $this->site->getCompanyByID($customer_id);
         $customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 		$user_setting 	= $this->site->getUserSetting($this->session->userdata('user_id'));
-        $rows 			= $this->sales_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category); 
+        $rows 			= $this->sales_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category);
+
 		$currency 		= $this->sales_model->getCurrency();
 		$us_currency 	= $this->sales_model->getUSCurrency();
 		$expiry_status = 0;
@@ -9913,7 +9914,7 @@ class Sales extends MY_Controller
 		if($this->site->get_setting()->product_expiry == 1){
 			$expiry_status = 1;
 		}
-		
+
         if ($rows) {
             foreach ($rows as $row) {
 				$option = FALSE;
@@ -13747,7 +13748,9 @@ class Sales extends MY_Controller
             } else {
 			    $date = date('Y-m-d H:i:s');
             }
-         
+
+            $location = $this->input->post('add_item_location');
+
 			$sale_id = $this->input->post('sale_id');
 			$sale_reference_no = $this->input->post('sale_reference');
 			$customer_id = $this->input->post('customer_id');
@@ -13776,7 +13779,8 @@ class Sales extends MY_Controller
 				'created_by'        => $this->session->userdata('user_id'),
 				'sale_status'       => 'pending',
 				'delivery_status'   => $delivery_status,
-				'pos'				=> $pos
+				'pos'				=> $pos,
+                'location'          => $location
 			);
 			
 			if($delivery){
@@ -16380,4 +16384,35 @@ class Sales extends MY_Controller
 		$this->data['id'] = $id;
         $this->load->view($this->theme .'sales/print_w_a5',$this->data);
     }
+
+    function add_location($sale = NULL)
+    {
+        $this->form_validation->set_rules('email', lang("email_address"), 'is_unique[companies.email]');
+
+        if ($this->form_validation->run('companies/add') == true) {
+            $cg = $this->site->getCustomerGroupByID($this->input->post('customer_group'));
+            $data = array(
+
+                'end_date' => $this->erp->fld(trim($this->input->post('end_date'))),
+                'start_date' => $this->erp->fld(trim($this->input->post('start_date')))
+
+            );
+
+        } elseif ($this->input->post('add_customer')) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('customers');
+        }
+
+        if ($this->form_validation->run() == true && $cid = $this->companies_model->addCompany($data)) {
+            $this->session->set_flashdata('message', lang("customer_added"));
+
+        } else {
+
+            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $this->data['modal_js'] = $this->site->modal_js();
+            $this->load->view($this->theme . 'sales/add_location', $this->data);
+        }
+    }
+
+
 }

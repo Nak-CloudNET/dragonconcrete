@@ -68,6 +68,7 @@ class Sales_model extends CI_Model
 				
 			}
         }
+
         $this->db->limit($limit);
         $q = $this->db->get('products');
         if ($q->num_rows() > 0) {
