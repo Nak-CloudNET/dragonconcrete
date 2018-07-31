@@ -114,10 +114,10 @@
                             <td>Customer</td>
                             <td>: <b><?=$invs->customer;?></b></td>
                         </tr>
-                        <tr>
+                       <!-- <tr>
                             <td>Address</td>
                             <td>: <b><?=$invs->group_area;?></b></td>
-                        </tr>
+                        </tr>-->
                         <tr>
                             <td>Tel</td>
                             <td>: <b><?=$invs->phone;?></b></td>
