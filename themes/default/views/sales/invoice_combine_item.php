@@ -189,7 +189,19 @@
                         <tr>
 
                             <td><?=$i?></td>
-                            <td><?=$this->erp->hrsd($row->date1);?></td>
+
+                            <td>
+
+                                <?php
+                                if($row->date1){
+                                    echo $this->erp->hrsd($row->date1);
+                                }
+
+
+                                ?>
+
+                            </td>
+
                             <td><?= $row->location ?></td>
                             <td style="text-align:left;"><?=$row->product_name?></td>
                             <td><?=$this->erp->formatDecimal($row->quantity);?></td>
