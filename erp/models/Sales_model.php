@@ -5484,15 +5484,20 @@ class Sales_model extends CI_Model
 //        ->order_by('erp_sale_items.unit_price DESC');
 
 
-        $this->db->select('erp_sale_items.id,
-		                   erp_sale_items.product_id,
-	                       erp_sale_items.product_code,
-	                       erp_sale_items.product_name,
-	                      erp_deliveries.location,
-	                      sum(erp_sale_items.quantity/2)
-                            
-                          AS quantity,
-                          erp_sale_items.unit_price,
+        $this->db->select('
+                             erp_sale_items.unit_price,
+                             erp_delivery_items.product_name,
+                             (
+                            CASE
+                            WHEN erp_delivery_items.quantity_received > 0 THEN
+                              SUM(
+                                erp_delivery_items.quantity_received
+                              )
+                            ELSE
+                              erp_sale_items.quantity
+                            END
+                          ) AS quantity,
+                          erp_deliveries.location,
                           DATE_FORMAT(
                             erp_deliveries.date,
                             "%Y-%m-%d"
@@ -5503,7 +5508,7 @@ class Sales_model extends CI_Model
             ->join('erp_delivery_items','erp_delivery_items.delivery_id=erp_deliveries.id AND erp_delivery_items.product_id = erp_sale_items.product_id
 ','left')
             ->where(array('erp_sale_items.sale_id'=>$id))
-            ->group_by('erp_sale_items.product_id')
+            ->group_by('erp_delivery_items.product_id')
             ->group_by('erp_deliveries.location')
             ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
             ->order_by('erp_sale_items.unit_price DESC');

@@ -163,7 +163,7 @@
                     </tr>
                     </thead>
                     <tbody>
-<!--                    --><?php // $this->erp->print_arrays($rows); ?>
+<!--                    --><?php //$this->erp->print_arrays($rows); ?>
                         <?php
                         $i = 1;
                         $stotal = 0;
@@ -181,13 +181,13 @@
                             <td><?= $row->location ?></td>
                             <td style="text-align:left;"><?=$row->product_name?></td>
                             <td><?=$this->erp->formatDecimal($row->quantity);?></td>
-                            <td><?=$this->erp->formatMoney($unit_price->unit_price)?> $</td>
-                            <td style="text-align:right;"><?=$this->erp->formatMoney($row->quantity*$unit_price->unit_price)?> $</td>
+                            <td><?=$this->erp->formatMoney($row->unit_price)?> $</td>
+                            <td style="text-align:right;"><?=$this->erp->formatMoney($row->quantity*$row->unit_price)?> $</td>
                         </tr>
                         <?php
                         $i++;
                         $tqty +=$row->quantity;
-                        $stotal +=$row->quantity*$unit_price->unit_price;
+                        $stotal +=$row->quantity*$row->unit_price;
                         }
                         for($k = 0;$k<12;$k++){
                         ?>
