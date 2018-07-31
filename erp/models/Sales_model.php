@@ -5507,7 +5507,6 @@ class Sales_model extends CI_Model
             ->group_by('erp_deliveries.location')
             ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
             ->order_by('erp_sale_items.unit_price DESC');
-
         $q = $this->db->get('erp_deliveries');
 		if($q->num_rows() > 0){
 			foreach($q->result() as $row){
