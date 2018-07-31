@@ -5452,12 +5452,43 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-	public function getAllSaleCombiByDeliveryIDs($id){
-		$this->db->select('erp_sale_items.id,
-		                   erp_sale_items.product_id,
-	                       erp_sale_items.product_code,
-	                       erp_sale_items.product_name,
-	                       (
+	public function getAllSaleCombineByDeliveryIDs($id){
+//		$this->db->select('erp_sale_items.id,
+//		                   erp_sale_items.product_id,
+//	                       erp_sale_items.product_code,
+//	                       erp_sale_items.product_name,
+//	                      erp_deliveries.location,
+//	                       (
+//                            CASE
+//                            WHEN erp_delivery_items.quantity_received > 0 THEN
+//                              SUM(
+//                                erp_delivery_items.quantity_received
+//                              )
+//                            ELSE
+//                              erp_sale_items.quantity
+//                            END
+//                          ) AS quantity,
+//                          erp_sale_items.unit_price,
+//                          DATE_FORMAT(
+//                            erp_deliveries.date,
+//                            "%Y-%m-%d"
+//                          ) AS date,
+//                          erp_delivery_items.quantity_received')
+//
+//        ->join('erp_sale_items','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
+//        ->join('erp_delivery_items','erp_delivery_items.delivery_id=erp_deliveries.id AND erp_delivery_items.product_id = erp_sale_items.product_id
+//','left')
+//		->where(array('erp_sale_items.sale_id'=>$id))
+//        ->group_by('erp_sale_items.product_id')
+//
+//        ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
+//        ->order_by('erp_sale_items.unit_price DESC');
+
+
+        $this->db->select('
+                             erp_sale_items.unit_price,
+                             erp_delivery_items.product_name,
+                             (
                             CASE
                             WHEN erp_delivery_items.quantity_received > 0 THEN
                               SUM(
@@ -5467,20 +5498,22 @@ class Sales_model extends CI_Model
                               erp_sale_items.quantity
                             END
                           ) AS quantity,
-                          erp_sale_items.unit_price,
+                          erp_deliveries.location,
                           DATE_FORMAT(
                             erp_deliveries.date,
                             "%Y-%m-%d"
-                          ) AS date,
+                          ) AS date1,
                           erp_delivery_items.quantity_received')
-        ->join('erp_sale_items','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
-        ->join('erp_delivery_items','erp_delivery_items.delivery_id=erp_deliveries.id AND erp_delivery_items.product_id = erp_sale_items.product_id
+
+            ->join('erp_sale_items','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
+            ->join('erp_delivery_items','erp_delivery_items.delivery_id=erp_deliveries.id AND erp_delivery_items.product_id = erp_sale_items.product_id
 ','left')
-		->where(array('erp_sale_items.sale_id'=>$id))
-        ->group_by('erp_sale_items.product_id')
-        ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
-        ->order_by('erp_sale_items.unit_price DESC');
-		$q = $this->db->get('erp_deliveries');
+            ->where(array('erp_sale_items.sale_id'=>$id))
+            ->group_by('erp_delivery_items.product_id')
+            ->group_by('erp_deliveries.location')
+            ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
+            ->order_by('erp_deliveries.date ASC');
+        $q = $this->db->get('erp_deliveries');
 		if($q->num_rows() > 0){
 			foreach($q->result() as $row){
 				$data[] = $row;
