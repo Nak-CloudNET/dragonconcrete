@@ -90,13 +90,13 @@
                         </div>
 
                         <div class="col-md-4">
+                            <?= lang("location", "location"); ?>
                             <div class="form-group" style="">
                                 <?php echo form_input('add_item_location',(isset($_POST['add_item_location'])?$_POST['add_item_location']:''), 'class="form-control" id="add_item_location" placeholder="' . lang("select location") . '"'); ?>
 
                             </div>
-
-
                         </div>
+
 
                         <div class="clearfix"></div>
                         
