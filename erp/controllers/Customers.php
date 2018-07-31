@@ -482,9 +482,8 @@ class Customers extends MY_Controller
     }
 
 
-    function getDeliveryLocations($sale_id = NULL)
+    function getDeliveryLocations($customer_id = NULL)
     {
-
         if ($this->input->get('term')) {
             $term = $this->input->get('term', TRUE);
         }
@@ -493,8 +492,9 @@ class Customers extends MY_Controller
         }
         $q = $this->db->select('*')
             ->from('erp_deliveries')
-            ->where('sale_id',$sale_id)
+            ->where('customer_id',$customer_id)
             ->where(" (erp_deliveries.location LIKE '%" . $term . "%' ) ")
+            ->group_by("erp_deliveries.location")
             ->get();
        $data = [];
        foreach ($q->result() as $row){
