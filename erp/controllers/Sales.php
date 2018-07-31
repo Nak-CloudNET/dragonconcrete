@@ -13420,6 +13420,7 @@ class Sales extends MY_Controller
 			$this->data['status'] = $status;
 			
 			if($status == 'sale_order'){
+			    $this->data['sale_order_id'] = $id;
 				$this->data['tax_rates'] = $this->site->getAllTaxRates();
 				$div = $this->sales_model->getSaleOrder($id);
 				$this->data['deliveries'] = $div;

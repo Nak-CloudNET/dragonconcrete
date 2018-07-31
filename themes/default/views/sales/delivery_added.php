@@ -18,7 +18,8 @@
 				<input type ="hidden" value="<?= $deliveries->delivery_by ?>" name="delivery_by">
 				<input type ="hidden" value="<?= $deliveries->saleman_by ?>" name = "saleman_by">
 				<input type ="hidden" value="<?= $status?>" name = "status">
-				
+				<input type ="hidden" value="<?= $sale_order_id?>" name = "sale_order_id">
+
                 <div class="row">
                     <div class="col-lg-12">
                         <?php if ($Owner || $Admin || $Settings->allow_change_date == 1) { ?>
@@ -337,9 +338,10 @@
         $("#add_item_location").autocomplete({
             source: function (request, response) {
                 var test = request.term;
+                var sale_order_id = '<?=$sale_order_id?>';
                 $.ajax({
                     type: 'get',
-                    url: '<?= site_url('customers/getDeliveryLocations'); ?>',
+                    url: '<?= site_url('customers/getDeliveryLocations'); ?>/' + sale_order_id,
                     dataType: "json",
                     data: {
                         term: request.term
