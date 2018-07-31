@@ -23,7 +23,6 @@
 			
 		});
 		
-		
 		$( "#other" ).click(function() {
 			$( ".target" ).change();
 		});
@@ -116,7 +115,8 @@
 							<?= lang("delivery_reference", "delivery_reference"); ?>
 								<div class="form-group">
 									<?php echo form_input('delivery_reference',$delivery->do_reference_no,'class="form-control input-tip" id="delivery_reference" required="required" style="pointer-events:none"'); ?>
-								</div>
+								    <input type='hidden' name = 'sale_order_id' value ='<?=$sale_order_id?>'/>
+                                </div>
                         </div>
 						
                         <div class="col-md-4">
@@ -151,12 +151,19 @@
 									foreach($drivers as $dr) {
 										$driver[$dr->id] = $dr->name;
 									}
-									
 									echo form_dropdown('delivery_by', $driver, (($delivery->delivery_by)? $delivery->delivery_by:''), 'class="form-control input-tip" id="delivery_by" required="required"');
 								?>
                             </div>
                         </div>
-						
+
+                        <div class="col-md-4">
+                            <?= lang("location", "location"); ?>
+                            <div class="form-group" style="">
+                                <?php echo form_input('add_item_location',(isset($_POST['add_item_location'])?$_POST['add_item_location']:$location), 'class="form-control" id="add_item_location" placeholder="' . lang("select location") . '"'); ?>
+
+                            </div>
+                        </div>
+
                         <div class="clearfix"></div>
                         
                         <div class="col-md-12">
@@ -356,6 +363,7 @@
 							<input type="hidden" class="form-control" id="item_quantity" value="">
 							<input type="hidden" class="form-control" id="real_qty_change" value="">
 							<input type="hidden" class="item_id" id="item_id" value="">
+
                         </div>
                     </div>
                     <div class="form-group">
@@ -385,6 +393,64 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        $("#add_item_location").autocomplete({
+            source: function (request, response) {
+                var test = request.term;
+                var sale_order_id = '<?=$sale_order_id?>';
+                $.ajax({
+                    type: 'get',
+                    url: '<?= site_url('customers/getDeliveryLocations'); ?>/' + sale_order_id,
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1,
+            autoFocus: false,
+            delay: 200,
+            response: function (event, ui) {
+
+                if ($(this).val().length >= 16 && ui.content[0].id == 0) {
+                    bootbox.alert('<?= lang('no_match_found') ?>', function () {
+                        $('#add_item_location').focus();
+                    });
+                    $(this).removeClass('ui-autocomplete-loading');
+                    $(this).removeClass('ui-autocomplete-loading');
+                }
+                else if (ui.content.length == 1 && ui.content[0].id != 0) {
+                    ui.item = ui.content[0];
+
+
+                    $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', ui);
+                    $(this).autocomplete('close');
+                    $(this).removeClass('ui-autocomplete-loading');
+                }
+                else if (ui.content.length == 1 && ui.content[0].id == 0) {
+                    bootbox.alert('<?= lang('no_match_found') ?>', function () {
+                        $('#add_item_location').focus();
+                    });
+                    $(this).removeClass('ui-autocomplete-loading');
+                }
+
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                if (ui.item.id !== 0) {
+                    $(this).val(ui.item.value);
+                } else {
+                    bootbox.alert('<?= lang('no_match_found') ?>');
+                }
+            }
+        });
+
+
+
+
 		<?php if($deliveries) {?>
 			localStorage.setItem('delivery_items', JSON.stringify(<?= $delivery_items; ?>));
         <?php } ?>

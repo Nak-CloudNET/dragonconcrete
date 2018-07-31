@@ -3962,7 +3962,8 @@ class Sales extends MY_Controller
 		$delivery_reference = $this->input->post('delivery_reference');
 		$delivery_status = $this->input->post('delivery_status');
 		$get_delivery = $this->sales_model->getDeliveriesByID($id);
-		
+        $location = $this->input->post('add_item_location');
+
 		$deliveryrec = array(
 			'date' => $date,
 			'do_reference_no' => $delivery_reference,
@@ -3971,8 +3972,11 @@ class Sales extends MY_Controller
 			'updated_count' => $updated_count,
 			'type' => $get_delivery->type,
 			'note' => $note,
-			'delivery_status' => $delivery_status
+			'delivery_status' => $delivery_status,
+            'location' => $this->input->post('add_item_location')
 		);
+
+
 		
 		$productID = $this->input->post('product_id');
 		$item_id = $this->input->post('item_id');
@@ -3987,8 +3991,10 @@ class Sales extends MY_Controller
 		$b_balance = $this->input->post('b_balance');
 		$total_qty_rec = $this->input->post('totalQtyRec');
 		$pos = $this->input->post('pos');
-		
 		$rows = sizeof($productID);
+
+
+
 		for($i=0; $i<$rows; $i++) {
 			$b_quantity = $b_balance[$i];
 			$ending_balance = $b_balance[$i] - $qty_received[$i];
@@ -4038,6 +4044,7 @@ class Sales extends MY_Controller
 		if($delivery_status == 'completed') {
 			$this->site->costing($products);
 		}
+
 		if($this->sales_model->save_edit_delivery($id, $deliveryrec, $delivery_items)){
 			
 			if($pos == 1){
@@ -4498,8 +4505,8 @@ class Sales extends MY_Controller
 			$this->data['quantity_recs'] = $arr;
             }
 
-		
-			//$this->erp->print_arrays($arr);
+            $this->data['sale_order_id'] = $deliv->sale_id;
+			$this->data['location'] = $deliv->location;
 			$this->data['setting'] = $this->site->get_setting();
 			$this->data['modal_js'] = $this->site->modal_js();
             $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('edit_deliveries')));

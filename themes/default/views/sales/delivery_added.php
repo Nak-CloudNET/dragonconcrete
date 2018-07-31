@@ -335,6 +335,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+
         $("#add_item_location").autocomplete({
             source: function (request, response) {
                 var test = request.term;

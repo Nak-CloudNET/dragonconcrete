@@ -495,6 +495,7 @@ class Customers extends MY_Controller
             ->from('erp_deliveries')
             ->where('sale_id',$sale_id)
             ->where(" (erp_deliveries.location LIKE '%" . $term . "%' ) ")
+            ->group_by("erp_deliveries.location")
             ->get();
        $data = [];
        foreach ($q->result() as $row){
