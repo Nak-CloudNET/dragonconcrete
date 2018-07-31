@@ -88,11 +88,11 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <div class="col-xs-3 text-center" style="margin-bottom:20px;">
-                <div id="textcenter" style="padding-left:250px; text-align:center;position: absolute;top: 560px;z-index:1;-webkit-transform: rotate(350deg);
--moz-transform: rotate(350deg);-o-transform: rotate(350deg);writing-mode: lr-tb;">
+            <div class="col-xs-10 text-center" style="margin-bottom:20px;">
+                <div id="textcenter" style="padding-left:250px; text-align:center;position: absolute;top: 500px;z-index:1;-webkit-transform: rotate(0deg);
+                    -moz-transform: rotate(350deg);-o-transform: rotate(350deg);writing-mode: lr-tb;">
 			<span style="font-size:40px;font-family:Khmer OS;
-color: rgba(0, 0, 0, 0.3) !important;
+                    color: rgba(0, 0, 0, 0.3) !important;
 			" >វិក័យប័ត្រនេះមិនអាចប្រកាសជា<br>បន្ទុកចំណាយបានទេ</span>
                 </div>
             </div>
@@ -122,14 +122,14 @@ color: rgba(0, 0, 0, 0.3) !important;
                             <td>Tel</td>
                             <td>: <b><?=$invs->phone;?></b></td>
                         </tr>
-                        <tr>
+                       <!-- <tr>
                             <td>Model</td>
                             <td>: </td>
-                        </tr>
-                        <tr>
+                        </tr>-->
+                        <!--<tr>
                             <td>Time</td>
                             <td>: <b><?= date('H:II')?></b></td>
-                        </tr>
+                        </tr>-->
                     </table>
                     <div class="clearfix"></div>
                 </div>
@@ -148,12 +148,14 @@ color: rgba(0, 0, 0, 0.3) !important;
             </div>
             <div class="clearfix"></div>
             <div><br/></div>
+
             <div class="-table-responsive">
                 <table class="table table-bordered table-striped" style="width: 100%;">
                     <thead style="height:50px;font-size: 13px;">
                     <tr>
                         <th style="vertical-align:middle;text-align:center; width:70px;">Item/ប្រការ</th>
                         <th style="vertical-align:middle;text-align:center; width:220px;">Delivery Date/ថ្ងៃបញ្ចេញទំនិញ</th>
+                        <th style="vertical-align:middle;text-align:center;">Location/ទីតាំង</th>
                         <th style="vertical-align:middle;text-align:center;​ width:180px;">Typer of Concrete /ប្រភេទ</th>
                         <th style="vertical-align:middle;text-align:center;">Quantity/ចំនួន</th>
                         <th style="vertical-align:middle;text-align:center;">Unit Price/តំលៃរាយ</th>
@@ -161,19 +163,22 @@ color: rgba(0, 0, 0, 0.3) !important;
                     </tr>
                     </thead>
                     <tbody>
+<!--                    --><?php // $this->erp->print_arrays($rows); ?>
                         <?php
                         $i = 1;
                         $stotal = 0;
                         $tqty = 0;
 
                         foreach($rows as $row){
-                            //$this->erp->print_arrays($row);
+//                            $this->erp->print_arrays($row);
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
 
                         ?>
                         <tr>
+
                             <td><?=$i?></td>
-                            <td><?=$this->erp->hrsd($row->date);?></td>
+                            <td><?=$this->erp->hrsd($row->date1);?></td>
+                            <td><?= $row->location ?></td>
                             <td style="text-align:left;"><?=$row->product_name?></td>
                             <td><?=$this->erp->formatDecimal($row->quantity);?></td>
                             <td><?=$this->erp->formatMoney($unit_price->unit_price)?> $</td>
@@ -192,6 +197,7 @@ color: rgba(0, 0, 0, 0.3) !important;
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                             <td style="text-align:right;"></td>
                         </tr>
 
@@ -201,7 +207,7 @@ color: rgba(0, 0, 0, 0.3) !important;
                         ?>
                         <tr>
 
-                            <td colspan="2" rowspan="3" style="text-align:left; font-size: 11px;">បញ្ជាក់៖<br><?php echo nl2br($bill->invoice)?></td>
+                            <td colspan="3" rowspan="3" style="text-align:left; font-size: 11px;">បញ្ជាក់៖<br><?php echo nl2br($bill->invoice)?></td>
                             <td  style="text-align:right;"><b>សរុប/Sub Total</b></td>
                             <td ><b><?=$this->erp->formatDecimal($tqty);?></b></td>
                             <td></td>
