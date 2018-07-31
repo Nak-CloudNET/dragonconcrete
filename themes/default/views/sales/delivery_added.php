@@ -19,6 +19,7 @@
 				<input type ="hidden" value="<?= $deliveries->saleman_by ?>" name = "saleman_by">
 				<input type ="hidden" value="<?= $status?>" name = "status">
 				<input type ="hidden" value="<?= $sale_order_id?>" name = "sale_order_id">
+				<input type ="hidden" value="<?= $customer_id?>" name = "customer_id">
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -340,9 +341,10 @@
             source: function (request, response) {
                 var test = request.term;
                 var sale_order_id = '<?=$sale_order_id?>';
+                var customer_id = '<?=$customer_id?>';
                 $.ajax({
                     type: 'get',
-                    url: '<?= site_url('customers/getDeliveryLocations'); ?>/' + sale_order_id,
+                    url: '<?= site_url('customers/getDeliveryLocations'); ?>/' + customer_id,
                     dataType: "json",
                     data: {
                         term: request.term

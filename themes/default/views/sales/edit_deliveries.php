@@ -116,6 +116,7 @@
 								<div class="form-group">
 									<?php echo form_input('delivery_reference',$delivery->do_reference_no,'class="form-control input-tip" id="delivery_reference" required="required" style="pointer-events:none"'); ?>
 								    <input type='hidden' name = 'sale_order_id' value ='<?=$sale_order_id?>'/>
+								    <input type='hidden' name = 'customer_id' value ='<?=$customer_id?>'/>
                                 </div>
                         </div>
 						
@@ -398,9 +399,10 @@
             source: function (request, response) {
                 var test = request.term;
                 var sale_order_id = '<?=$sale_order_id?>';
+                var customer_id = '<?=$customer_id?>';
                 $.ajax({
                     type: 'get',
-                    url: '<?= site_url('customers/getDeliveryLocations'); ?>/' + sale_order_id,
+                    url: '<?= site_url('customers/getDeliveryLocations'); ?>/' + customer_id,
                     dataType: "json",
                     data: {
                         term: request.term

@@ -4506,6 +4506,7 @@ class Sales extends MY_Controller
             }
 
             $this->data['sale_order_id'] = $deliv->sale_id;
+            $this->data['customer_id'] = $deliv->customer_id;
 			$this->data['location'] = $deliv->location;
 			$this->data['setting'] = $this->site->get_setting();
 			$this->data['modal_js'] = $this->site->modal_js();
@@ -13430,6 +13431,7 @@ class Sales extends MY_Controller
 			    $this->data['sale_order_id'] = $id;
 				$this->data['tax_rates'] = $this->site->getAllTaxRates();
 				$div = $this->sales_model->getSaleOrder($id);
+				$this->data['customer_id'] = $div->customer_id;
 				$this->data['deliveries'] = $div;
 				$this->data['delivery_items'] = $this->sales_model->getSaleOrderItems($id);
 				$this->data['reference'] = $this->site->getReference('do',$div->biller_id);
