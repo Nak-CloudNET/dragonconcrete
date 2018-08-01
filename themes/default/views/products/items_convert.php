@@ -703,7 +703,7 @@
                 $("#reference_no").attr('readonly', false);
 				$("#reference_no").val("");
 			}else{ 
-				$("#reference_no").prop('disabled', true);
+				$("#reference_no").prop('readonly', true);
 				var temp = $("#temp_reference_no").val();
 				$("#reference_no").val(temp);
 			}

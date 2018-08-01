@@ -73,7 +73,7 @@
 								<?php echo form_input('reference_no', $reference_no?$reference_no:"",'  class="form-control input-tip" id="slref"'); ?>
 								<input type="hidden"  name="temp_reference_no"  id="temp_reference_no" value="<?= $reference_no?$reference_no:"" ?>" />
 							<div class="input-group-addon no-print" style="padding: 2px 5px;background-color:white;">
-								<input type="checkbox" name="ref_status" id="ref_st" value="1" style="margin-top:3px;">
+								<input type="checkbox" name="ref_status" id="exp_ref_st" value="1" style="margin-top:3px;">
 							</div>
 						</div>
 					</div>
@@ -151,7 +151,7 @@
 <script type="text/javascript" charset="UTF-8">
 
     $("#slref").attr('readonly','readonly');
-    $('#ref_st').on('ifChanged', function() {
+    $('#exp_ref_st').on('ifChanged', function() {
         if ($(this).is(':checked')) {
             $("#slref").prop('readonly', false);
             $("#slref").val("");
