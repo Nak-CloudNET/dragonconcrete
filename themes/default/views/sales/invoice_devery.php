@@ -29,7 +29,7 @@
             padding: 4px;
         }
         hr{
-            border-color: #333;
+            border-color: #332;
             width:100px;
             margin-top: 70px;
         }

@@ -5501,7 +5501,7 @@ FROM
 	LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` 
 	AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id` 
 WHERE
-	`erp_sale_items`.`sale_id` = '9' 
+	`erp_sale_items`.`sale_id` = $id
 GROUP BY
 	`erp_delivery_items`.`product_id`,
 	`erp_deliveries`.`location`,
@@ -5519,7 +5519,7 @@ FROM
 	`erp_sales`
 	LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
 WHERE
-	`erp_sale_items`.`sale_id` = '9' 
+	`erp_sale_items`.`sale_id` = $id 
 GROUP BY
 	`erp_sale_items`.`product_id` 
 
