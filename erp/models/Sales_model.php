@@ -5506,7 +5506,8 @@ class Sales_model extends CI_Model
                             GROUP BY
                                 `erp_delivery_items`.`product_id`,
                                 `erp_deliveries`.`location`,
-                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' )
+                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
+                                
                             UNION ALL
                             SELECT
                                 `erp_sale_items`.`unit_price`,
@@ -5519,14 +5520,17 @@ class Sales_model extends CI_Model
                             FROM
                                 `erp_sales`
                                 LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
+                                LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
+                                
                             WHERE
                                 `erp_sale_items`.`product_type` = 'service' AND 
                                 `erp_sale_items`.`sale_id` = $id
                                 
                             GROUP BY
-                                `erp_sale_items`.`product_id` 
-                            ORDER BY
-                                date1 DESC"
+                                `erp_deliveries`.`location` 
+                                
+                            ORDER BY  location DESC"
          );
 
         return $query->result();
