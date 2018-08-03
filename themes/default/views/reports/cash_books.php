@@ -173,7 +173,7 @@
                                                     $current_month = date('m');
                                                     $getListGLTran->where('MONTH(tran_date)', $current_month);
                                                 }
-                                                if($biller_id != "" && $biller_id != NULL){
+                                                if($biller_id != "" && $biller_id != NULL && $biller_id > 0){
                                                     $getListGLTran->where('erp_gl_trans.biller_id', $biller_id);
                                                 }
                                                 if($cashier != '' || $cashier != NULL){
@@ -198,7 +198,7 @@
                                                             <td><div class="fix-text"><?=$rw->reference_no?></div></td>
                                                             <td><div class="fix-text text-center"><?=$rw->tran_no?></div></td>
                                                             <td><div class="fix-text text-center"><?=$rw->cashier?></div></td>
-                                                            <td><div class="fix-text"><?=$rw->narrative?></div></td>
+                                                            <td><div class="text-left"><?=$rw->description?></div></td>
                                                             <td><div class="fix-text"><?=$rw->tran_date?></div></td>
                                                             <td><div class="fix-text text-center"><?=$rw->tran_type?></div></td>
                                                             <td><div class="fix-text text-center"><?=($rw->amount > 0 ? $this->erp->formatMoney($rw->amount) : '0.00')?></div></td>
