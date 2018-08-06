@@ -54,17 +54,16 @@ class Sales extends MY_Controller
     
 	function modal_views($id = NULL)
     {
-		
-        $this->erp->checkPermissions('index', null, 'sales');	
+        $this->erp->checkPermissions('index', null, 'sales');
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		$this->load->model('pos_model');
-		$this->data['pos'] = $this->pos_model->getSetting();
-		$this->data['setting'] = $this->site->get_setting();
+        $this->load->model('pos_model');
+        $this->data['pos'] = $this->pos_model->getSetting();
+        $this->data['setting'] = $this->site->get_setting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $inv = $this->sales_model->getInvoiceByID($id);
-		if (!$this->session->userdata('view_right')){
+        if (!$this->session->userdata('view_right')){
             $this->erp->view_rights($inv->created_by, true);
         }
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -72,7 +71,7 @@ class Sales extends MY_Controller
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
         $this->data['updated_by'] = $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
-        $this->data['inv'] = $inv;
+        $this->data['invs'] = $inv;
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $this->data['rows'] = $this->sales_model->getAllInvoiceItem($id);
@@ -1496,7 +1495,7 @@ class Sales extends MY_Controller
                 
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.company as customer, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, 
 						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
 						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
 						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
