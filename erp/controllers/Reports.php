@@ -21342,11 +21342,12 @@ function salesDetail_actions(){
                 foreach ($_POST['val'] as $id) {
                         $supplier = $this->db
 						->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, reference_no, " . 
-									 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
+									 $this->db->dbprefix('warehouses') . ".name as wname, com.name as supplier ,
 									 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".payment_status", FALSE)
 						->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
 						->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
 						->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
+						->join('companies as com', 'com.id = purchases.supplier_id', 'left')
 						->where(array('purchases.status' => 'received', 'purchases.payment_status <>' => 'paid','purchases.id' => $id))
 						->group_by('purchases.id')
 						->get("purchases")->result(); 
