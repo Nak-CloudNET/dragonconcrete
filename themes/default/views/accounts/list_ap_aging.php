@@ -231,7 +231,8 @@ if(isset($date)){
 									"aoColumns": [{
 										"bSortable": false,
 										"mRender": checkbox
-									}, 
+									},
+
 									null, 
 									{"mRender": currencyFormat,"bSortable" : false}, 
 									{"mRender": currencyFormat,"bSortable" : false}, 
