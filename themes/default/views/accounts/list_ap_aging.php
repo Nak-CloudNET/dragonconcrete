@@ -245,6 +245,7 @@ if(isset($date)){
 										nRow.className = "purchase_link_ap";
 										return nRow;
 									},
+
 									"fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
 										var gtotal = 0, paid = 0, balance = 0, ap_n = 0;
 										for (var i = 0; i < aaData.length; i++) {
