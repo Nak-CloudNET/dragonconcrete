@@ -817,6 +817,7 @@ function generateCardNo(x) {
    }
    return no;
 }
+
 function roundNumber(num, nearest) {
     if(!nearest) { nearest = 0.05; }
     return Math.round((num / nearest) * nearest);

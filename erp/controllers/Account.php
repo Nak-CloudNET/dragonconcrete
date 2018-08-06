@@ -324,7 +324,6 @@ class Account extends MY_Controller
 
 	function getSales_pending($warehouse_id = NULL, $date = NULL)
 	{
-
 		if($warehouse_id){
 			$warehouse_id = explode('-', $warehouse_id);
 		}

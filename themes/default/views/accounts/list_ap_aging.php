@@ -232,7 +232,6 @@ if(isset($date)){
 										"bSortable": false,
 										"mRender": checkbox
 									},
-
 									null, 
 									{"mRender": currencyFormat,"bSortable" : false}, 
 									{"mRender": currencyFormat,"bSortable" : false}, 
