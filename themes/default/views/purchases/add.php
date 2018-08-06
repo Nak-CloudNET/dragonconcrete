@@ -1391,11 +1391,10 @@
         $("#poref").attr('readonly', true);
 		$('#ref_st').on('ifChanged', function() {
 		  if ($(this).is(':checked')) {
-			// $("#poref").prop('disabled', false);
 			$("#poref").attr('readonly', false);
 			$("#poref").val("");
 		  }else{ 
-			$("#poref").prop('disabled', true);
+			$("#poref").attr('readonly', true);
 			var temp = $("#temp_reference_no").val();
 			$("#poref").val(temp);
 			

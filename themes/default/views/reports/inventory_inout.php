@@ -489,8 +489,8 @@ $(document).ready(function () {
 	$('#pdf').on('click', function (e) {
 		e.preventDefault();
 		if ($('.checkbox:checked').length <= 0) {
-			window.location.href = "<?= site_url('#') ?>";
-			return false;
+            window.location.href = "<?= site_url('reports/inventoryInoutReport/pdf/0/'.$product1.'/'.$category1.'/'.$warehouse1.'/'.$from_date2.'/'.$to_date2) ?>";
+            return false;
 		}
 	});	
 });

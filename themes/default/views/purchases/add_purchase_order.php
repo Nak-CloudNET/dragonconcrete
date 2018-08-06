@@ -329,20 +329,23 @@ var test = '<?=$this->session->userdata('remove_polso');?>';
 		$("#poref").css('pointer-events','none');
 		$('#ref_st').on('ifChanged', function() {
 		  if ($(this).is(':checked')) {
-			// $("#poref").prop('disabled', false);
-            $("#poref").css('pointer-events','');
+			$("#poref").prop('readonly', false);
 			$("#poref").val("");
+            $("#poref").css('pointer-events','visible');
+
 		  }else{
-			$("#poref").prop('disabled', true);
+			$("#poref").prop('readonly', true);
 			var temp = $("#temp_reference_no").val();
 			$("#poref").val(temp);
+            $("#poref").css('pointer-events','none');
+
 			
 		  }
 		});
 		$("#poref_request").attr('disabled','disabled');
 		$('#ref_st_request').on('ifChanged', function() {
 		  if ($(this).is(':checked')) {
-			$("#poref_request").prop('disabled', false);
+			$("#poref_request").css('disabled', false);
 			$("#poref_request").val("");
 		  }else{
 			$("#poref_request").prop('disabled', true);
@@ -392,7 +395,7 @@ var test = '<?=$this->session->userdata('remove_polso');?>';
 								<div style="float:left;width:100%;">
 									<div class="form-group">
 										<div class="input-group">  
-											<?php echo form_input('reference_no', $ponumber?$ponumber:"",'class="form-control input-tip" id="poref"'); ?>
+											<?php echo form_input('reference_no', $ponumber?$ponumber:"",'class="form-control input-tip" readonly  id="poref"'); ?>
                                             <input type="hidden"  name="reference_no_request"  id="reference_no_request" value="" />
 											<!-- <input type="hidden"  name="reference_no_request"  id="reference_no_request" value="<?= $purchase->reference_no?$purchase->reference_no:'' ?>" /> -->
 											<input type="hidden"  name="temp_reference_no"  id="temp_reference_no" value="<?= $ponumber?$ponumber:""; ?>" />

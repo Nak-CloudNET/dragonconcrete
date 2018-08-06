@@ -218,7 +218,7 @@
         });
 		$('#pdf').click(function (event) {
             event.preventDefault();
-            window.location.href = "<?=site_url('reports/ledger/pdf/0/'.$biller_id . '?v=1'.$v. '&sd='. $start_date . '&ed='. $end_dat)?>";
+            window.location.href = "<?=site_url('reports/ledger/pdf/0/'.$biller_id . '?v=1'.$v. '&sd='. $start_date . '&ed='. $end_date)?>";
             return false;
         });
         $('#xls').click(function (event) {

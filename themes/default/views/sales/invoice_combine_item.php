@@ -37,6 +37,12 @@
             border: 1px solid #000 !important;
         }
         @media print{
+            .cl_pd:nth-child(1){
+                /*margin-left: -15px;*/
+            }
+            .cl_pd:nth-child(2){
+                /*margin-right: -15px;*/
+            }
             .page {
                 page-break-after: always;
             }
@@ -51,10 +57,7 @@
                 height: 27.7cm !important;
                 margin: 0 auto !important;
             }
-            .table thead > tr > th {
-                background-color: #444 !important;
-                color: #FFF !important;
-            }
+
             #textcenter {
                 margin-left:-150px !important;
             }
@@ -71,14 +74,21 @@
             #customer-table {
                 width: 7.50cm !important;
             }
+            .p_th td{
+                color: black!important;
+
+            }
         }
         .trtd table th, td {
             padding: 5px;
-            border-radius: 5px !important;
+            /*border-radius: 5px !important;*/
         }
-        thead th, th {
+        thead td {
             background-color:#323233;
             color:#fff;
+        }
+        .td_w{
+            width:25%;
         }
     </style>
 </head>
@@ -88,16 +98,16 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <div class="col-xs-3 text-center" style="margin-bottom:20px;">
-                <div id="textcenter" style="padding-left:250px; text-align:center;position: absolute;top: 560px;z-index:1;-webkit-transform: rotate(350deg);
--moz-transform: rotate(350deg);-o-transform: rotate(350deg);writing-mode: lr-tb;">
+            <div class="col-xs-10 text-center" style="margin-bottom:20px;">
+                <div id="textcenter" style="padding-left:300px; text-align:center;position: absolute;top: 500px;z-index:1;-webkit-transform: rotate(350deg);
+                    -moz-transform: rotate(350deg);-o-transform: rotate(350deg);writing-mode: lr-tb;">
 			<span style="font-size:40px;font-family:Khmer OS;
-color: rgba(0, 0, 0, 0.3) !important;
+                    color: rgba(0, 0, 0, 0.3) !important;
 			" >វិក័យប័ត្រនេះមិនអាចប្រកាសជា<br>បន្ទុកចំណាយបានទេ</span>
                 </div>
             </div>
 
-            <div class="col-xs-6 text-center">
+            <div class="col-xs-12 text-center">
                 <h2 style="font-family: Khmer M1"><?= lang("invoice_kh"); ?></h2>
                 <h2 style="margin-top: -10px !important; margin-bottom: 0px !important"><?= lang("Invoice"); ?></h2>
             </div>
@@ -108,39 +118,29 @@ color: rgba(0, 0, 0, 0.3) !important;
             <br>
             <br>
             <div class="row padding10" style="margin-top: -20px !important">
-                <div class="col-xs-6" id="customer" style="float: left;font-size:14px; margin-top: -30px !important">
-                    <table class="trtd" style="width:100%;border: 1px solid #000000">
-                        <tr>
-                            <td>Customer</td>
-                            <td>: <b><?=$invs->customer;?></b></td>
-                        </tr>
-                        <tr>
-                            <td>Address</td>
-                            <td>: <b><?=$invs->group_area;?></b></td>
-                        </tr>
-                        <tr>
-                            <td>Tel</td>
-                            <td>: <b><?=$invs->phone;?></b></td>
-                        </tr>
-                        <tr>
-                            <td>Model</td>
-                            <td>: </td>
-                        </tr>
-                        <tr>
-                            <td>Time</td>
-                            <td>: <b><?= date('H:II')?></b></td>
-                        </tr>
-                    </table>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="col-xs-6"  style="float: right;font-size:14px; margin-top: -30px !important; ">
+
+
+                <div class="col-xs-6 cl_pd"  style="float: left;font-size:14px; margin-top: -30px !important;  ">
                     <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;">
                         <tr>
-                            <td>From</td>
+                            <td class="td_w">Customer</td>
+                            <td >: <b><?=$invs->customer;?></b></td>
+                        </tr>
+                        <tr>
+                            <td class="td_w">Tel</td>
+                            <td>: <b><?=$invs->phone?></b></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-xs-6 cl_pd"  style="float: right;font-size:14px; margin-top: -30px !important; ">
+                    <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;">
+                        <tr>
+                            <td class="td_w">From</td>
                             <td>: <b><?=$bill->biller;?></b></td>
                         </tr>
                         <tr>
-                            <td>Date</td>
+                            <td class="td_w">Date</td>
                             <td>: <b><?=$this->erp->hrsd($bill->date);?></b></td>
                         </tr>
                     </table>
@@ -148,43 +148,82 @@ color: rgba(0, 0, 0, 0.3) !important;
             </div>
             <div class="clearfix"></div>
             <div><br/></div>
+            <?php
+                foreach($rows as $row){
+                    $tax+=$row->item_tax;
+                    $dis+=$row->discount;
+                }
+            $col_sp=3;
+            ?>
             <div class="-table-responsive">
                 <table class="table table-bordered table-striped" style="width: 100%;">
                     <thead style="height:50px;font-size: 13px;">
-                    <tr>
-                        <th style="vertical-align:middle;text-align:center; width:70px;">Item/ប្រការ</th>
-                        <th style="vertical-align:middle;text-align:center; width:220px;">Delivery Date/ថ្ងៃបញ្ចេញទំនិញ</th>
-                        <th style="vertical-align:middle;text-align:center;​ width:180px;">Typer of Concrete /ប្រភេទ</th>
-                        <th style="vertical-align:middle;text-align:center;">Quantity/ចំនួន</th>
-                        <th style="vertical-align:middle;text-align:center;">Unit Price/តំលៃរាយ</th>
-                        <th style="vertical-align:middle;text-align:center; width: 130px;">Amount/តំលៃសរុប</th>
+                    <tr class="p_th">
+                        <td style="vertical-align:middle;text-align:center; width:70px;">Item/ ប្រការ</td>
+                        <td style="vertical-align:middle;text-align:center; width:220px;">Delivery Date/ថ្ងៃញ្ចេញទំនិញ</td>
+                        <td style="vertical-align:middle;text-align:center;">Location/ ទីតាំង</td>
+                        <td style="vertical-align:middle;text-align:center;​ width:180px;">Typer of Concrete/ ប្រភេទ</td>
+                        <td style="vertical-align:middle;text-align:center;">Quantity/ ចំនួន</td>
+                        <td style="vertical-align:middle;text-align:center;">Unit Price/ តំលៃរាយ</td>
+                        <?php if($dis>0){ $col_sp+=1; ?>
+                        <td style="vertical-align:middle;text-align:center; width: 130px;">Discount/ បញ្ចុះតម្លៃ</td>
+                        <?php }if($tax>0){ $col_sp+=1; ?>
+                        <td style="vertical-align:middle;text-align:center; width: 130px;">Tax/ ពន្ធទំនិញ</td>
+                        <?php } ?>
+                        <td style="vertical-align:middle;text-align:center; width: 130px;">Amount/ តំលៃសរុប</td>
                     </tr>
                     </thead>
                     <tbody>
+<!--                    --><?php //$this->erp->print_arrays($rows); ?>
                         <?php
                         $i = 1;
                         $stotal = 0;
                         $tqty = 0;
 
                         foreach($rows as $row){
-                            //$this->erp->print_arrays($row);
+                            $amt=$row->quantity*$row->unit_price;
+//                            $this->erp->print_arrays($row);
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
 
                         ?>
                         <tr>
+
                             <td><?=$i?></td>
-                            <td><?=$this->erp->hrsd($row->date);?></td>
+
+                            <td>
+
+                                <?php
+                                if($row->date1){
+                                    echo $this->erp->hrsd($row->date1);
+                                }
+
+
+                                ?>
+
+                            </td>
+
+                            <td><?= $row->location ?></td>
                             <td style="text-align:left;"><?=$row->product_name?></td>
                             <td><?=$this->erp->formatDecimal($row->quantity);?></td>
-                            <td><?=$this->erp->formatMoney($unit_price->unit_price)?> $</td>
-                            <td style="text-align:right;"><?=$this->erp->formatMoney($row->quantity*$unit_price->unit_price)?> $</td>
+                            <td><?=$this->erp->formatMoney($row->unit_price)?> $</td>
+
+                            <?php if($dis>0){ ?>
+                                <td><?=$this->erp->formatMoney($row->discount)?> $</td>
+                            <?php $amt-=$row->discount;} ?>
+
+                            <?php if($tax>0){ ?>
+                            <td><?=$this->erp->formatMoney($row->item_tax)?> $</td>
+                            <?php $amt+=$row->item_tax;} ?>
+
+                            <td style="text-align:right;"><?=$this->erp->formatMoney($amt)?> $</td>
                         </tr>
                         <?php
                         $i++;
                         $tqty +=$row->quantity;
-                        $stotal +=$row->quantity*$unit_price->unit_price;
+                        $stotal +=$row->quantity*$row->unit_price;
                         }
-                        for($k = 0;$k<12;$k++){
+                        $co=15-($i-1);
+                        for($k = 1;$k<=$co;$k++){
                         ?>
                         <tr class="blank">
                             <td><?=$i?></td>
@@ -192,33 +231,87 @@ color: rgba(0, 0, 0, 0.3) !important;
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
+                            <?php if($dis>0){ ?>
+                                <td></td>
+                            <?php } ?>
+                            <?php if($tax>0){ ?>
+                            <td></td>
+                            <?php } ?>
                             <td style="text-align:right;"></td>
                         </tr>
 
                         <?php
                         $i++;
                         }
+                        $row_sp=1;
+
+                        if($invs->order_discount>0){
+                            $row_sp+=1;
+                        }
+
+                        if($invs->shipping>0){
+                            $row_sp+=1;
+                        }
+                        if($invs->order_discount>0 || $invs->order_tax>0 || $invs->shipping>0){
+                            $row_sp+=1;
+                        }
+
                         ?>
                         <tr>
 
-                            <td colspan="2" rowspan="3" style="text-align:left; font-size: 11px;">បញ្ជាក់៖<br><?php echo nl2br($bill->invoice)?></td>
+                            <td colspan="3" rowspan="<?= $row_sp; ?>" style="text-align:left; font-size: 11px;">បញ្ជាក់៖<br><?php echo nl2br($bill->invoice)?></td>
                             <td  style="text-align:right;"><b>សរុប/Sub Total</b></td>
                             <td ><b><?=$this->erp->formatDecimal($tqty);?></b></td>
+
                             <td></td>
+                            <?php
+                            if($dis>0){
+                                ?>
+                                <td></td>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if($tax>0){
+                                ?>
+                                <td></td>
+                                <?php
+                            }
+                            ?>
 
                             <td  style="text-align:right;"><b><?=$this->erp->formatMoney($stotal);?> $</b></td>
 
                         </tr>
-                        <tr>
-                            <td  colspan="3" style="text-align:right;​"><b>ចំនួនទឹកប្រាក់ដែលមិនទាន់បានបង់ពីមុន/Unpaid previous period  USD</b></td>
-                            <td   ></td>
+                        <?php
+                            if($invs->order_discount>0){
+                                $stotal-=$invs->order_discount;
+                            ?>
+                                <tr>
+                                    <td  colspan="<?= $col_sp; ?>" style="text-align:right;​"><b>បញ្ចេុះតម្លៃ/Order Discount</b></td>
+                                    <td   style="text-align:right;" ><b><?=$this->erp->formatMoney($invs->order_discount);?> $</b></td>
+                                </tr>
+                        <?php
+                            }
+                        ?>
 
-                        </tr>
+                        <?php
+                        if($invs->shipping>0){
+                            $stotal+=$invs->shipping;
+                            ?>
+                            <tr>
+                                <td  colspan="<?= $col_sp; ?>" style="text-align:right;​"><b>ដឹកជញ្ជូន/Shipping</b></td>
+                                <td   style="text-align:right;" ><b><?=$this->erp->formatMoney($invs->shipping);?> $</b></td>
+                            </tr>
+                            <?php
+                        }
+                        if($row_sp>1){
+                        ?>
                         <tr>
-                            <td  colspan="3"​ style="text-align:right;" ><b>ចំនួនទឹកប្រាក់សរុប/Grand total  USD</b></td>
+                            <td  colspan="<?= $col_sp; ?>"​ style="text-align:right;" ><b>ចំនួនទឹកប្រាក់សរុប/Grand total  USD</b></td>
                             <td   style="text-align:right;" ><b><?=$this->erp->formatMoney($stotal);?> $</b></td>
-
                         </tr>
+                    <?php } ?>
                     </tbody>
                 </table>
                 <p>Remark: The invoice above is excluding 10% VAT.</p>

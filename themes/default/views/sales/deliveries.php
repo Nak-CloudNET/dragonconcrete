@@ -102,6 +102,7 @@
             null, 
             null, 
             null, 
+            null,
             {"mRender": formatQuantity, "bSearchable": false},
             {"mRender": formatQuantity, "bSearchable": false},
             {"mRender": delivery_status, "bSearchable": false}, 
@@ -123,12 +124,12 @@
 				var gtotal = 0;
 				var qtotal = 0;
                 for (var i = 0; i < aaData.length; i++) {
-					qtotal += parseFloat(aaData[aiDisplay[i]][6]);
-					gtotal += parseFloat(aaData[aiDisplay[i]][7]);
+					qtotal += parseFloat(aaData[aiDisplay[i]][7]);
+					gtotal += parseFloat(aaData[aiDisplay[i]][8]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[6].innerHTML = currencyFormat(parseFloat(qtotal));
-                nCells[7].innerHTML = currencyFormat(parseFloat(gtotal));
+                nCells[7].innerHTML = currencyFormat(parseFloat(qtotal));
+                nCells[8].innerHTML = currencyFormat(parseFloat(gtotal));
             }
 			
         }).fnSetFilteringDelay().dtFilter([
@@ -137,7 +138,8 @@
             {column_number: 3, filter_default_label: "[<?=lang('sale_ref');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
             {column_number: 5, filter_default_label: "[<?=lang('address');?>]", filter_type: "text", data: []},
-			{column_number: 8, filter_default_label: "[<?=lang('issue_invoice');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('location');?>]", filter_type: "text", data: []},
+			{column_number: 9, filter_default_label: "[<?=lang('issue_invoice');?>]", filter_type: "text", data: []},
         ], "footer");
 		
 		function delivery_status(x) {
@@ -382,6 +384,7 @@
 											<th><?php echo $this->lang->line("so_no"); ?></th>
 											<th><?php echo $this->lang->line("customer"); ?></th>
 											<th style="width:220px"><?php echo $this->lang->line("address"); ?></th>
+											<th><?php echo $this->lang->line("location"); ?></th>
 											<th><?php echo $this->lang->line("quantity_order"); ?></th>
 											<th><?php echo $this->lang->line("quantity"); ?></th>
 											<th><?php echo $this->lang->line("issue_invoice"); ?></th>
@@ -398,6 +401,7 @@
 											<th style="min-width:30px; width: 30px; text-align: center;">
 												<input class="checkbox checkft2" type="checkbox" name="check"/>
 											</th>
+											<th></th>
 											<th></th>
 											<th></th>
 											<th></th>

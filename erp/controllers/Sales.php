@@ -1496,7 +1496,7 @@ class Sales extends MY_Controller
                 
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.company as customer, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, 
 						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
 						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
 						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
@@ -3962,7 +3962,8 @@ class Sales extends MY_Controller
 		$delivery_reference = $this->input->post('delivery_reference');
 		$delivery_status = $this->input->post('delivery_status');
 		$get_delivery = $this->sales_model->getDeliveriesByID($id);
-		
+        $location = $this->input->post('add_item_location');
+
 		$deliveryrec = array(
 			'date' => $date,
 			'do_reference_no' => $delivery_reference,
@@ -3971,8 +3972,11 @@ class Sales extends MY_Controller
 			'updated_count' => $updated_count,
 			'type' => $get_delivery->type,
 			'note' => $note,
-			'delivery_status' => $delivery_status
+			'delivery_status' => $delivery_status,
+            'location' => $this->input->post('add_item_location')
 		);
+
+
 		
 		$productID = $this->input->post('product_id');
 		$item_id = $this->input->post('item_id');
@@ -3987,8 +3991,10 @@ class Sales extends MY_Controller
 		$b_balance = $this->input->post('b_balance');
 		$total_qty_rec = $this->input->post('totalQtyRec');
 		$pos = $this->input->post('pos');
-		
 		$rows = sizeof($productID);
+
+
+
 		for($i=0; $i<$rows; $i++) {
 			$b_quantity = $b_balance[$i];
 			$ending_balance = $b_balance[$i] - $qty_received[$i];
@@ -4038,6 +4044,7 @@ class Sales extends MY_Controller
 		if($delivery_status == 'completed') {
 			$this->site->costing($products);
 		}
+
 		if($this->sales_model->save_edit_delivery($id, $deliveryrec, $delivery_items)){
 			
 			if($pos == 1){
@@ -4498,8 +4505,9 @@ class Sales extends MY_Controller
 			$this->data['quantity_recs'] = $arr;
             }
 
-		
-			//$this->erp->print_arrays($arr);
+            $this->data['sale_order_id'] = $deliv->sale_id;
+            $this->data['customer_id'] = $deliv->customer_id;
+			$this->data['location'] = $deliv->location;
 			$this->data['setting'] = $this->site->get_setting();
 			$this->data['modal_js'] = $this->site->modal_js();
             $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('edit_deliveries')));
@@ -6941,7 +6949,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
         if($biller_id){
             $this->datatables
-            ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,qty_order.qty AS qty_order, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+            ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
             ->from('deliveries')
             ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
             ->where('type','sale_order')
@@ -6950,9 +6958,9 @@ class Sales extends MY_Controller
             ->where('deliveries.biller_id', $biller_id)
             ->group_by('deliveries.id')
             ->order_by('deliveries.id', 'desc');
-        }else{		
+        }else{
     		$this->datatables
-                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
                 ->from('deliveries')
                 ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
     			->where('type','sale_order')
@@ -9747,7 +9755,8 @@ class Sales extends MY_Controller
         $customer 		= $this->site->getCompanyByID($customer_id);
         $customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 		$user_setting 	= $this->site->getUserSetting($this->session->userdata('user_id'));
-        $rows 			= $this->sales_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category); 
+        $rows 			= $this->sales_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category);
+
 		$currency 		= $this->sales_model->getCurrency();
 		$us_currency 	= $this->sales_model->getUSCurrency();
 		$expiry_status = 0;
@@ -9913,7 +9922,7 @@ class Sales extends MY_Controller
 		if($this->site->get_setting()->product_expiry == 1){
 			$expiry_status = 1;
 		}
-		
+
         if ($rows) {
             foreach ($rows as $row) {
 				$option = FALSE;
@@ -13419,8 +13428,10 @@ class Sales extends MY_Controller
 			$this->data['status'] = $status;
 			
 			if($status == 'sale_order'){
+			    $this->data['sale_order_id'] = $id;
 				$this->data['tax_rates'] = $this->site->getAllTaxRates();
 				$div = $this->sales_model->getSaleOrder($id);
+				$this->data['customer_id'] = $div->customer_id;
 				$this->data['deliveries'] = $div;
 				$this->data['delivery_items'] = $this->sales_model->getSaleOrderItems($id);
 				$this->data['reference'] = $this->site->getReference('do',$div->biller_id);
@@ -13747,7 +13758,9 @@ class Sales extends MY_Controller
             } else {
 			    $date = date('Y-m-d H:i:s');
             }
-         
+
+            $location = $this->input->post('add_item_location');
+
 			$sale_id = $this->input->post('sale_id');
 			$sale_reference_no = $this->input->post('sale_reference');
 			$customer_id = $this->input->post('customer_id');
@@ -13776,7 +13789,8 @@ class Sales extends MY_Controller
 				'created_by'        => $this->session->userdata('user_id'),
 				'sale_status'       => 'pending',
 				'delivery_status'   => $delivery_status,
-				'pos'				=> $pos
+				'pos'				=> $pos,
+                'location'          => $location
 			);
 			
 			if($delivery){
@@ -14987,7 +15001,7 @@ class Sales extends MY_Controller
 
 		$this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
 		$this->data['ref'] = $this->sales_model->getDeliveryRefIDBill($id);
-		$this->data['rows'] = $this->sales_model->getAllSaleCombiByDeliveryIDs($id);
+		$this->data['rows'] = $this->sales_model->getAllSaleCombineByDeliveryIDs($id);
         $this->data['idd'] = $id;
 
         $this->load->view($this->theme .'sales/invoice_combine_item',$this->data);
@@ -16380,4 +16394,35 @@ class Sales extends MY_Controller
 		$this->data['id'] = $id;
         $this->load->view($this->theme .'sales/print_w_a5',$this->data);
     }
+
+    function add_location($sale = NULL)
+    {
+        $this->form_validation->set_rules('email', lang("email_address"), 'is_unique[companies.email]');
+
+        if ($this->form_validation->run('companies/add') == true) {
+            $cg = $this->site->getCustomerGroupByID($this->input->post('customer_group'));
+            $data = array(
+
+                'end_date' => $this->erp->fld(trim($this->input->post('end_date'))),
+                'start_date' => $this->erp->fld(trim($this->input->post('start_date')))
+
+            );
+
+        } elseif ($this->input->post('add_customer')) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('customers');
+        }
+
+        if ($this->form_validation->run() == true && $cid = $this->companies_model->addCompany($data)) {
+            $this->session->set_flashdata('message', lang("customer_added"));
+
+        } else {
+
+            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $this->data['modal_js'] = $this->site->modal_js();
+            $this->load->view($this->theme . 'sales/add_location', $this->data);
+        }
+    }
+
+
 }

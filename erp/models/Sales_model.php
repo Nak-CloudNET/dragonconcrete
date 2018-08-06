@@ -68,6 +68,7 @@ class Sales_model extends CI_Model
 				
 			}
         }
+
         $this->db->limit($limit);
         $q = $this->db->get('products');
         if ($q->num_rows() > 0) {
@@ -3875,94 +3876,99 @@ class Sales_model extends CI_Model
 			return true;
 		}
 	}
-	
-	public function add_delivery($delivery, $delivery_items)
-	{
-		$pos = $delivery['pos'];
-		unset($delivery['pos']);
-		
-		if(isset($delivery) && !empty($delivery) && isset($delivery_items) && !empty($delivery_items)){
-			foreach($delivery_items as $g){
-				$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity_received']);
-				$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
-				if($product_variants) {
-					$delivery['total_cost'] += $totalCostProducts->total_cost * $product_variants->qty_unit;
-				}else {
-					$delivery['total_cost'] += $totalCostProducts->total_cost;
-				}
-			}
-			
-			$this->db->insert('deliveries', $delivery);
-			$delivery_id = $this->db->insert_id();
-			
-			if($delivery_id > 0){
-				//$this->db->update("erp_sales",array('sale_status'=>'completed'),array('id'=>$delivery['sale_id']));
-				//$this->erp->print_arrays($this->site->getReference('do',$delivery['biller_id']),$delivery['do_reference_no']);
-				if ($this->site->getReference('do',$delivery['biller_id']) == $delivery['do_reference_no']) {
-					$this->site->updateReference('do',$delivery['biller_id']);
-				}
-				
-				foreach($delivery_items as $delivery_item){
-					$delivery_item['delivery_id'] = $delivery_id;
-					if($delivery_item['option_id'] == '' || $delivery_item['option_id'] == null) {
-						unset($delivery_item['option_id']);
-					}
 
-					/*if ($delivery_item['sale_id']) {
-						$abc = $this->db->update('sales', array('so_id' => $delivery_item['sale_id']), array('sale_id' => $delivery_item['sale_id']));
-					}*/
-					
-					$this->db->insert('delivery_items',$delivery_item);
-					$delivery_item_id = $this->db->insert_id();
-					
-					if ($delivery['delivery_status'] == 'completed' && $getproduct = $this->site->getProductByID($delivery_item['product_id'])) {
-						
-						if($delivery['type'] == 'sale_order') {
-							$getitem = $this->getSaleOrderItemByID($delivery_item['item_id']);
-							if($pos == 1){
-								$getitem = $this->getSaleItemByID($delivery_item['item_id']);
-							}
-						}else {
-							$getitem = $this->getSaleItemByID($delivery_item['item_id']);
-							
-						}
-						
-						$item = array(
-							'product_id' 		=> $delivery_item['product_id'],
-							'product_name' 		=> $delivery_item['product_name'],
-							'product_type' 		=> $getproduct->type,
-							'option_id' 		=> $delivery_item['option_id'],
-							'warehouse_id' 		=> $delivery_item['warehouse_id'],
-							'quantity' 			=> $delivery_item['quantity_received'],
-							'net_unit_price' 	=> $getitem->net_unit_price,
-							'unit_price' 		=> $getitem->unit_price
-						);
-						$item_costs = $this->site->item_costing($item);
-						
-						foreach ($item_costs as $item_cost) {
-							$item_cost['delivery_item_id'] = $delivery_item_id;
-							$item_cost['delivery_id'] = $delivery_id;
-							if(isset($data['date'])){
-								$item_cost['date'] = $delivery['date'];
-							}
-							unset($item_cost['transaction_type']);
-							unset($item_cost['transaction_id']);
-							unset($item_cost['status']);
-							//$option_id = $item_cost['option_id'];
-							
-							if(! isset($item_cost['pi_overselling'])) {
-								$this->db->insert('costing', $item_cost);
-							}
-						}
-					}
-				}
-				
-				return $delivery_id;
-			}
-			
-		}
-		return false;
-	}
+    public function add_delivery($delivery, $delivery_items)
+    {
+        $pos = $delivery['pos'];
+        unset($delivery['pos']);
+
+        if(isset($delivery) && !empty($delivery) && isset($delivery_items) && !empty($delivery_items)){
+            foreach($delivery_items as $g){
+                $totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity_received']);
+                $product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
+                if($product_variants) {
+                    $delivery['total_cost'] += $totalCostProducts->total_cost * $product_variants->qty_unit;
+                }else {
+                    $delivery['total_cost'] += $totalCostProducts->total_cost;
+                }
+            }
+
+            $this->db->insert('deliveries', $delivery);
+            $delivery_id = $this->db->insert_id();
+
+            if($delivery_id > 0){
+                //$this->db->update("erp_sales",array('sale_status'=>'completed'),array('id'=>$delivery['sale_id']));
+                //$this->erp->print_arrays($this->site->getReference('do',$delivery['biller_id']),$delivery['do_reference_no']);
+                if ($this->site->getReference('do',$delivery['biller_id']) == $delivery['do_reference_no']) {
+                    $this->site->updateReference('do',$delivery['biller_id']);
+                }
+
+                foreach($delivery_items as $delivery_item){
+                    $delivery_item['delivery_id'] = $delivery_id;
+                    if($delivery_item['option_id'] == '' || $delivery_item['option_id'] == null) {
+                        unset($delivery_item['option_id']);
+                    }
+
+                    $this->db->update('sales', array('sale_status' => 'completed'), array('id' => $delivery['sale_id']));
+
+                    /*if ($delivery_item['sale_id']) {
+                        $abc = $this->db->update('sales', array('so_id' => $delivery_item['sale_id']), array('sale_id' => $delivery_item['sale_id']));
+                    }*/
+
+                    $this->db->insert('delivery_items',$delivery_item);
+                    $delivery_item_id = $this->db->insert_id();
+
+                    if ($delivery['delivery_status'] == 'completed' && $getproduct = $this->site->getProductByID($delivery_item['product_id'])) {
+
+                        if($delivery['type'] == 'sale_order') {
+                            $getitem = $this->getSaleOrderItemByID($delivery_item['item_id']);
+                            if($pos == 1){
+                                $getitem = $this->getSaleItemByID($delivery_item['item_id']);
+                            }
+                        }else {
+                            $getitem = $this->getSaleItemByID($delivery_item['item_id']);
+
+                        }
+
+                        $item = array(
+                            'product_id' 		=> $delivery_item['product_id'],
+                            'product_name' 		=> $delivery_item['product_name'],
+                            'transaction_type' 	=> $getproduct->type,
+                            'option_id' 		=> $delivery_item['option_id'],
+                            'warehouse_id' 		=> $delivery_item['warehouse_id'],
+                            'quantity' 			=> $delivery_item['quantity_received'],
+                            'net_unit_price' 	=> $getitem->net_unit_price,
+                            'unit_price' 		=> $getitem->unit_price
+                        );
+
+                        $item_costs = $this->site->item_costing($item);
+                    	
+                        foreach ($item_costs as $item_cost) {
+                            $item_cost['delivery_item_id'] = $delivery_item_id;
+                            $item_cost['delivery_id'] = $delivery_id;
+                            if(isset($data['date'])){
+                                $item_cost['date'] = $delivery['date'];
+                            }
+                            unset($item_cost['transaction_type']);
+                            unset($item_cost['transaction_id']);
+
+                            unset($item_cost['product_name']);
+                            unset($item_cost['warehouse_id']);
+                            unset($item_cost['product_type']);
+
+                            if(! isset($item_cost['pi_overselling'])) {
+                                $this->db->insert('costing', $item_cost);
+                            }
+                        }
+                    }
+                }
+
+                return $delivery_id;
+            }
+
+        }
+        return false;
+    }
 	
 	public function add_delivery_old($delivery, $delivery_items){
 		
@@ -5446,42 +5452,97 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-	public function getAllSaleCombiByDeliveryIDs($id){
-		$this->db->select('erp_sale_items.id,
-		                   erp_sale_items.product_id,
-	                       erp_sale_items.product_code,
-	                       erp_sale_items.product_name,
-	                       (
-                            CASE
-                            WHEN erp_delivery_items.quantity_received > 0 THEN
-                              SUM(
-                                erp_delivery_items.quantity_received
-                              )
-                            ELSE
-                              erp_sale_items.quantity
-                            END
-                          ) AS quantity,
-                          erp_sale_items.unit_price,
-                          DATE_FORMAT(
-                            erp_deliveries.date,
-                            "%Y-%m-%d"
-                          ) AS date,
-                          erp_delivery_items.quantity_received')
-        ->join('erp_sale_items','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
-        ->join('erp_delivery_items','erp_delivery_items.delivery_id=erp_deliveries.id AND erp_delivery_items.product_id = erp_sale_items.product_id
-','left')
-		->where(array('erp_sale_items.sale_id'=>$id))
-        ->group_by('erp_sale_items.product_id')
-        ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
-        ->order_by('erp_sale_items.unit_price DESC');
-		$q = $this->db->get('erp_deliveries');
-		if($q->num_rows() > 0){
-			foreach($q->result() as $row){
-				$data[] = $row;
+	public function getAllSaleCombineByDeliveryIDs($id){
+//		$this->db->select('erp_sale_items.id,
+//		                   erp_sale_items.product_id,
+//	                       erp_sale_items.product_code,
+//	                       erp_sale_items.product_name,
+//	                      erp_deliveries.location,
+//	                       (
+//                            CASE
+//                            WHEN erp_delivery_items.quantity_received > 0 THEN
+//                              SUM(
+//                                erp_delivery_items.quantity_received
+//                              )
+//                            ELSE
+//                              erp_sale_items.quantity
+//                            END
+//                          ) AS quantity,
+//                          erp_sale_items.unit_price,
+//                          DATE_FORMAT(
+//                            erp_deliveries.date,
+//                            "%Y-%m-%d"
+//                          ) AS date,
+//                          erp_delivery_items.quantity_received')
+//
+//        ->join('erp_sale_items','erp_deliveries.issued_sale_id=erp_sale_items.sale_id ','left')
+//        ->join('erp_delivery_items','erp_delivery_items.delivery_id=erp_deliveries.id AND erp_delivery_items.product_id = erp_sale_items.product_id
+//','left')
+//		->where(array('erp_sale_items.sale_id'=>$id))
+//        ->group_by('erp_sale_items.product_id')
+//
+//        ->group_by('DATE_FORMAT(erp_deliveries.date,"%Y-%m-%d")')
+//        ->order_by('erp_sale_items.unit_price DESC');
 
-			}
-			return $data;
-		}
+
+
+         $query = $this->db->query("
+                            SELECT
+                                `erp_sale_items`.`unit_price`,
+                                `erp_delivery_items`.`product_name`,
+                                ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                `erp_deliveries`.`location`,
+                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
+                                `erp_sale_items`.`item_tax`,
+                                `erp_sale_items`.`discount` 
+                            FROM
+                                `erp_deliveries`
+                                LEFT JOIN `erp_sale_items` ON `erp_deliveries`.`issued_sale_id` = `erp_sale_items`.`sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` 
+                                AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id` 
+                            WHERE
+                                `erp_sale_items`.`product_type` = 'standard' AND 
+                                `erp_sale_items`.`sale_id` = $id 
+                            GROUP BY
+                                `erp_delivery_items`.`product_id`,
+                                `erp_deliveries`.`location`,
+                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
+                                
+                            UNION ALL
+                            SELECT
+                                `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_name`,
+                                erp_sale_items.quantity AS quantity,
+                                '' AS location,
+                                '' AS date1,
+                                `erp_sale_items`.`item_tax`,
+                                `erp_sale_items`.`discount` 
+                            FROM
+                                `erp_sales`
+                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
+                                LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
+                                
+                            WHERE
+                                `erp_sale_items`.`product_type` = 'service' AND 
+                                `erp_sale_items`.`sale_id` = $id
+                                
+                            GROUP BY
+                                `erp_deliveries`.`location` 
+                                
+                            ORDER BY  date1 ASC"
+         );
+
+        return $query->result();
+
+//        $q = $this->db->get('erp_deliveries');
+//		if($q->num_rows() > 0){
+//			foreach($q->result() as $row){
+//				$data[] = $row;
+//
+//			}
+//			return $data;
+//		}
 		return false;
 	}
 	public function getAllSaleByDeliveryStateID($id){

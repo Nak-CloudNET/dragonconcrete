@@ -341,6 +341,7 @@
 						}
 					});
 				}else{
+
 					$.ajax({
 						type: 'get',
 						url: '<?= site_url('sales/suggestionsSale'); ?>',
@@ -695,6 +696,8 @@
                                             </div>
                                         <?php } ?>
                                         </div>
+
+
                                     </div>
                                 </div>
                             </div>

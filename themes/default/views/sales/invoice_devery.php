@@ -29,7 +29,7 @@
             padding: 4px;
         }
         hr{
-            border-color: #333;
+            border-color: #332;
             width:100px;
             margin-top: 70px;
         }
@@ -96,7 +96,7 @@ color: rgba(0, 0, 0, 0.3) !important;
 			" >វិក័យប័ត្រនេះមិនអាចប្រកាសជា<br>បន្ទុកចំណាយបានទេ</span>
                 </div>
             </div>
-
+            <input type="hidden">
             <div class="col-xs-6 text-center">
                 <h2 style="font-family: Khmer M1"><?= lang("invoice_kh"); ?></h2>
                 <h2 style="margin-top: -10px !important; margin-bottom: 0px !important"><?= lang("Invoice"); ?></h2>
