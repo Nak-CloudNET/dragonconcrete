@@ -850,9 +850,9 @@ function formatNumber(x, d) {
 function formatMoney(x, symbol) {
     if(!symbol) { symbol = ""; }
     if(site.settings.sac == 1) {
-        return symbol+''+formatSA(parseFloat(x + 0.00000000).toFixed(site.settings.decimals));
+        return symbol+''+formatSA(parseFloat(x).toFixed(site.settings.decimals));
     }
-    return accounting.formatMoney((x + 0.00000000), symbol, site.settings.decimals, site.settings.thousands_sep == 0 ? ' ' : site.settings.thousands_sep, site.settings.decimals_sep, "%s%v");
+    return accounting.formatMoney((x), symbol, site.settings.decimals, site.settings.thousands_sep == 0 ? ' ' : site.settings.thousands_sep, site.settings.decimals_sep, "%s%v");
 }
 
 function is_valid_discount(mixed_var) {

@@ -235,7 +235,7 @@ if(isset($date)){
 									null, 
 									{"mRender": currencyFormat,"bSortable" : false}, 
 									{"mRender": currencyFormat,"bSortable" : false}, 
-									{"mRender": currencyFormat,"bSortable" : false}, 
+									{"mRender": currencyFormat,"bSortable" : false},
 									{"mRender": currencyFormat,"bSortable" : false},
 									{"mRender": fld, "sClass": "center"}
 									],
