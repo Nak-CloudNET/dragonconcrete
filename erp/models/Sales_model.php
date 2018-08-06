@@ -1106,18 +1106,29 @@ class Sales_model extends CI_Model
 	}
 	public function getInvoiceByID($id=null,$wh=null)
     {
-		$this->db
-			 ->select("sales.*, companies.phone, companies.email, quotes.reference_no as quote_no, users.username as saleman,(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit, (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, companies.invoice_footer as invoice_footer, group_areas.areas_group")
-			 ->join('companies', 'sales.biller_id = companies.id', 'left')
-			 ->join('quotes', 'sales.quote_id = quotes.id', 'left')
-			 ->join('payments', 'payments.sale_id = sales.id', 'left')
-			 ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
-			 ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
-			 ->join('users', 'sales.saleman_by = users.id', 'left');
-			 if($wh){
-			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
-			 }
-        $q = $this->db->get_where('sales', array('sales.id' => $id),1);
+        $this->db
+            ->select("sales.*, companies.name,companies.company,companies.logo,companies.cf4,companies.phone, companies.email,
+			  quotes.reference_no as quote_no, users.username as saleman,
+			  (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) 
+			  FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
+			   (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) 
+			   FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, 
+			   sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, 
+			   companies.invoice_footer as invoice_footer, group_areas.areas_group, 
+			   tax_rates.name as vat, payment_term.description as payment_term, sales.due_date")
+            ->join('companies', 'sales.biller_id = companies.id', 'left')
+            ->join('quotes', 'sales.quote_id = quotes.id', 'left')
+            ->join('payments', 'payments.sale_id = sales.id', 'left')
+            ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
+            ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
+            ->join('users', 'sales.saleman_by = users.id', 'left')
+            ->join('tax_rates', 'sales.order_tax_id = tax_rates.id', 'left')
+            ->join('payment_term', 'sales.payment_term = payment_term.id', 'left');
+
+        if($wh){
+            $this->db->where_in('erp_sales.warehouse_id',$wh);
+        }
+        $q = $this->db->get_where('sales', array('sales.customer_id' => $id),1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -1272,7 +1283,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getSOInvoiceByID($id)
     {
 		$this->db
