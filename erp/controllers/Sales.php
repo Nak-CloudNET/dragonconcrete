@@ -1496,7 +1496,7 @@ class Sales extends MY_Controller
                 
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.company as customer, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, 
 						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
 						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
 						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
