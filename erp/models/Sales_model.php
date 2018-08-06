@@ -5530,7 +5530,7 @@ class Sales_model extends CI_Model
                             GROUP BY
                                 `erp_deliveries`.`location` 
                                 
-                            ORDER BY  location ASC"
+                            ORDER BY  date1 ASC"
          );
 
         return $query->result();
