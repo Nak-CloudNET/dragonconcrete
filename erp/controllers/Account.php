@@ -404,7 +404,9 @@ class Account extends MY_Controller
 							) <= CURDATE()
 						AND (s.grand_total - s.paid) <> 0
 						GROUP BY s.customer_id
-					) as erp_gsale ";
+					) as erp_gsale 
+					
+					";
 
 			$this->datatables
 			->select("erp_companies.id, erp_sales.customer, 
@@ -416,7 +418,8 @@ class Account extends MY_Controller
 				", FALSE)
 			->from('sales')
 			->join('companies','sales.customer_id = companies.id', 'left')
-			->join($lsale,'companies.id = '.$this->db->dbprefix("gsale").'.customer_id','left');
+			->join($lsale,'companies.id = '.$this->db->dbprefix("gsale").'.customer_id','left')
+                ->where('balance2 > 0');
 			if(isset($_REQUEST['d'])){
 				$date = $_GET['d'];
 				$date1 = str_replace("/", "-", $date);
