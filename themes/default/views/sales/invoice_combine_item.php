@@ -179,49 +179,52 @@
                         $i = 1;
                         $stotal = 0;
                         $tqty = 0;
-
+//                        $this->erp->print_arrays($rows);
+                        $product_standard="";
+                        $product_service="";
                         foreach($rows as $row){
                             $amt=$row->quantity*$row->unit_price;
-//                            $this->erp->print_arrays($row);
+
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
 
+
+                                    $product_standard.='
+                                         <tr>
+
+                                            <td>'.$i.'</td>
+                
+                                            <td>
+                                                 '.$this->erp->hrsd($row->date1).'
+                                            </td>
+                
+                                            <td>'. $row->location.' </td>
+                                            <td style="text-align:left;">'.$row->product_name.'</td>
+                                            <td>'.$this->erp->formatDecimal($row->quantity).'</td>
+                                            <td>'.$this->erp->formatMoney($row->unit_price).' $</td>';
+
+                                            if($dis>0){
+                                                $product_standard.='<td>'.$this->erp->formatMoney($row->discount).' $</td>';
+                                            $amt-=$row->discount;}
+
+                                            if($tax>0){
+                                            $product_standard.='<td>'.$this->erp->formatMoney($row->item_tax).' $</td>';
+                                             $amt+=$row->item_tax;}
+
+                                            $product_standard.='<td style="text-align:right;">'.$this->erp->formatMoney($amt).' $</td>
+                                        </tr>
+                                    
+                                    ';
+
+
+
                         ?>
-                        <tr>
 
-                            <td><?=$i?></td>
-
-                            <td>
-
-                                <?php
-                                if($row->date1){
-                                    echo $this->erp->hrsd($row->date1);
-                                }
-
-
-                                ?>
-
-                            </td>
-
-                            <td><?= $row->location ?></td>
-                            <td style="text-align:left;"><?=$row->product_name?></td>
-                            <td><?=$this->erp->formatDecimal($row->quantity);?></td>
-                            <td><?=$this->erp->formatMoney($row->unit_price)?> $</td>
-
-                            <?php if($dis>0){ ?>
-                                <td><?=$this->erp->formatMoney($row->discount)?> $</td>
-                            <?php $amt-=$row->discount;} ?>
-
-                            <?php if($tax>0){ ?>
-                            <td><?=$this->erp->formatMoney($row->item_tax)?> $</td>
-                            <?php $amt+=$row->item_tax;} ?>
-
-                            <td style="text-align:right;"><?=$this->erp->formatMoney($amt)?> $</td>
-                        </tr>
                         <?php
                         $i++;
                         $tqty +=$row->quantity;
                         $stotal +=$row->quantity*$row->unit_price;
                         }
+                        echo $product_standard;
                         $co=15-($i-1);
                         for($k = 1;$k<=$co;$k++){
                         ?>

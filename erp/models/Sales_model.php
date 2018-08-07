@@ -5489,6 +5489,7 @@ class Sales_model extends CI_Model
          $query = $this->db->query("
                             SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_delivery_items`.`product_name`,
                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
                                 `erp_deliveries`.`location`,
@@ -5508,13 +5509,14 @@ class Sales_model extends CI_Model
                                 `erp_deliveries`.`location`,
                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
                                 
-                            UNION ALL
+                            UNION
                             SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
                                 erp_sale_items.quantity AS quantity,
                                 '' AS location,
-                                '' AS date1,
+                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
                                 `erp_sale_items`.`item_tax`,
                                 `erp_sale_items`.`discount` 
                             FROM
