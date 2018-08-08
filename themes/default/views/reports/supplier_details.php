@@ -184,6 +184,7 @@
 								foreach($suppliers as $row){
 									if($row->supplier_id){
 										if($row->qty){
+										    //echo $row->supplier;exit;
 											?>
 											<tr>
 												<td colspan="9" style="background:#F0F8FF;"><b><?=$row->supplier?></b></td>
