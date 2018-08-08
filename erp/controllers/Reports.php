@@ -20524,6 +20524,7 @@ function salesDetail_actions(){
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
+        $this->data['billers']     = $this->reports_model->getAllBillers();
 		//$this->erp->print_arrays($this->reports_model->getAllCategories());
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('supplier_products'), 'bc' => $bc);
@@ -21137,6 +21138,7 @@ function salesDetail_actions(){
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
+        $this->data['billers']     = $this->reports_model->getAllBillers();
 		$this->data['categories'] = $this->site->getAllCategories();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('product_customers'), 'bc' => $bc);
