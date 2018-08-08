@@ -1106,29 +1106,18 @@ class Sales_model extends CI_Model
 	}
 	public function getInvoiceByID($id=null,$wh=null)
     {
-        $this->db
-            ->select("sales.*, companies.name,companies.company,companies.logo,companies.cf4,companies.phone, companies.email,
-			  quotes.reference_no as quote_no, users.username as saleman,
-			  (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) 
-			  FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
-			   (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) 
-			   FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, 
-			   sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, 
-			   companies.invoice_footer as invoice_footer, group_areas.areas_group, 
-			   tax_rates.name as vat, payment_term.description as payment_term, sales.due_date")
-            ->join('companies', 'sales.biller_id = companies.id', 'left')
-            ->join('quotes', 'sales.quote_id = quotes.id', 'left')
-            ->join('payments', 'payments.sale_id = sales.id', 'left')
-            ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
-            ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
-            ->join('users', 'sales.saleman_by = users.id', 'left')
-            ->join('tax_rates', 'sales.order_tax_id = tax_rates.id', 'left')
-            ->join('payment_term', 'sales.payment_term = payment_term.id', 'left');
-
-        if($wh){
-            $this->db->where_in('erp_sales.warehouse_id',$wh);
-        }
-        $q = $this->db->get_where('sales', array('sales.customer_id' => $id),1);
+		$this->db
+			 ->select("sales.*, companies.phone, companies.email, quotes.reference_no as quote_no, users.username as saleman,(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit, (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, companies.invoice_footer as invoice_footer, group_areas.areas_group")
+			 ->join('companies', 'sales.biller_id = companies.id', 'left')
+			 ->join('quotes', 'sales.quote_id = quotes.id', 'left')
+			 ->join('payments', 'payments.sale_id = sales.id', 'left')
+			 ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
+			 ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
+			 ->join('users', 'sales.saleman_by = users.id', 'left');
+			 if($wh){
+			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
+			 }
+        $q = $this->db->get_where('sales', array('sales.id' => $id),1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -1283,7 +1272,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getSOInvoiceByID($id)
     {
 		$this->db
@@ -5500,6 +5489,7 @@ class Sales_model extends CI_Model
          $query = $this->db->query("
                             SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_delivery_items`.`product_name`,
                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
                                 `erp_deliveries`.`location`,
@@ -5519,13 +5509,14 @@ class Sales_model extends CI_Model
                                 `erp_deliveries`.`location`,
                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
                                 
-                            UNION ALL
+                            UNION
                             SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
                                 erp_sale_items.quantity AS quantity,
                                 '' AS location,
-                                '' AS date1,
+                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
                                 `erp_sale_items`.`item_tax`,
                                 `erp_sale_items`.`discount` 
                             FROM
