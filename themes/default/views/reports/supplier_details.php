@@ -71,18 +71,17 @@
                         </div>
 						
                         <?php if(isset($biller_idd)){?>
-						<div class="col-sm-4">
-						 <div class="form-group">
-                                    <?= lang("biller", "biller"); ?>
-                                    <?php 
-									$str = "";
-									$q = $this->db->get_where("companies",array("id"=>$biller_idd),1);
-									 if ($q->num_rows() > 0) {
-										 $str = $q->row()->name.' / '.$q->row()->company;
-										echo form_input('biller',$str , 'class="form-control" id="biller"');
-									 }
-									?>
-                                </div>
+						 <div class="col-sm-4">
+                             <div class="form-group">
+                                 <label class="control-label" for="warehouse"><?= lang("biller"); ?></label>
+                                 <?php
+                                 $bill[""] = "ALL";
+                                 foreach ($billers as $biller) {
+                                     $bill[$biller->id] =  $biller->code.' / '.$biller->name;
+                                 }
+                                 echo form_dropdown('biller', $bill, (isset($_GET['biller']) ? $_GET['biller'] : ""), 'class="form-control" id="biller" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("biller") . '"');
+                                 ?>
+                             </div>
 						 </div>
 						<?php } ?>
                         <div class="col-sm-4">
@@ -185,6 +184,7 @@
 								foreach($suppliers as $row){
 									if($row->supplier_id){
 										if($row->qty){
+										    //echo $row->supplier;exit;
 											?>
 											<tr>
 												<td colspan="9" style="background:#F0F8FF;"><b><?=$row->supplier?></b></td>
