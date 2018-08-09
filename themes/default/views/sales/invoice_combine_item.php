@@ -186,7 +186,7 @@
                             $amt=$row->quantity*$row->unit_price;
 
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
-                                if($row->product_type=='standard') {
+                                if($row->product_type=='combo' ||$row->product_type=='standard') {
 
                                     $product_standard .= '
                                          <tr>
