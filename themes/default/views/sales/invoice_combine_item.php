@@ -111,6 +111,7 @@
                 <h2 style="font-family: Khmer M1"><?= lang("invoice_kh"); ?></h2>
                 <h2 style="margin-top: -10px !important; margin-bottom: 0px !important"><?= lang("Invoice"); ?></h2>
             </div>
+            <?php echo ''; ?>
             <div class="col-xs-3"></div>
             <div class="clearfix"></div>
             <br>
