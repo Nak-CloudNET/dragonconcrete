@@ -20284,13 +20284,14 @@ function salesDetail_actions(){
 			$this->excel->getActiveSheet()->SetCellValue('F1', lang('unit'));
 			$this->excel->getActiveSheet()->SetCellValue('G1', lang('cost_price'));
 			$this->excel->getActiveSheet()->SetCellValue('H1', lang('amount'));
-			$this->excel->getActiveSheet()->getStyle('A1'. $row.':H1'.$row)->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle('A1'.$row.':H1'.$row)->getFont()->setBold(true);
 			$this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$row = 2;
 			$grand = 0 ;
 			$gqty = 0;
-			$this->db->select("erp_purchases.supplier_id,supplier,SUM(erp_purchase_items.quantity) as qty");
-			$this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
+            $this->db->select("erp_purchases.supplier_id,if(erp_companies.company IS NULL or erp_companies.company='',erp_companies.name,erp_companies.company) as supplier,SUM(erp_purchase_items.quantity) as qty");
+            $this->db->join('companies', 'companies.id=purchases.supplier_id', 'left');
+            $this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
 			if($supplier){
 				$this->db->where("erp_purchases.supplier_id",$supplier);
 			}
@@ -20347,6 +20348,7 @@ function salesDetail_actions(){
                     $totalshipping = 0 ;
 					$row++;
 					$vqty = 0;
+					//$this->erp->print_arrays($sup);
 					foreach($pur_items as $row1){
 						// $this->erp->print_arrays($row1);
 						if($sup->supplier_id == $row1->supplier_id){
@@ -20524,6 +20526,7 @@ function salesDetail_actions(){
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
+        $this->data['billers']     = $this->reports_model->getAllBillers();
 		//$this->erp->print_arrays($this->reports_model->getAllCategories());
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('supplier_products'), 'bc' => $bc);
@@ -21137,6 +21140,7 @@ function salesDetail_actions(){
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
+        $this->data['billers']     = $this->reports_model->getAllBillers();
 		$this->data['categories'] = $this->site->getAllCategories();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('product_customers'), 'bc' => $bc);
