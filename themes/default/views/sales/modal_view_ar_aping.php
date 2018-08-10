@@ -39,16 +39,18 @@ function row_status($x){
                                  alt="<?= $biller->company != '-' ? $biller->company : $biller->name; ?>">
                         </div>
                     <?php } ?>
+
             <?php } ?>
                 <div class="well well-sm">
                     <div class="row bold" style="font-size:12px;">
                         <div class="col-xs-5">
                             <p class="bold">
-                                <?= lang("ref"); ?>: <?= $inv->reference_no; ?><br>
+                                <?= lang("ref"); ?>: <?= $inv->reference_no; //$this->erp->print_arrays($inv);?><br>
                                 <?= lang("date"); ?>: <?= $this->erp->hrld($inv->date); ?><br>
                                 <?= lang("sale_status"); ?>: <?= lang($inv->sale_status); ?><br>
                                 <?= lang("payment_status"); ?>: <?= lang($inv->payment_status); ?>
                             </p>
+
                         </div>
                         <div class="col-xs-7 text-right">
                           <p style="font-size:16px; margin:0 !important;"><?= lang("INVOICE"); ?></p>

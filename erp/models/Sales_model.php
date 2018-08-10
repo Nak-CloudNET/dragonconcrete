@@ -1117,7 +1117,7 @@ class Sales_model extends CI_Model
 			 if($wh){
 			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
 			 }
-        $q = $this->db->get_where('sales', array('sales.id' => $id),1);
+        $q = $this->db->get_where('sales', array('sales.customer_id' => $id),1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -5489,6 +5489,7 @@ class Sales_model extends CI_Model
          $query = $this->db->query("
                             SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_delivery_items`.`product_name`,
                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
                                 `erp_deliveries`.`location`,
@@ -5507,14 +5508,40 @@ class Sales_model extends CI_Model
                                 `erp_delivery_items`.`product_id`,
                                 `erp_deliveries`.`location`,
                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
+                           
                                 
-                            UNION ALL
+                          
+                            
+                            UNION
                             SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
-                                erp_sale_items.quantity AS quantity,
+                                erp_delivery_items.quantity_received AS quantity,
+                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
+                                `erp_sale_items`.`item_tax`,
+                                `erp_sale_items`.`discount` 
+                            FROM
+                                `erp_sales`
+                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
+                                LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
+                                
+                            WHERE
+                                `erp_sale_items`.`product_type` = 'combo' AND 
+                                `erp_sale_items`.`sale_id` = $id
+                                
+                            GROUP BY
+                                `erp_deliveries`.`location` 
+                             UNION
+                            SELECT
+                                `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
+                                `erp_sale_items`.`product_name`,
+                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
                                 '' AS location,
-                                '' AS date1,
+                                 '' AS date1,
                                 `erp_sale_items`.`item_tax`,
                                 `erp_sale_items`.`discount` 
                             FROM
@@ -5530,7 +5557,8 @@ class Sales_model extends CI_Model
                             GROUP BY
                                 `erp_deliveries`.`location` 
                                 
-                            ORDER BY  date1 ASC"
+                              ORDER BY  date1 ASC , location ASC,quantity ASC,unit_price ASC
+                            "
          );
 
         return $query->result();

@@ -54,17 +54,16 @@ class Sales extends MY_Controller
     
 	function modal_views($id = NULL)
     {
-		
-        $this->erp->checkPermissions('index', null, 'sales');	
+        $this->erp->checkPermissions('index', null, 'sales');
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		$this->load->model('pos_model');
-		$this->data['pos'] = $this->pos_model->getSetting();
-		$this->data['setting'] = $this->site->get_setting();
+        $this->load->model('pos_model');
+        $this->data['pos'] = $this->pos_model->getSetting();
+        $this->data['setting'] = $this->site->get_setting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $inv = $this->sales_model->getInvoiceByID($id);
-		if (!$this->session->userdata('view_right')){
+        if (!$this->session->userdata('view_right')){
             $this->erp->view_rights($inv->created_by, true);
         }
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -72,7 +71,7 @@ class Sales extends MY_Controller
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
         $this->data['updated_by'] = $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
-        $this->data['inv'] = $inv;
+        $this->data['invs'] = $inv;
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $this->data['rows'] = $this->sales_model->getAllInvoiceItem($id);

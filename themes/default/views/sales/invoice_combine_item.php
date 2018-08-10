@@ -111,6 +111,7 @@
                 <h2 style="font-family: Khmer M1"><?= lang("invoice_kh"); ?></h2>
                 <h2 style="margin-top: -10px !important; margin-bottom: 0px !important"><?= lang("Invoice"); ?></h2>
             </div>
+            <?php echo ''; ?>
             <div class="col-xs-3"></div>
             <div class="clearfix"></div>
             <br>
@@ -173,60 +174,94 @@
                         <td style="vertical-align:middle;text-align:center; width: 130px;">Amount/ តំលៃសរុប</td>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbody">
 <!--                    --><?php //$this->erp->print_arrays($rows); ?>
                         <?php
                         $i = 1;
                         $stotal = 0;
                         $tqty = 0;
-
+//                        $this->erp->print_arrays($rows);
+                        $product_standard="";
+                        $product_service="";
                         foreach($rows as $row){
                             $amt=$row->quantity*$row->unit_price;
-//                            $this->erp->print_arrays($row);
+
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
+                                if($row->product_type=='combo' ||$row->product_type=='standard') {
 
-                        ?>
-                        <tr>
+                                    $product_standard .= '
+                                         <tr>
 
-                            <td><?=$i?></td>
+                                            <td ></td>
+                
+                                            <td>
+                                                 ' . $this->erp->hrsd($row->date1) . '
+                                            </td>
+                
+                                            <td>' . $row->location . ' </td>
+                                            <td style="text-align:left;">' . $row->product_name . '</td>
+                                            <td>' . $this->erp->formatDecimal($row->quantity) . '</td>
+                                            <td>' . $this->erp->formatMoney($row->unit_price) . ' $</td>';
 
-                            <td>
+                                    if ($dis > 0) {
+                                        $product_standard .= '<td>' . $this->erp->formatMoney($row->discount) . ' $</td>';
+                                        $amt -= $row->discount;
+                                    }
 
-                                <?php
-                                if($row->date1){
-                                    echo $this->erp->hrsd($row->date1);
+                                    if ($tax > 0) {
+                                        $product_standard .= '<td>' . $this->erp->formatMoney($row->item_tax) . ' $</td>';
+                                        $amt += $row->item_tax;
+                                    }
+
+                                    $product_standard .= '<td style="text-align:right;">' . $this->erp->formatMoney($amt) . ' $</td>
+                                        </tr>
+                                    
+                                    ';
+                                }
+                                if($row->product_type=='service'){
+                                    $product_service .= '
+                                         <tr>
+
+                                            <td class="no"></td>
+                
+                                            <td>';
+                                                 $this->erp->hrsd($row->date1);
+                                            $product_service.='</td>
+                
+                                            <td> </td>
+                                            <td style="text-align:left;">' . $row->product_name . '</td>
+                                            <td>' . $this->erp->formatDecimal($row->quantity) . '</td>
+                                            <td>' . $this->erp->formatMoney($row->unit_price) . ' $</td>';
+
+                                    if ($dis > 0) {
+                                        $product_service .= '<td>' . $this->erp->formatMoney($row->discount) . ' $</td>';
+                                        $amt -= $row->discount;
+                                    }
+
+                                    if ($tax > 0) {
+                                        $product_service .= '<td>' . $this->erp->formatMoney($row->item_tax) . ' $</td>';
+                                        $amt += $row->item_tax;
+                                    }
+
+                                    $product_service .= '<td style="text-align:right;">' . $this->erp->formatMoney($amt) . ' $</td>
+                                        </tr>
+                                    
+                                    ';
                                 }
 
+                            $i++;
+                        ?>
 
-                                ?>
-
-                            </td>
-
-                            <td><?= $row->location ?></td>
-                            <td style="text-align:left;"><?=$row->product_name?></td>
-                            <td><?=$this->erp->formatDecimal($row->quantity);?></td>
-                            <td><?=$this->erp->formatMoney($row->unit_price)?> $</td>
-
-                            <?php if($dis>0){ ?>
-                                <td><?=$this->erp->formatMoney($row->discount)?> $</td>
-                            <?php $amt-=$row->discount;} ?>
-
-                            <?php if($tax>0){ ?>
-                            <td><?=$this->erp->formatMoney($row->item_tax)?> $</td>
-                            <?php $amt+=$row->item_tax;} ?>
-
-                            <td style="text-align:right;"><?=$this->erp->formatMoney($amt)?> $</td>
-                        </tr>
                         <?php
-                        $i++;
                         $tqty +=$row->quantity;
                         $stotal +=$row->quantity*$row->unit_price;
                         }
+                        echo $product_standard.$product_service;
                         $co=15-($i-1);
                         for($k = 1;$k<=$co;$k++){
                         ?>
                         <tr class="blank">
-                            <td><?=$i?></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -242,7 +277,7 @@
                         </tr>
 
                         <?php
-                        $i++;
+
                         }
                         $row_sp=1;
 
@@ -258,6 +293,8 @@
                         }
 
                         ?>
+                    </tbody>
+                    <tfoot>
                         <tr>
 
                             <td colspan="3" rowspan="<?= $row_sp; ?>" style="text-align:left; font-size: 11px;">បញ្ជាក់៖<br><?php echo nl2br($bill->invoice)?></td>
@@ -312,7 +349,8 @@
                             <td   style="text-align:right;" ><b><?=$this->erp->formatMoney($stotal);?> $</b></td>
                         </tr>
                     <?php } ?>
-                    </tbody>
+
+                    </tfoot>
                 </table>
                 <p>Remark: The invoice above is excluding 10% VAT.</p>
                 <p>ផ្សេងៗ៖ តំលៃខាងលើមិនបូករួមពន្ធ 10% នៃ VAT</p>
@@ -370,6 +408,14 @@
             window.location.href = "<?= site_url('purchases_request/index'); ?>";
         });
     });
+    var i;
+
+    var row=$('#tbody>tr').length;
+    var texto = '';
+    for (i = 1; i <=row; i++) {
+        texto=$('#tbody tr:nth-child('+i+') td:nth-child(1)').text(i);
+
+    }
 
 </script>
 </body>
