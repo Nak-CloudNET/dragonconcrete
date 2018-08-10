@@ -69,7 +69,6 @@
             }
         }
         ?>
-        
         <script>
         $(document).ready(function () {
             var oTable = $('#PoRData').dataTable({

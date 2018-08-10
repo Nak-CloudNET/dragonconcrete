@@ -20248,8 +20248,8 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	function ProductsSuppliersReport($pdf = NULL, $excel = NULL,$warehouse,$supplier,$reference,$product_id,$from_date,$to_date){
-
+	function ProductsSuppliersReport($pdf = NULL, $excel = NULL,$warehouse,$supplier,$reference,$product_id,$from_date,$to_date)
+    {
         if($supplier == 0){
             $supplier = null;
         }

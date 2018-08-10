@@ -96,6 +96,7 @@
                                 ?>
                             </div>
                         </div>
+                        
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("from_date", "from_date"); ?>
