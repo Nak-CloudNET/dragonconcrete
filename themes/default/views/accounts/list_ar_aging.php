@@ -185,6 +185,7 @@
 									'bProcessing': true,'bServerSide': true,
 									'sAjaxSource': "<?= site_url('account/getSales_pending' . ($warehouse_id ? '/' . $warehouse_id : '')) . '/?v=1' . $v ?>",
 									'fnServerData': function (sSource, aoData, fnCallback) {
+
 										aoData.push({
 											"name": "<?=$this->security->get_csrf_token_name()?>",
 											"value": "<?=$this->security->get_csrf_hash()?>"
@@ -192,7 +193,8 @@
 										$.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
 									},
 									'fnRowCallback': function (nRow, aData, iDisplayIndex) {
-										var oSettings = oTable.fnSettings();										
+										var oSettings = oTable.fnSettings();
+
 										nRow.id = aData[0];
 										nRow.className = "invoice_link_ar";										
 										return nRow;
