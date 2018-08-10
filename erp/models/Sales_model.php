@@ -1117,7 +1117,7 @@ class Sales_model extends CI_Model
 			 if($wh){
 			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
 			 }
-        $q = $this->db->get_where('sales', array('sales.id' => $id),1);
+        $q = $this->db->get_where('sales', array('sales.customer_id' => $id),1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
