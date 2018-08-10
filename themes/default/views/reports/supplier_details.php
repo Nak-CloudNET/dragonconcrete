@@ -70,20 +70,6 @@
                             </div>
                         </div>
 						
-                        <?php if(isset($biller_idd)){?>
-						 <div class="col-sm-4">
-                             <div class="form-group">
-                                 <label class="control-label" for="warehouse"><?= lang("biller"); ?></label>
-                                 <?php
-                                 $bill[""] = "ALL";
-                                 foreach ($billers as $biller) {
-                                     $bill[$biller->id] =  $biller->code.' / '.$biller->name;
-                                 }
-                                 echo form_dropdown('biller', $bill, (isset($_GET['biller']) ? $_GET['biller'] : ""), 'class="form-control" id="biller" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("biller") . '"');
-                                 ?>
-                             </div>
-						 </div>
-						<?php } ?>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("warehouse", "warehouse") ?>
@@ -100,17 +86,17 @@
 						
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label" for="warehouse"><?= lang("supplier"); ?></label>
+                                <label class="control-label" for="supplier"><?= lang("supplier"); ?></label>
                                 <?php
-								$su = array(""=>"ALL");
-								$supp = $this->db->select("supplier_id,supplier")->group_by("supplier_id")->get("erp_purchases")->result();
-                                foreach ($supp as $sup) {
-                                    $su[$sup->supplier_id] = $sup->supplier;
+								$su[''] = "ALL";
+                                foreach ($suppliers as $sup) {
+                                    $su[$sup->id] = $sup->name;
                                 }
                                 echo form_dropdown('supplier', $su, (isset($_POST['supplier']) ? $_POST['supplier'] : ""), 'class="form-control" id="supplier" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("supplier") . '"');
                                 ?>
                             </div>
                         </div>
+                        
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("from_date", "from_date"); ?>
@@ -184,7 +170,6 @@
 								foreach($suppliers as $row){
 									if($row->supplier_id){
 										if($row->qty){
-										    //echo $row->supplier;exit;
 											?>
 											<tr>
 												<td colspan="9" style="background:#F0F8FF;"><b><?=$row->supplier?></b></td>
