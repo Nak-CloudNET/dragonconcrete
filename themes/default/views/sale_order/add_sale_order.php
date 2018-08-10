@@ -1196,7 +1196,7 @@
                             <div id="poptions-div"></div>
                         </div>
                     </div>
-					       
+
 					<!--
 					<div class="form-group">
                         <label for="pg" class="col-sm-4 control-label"><?= lang('price_groups') ?></label>
