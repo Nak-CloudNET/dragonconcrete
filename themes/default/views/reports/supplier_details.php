@@ -70,21 +70,6 @@
                             </div>
                         </div>
 						
-                        <?php if(isset($biller_idd)){?>
-						<div class="col-sm-4">
-						 <div class="form-group">
-                                    <?= lang("biller", "biller"); ?>
-                                    <?php 
-									$str = "";
-									$q = $this->db->get_where("companies",array("id"=>$biller_idd),1);
-									 if ($q->num_rows() > 0) {
-										 $str = $q->row()->name.' / '.$q->row()->company;
-										echo form_input('biller',$str , 'class="form-control" id="biller"');
-									 }
-									?>
-                                </div>
-						 </div>
-						<?php } ?>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("warehouse", "warehouse") ?>
@@ -101,12 +86,11 @@
 						
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label" for="warehouse"><?= lang("supplier"); ?></label>
+                                <label class="control-label" for="supplier"><?= lang("supplier"); ?></label>
                                 <?php
-								$su = array(""=>"ALL");
-								$supp = $this->db->select("supplier_id,supplier")->group_by("supplier_id")->get("erp_purchases")->result();
-                                foreach ($supp as $sup) {
-                                    $su[$sup->supplier_id] = $sup->supplier;
+								$su[''] = "ALL";
+                                foreach ($suppliers as $sup) {
+                                    $su[$sup->id] = $sup->name;
                                 }
                                 echo form_dropdown('supplier', $su, (isset($_POST['supplier']) ? $_POST['supplier'] : ""), 'class="form-control" id="supplier" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("supplier") . '"');
                                 ?>

@@ -7847,10 +7847,11 @@ class Reports extends MY_Controller
             $this->load->library('datatables');
 
 			$this->datatables
-			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, reference_no, " . 
-						 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
-						 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".status", FALSE)
+			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, purchases_order.reference_no as po_ref, purchases.reference_no, " . 
+						 $this->db->dbprefix('warehouses') . ".name as wname, purchases.supplier ,
+						 purchases.grand_total, purchases.order_discount, purchases.paid, (erp_purchases.grand_total-erp_purchases.paid) as balance, " . $this->db->dbprefix('purchases') . ".status", FALSE)
                 ->from('purchases')
+                ->join('purchases_order', 'purchases.reference_no=purchases_order.purchase_ref', 'left')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
                 ->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
 				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
@@ -20524,7 +20525,9 @@ function salesDetail_actions(){
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
-		//$this->erp->print_arrays($this->reports_model->getAllCategories());
+        $this->data['suppliers'] = $this->site->getAllSuppliers();
+		//$this->erp->print_arrays($this->site->getAllSuppliers());
+        
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('supplier_products'), 'bc' => $bc);
         $this->page_construct('reports/supplier_details', $meta, $this->data);
