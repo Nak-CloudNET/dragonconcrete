@@ -1623,7 +1623,7 @@
 									'<td class="td_color_light td_align_center" align="center">'+ no +'</td>'+
 									'<td class="td_color_light">'+ parent.find('.rcode').val() +'</td>'+
 									'<td colspan="2" class="td_color_light td_align_center">'+ parent.find('.rname').val() +'</td>'+
-									'<td class="td_color_light td_align_right" align="right">$ &nbsp;'+ formatMoney(unit_price) +'</td>'+
+									'<td class="td_color_light td_align_right" align="right">$ &nbsp;'+ (unit_price) +'</td>'+
 									'<td class="td_color_light" align="right">'+ qtt +'</td>'+
 									'<td class="td_color_bottom_light td_align_right" align="right">$ &nbsp;'+ formatMoney(amt) +'</td>'+
 								'</tr>';  
@@ -1836,7 +1836,7 @@
 													'<td class="td_color_light td_align_center" >'+ no +'</td>'+
 													'<td class="td_color_light">'+ parent.find('.rcode').val() +'</td>'+
 													'<td class="td_color_light td_align_center">'+ parent.find('.rname').val() +'</td>'+
-													'<td class="td_color_light td_align_right">$ '+ formatMoney(unit_price) +'</td>'+
+													'<td class="td_color_light td_align_right">$ '+ (unit_price) +'</td>'+
 													'<td class="td_color_light td_align_center">'+ qtt +'</td>'+
 													'<td class="td_color_bottom_light td_align_right">$ '+ formatMoney(amt) +'</td>'+
 												'</tr>');  
