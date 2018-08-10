@@ -567,7 +567,7 @@ class Purchases_request extends MY_Controller
                         }
                     }
 
-                    $unit_cost 			= $this->erp->formatPurDecimal($unit_cost - $pr_discount);
+                    $unit_cost 			=$unit_cost - $pr_discount;
                     $item_net_cost 		= $unit_cost_real;
                     $pr_item_discount 	= $this->erp->formatPurDecimal($pr_discount * $item_quantity);
                     $product_discount 	+= $pr_item_discount;
