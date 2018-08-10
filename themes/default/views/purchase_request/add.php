@@ -1,6 +1,6 @@
 <script type="text/javascript">
 	var test = '<?=$this->session->userdata('remove_polsr');?>';
-     if (test == '1') { 
+     if (test == '1') {
 		if (localStorage.getItem('poitems')) {
 			localStorage.removeItem('poitems');
 		}
@@ -51,7 +51,7 @@
 		}
 		// $this->erp->unset_data('remove_pols');
 		<?=$this->session->set_userdata('remove_polsr', '0');?>
-	} 
+	}
     <?php if($quote_id) { ?>
     localStorage.setItem('powarehouse', '<?= $quote->warehouse_id ?>');
     localStorage.setItem('ponote', '<?= str_replace(array("\r", "\n"), "", $this->erp->decode_html($quote->note)); ?>');
@@ -75,7 +75,7 @@
             localStorage.setItem('psupplier', <?=$this->input->get('supplier');?>);
         }
         <?php } ?>
-		
+
         if (!localStorage.getItem('podate')) {
             $("#podate").datetimepicker({
                 format: site.dateFormats.js_ldate,
@@ -142,12 +142,12 @@
             response: function (event, ui) {
                 if ($(this).val().length >= 16 && ui.content[0].id == 0) {
                     //audio_error.play();
-					
+
                    bootbox.alert('<?= lang('no_match_found') ?>', function () {
                         $('#add_item').focus();
                     });
 					/* bootbox.confirm({
-						message: '<?= lang('no_match_found') ?>',
+						message:
 						buttons: {
 							'cancel': {
 								label: 'Close',
@@ -160,11 +160,11 @@
 						},
 						callback: function(result) {
 							if (result) {
-								
+
 							}
 						}
 					}); */
-					
+
                     $(this).val('');
                 }
                 else if (ui.content.length == 1 && ui.content[0].id != 0) {
@@ -175,7 +175,7 @@
                 }
                 else if (ui.content.length == 1 && ui.content[0].id == 0) {
                     //audio_error.play();
-					
+
                     bootbox.alert('<?= lang('no_match_found') ?>', function () {
                         $('#add_item').focus();
                     });
@@ -196,7 +196,7 @@
                 }
             }
         });
-		
+
 		$('#add_item').bind('keypress', function (e) {
             if (e.keyCode == 13) {
                 e.preventDefault();
@@ -319,7 +319,7 @@
 							<?= lang("reference_no", "poref"); ?>
 							<div style="float:left;width:100%;">
 								<div class="form-group">
-									<div class="input-group">  
+									<div class="input-group">
 										<?php echo form_input('reference_no', $ponumber?$ponumber:"",'class="form-control input-tip" id="poref"'); ?>
 										<input type="hidden"  name="temp_reference_no"  id="temp_reference_no" value="<?= $ponumber?$ponumber:"" ?>" />
 										<div class="input-group-addon no-print" style="padding: 2px 5px;background-color:white;">
@@ -383,7 +383,7 @@
 								</div>
 							</div>
 						<?php } ?>
-												
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <?= lang("document", "document") ?>
@@ -397,24 +397,24 @@
                                 <div
                                     class="panel-heading"><?= lang('please_select_these_before_adding_product') ?>
 								</div>
-								
+
                                 <div class="panel-body" style="padding: 5px;">
 									<div class="col-sm-4">
 										<div class="form-group">
 										<?= lang("supplier", "posupplier"); ?>
-										<?php 
+										<?php
 											$sup = array(""=>"");
 											foreach($suppliers as $supplier){
 												$sup[$supplier->id] = $supplier->code .'-'. ($supplier->company ? $supplier->company : $supplier->name);
 											}
-											
+
 											echo form_dropdown('supplier', $sup, (isset($_POST['supplier']) ? $_POST['supplier'] : ""), 'id="posupplier" class="form-control input-tip select" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("suppliers") . '"  style="width:100%;" required="required" ');
-											
+
 										?>
 										<input type="hidden" name="supplier_id" value="" id="supplier_id"
                                                        class="form-control">
 										</div>
-									</div>	
+									</div>
                                     <div class="col-md-4" style="display: none;">
                                         <div class="form-group">
                                             <?= lang("supplier", "posupplier"); ?>
@@ -446,13 +446,13 @@
                                         <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
                                             <i class="fa fa-2x fa-barcode addIcon"></i>
 										</div>
-                                        <?php 
+                                        <?php
 										// if($this->input->get('addpurrquest')){
-											
+
 											$q = $this->db->get_where('erp_products',array('id'=>$this->input->get('addpurrquest')),1);
                                             $pcode = $q->row();
 											// $pcode = $q->row()->code;
-											
+
 										// }
 										echo form_input('add_item', $pcode?$pcode:'', 'class="form-control input-lg" id="add_item" placeholder="' . $this->lang->line("add_product_to_order") . '"'); ?>
                                         <?php if ($Owner || $Admin || $GP['products-add']) { ?>
@@ -493,7 +493,7 @@
 													}
 												?>
 												<th class="col-md-1"><?= lang("quantity"); ?></th>
-												
+
 												<th class="col-md-1"><?= lang("stock_in_hand"); ?></th>
 												<?php
 												if ($Settings->product_discount) {
@@ -523,15 +523,15 @@
                         <input type="hidden" name="total_items" value="" id="total_items" required="required"/>
 
                         <div class="col-md-12">
-						
+
                             <div class="clearfix"></div>
                             <div class="form-group">
                                 <?= lang("note", "ponote"); ?>
                                 <?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control" id="ponote" style="margin-top: 10px; height: 100px;"'); ?>
                             </div>
-							
+
                         </div>
-						
+
                         <div class="col-md-12">
                             <div
                                 class="from-group"><?php echo form_submit('add_pruchase', $this->lang->line("submit"), 'id="add_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
@@ -540,7 +540,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <?php echo form_close(); ?>
 
@@ -579,7 +579,7 @@
                             <div class="col-sm-8">
                                 <?php
 									$tm = array(
-										'0' => lang('inclusive'), 
+										'0' => lang('inclusive'),
 										'1' => lang('exclusive')
 									);
 									echo form_dropdown('tax_method', $tm, '', 'class="form-control select" id="tax_method" style="width:100%"')
@@ -695,11 +695,11 @@
 </div>
 
 <script type="text/javascript">
-$(window).load(function(){	
+$(window).load(function(){
 		var al = '<?php echo $this->input->get('addpurrquest');?>';
-		
+
 		if(al){
-			
+
 			var test = $("#add_item").val();
 				$.ajax({
 					type: 'get',
@@ -715,13 +715,13 @@ $(window).load(function(){
 							comment = data[i];
 							add_purchase_item(comment);
 						  }
-						 $("#add_item").val('');	
+						 $("#add_item").val('');
 						var url = $(".gos").attr('href');
 						window.location.href = url;
 					}
-				});   
-				
-	
+				});
+
+
 		}
     });
 
@@ -734,9 +734,9 @@ $(window).load(function(){
 	$(window).load(function(){
 			billerChange();
 	});
-	
+
 	function billerChange(){
-		
+
         var id = $biller.val();
         $("#powarehouse").empty();
         $.ajax({
@@ -749,9 +749,9 @@ $(window).load(function(){
                     var name = val.name;
                     var opt = '<option value="' + b_id + '">' + code + '-'+ name + '</option>';
                     $("#powarehouse").append(opt);
-					
+
                 });
-				
+
                 $('#powarehouse option[selected="selected"]').each(
                     function() {
                         //$(this).removeAttr('selected');
@@ -759,7 +759,7 @@ $(window).load(function(){
                 );
 				//$('#slwarehouse').val($('#slwarehouse option:first-child').val()).trigger('change');
                 //$("#slwarehouse").select2("val", "<?=$Settings->default_warehouse;?>");
-				
+
 				if(powarehouse = localStorage.getItem('powarehouse')){
 					$('#powarehouse').select2("val", powarehouse);
 				}else{
@@ -767,7 +767,7 @@ $(window).load(function(){
 				}
             }
         });
-		
+
 		$.ajax({
             url: '<?= base_url() ?>sales/getReferenceByProject/pq/'+id,
             dataType: 'json',
@@ -776,10 +776,10 @@ $(window).load(function(){
 				$("#temp_reference_no").val(data);
             }
         });
-		
+
     }
     $(document).ready(function () {
-		
+
 		$('body').on('click', '.add_product_auto', function(e) {
 			e.preventDefault();
 			var pname = $("#name").val();
@@ -793,7 +793,7 @@ $(window).load(function(){
 			}
 			$(".request_").text("Please input required fields (*)");
 		});
-		
+
         var audio_success = new Audio('<?= $assets ?>sounds/sound2.mp3');
         var audio_error = new Audio('<?= $assets ?>sounds/sound3.mp3');
         var items = {};
@@ -821,7 +821,7 @@ $(window).load(function(){
         $('.attributes').on('ifUnchecked', function (event) {
             $('#options_' + $(this).attr('id')).slideUp();
         });
-		
+
         // $("#poref").attr('disabled','disabled');
 		$("#poref").prop('readonly', true);
 		$('#ref_st').on('ifChanged', function() {
@@ -833,10 +833,10 @@ $(window).load(function(){
 			$("#poref").prop('readonly', true);
 			var temp = $("#temp_reference_no").val();
 			$("#poref").val(temp);
-			
+
 		  }
 		});
-		
+
         //$('#cost').removeAttr('required');
         $('#type').change(function () {
             var t = $(this).val();
@@ -896,14 +896,14 @@ $(window).load(function(){
 
 		/*
         $("#add_item").autocomplete({
-            source: '<?= site_url('products/suggestions'); ?>',
+
             minLength: 1,
             autoFocus: false,
             delay: 200,
             response: function (event, ui) {
                 if ($(this).val().length >= 16 && ui.content[0].id == 0) {
                     //audio_error.play();
-                    bootbox.alert('<?= lang('no_product_found') ?>', function () {
+
                         $('#add_item').focus();
                     });
                     $(this).val('');
@@ -916,7 +916,7 @@ $(window).load(function(){
                 }
                 else if (ui.content.length == 1 && ui.content[0].id == 0) {
                     //audio_error.play();
-                    bootbox.alert('<?= lang('no_product_found') ?>', function () {
+
                         $('#add_item').focus();
                     });
                     $(this).val('');
@@ -932,7 +932,7 @@ $(window).load(function(){
                     }
                 } else {
                     //audio_error.play();
-                    bootbox.alert('<?= lang('no_product_found') ?>');
+
                 }
             }
         });
@@ -1086,7 +1086,7 @@ $(window).load(function(){
             row.children().eq(2).html('<input type="hidden" name="attr_price[]" value="' + $('#aprice').val() + '"><span>' + currencyFormat($('#aprice').val()) + '</span>');
             $('#aModal').modal('hide');
         });
-		
+
 		$(document).on('click', '.edit',function(){
 			var tr = $(this).parent().parent();
 			var qty = tr.find('.rquantity').val();
@@ -1104,14 +1104,14 @@ $(window).load(function(){
 			}
 			//$(input).appendTo("#serial");
 			$('#serial').html(input);
-		});		
-		
+		});
+
 	});
 
     <?php if (isset($product)) { ?>
     $(document).ready(function () {
-		
-		 
+
+
         var t = "<?=$product->type?>";
         if (t !== 'standard') {
             $('.standard').slideUp();
@@ -1223,7 +1223,7 @@ $(window).load(function(){
             $(this).val($('#r' + $(this).attr('id')).text());
         });
     });
-	
+
     <?php } ?>
 </script>
 
@@ -1250,7 +1250,7 @@ $(window).load(function(){
                             ?>
                         </div>
                     </div> -->
-					
+
 					<div class="form-group">
 							<label for="aquantity_unit" class="col-sm-4 control-label"><?= lang('quantity_unit') ?></label>
 
@@ -1260,14 +1260,14 @@ $(window).load(function(){
 					</div>
 					<!--
                     <div class="form-group">
-					
+
                         <label for="aquantity" class="col-sm-4 control-label"><?= lang('quantity') ?></label>
 
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="aquantity">
                         </div>
                     </div>
-					
+
                     <div class="form-group">
                         <label for="acost" class="col-sm-4 control-label"><?= lang('cost') ?></label>
 
@@ -1295,7 +1295,7 @@ $(window).load(function(){
 <script>
 
 $(document).ready(function(){
-		
+
 		 $("#subcategory").select2("destroy").empty().attr("placeholder", "<?= lang('select_category_to_load') ?>").select2({
             placeholder: "<?= lang('select_category_to_load') ?>", data: [
                 {id: '', text: '<?= lang('select_category_to_load') ?>'}
@@ -1337,6 +1337,6 @@ $(document).ready(function(){
             $('#modal-loading').hide();
         });
 	});
-	
-		
+
+
 </script>
