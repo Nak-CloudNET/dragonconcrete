@@ -437,7 +437,7 @@
                         $('#add_item').focus();
                     });
 					/* bootbox.confirm({
-						message: '<?= lang('no_match_found') ?>',
+						message:
 						buttons: {
 							'cancel': {
 								label: 'Close',

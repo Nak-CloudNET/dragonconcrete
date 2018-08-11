@@ -179,7 +179,7 @@
                             // }
                             ?>
                             <?php if($Owner || $Admin || $GP['purchase_order-cost']) {?>
-								<td style="text-align:right; width:100px;"><?= $this->erp->formatMoney($row->unit_cost); ?></td>
+								<td style="text-align:right; width:100px;"><?=$row->unit_cost; ?></td>
                             <?php } ?>
 							<?php
                                 if ($Settings->product_discount) {
