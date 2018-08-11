@@ -84,11 +84,11 @@
                                     <td><?= $product->unit; ?></td>
                                 </tr>
                                 <?php if ($Owner || $Admin) {
-                                    echo '<tr><td>' . $this->lang->line("product_cost") . '</td><td>' . $this->erp->formatMoney($product->cost) . '</td></tr>';
+                                    echo '<tr><td>' . $this->lang->line("product_cost") . '</td><td>' .$product->cost . '</td></tr>';
                                     echo '<tr><td>' . $this->lang->line("product_price") . '</td><td>' . $this->erp->formatMoney($product->price) . '</td></tr>';
                                 } else {
                                     if ($this->session->userdata('show_cost')) {
-                                        echo '<tr><td>' . $this->lang->line("product_cost") . '</td><td>' . $this->erp->formatMoney($product->cost) . '</td></tr>';
+                                        echo '<tr><td>' . $this->lang->line("product_cost") . '</td><td>' . $product->cost    . '</td></tr>';
                                     }
                                     if ($this->session->userdata('show_price')) {
                                         echo '<tr><td>' . $this->lang->line("product_price") . '</td><td>' . $this->erp->formatMoney($product->price) . '</td></tr>';

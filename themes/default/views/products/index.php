@@ -80,15 +80,15 @@
                 {"bSortable": false, "mRender": checkbox}, {
                     "bSortable": false,
                     "mRender": img_hl
-                }, null, null, null, null,null, 
+                }, null, null, null, null,null,
 				<?php if ($Owner || $Admin) { ?>
-                    {"mRender": currencyFormat},
+                    null,
                     {"mRender": currencyFormat},
                 <?php } else { ?>
 
                     <?php if ($GP['products-cost']) { ?>
                         <?php if ($this->session->userdata('show_cost')) { ?>
-                            {"mRender": currencyFormat},
+                            null,
                         <?php } ?>
                     <?php } ?>
 
@@ -149,15 +149,15 @@
                 <?php } ?>
 
             <?php } ?>
-                
+
         ], "footer");
 
     });
 </script>
-<?php 
+<?php
 //if ($Owner) {
     echo form_open('products/product_actions'.($warehouse_id ? '/'.$warehouse_id : ''), 'id="action-form"');
-//} 
+//}
 ?>
 <div class="box">
     <div class="box-header">
@@ -190,7 +190,7 @@
 								</a>
 							</li>
 						<?php } ?>
-						
+
 						<?php if ($Owner || $Admin || $GP['products-print_barcodes']) { ?>
 							<li>
 								<a href="#" id="barcodeProducts" data-action="barcodes">
@@ -198,7 +198,7 @@
 								</a>
 							</li>
 						<?php } ?>
-						
+
 						<?php if ($Owner || $Admin || $GP['products-sync_quantity']) { ?>
 							<li>
 								<a href="#" id="sync_quantity" data-action="sync_quantity">
@@ -206,7 +206,7 @@
 								</a>
 							</li>
 						<?php } ?>
-						
+
 						<?php if ($Owner || $Admin || $GP['products-export']) {?>
 							<li>
 								<a href="#" id="excel" data-action="export_excel">
@@ -219,7 +219,7 @@
 								</a>
 							</li>
 						<?php } ?>
-						
+
 						<?php if ($Owner || $Admin || $GP['products-import']) {?>
 							<li>
 								<a href="<?= site_url('products/import_csv'); ?>">
@@ -227,33 +227,33 @@
 									<span class="text"> <?= lang('import_products'); ?></span>
 								</a>
 							</li>
-						<?php } ?>	
-						
-						<?php if ($Owner || $Admin || $GP['products-adjustments']) {?>	
+						<?php } ?>
+
+						<?php if ($Owner || $Admin || $GP['products-adjustments']) {?>
 							<li>
 								<a href="#" id="adjust_products" data-action="adjustments">
 									<i class="fa fa-filter"></i> <?= lang('adjust_quantity') ?>
 								</a>
 							</li>
-						<?php } ?>	
-						
-						<?php if ($Owner || $Admin || $GP['products-import_quantity']) {?>	
+						<?php } ?>
+
+						<?php if ($Owner || $Admin || $GP['products-import_quantity']) {?>
 							<li>
 								<a href="<?= site_url('products/update_quantity'); ?>">
 									<i class="fa fa-file-text-o"></i>
 									<span class="text"> <?= lang('update_quantity'); ?></span>
 								</a>
 							</li>
-						<?php } ?>	
-						
-						<?php if ($Owner || $Admin || $GP['products-import_price_cost']) {?>	
+						<?php } ?>
+
+						<?php if ($Owner || $Admin || $GP['products-import_price_cost']) {?>
 							<li>
 								<a href="<?= site_url('products/update_price'); ?>">
 									<i class="fa fa-file-text-o"></i>
 									<span class="text"> <?= lang('update_price'); ?></span>
 								</a>
 							</li>
-						<?php } ?>	
+						<?php } ?>
 					<!--	<?php if ($Owner || $Admin || $GP['products-delete']) { ?>
 							<li class="divider"></li>
 							<li><a href="#" class="bpo" title="<?= $this->lang->line("delete_products") ?>"
@@ -296,7 +296,7 @@
                             <div class="form-group">
                                 <label class="control-label" for="product_id"><?= lang("product"); ?></label>
                                 <?php
-								
+
                                 $pr[0] = $this->lang->line("all");;
                                 foreach ($products as $product) {
                                     $pr[$product->id] = $product->name . " | " . $product->code ;
@@ -305,7 +305,7 @@
                                 ?>
                             </div>
                         </div>
-						
+
 						<div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("category", "category") ?>
@@ -354,7 +354,7 @@
                                 echo '<th>' . lang("product_price") . '</th>';
                             } else {
 								if($GP['products-cost']) {
-									if ($this->session->userdata('show_cost')) {
+									if ($this->session->userdata('')) {
 										echo '<th>' . lang("product_cost") . '</th>';
 									}
 								}
@@ -432,12 +432,12 @@
 		/*
 		$("#excel").click(function(e){
 			e.preventDefault();
-			window.location.href = "<?=site_url('products/getProductAll/0/xls/')?>";
+			window.location.href =
 			return false;
 		});
 		$('#pdf').click(function (event) {
             event.preventDefault();
-            window.location.href = "<?=site_url('products/getProductAll/pdf/?v=1'.$v)?>";
+            window.location.href =
             return false;
         });
 		*/
@@ -450,7 +450,7 @@
 			$('.checkbox').each(function(i){
 				if($(this).is(":checked")){
 					if(this.value != ""){
-						arrItems[i] = $(this).val();   
+						arrItems[i] = $(this).val();
 					}
 				}
 			});

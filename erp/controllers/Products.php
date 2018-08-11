@@ -45,14 +45,14 @@ class Products extends MY_Controller
         $this->data['products'] = $this->site->getProducts();
         $this->data['categories'] = $this->site->getAllCategories();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-		
+
         if ($this->Owner || $this->Admin || !$this->session->userdata('warehouse_id')) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             $this->data['warehouse_id'] = $warehouse_id;
             $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-			
+
         } else {
-			
+
             $this->data['warehouses'] = $this->products_model->getUserWarehouses();
 
 			if($warehouse_id){
@@ -68,7 +68,7 @@ class Products extends MY_Controller
         $meta = array('page_title' => lang('products'), 'bc' => $bc);
         $this->page_construct('products/index', $meta, $this->data);
     }
-	
+
 	function adjustment_actions()
 	{
         if (!empty($_POST['val'])) {
@@ -814,7 +814,7 @@ class Products extends MY_Controller
 			}
 			$product_type 			= $this->input->post('type');
 			$cost_combo_item 		= $this->input->post('cost_combo_item');
-			$prodcut_cost 			= $this->erp->formatDecimal($this->input->post('cost'));
+			$prodcut_cost 			= $this->input->post('cost');
 			$data = array(
                 'code' 				=> $this->input->post('code'),
                 'barcode_symbology' => $this->input->post('barcode_symbology'),
