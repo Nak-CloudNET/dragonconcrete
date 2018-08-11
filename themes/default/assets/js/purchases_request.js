@@ -1115,7 +1115,7 @@ function loadItems() {
             /* Unit Cost */
 		
 			if(owner || admin || purchase_request_cost) {
-				tr_html += '<td class="text-right"><input class="form-control text-center sp" name="serial[]" type="hidden" value="' + serial_no + '"><input class="form-control number_only text-center rcost" name="net_cost[]" type="text" id="cost_' + row_no + '" value="' + (net_unit_cost) + '"><input class="rucost" name="unit_cost[]" type="hidden" value="' + net_unit_cost + '"><input class="realucost" name="real_unit_cost[]" type="hidden" value="' + net_unit_cost + '"></td>';
+				tr_html += '<td class="text-right"><input class="form-control text-center sp" name="serial[]" type="hidden" value="' + serial_no + '"><input class="form-control number_only text-center rcost" name="net_cost[]" type="text" id="cost_' + row_no + '" value="' + formatMoney(net_unit_cost) + '"><input class="rucost" name="unit_cost[]" type="hidden" value="' + net_unit_cost + '"><input class="realucost" name="real_unit_cost[]" type="hidden" value="' + net_unit_cost + '"></td>';
 			} else {
 				tr_html += '<input class="rucost" name="unit_cost[]" type="hidden" value="' + net_unit_cost + '"><input class="realucost" name="real_unit_cost[]" type="hidden" value="' + net_unit_cost + '">';
 			}
@@ -1184,7 +1184,7 @@ function loadItems() {
 			}
 		}
 		var col = 3;
-        var tfoot = '<tr id="tfoot" class="tfoot active"><th colspan="'+col+'">Total</th><th class="text-center">'+(parseFloat(cost))+'</th><th class="text-center">' + formatNumber(parseFloat(count) - 1) + '</th><th class="text-right">'+formatNumber(parseFloat(stock))+'</th>';
+        var tfoot = '<tr id="tfoot" class="tfoot active"><th colspan="'+col+'">Total</th><th class="text-center">'+formatNumber(parseFloat(cost))+'</th><th class="text-center">' + formatNumber(parseFloat(count) - 1) + '</th><th class="text-right">'+formatNumber(parseFloat(stock))+'</th>';
         if (po_edit) {
             tfoot += '<th class="rec_con"></th>';
         }
@@ -1195,8 +1195,7 @@ function loadItems() {
         if (site.settings.tax1 == 1) {
             tfoot += '<th class="text-right">'+formatMoney(product_tax)+'</th>';
         }
-        tfoot += '<th class="text-right">'+
-			(total)+'</th><th class="text-center"><i class="fa fa-trash-o" style="opacity:0.5; filter:alpha(opacity=50);"></i></th></tr>';
+        tfoot += '<th class="text-right">'+ formatMoney(total)+'</th><th class="text-center"><i class="fa fa-trash-o" style="opacity:0.5; filter:alpha(opacity=50);"></i></th></tr>';
         $('#poTable tfoot').html(tfoot);
 		
         // Order level discount calculations

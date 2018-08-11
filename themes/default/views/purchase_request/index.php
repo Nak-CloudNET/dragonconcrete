@@ -48,7 +48,7 @@
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, {"mRender": fld}, null, null, null, {"mRender": row_status},null,{"mRender": row_status}, {"bSortable": false}],
+            }, {"mRender": fld}, null, null, null, {"mRender": row_status},{"mRender":currencyFormat},{"mRender": row_status}, {"bSortable": false}],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
                 var oSettings = oTable.fnSettings();
 				var action =$('td:eq(8)',nRow);
@@ -100,7 +100,7 @@
                     total += parseFloat(aaData[aiDisplay[i]][6]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[6].innerHTML = (total);
+                nCells[6].innerHTML = currencyFormat(total);
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
