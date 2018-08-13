@@ -96,8 +96,8 @@
 										<td><?= $anlysis->product_name .' ('.$anlysis->product_code .')'; ?></td>
 										<td class="text-center"><span class="label label-primary"><?= $anlysis->variant; ?></span></td>
 										<td><?= $anlysis->Cquantity; ?></td>
-										<td><?= $this->erp->formatMoney($anlysis->Ccost);?></td>
-										<td><?= $this->erp->formatMoney($total_cost);?></td>
+										<td><?= ($anlysis->Ccost);?></td>
+										<td><?= ($total_cost);?></td>
 										<td><?= $this->erp->formatPercentage($percentage); ?>%</td>
 									</tr>
 									<?php
@@ -164,8 +164,8 @@
 										<td><?= $anlysis->product_name .' ('.$anlysis->product_code .')'; ?></td>
 										<td class="text-center"><span class="label label-primary"><?= $anlysis->variant; ?></span></td>
 										<td><?= $anlysis->Cquantity; ?></td>
-										<td><?= $this->erp->formatMoney($anlysis->Ccost); ?></td>
-										<td><?= $this->erp->formatMoney($cost); ?></td>
+										<td><?= ($anlysis->Ccost); ?></td>
+										<td><?= ($cost); ?></td>
 										<td><?= $this->erp->formatPercentage($percentage); ?>%</td>
 									</tr>
 									<?php

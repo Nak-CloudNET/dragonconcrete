@@ -2185,10 +2185,10 @@ class Purchases extends MY_Controller
 				for ($r = 0; $r < $i; $r++) {
 					$item_code 		= $_POST['product'][$r];
 					$pro_id 		= $_POST['product_id'][$r];
-					$item_net_cost 	= $this->erp->formatPurDecimal($_POST['net_cost'][$r]);
-					$unit_cost 		= $this->erp->formatPurDecimal($_POST['unit_cost'][$r]);
+					$item_net_cost 	= $_POST['net_cost'][$r];
+					$unit_cost 		= $_POST['unit_cost'][$r];
 					$unit_cost_real = $unit_cost;
-					$real_unit_cost = $this->erp->formatPurDecimal($_POST['real_unit_cost'][$r]);
+					$real_unit_cost = $_POST['real_unit_cost'][$r];
 					$item_quantity 	= ($_POST['received'][$r] > 0 ? $_POST['received'][$r]:$_POST['quantity'][$r]);
 					$serial_no 		= $_POST['serial'][$r];
 					$create_id 		= $_POST['create_id'][$r];
@@ -8349,10 +8349,10 @@ class Purchases extends MY_Controller
             $i = sizeof($_POST['product']);
             for ($r = 0; $r < $i; $r++) {
                 $item_code 		= $_POST['product'][$r];
-                $item_net_cost 	= $this->erp->formatPurDecimal(isset($_POST['net_cost'][$r]));
-                $unit_cost 		= $this->erp->formatPurDecimal($_POST['unit_cost'][$r]);
+                $item_net_cost 	= isset($_POST['net_cost'][$r]);
+                $unit_cost 		= $_POST['unit_cost'][$r];
 				$unit_cost_real = $unit_cost;
-                $real_unit_cost = $this->erp->formatPurDecimal($_POST['real_unit_cost'][$r]);
+                $real_unit_cost = $_POST['real_unit_cost'][$r];
 				
                 $item_quantity 	= $_POST['quantity'][$r];
 				$serial_no 		= $_POST['serial'][$r];

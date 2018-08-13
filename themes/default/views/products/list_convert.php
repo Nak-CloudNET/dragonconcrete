@@ -26,7 +26,7 @@
 					"mRender": checkbox
 				}, 
 				{"mRender": fld}, null, 
-				{"mRender": currencyFormat}, 
+				null,
 				{"mRender": formatDecimal}, 
 				null, null, null,
 				{"bSortable": false}

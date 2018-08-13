@@ -565,7 +565,7 @@ $(document).on('click', '.podel', function () {
         $('select.select').select2({minimumResultsForSearch: 6});
         $('#pquantity').val(qty);
         $('#old_qty').val(qty);
-        $('#pcost').val(formatDecimal(unit_cost));
+        $('#pcost').val((unit_cost));
         $('#punit_cost').val(formatPurDecimal(parseFloat(unit_cost)+parseFloat(pr_tax_val)));
         $('#poption').select2('val', item.row.option);
 		$('#tax_method').select2('val', tax_method);
@@ -575,7 +575,7 @@ $(document).on('click', '.podel', function () {
         $('#pnote').val(pnote);
         $('#pexpiry').val(row.children().children('.rexpiry').val());
         $('#pdiscount').val(discount);
-        $('#net_cost').text(formatMoney(net_cost));
+        $('#net_cost').text((net_cost));
         $('#pro_tax').text(formatMoney(pr_tax_val));
         $('#prModal').appendTo("body").modal('show');
 

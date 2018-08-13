@@ -535,7 +535,7 @@ $('#podiscount').focus(function () {
 			var qty = row.children().children('.received').val();
 		}
         var product_option = row.children().children('.roption').val(),
-        unit_cost = z(row.children().children('.realucost').val()),
+        unit_cost = (row.children().children('.realucost').val()),
         realcost = formatPurDecimal(row.children().children('.realcost').val()),
         discount = row.children().children('.rdiscount').val(),
         supplier = row.children().children('.rsupplier_id').val();
@@ -650,7 +650,7 @@ $('#podiscount').focus(function () {
         $('#item_id').val(item_id);
         $('#pexpiry').val(row.children().children('.rexpiry').val());
         $('#pdiscount').val(discount);
-        $('#net_cost').text(formatPurDecimal(net_cost));
+        $('#net_cost').text((net_cost));
         $('#pro_tax').text(formatPurDecimal(pr_tax_val));
         $('#prModal').appendTo("body").modal('show');
 

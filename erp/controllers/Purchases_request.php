@@ -519,9 +519,9 @@ class Purchases_request extends MY_Controller
             $i = sizeof($_POST['product']);
             for ($r = 0; $r < $i; $r++) {
                 $item_code = $_POST['product'][$r];
-                $unit_cost = $this->erp->formatPurDecimal($_POST['unit_cost'][$r]);
+                $unit_cost = $_POST['unit_cost'][$r];
 				$unit_cost_real = $unit_cost;
-                $real_unit_cost = $this->erp->formatPurDecimal($_POST['real_unit_cost'][$r]);
+                $real_unit_cost = $_POST['real_unit_cost'][$r];
                 $item_quantity  = $_POST['quantity'][$r];
 				
 				$serial_no  = $_POST['serial'][$r];

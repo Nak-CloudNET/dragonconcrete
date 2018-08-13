@@ -512,7 +512,7 @@ $(document).on('click', '.podel', function () {
         item = poitems[item_id];
         var qty = row.children().children('.rquantity').val(), 
         product_option = row.children().children('.roption').val(),
-        unit_cost = formatPurDecimal(row.children('.realucost').val()),
+        unit_cost = (row.children('.realucost').val()),
         discount = row.children().children('.rdiscount').val(),
         supplier = row.children().children('.rsupplier_id').val();
 		tax_method 		= row.children().children('.tax_method').val();
@@ -616,7 +616,7 @@ $(document).on('click', '.podel', function () {
         $('#item_id').val(item_id);
         $('#pexpiry').val(row.children().children('.rexpiry').val());
         $('#pdiscount').val(discount);
-        $('#net_cost').text(formatPurDecimal(net_cost));
+        $('#net_cost').text((net_cost));
         $('#pro_tax').text(formatPurDecimal(pr_tax_val));
         $('#prModal').appendTo("body").modal('show');
 
