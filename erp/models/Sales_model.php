@@ -5517,8 +5517,8 @@ class Sales_model extends CI_Model
                                 `erp_sale_items`.`unit_price`,
                                 `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
-                                erp_delivery_items.quantity_received AS quantity,
                                  ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                 `erp_deliveries`.`location`,
                                  DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
                                 `erp_sale_items`.`item_tax`,
                                 `erp_sale_items`.`discount` 
