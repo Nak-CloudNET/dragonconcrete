@@ -554,7 +554,6 @@
                 </div>
 				
 				<div class="buttons" >
-				
                     <div class="btn-group btn-group-justified">
 
 						<div class="btn-group">
