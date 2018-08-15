@@ -5526,8 +5526,7 @@ class Sales_model extends CI_Model
                                 `erp_sales`
                                 LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
                                 LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
-                                LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
-                                
+                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id`
                             WHERE
                                 `erp_sale_items`.`product_type` = 'combo' AND 
                                 `erp_sale_items`.`sale_id` = $id
