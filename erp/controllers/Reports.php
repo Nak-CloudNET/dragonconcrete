@@ -7842,18 +7842,19 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang('nothing_found'));
             redirect($_SERVER["HTTP_REFERER"]);
 
-        } else { 
+        } else {
 			
             $this->load->library('datatables');
 
 			$this->datatables
-			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, reference_no, " . 
-						 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
-						 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".status", FALSE)
+			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, purchases_order.reference_no as po_ref, purchases.reference_no, " . 
+						 $this->db->dbprefix('warehouses') . ".name as wname, companies.name as supplier,
+						 purchases.grand_total, purchases.order_discount, purchases.paid, (erp_purchases.grand_total - erp_purchases.paid) as balance, " . $this->db->dbprefix('purchases') . ".status", FALSE)
                 ->from('purchases')
+                ->join('purchases_order', 'purchases.order_id = purchases_order.id', 'left')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
                 ->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
-				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
+				->join('companies', 'companies.id = purchases.supplier_id', 'left')
                 ->group_by('purchases.id');
 			
 			if ($user) {
@@ -17483,7 +17484,7 @@ function salesDetail_actions(){
 		if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-		if ($this->input->post('form_action') == 'excel' || $this->input->post('form_action') == 'pdf') {  
+		if ($this->input->post('form_action') == 'excel' || $this->input->post('form_action') == 'pdf') { 
 		
 		$this->db->select($this->db->dbprefix('purchases_order') . ".id, purchases_order.date, 
 				reference_no,supplier, grand_total " , FALSE)
@@ -17596,9 +17597,10 @@ function salesDetail_actions(){
 			
 			$this->load->library('datatables');
 			$this->datatables
-			->select("purchases_order.id as id, purchases_order.date, reference_no, supplier, grand_total")
+			->select("purchases_order.id as id, purchases_order.date, reference_no, companies.name as supplier, purchase_order_items.quantity_po, purchase_order_items.quantity_received, purchase_order_items.quantity_balance, grand_total")
 			->from("purchases_order")
-			->join('purchase_order_items', 'purchase_order_items.purchase_id = purchases_order.id', 'inner')
+            ->join('purchase_order_items', 'purchase_order_items.purchase_id = purchases_order.id', 'inner')
+			->join('companies', 'purchases_order.supplier_id = companies.id', 'left')
 			->group_by('reference_no');
 			if($supplier){
 				$this->db->where('purchases_order.supplier_id',$supplier);

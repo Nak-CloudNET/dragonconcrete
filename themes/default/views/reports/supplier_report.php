@@ -571,9 +571,9 @@
                     gtotal += parseFloat(aaData[aiDisplay[i]][7]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[4].innerHTML = currencyFormat(parseFloat(qty_order));
-                nCells[5].innerHTML = currencyFormat(parseFloat(qty_received));
-                nCells[6].innerHTML = currencyFormat(parseFloat(qty_balance));
+                nCells[4].innerHTML = formatQuantity(parseFloat(qty_order));
+                nCells[5].innerHTML = formatQuantity(parseFloat(qty_received));
+                nCells[6].innerHTML = formatQuantity(parseFloat(qty_balance));
                 nCells[7].innerHTML = currencyFormat(parseFloat(gtotal));
                 }
             
