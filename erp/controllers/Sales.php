@@ -4012,7 +4012,7 @@ class Sales extends MY_Controller
 									'item_id' => $item_id[$i],
 									'product_id' => $productID[$i],
 									'sale_id' => $getdelivery->sale_id,
-									'product_name' => $productName[$i],
+									//'product_name' => $productName[$i],
 									'product_type' => $getproduct->type,
 									'option_id' => $option_id[$i],
 									'warehouse_id' => $warehouse_id[$i],
@@ -4030,7 +4030,7 @@ class Sales extends MY_Controller
 				$products[] = array(
 							'product_id' 		=> $productID[$i],
 							'product_code' 		=> $getproduct->code,
-							'product_name' 		=> $productName[$i],
+
 							'product_type' 		=> $getproduct->type,
 							'option_id' 		=> $option_id[$i],
 							'quantity' 			=> $qty_received[$i],
@@ -4045,7 +4045,7 @@ class Sales extends MY_Controller
 		}
 
 		if($this->sales_model->save_edit_delivery($id, $deliveryrec, $delivery_items)){
-			
+
 			if($pos == 1){
 				$getdelivery->type = "invoice";
 			}
@@ -4106,7 +4106,7 @@ class Sales extends MY_Controller
 							$stock_info[] = array(
 								'product_id' => $delivery_item['product_id'],
 								'product_code' => $getproduct->code,
-								'product_name' => $delivery_item['product_name'],
+								//'product_name' => $delivery_item['product_name'],
 								'product_type' => $getproduct->type,
 								'option_id' => $delivery_item['option_id'],
 								'net_unit_price' => $getsaleitem->net_unit_price,
@@ -14994,7 +14994,7 @@ class Sales extends MY_Controller
         $this->load->view($this->theme .'sales/invoice_devery',$this->data);
     }
 
-	function invoice_combine_item($id)
+	function invoice_combine_item($id=NULL)
     {
 		$this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
 
