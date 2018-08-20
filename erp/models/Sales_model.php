@@ -4352,7 +4352,7 @@ class Sales_model extends CI_Model
 		
 	}
 	public function save_edit_delivery($id, $delivery, $delivery_items) {
-		
+
 		if($id && $delivery && $delivery_items){
 			$this->resetDeliveryActions($id);	
 			foreach($delivery_items as $g){
@@ -4364,7 +4364,7 @@ class Sales_model extends CI_Model
 					$delivery['total_cost'] += $totalCostProducts->total_cost;
 				}
 			}
-			
+
 			if($this->db->update('deliveries', $delivery, array('id' => $id))) {
 				
 				$this->db->delete('delivery_items', array('delivery_id' => $id));
@@ -4390,8 +4390,8 @@ class Sales_model extends CI_Model
 						//$this->erp->print_arrays($getitem);
 						$item = array(
 							'product_id' => $delivery_item['product_id'],
-							'product_name' => $delivery_item['product_name'],
-							'product_type' => $getproduct->type,
+
+							//'product_type' => $getproduct->type,
 							'option_id' => $delivery_item['option_id'],
 							'warehouse_id' => $delivery_item['warehouse_id'],
 							'quantity' => $delivery_item['quantity_received'],
@@ -4400,6 +4400,7 @@ class Sales_model extends CI_Model
 							'old_sqty' => $old_sqty
 						);
 						$item_costs = $this->site->item_costing($item);
+                        //$this->erp->print_arrays($item_costs);
 						foreach ($item_costs as $item_cost) {
 							$item_cost['delivery_item_id'] = $delivery_item_id;
 							$item_cost['delivery_id'] = $id;
@@ -4407,10 +4408,11 @@ class Sales_model extends CI_Model
 								$item_cost['date'] = $delivery['date'];
 							}
 							//$option_id = $item_cost['option_id'];
-							
+
 							if(! isset($item_cost['pi_overselling'])) {
 								$this->db->insert('costing', $item_cost);
 							}
+
 						}
 					}
 				}
