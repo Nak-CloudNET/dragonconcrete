@@ -2598,10 +2598,9 @@ class Account extends MY_Controller
 						SELECT
 							erp_companies.name
 						FROM
-							erp_sales
-						INNER JOIN erp_companies ON erp_companies.id = erp_sales.customer_id
+							erp_companies
 						WHERE
-							erp_sales.reference_no = gt.reference_no
+							gt.customer_id = erp_companies.id
 						LIMIT 0,1
 					)
 				WHEN gt.tran_type = 'PURCHASES' THEN
@@ -2609,10 +2608,9 @@ class Account extends MY_Controller
 						SELECT
 							erp_companies.name
 						FROM
-							erp_purchases
-						INNER JOIN erp_companies ON erp_companies.id = erp_purchases.supplier_id
+							erp_companies
 						WHERE
-							erp_purchases.reference_no = gt.reference_no
+							gt.customer_id = erp_companies.id
 						LIMIT 0,1
 					)
 				WHEN gt.tran_type = 'SALES-RETURN' THEN
@@ -2656,6 +2654,16 @@ class Account extends MY_Controller
 						INNER JOIN erp_companies ON erp_companies.id = erp_sales.customer_id
 						WHERE
 							erp_payments.reference_no = gt.reference_no
+						LIMIT 0,1
+					)
+				WHEN gt.tran_type = 'STOCK_ADJUST' THEN
+					(
+						SELECT
+							erp_users.username
+						FROM
+							erp_users
+						WHERE
+							gt.customer_id = erp_users.id
 						LIMIT 0,1
 					)
 				ELSE
