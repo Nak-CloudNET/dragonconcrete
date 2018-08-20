@@ -307,7 +307,7 @@ if (!empty($variants)) {
 					
                     <div class="form-group standard cost">
                         <?= lang("product_cost", "cost") ?>
-                        <?= form_input('cost', (isset($_POST['cost']) ? $_POST['cost'] : ($product ? $this->erp->formatDecimal($product->cost) : '')), 'class="form-control tip number_only" id="cost" required="required"') ?>
+                        <?= form_input('cost', (isset($_POST['cost']) ? $_POST['cost'] : ($product ? $this->erp->formatDecimal($product->cost) : '')), 'class="form-control tip number_only" id="cost"') ?>
                     </div>
                     <div class="form-group all">
                         <?= lang("product_price", "price") ?>
@@ -725,7 +725,7 @@ if (!empty($variants)) {
         $('#type').change(function () {
             var t = $(this).val();
             if (t !== 'standard') {
-                $('.standard').slideUp();
+                //$('.standard').slideUp();
                 //$('#cost').attr('required', 'required');
                 $('#track_quantity').iCheck('uncheck');
                 //$('form[data-toggle="validator"]').bootstrapValidator('addField', 'cost');
@@ -1124,6 +1124,9 @@ if (!empty($variants)) {
 			$('.cb_footer_cost').html(subt);
 			$('#cost_combo_item').val(formatDecimal(subt));
 			$('#price').val(formatDecimal(tpprice));
+
+            $("#cost").val(formatDecimal(subt));
+            $("#cost").attr('readonly', 'true');
 		});
 		
     });
@@ -1139,8 +1142,12 @@ if (!empty($variants)) {
 		});
 		
 		$("#price").val(total_price);
-		$(".cb_footer_cost").text(formatDecimal(total_cost));
-		$("#cost_combo_item").val(formatDecimal(total_cost));
+        $(".cb_footer_cost").text(formatDecimal(total_cost));
+        $("#cost_combo_item").val(formatDecimal(total_cost));
+
+        $("#cost").val(formatDecimal(total_cost));
+		$("#cost").attr('readonly', 'true');
+
 	}
 
     <?php if ($product) { ?>
@@ -1148,7 +1155,7 @@ if (!empty($variants)) {
         var t = "<?=$product->type?>";
         if (t !== 'standard') {
             $('.standard').slideUp();
-            $('#cost').attr('required', 'required');
+            //$('#cost').attr('required', 'required');
             $('#track_quantity').iCheck('uncheck');
             $('form[data-toggle="validator"]').bootstrapValidator('addField', 'cost');
         } else {

@@ -6948,7 +6948,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
         if($biller_id){
             $this->datatables
-            ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+            ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,companies.country,qty_order.qty AS qty_order, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
             ->from('deliveries')
             ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
             ->where('type','sale_order')
@@ -6959,7 +6959,7 @@ class Sales extends MY_Controller
             ->order_by('deliveries.id', 'desc');
         }else{
     		$this->datatables
-                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,companies.country,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
                 ->from('deliveries')
                 ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
     			->where('type','sale_order')
