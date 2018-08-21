@@ -20270,10 +20270,11 @@ function salesDetail_actions(){
         if($to_date == 0){
             $to_date = null;
         }
+
 		$wid = $this->reports_model->getWareByUserID();
-        $this->erp->checkPermissions('inventory_valuation_detail', NULL, 'product_report');
-        // $this->erp->checkPermissions('index', NULL, 'chart_report');
+        $this->erp->checkPermissions('suppliers', NULL, 'product_report');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        
         if ($pdf || $excel) {
 			$this->load->library('excel');
 			$this->excel->setActiveSheetIndex(0);
@@ -20291,8 +20292,9 @@ function salesDetail_actions(){
 			$row = 2;
 			$grand = 0 ;
 			$gqty = 0;
-			$this->db->select("erp_purchases.supplier_id,supplier,SUM(erp_purchase_items.quantity) as qty");
-			$this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
+			$this->db->select("erp_purchases.supplier_id,erp_companies.name as supplier,SUM(erp_purchase_items.quantity) as qty");
+            $this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
+			$this->db->join("erp_companies","erp_purchases.supplier_id = erp_companies.id","LEFT");
 			if($supplier){
 				$this->db->where("erp_purchases.supplier_id",$supplier);
 			}
