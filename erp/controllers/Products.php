@@ -454,10 +454,10 @@ class Products extends MY_Controller
             }
 
         if (!$this->Owner && !$this->Admin) {
-            if (!$this->session->userdata('show_cost')) {
+            if (!$this->GP['products-cost']) {
                 $this->datatables->unset_column("cost");
             }
-            if (!$this->session->userdata('show_price')) {
+            if (!$this->GP['products-price']) {
                 $this->datatables->unset_column("price");
             }
         }
