@@ -105,6 +105,7 @@
             null,
             {"mRender": formatQuantity, "bSearchable": false},
             {"mRender": formatQuantity, "bSearchable": false},
+
             {"mRender": delivery_status, "bSearchable": false}, 
             {"bSortable": false}],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
