@@ -2106,7 +2106,7 @@ class Products extends MY_Controller
         if ($warehouse_id) {
             $this->datatables
                 ->select("{$this->db->dbprefix('adjustments')}.id as id,
-                date, reference_no, warehouses.name as wh_name, 0 as quantity,
+                adjustments.date, reference_no, warehouses.name as wh_name, erp_adjustment_items.quantity as quantity,
                 CONCAT({$this->db->dbprefix('users')}.first_name, ' ',
                 {$this->db->dbprefix('users')}.last_name) as created_by,
                 {$this->db->dbprefix('adjustments')}.note,
@@ -2114,6 +2114,7 @@ class Products extends MY_Controller
                 ->from('adjustments')
                 ->join('warehouses', 'warehouses.id=adjustments.warehouse_id', 'left')
                 ->join('users', 'users.id=adjustments.created_by', 'left')
+                ->join('adjustment_items', 'adjustment_items.adjust_id = adjustments.id', 'left')
                 ->group_by("adjustments.id");
 
                 if (count($warehouse_ids) > 1) {
