@@ -3901,7 +3901,7 @@ class Sales_model extends CI_Model
     {
         $pos = $delivery['pos'];
         unset($delivery['pos']);
-        unset($delivery['location']);
+
 
         if(isset($delivery) && !empty($delivery) && isset($delivery_items) && !empty($delivery_items)){
             foreach($delivery_items as $g){

@@ -13767,6 +13767,7 @@ class Sales extends MY_Controller
 
             $location = $this->input->post('add_item_location');
 
+
 			$sale_id = $this->input->post('sale_id');
 			$sale_reference_no = $this->input->post('sale_reference');
 			$customer_id = $this->input->post('customer_id');
@@ -13798,6 +13799,7 @@ class Sales extends MY_Controller
 				'pos'				=> $pos,
                 'location'          => $location
 			);
+			//$this->erp->print_arrays($delivery);
 
 			if($delivery){
 
@@ -13814,6 +13816,7 @@ class Sales extends MY_Controller
 				$items_id = $this->input->post('delivery_id');
 				$piece = $this->input->post('piece');
 				$wpiece = $this->input->post('wpiece');
+
 
 				$pro_num = sizeof($product_id);
 				for($i=0; $i<$pro_num; $i++) {
