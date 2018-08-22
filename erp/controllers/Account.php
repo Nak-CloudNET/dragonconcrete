@@ -1508,7 +1508,8 @@ class Account extends MY_Controller
 				) AS balance,
 				COUNT(
 					erp_purchases.id
-				) as ap_number
+				) as ap_number,
+				purchases.date
 				")
 			->from('purchases')
 			->join('companies', 'companies.id = purchases.supplier_id', 'inner')
