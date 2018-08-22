@@ -87,9 +87,9 @@
                 <?php } else { ?>
 
                     <?php if ($GP['products-cost']) { ?>
-                        <?php if ($this->session->userdata('show_cost')) { ?>
+
                             null,
-                        <?php } ?>
+
                     <?php } ?>
 
                     <?php if ($GP['products-price']) { ?>
@@ -354,14 +354,10 @@
                                 echo '<th>' . lang("product_price") . '</th>';
                             } else {
 								if($GP['products-cost']) {
-									if ($this->session->userdata('')) {
 										echo '<th>' . lang("product_cost") . '</th>';
-									}
 								}
 								if($GP['products-price']) {
-									if ($this->session->userdata('show_price')) {
 										echo '<th>' . lang("product_price") . '</th>';
-									}
 								}
                             }
                             ?>
@@ -394,12 +390,10 @@
                                 echo '<th></th>';
                             } else {
 								if($GP['products-cost']) {
-									if ($this->session->userdata('show_cost')) {
-										echo '<th></th>';
-									}
+									echo '<th></th>';
 								}
 								if($GP['products-price']) {
-									if ($this->session->userdata('show_price')) {
+									if ($this->GP['products-price']) {
 										echo '<th></th>';
 									}
 								}
