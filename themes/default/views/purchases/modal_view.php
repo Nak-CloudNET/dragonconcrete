@@ -260,7 +260,7 @@
                         if($inv->order_discount_id){
                             $perc='('.$inv->order_discount_id.'%)';
                         }
-                        echo '<tr><td></td><td colspan="' . $col . '" style="text-align:right; padding-right:10px;">' . lang("order_tax") . '</td><td style="text-align:right; padding-right:10px;">' . $this->erp->formatMoney($inv->order_tax) . '</td></tr>';
+                        echo '<tr><td></td><td colspan="' . $col . '" style="text-align:right; padding-right:10px;">' . lang("Tax_Rate") . '</td><td style="text-align:right; padding-right:10px;">' . $this->erp->formatMoney($inv->order_tax) . '</td></tr>';
                     }
 //                    $this->erp->print_arrays($inv);
                     ?>
