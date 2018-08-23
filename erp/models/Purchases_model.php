@@ -1406,13 +1406,14 @@ class Purchases_model extends CI_Model
                         purchases.payment_status,
 						purchases.updated_by,
 						purchases.updated_count,
+						tax_rates.rate as t_n,
                         purchases.opening_ap, companies.company,users.username, tax_rates.name AS tax_name, warehouses.name AS ware_name")
                 ->from('purchases')
 				->join('companies', 'companies.id = purchases.biller_id', 'inner')
                 ->join('purchases_order', 'purchases.order_id = purchases_order.id', 'left')
                 ->join('purchases_request', 'purchases_order.request_id = purchases_request.id', 'left')
                 ->join('users', 'purchases.created_by = users.id', 'left')
-                ->join('tax_rates', 'purchases.order_discount_id = tax_rates.id', 'left')
+                ->join('tax_rates', 'purchases.order_tax_id = tax_rates.id', 'left')
                 ->join('warehouses', 'purchases.warehouse_id = warehouses.id', 'left')
     			->where('purchases.id',$id);
     	if($wh){
