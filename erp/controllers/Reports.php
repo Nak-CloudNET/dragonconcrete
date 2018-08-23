@@ -81,9 +81,9 @@ class Reports extends MY_Controller
             $start_date = $this->erp->fld($start_date);
             $end_date = $this->erp->fld($end_date);
         }
-		
+
         $detail_link = anchor('purchases/expense_note/$1', '<i class="fa fa-file-text-o"></i> ' . lang('expense_note'), 'data-toggle="modal" data-target="#myModal2"');
-         
+
 
         $this->load->library('datatables');
 
@@ -113,8 +113,8 @@ class Reports extends MY_Controller
 		}
 		if ($start_date) {
 			$this->datatables->where($this->db->dbprefix('expenses').'.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
-		} 
-		
+		}
+
         echo $this->datatables->generate();
     }
 	function profit_chart()
@@ -124,7 +124,7 @@ class Reports extends MY_Controller
         $this->data['stock'] = $this->reports_model->getStockValue();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('reports'), 'bc' => $bc);
-		
+
 		if($this->input->post('biller')){
 			$biller_id = $this->input->post('biller');
 		}else{
@@ -157,7 +157,7 @@ class Reports extends MY_Controller
         $this->page_construct('reports/warehouse_stock', $meta, $this->data);
 
     }
-	
+
 	function category_stock($warehouse = NULL)
     {
         $this->erp->checkPermissions('category_stock',NULL,'chart_report');
@@ -168,7 +168,7 @@ class Reports extends MY_Controller
 		$this->data['billers'] = $this->site->getAllCompanies('biller');
 		$this->data['customers'] = $this->site->getCustomers();
 		$this->form_validation->set_rules('user_post', lang("user_post"), 'required');
-		
+
         if ($this->form_validation->run() == true) {
 			$biller = $this->input->post('biller');
 			$customer = $this->input->post('customer');
@@ -187,9 +187,9 @@ class Reports extends MY_Controller
         $this->page_construct('reports/category_stock', $meta, $this->data);
 
     }
-	
+
 	function cash_chart($accountcode = NULL)
-    { 
+    {
 		$this->erp->checkPermissions('cash_analysis',NULL,'chart_report');
         $data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         if ($this->input->get('accountcode')) {
@@ -205,7 +205,7 @@ class Reports extends MY_Controller
         $this->page_construct('reports/cash_chart', $meta, $this->data);
 
     }
-    
+
 	function expiry_alerts($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('expiry_alerts');
@@ -253,7 +253,7 @@ class Reports extends MY_Controller
             $this->datatables
                 ->select("products.image, erp_purchase_items.product_code, erp_purchase_items.product_name, SUM(erp_purchase_items.quantity_balance), warehouses.name, erp_purchase_items.expiry, serial.serial_number")
                 ->from('purchase_items')
-                ->join('products', 'products.id = purchase_items.product_id', 'left')				
+                ->join('products', 'products.id = purchase_items.product_id', 'left')
                 ->join('warehouses', 'warehouses.id=purchase_items.warehouse_id', 'left')
 				->join('serial', 'serial.product_id = products.id', 'left')
 				->where('erp_purchase_items.expiry !=', NULL)->where('erp_purchase_items.expiry !=', '0000-00-00')
@@ -271,16 +271,16 @@ class Reports extends MY_Controller
         $this->erp->checkPermissions('quantity_alert',NULL,'product_report');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 		$wid = $this->reports_model->getWareByUserID();
-        
+
             $this->data['warehouses'] = $this->reports_model->getWareFullByUSER($wid);
-       
+
             $this->data['warehouse'] = $this->site->getWarehouseByID($warehouse_id) ;
 			if($warehouse_id){
 			 $this->data['warehouse_id'] = $warehouse_id;
 			}else{
 				$this->data['warehouse_id'] = 0;
 			}
-			
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('product_quantity_alerts')));
         $meta = array('page_title' => lang('product_quantity_alerts'), 'bc' => $bc);
         $this->page_construct('reports/quantity_alerts', $meta, $this->data);
@@ -309,7 +309,7 @@ class Reports extends MY_Controller
                     ->where('track_quantity', 1);
 					if($wid){
 						$this->db->where("warehouses_products.warehouse_id IN ($wid)");
-					}		
+					}
                    $this->db->order_by('code desc');
             }
 
@@ -411,15 +411,15 @@ class Reports extends MY_Controller
                     ->where('track_quantity', 1);
 				if($wid){
 					$this->datatables->where("warehouses_products.warehouse_id IN ($wid)");
-				}				
-				
+				}
+
             }
 
             echo $this->datatables->generate();
 
         }
     }
-	
+
 	function getPurchasePaymentAlerts($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('expiry_alerts', TRUE);
@@ -452,7 +452,7 @@ class Reports extends MY_Controller
         }
         echo $this->datatables->generate();
     }
-	
+
 	function getCustomerPaymentAlerts($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('expiry_alerts', TRUE);
@@ -490,7 +490,7 @@ class Reports extends MY_Controller
             }
         echo $this->datatables->generate();
     }
-	
+
     function suggestions()
     {
         $term = $this->input->get('term', TRUE);
@@ -509,7 +509,7 @@ class Reports extends MY_Controller
             echo FALSE;
         }
     }
-	
+
 	function products($biller_id = NULL)
     {
         $this->erp->checkPermissions('product',NULL,'product_report');
@@ -554,12 +554,12 @@ class Reports extends MY_Controller
             $this->data['warehouses'] = NULL;
             $this->data['warehouse_id'] = $this->session->userdata('warehouse_id');
             $this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->site->getWarehouseByID($this->session->userdata('warehouse_id')) : NULL;
-        }		
+        }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('products_report')));
         $meta = array('page_title' => lang('products_report'), 'bc' => $bc);
         $this->page_construct('reports/products', $meta, $this->data);
     }
-   
+
     function product_daily_in_out($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('daily',NULL,'product_report');
@@ -571,7 +571,7 @@ class Reports extends MY_Controller
         } else {
             $dt = "Till " . $this->input->post('end_date');
         }
-        
+
         if ($this->Owner || $this->Admin) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             if(isset($warehouse_id)){
@@ -581,7 +581,7 @@ class Reports extends MY_Controller
                 $this->data['warehouse_id']=null;
                 $this->data['warehouse'] = null;
             }
-            
+
         } else {
             $this->data['warehouses'] = NULL;
             $this->data['warehouse_id'] = $this->session->userdata('warehouse_id');
@@ -589,7 +589,7 @@ class Reports extends MY_Controller
         }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('daily_products')));
         $meta = array('page_title' => lang('daily_products'), 'bc' => $bc);
-        
+
         $this->page_construct('reports/product_daily_in_out', $meta, $this->data);
     }
 
@@ -604,7 +604,7 @@ class Reports extends MY_Controller
         } else {
             $dt = "Till " . $this->input->post('end_date');
         }
-		
+
 		if ($this->Owner || $this->Admin) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
 			if(isset($warehouse_id)){
@@ -614,7 +614,7 @@ class Reports extends MY_Controller
 				$this->data['warehouse_id']=null;
 				$this->data['warehouse'] = null;
 			}
-            
+
         } else {
             $this->data['warehouses'] = NULL;
             $this->data['warehouse_id'] = $this->session->userdata('warehouse_id');
@@ -622,10 +622,10 @@ class Reports extends MY_Controller
         }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('monthly_products')));
         $meta = array('page_title' => lang('monthly_products'), 'bc' => $bc);
-		
+
         $this->page_construct('reports/product_monthly_in_out', $meta, $this->data);
     }
-	
+
 	function product_in_out($biller_id = NULL)
     {
         $this->erp->checkPermissions('in_out',NULL,'product_report');
@@ -656,7 +656,7 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
 		if ($this->Owner || $this->Admin) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
 			if($this->session->userdata('warehouse_id')){
@@ -666,7 +666,7 @@ class Reports extends MY_Controller
 				$this->data['warehouse_id']=null;
 				$this->data['warehouse'] = null;
 			}
-            
+
         } else {
             $this->data['warehouses'] = NULL;
             $this->data['warehouse_id'] = $this->session->userdata('warehouse_id');
@@ -674,10 +674,10 @@ class Reports extends MY_Controller
         }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('products_in/out')));
         $meta = array('page_title' => lang('products_report'), 'bc' => $bc);
-		
+
         $this->page_construct('reports/product_in_out', $meta, $this->data);
     }
-	
+
 	function product_in_out1()
     {
         $this->erp->checkPermissions();
@@ -689,7 +689,7 @@ class Reports extends MY_Controller
         } else {
             $dt = "Till " . $this->input->post('end_date');
         }
-		
+
 		if ($this->Owner || $this->Admin) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
 			if($this->session->userdata('warehouse_id')){
@@ -699,7 +699,7 @@ class Reports extends MY_Controller
 				$this->data['warehouse_id']=null;
 				$this->data['warehouse'] = null;
 			}
-            
+
         } else {
             $this->data['warehouses'] = NULL;
             $this->data['warehouse_id'] = $this->session->userdata('warehouse_id');
@@ -707,13 +707,13 @@ class Reports extends MY_Controller
         }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('products_in/out')));
         $meta = array('page_title' => lang('products_report'), 'bc' => $bc);
-		
+
         $this->page_construct('reports/product_in_out', $meta, $this->data);
     }
 	function getProductsReports1()
 	{
 		if ($this->input->get('customer')) {
-            $customer = $this->input->get('customer');			
+            $customer = $this->input->get('customer');
         } else {
             $customer = NULL;
 		}
@@ -726,7 +726,7 @@ class Reports extends MY_Controller
             $end_date = $this->input->get('end_date');
         } else {
             $end_date = NULL;
-        } 
+        }
 		if($start_date){
 			$start = $this->erp->fld($start_date);
 			$end =$this->erp->fld($end_date);
@@ -743,12 +743,12 @@ class Reports extends MY_Controller
 			$this->datatables->where('sales.date BETWEEN "'.$start.'" AND "'.$end.'"');
 		}
 		echo $this->datatables->generate();
-		
+
 	}
 	function getProductsReports()
 	{
 		if ($this->input->get('customer')) {
-            $customer = $this->input->get('customer');			
+            $customer = $this->input->get('customer');
         } else {
             $customer = NULL;
 		}
@@ -761,7 +761,7 @@ class Reports extends MY_Controller
             $end_date = $this->input->get('end_date');
         } else {
             $end_date = NULL;
-        } 
+        }
 		if($start_date){
 			$start = $this->erp->fld($start_date);
 			$end =$this->erp->fld($end_date);
@@ -778,9 +778,9 @@ class Reports extends MY_Controller
 			$this->datatables->where('sales.date BETWEEN "'.$start.'" AND "'.$end.'"');
 		}
 		echo $this->datatables->generate();
-		
+
 	}
-	
+
     function getProductsReport($pdf = NULL, $xls = NULL, $biller_id = NULL)
     {
         $product = null;
@@ -823,7 +823,7 @@ class Reports extends MY_Controller
 			$where_purchase = '';
 			$where_sale='';
         }
-		
+
 		if($biller_id){
 			$where_p_biller = "AND p.biller_id = {$biller_id} ";
 			$where_s_biller = "AND s.biller_id = {$biller_id} ";
@@ -831,72 +831,72 @@ class Reports extends MY_Controller
 			$where_p_biller = 'AND 1=1 ';
 			$where_s_biller = 'AND 1=1 ';
 		}
-		
+
         if ($start_date) {
             $start_date = $this->erp->fld($start_date);
             $end_date = $end_date ? $this->erp->fld($end_date) : date('Y-m-d');
-			$pp = "( SELECT 
-				pi.date as date, pi.product_id, 
-				pi.purchase_id, 
-				COALESCE(SUM( CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty, 
-				SUM(pi.quantity_balance) as balacneQty, 
-				SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue, 
-				SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase 
-				FROM {$this->db->dbprefix('purchase_items')} pi 
-				LEFT JOIN {$this->db->dbprefix('purchases')} p 
-				on p.id = pi.purchase_id 
-				LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-				ON ppv.id=pi.option_id 
-				WHERE p.date >= '{$start_date}' and p.date < '{$end_date}' 
+			$pp = "( SELECT
+				pi.date as date, pi.product_id,
+				pi.purchase_id,
+				COALESCE(SUM( CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty,
+				SUM(pi.quantity_balance) as balacneQty,
+				SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue,
+				SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase
+				FROM {$this->db->dbprefix('purchase_items')} pi
+				LEFT JOIN {$this->db->dbprefix('purchases')} p
+				on p.id = pi.purchase_id
+				LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+				ON ppv.id=pi.option_id
+				WHERE p.date >= '{$start_date}' and p.date < '{$end_date}'
 				AND pi.status <> 'ordered'
 				". $where_p_biller ."
 				GROUP BY pi.product_id ) PCosts";
-			
-			$sp = "( SELECT si.product_id, 
-				SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty, 
-				SUM( si.subtotal ) totalSale, 
-				s.date as sdate 
-				FROM " . $this->db->dbprefix('sales') . " s 
-				INNER JOIN " . $this->db->dbprefix('sale_items') . " si 
-				ON s.id = si.sale_id 
-				LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv 
-				ON pv.id=si.option_id 
-				WHERE s.date >= '{$start_date}' 
-				AND s.date < '{$end_date}' 
+
+			$sp = "( SELECT si.product_id,
+				SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty,
+				SUM( si.subtotal ) totalSale,
+				s.date as sdate
+				FROM " . $this->db->dbprefix('sales') . " s
+				INNER JOIN " . $this->db->dbprefix('sale_items') . " si
+				ON s.id = si.sale_id
+				LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv
+				ON pv.id=si.option_id
+				WHERE s.date >= '{$start_date}'
+				AND s.date < '{$end_date}'
 				". $where_s_biller ."
 				GROUP BY si.product_id ) PSales";
-			
+
         } else {
-            $pp = "( SELECT 
-						pi.date as date, 
-						pi.product_id, 
-						pi.purchase_id, 
-						COALESCE(SUM(CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty, 
-						SUM(pi.quantity_balance) as balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue, 
+            $pp = "( SELECT
+						pi.date as date,
+						pi.product_id,
+						pi.purchase_id,
+						COALESCE(SUM(CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty,
+						SUM(pi.quantity_balance) as balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue,
 						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase
-						FROM {$this->db->dbprefix('purchase_items')} pi 
-						LEFT JOIN {$this->db->dbprefix('purchases')} p 
+						FROM {$this->db->dbprefix('purchase_items')} pi
+						LEFT JOIN {$this->db->dbprefix('purchases')} p
 						ON p.id = pi.purchase_id
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-						ON ppv.id=pi.option_id ".$where_purchase." 
-						WHERE pi.status <> 'ordered' 
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+						ON ppv.id=pi.option_id ".$where_purchase."
+						WHERE pi.status <> 'ordered'
 						". $where_p_biller ."
 						GROUP BY pi.product_id ) PCosts";
-			
-            $sp = "( SELECT 
-						si.product_id, 
-						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
-						s.date as sdate FROM " . $this->db->dbprefix('sales') . " s 
-						INNER JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv 
-						ON pv.id=si.option_id ".$where_sale." 
+
+            $sp = "( SELECT
+						si.product_id,
+						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
+						s.date as sdate FROM " . $this->db->dbprefix('sales') . " s
+						INNER JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv
+						ON pv.id=si.option_id ".$where_sale."
 						". $where_s_biller ."
 						GROUP BY si.product_id ) PSales";
         }
-        
+
 		if ($pdf || $xls) {
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->db
@@ -921,7 +921,7 @@ class Reports extends MY_Controller
                 (COALESCE( PSales.totalSale, 0 ) - COALESCE( PCosts.totalPurchase, 0 )) as Profit", FALSE)
                 ->from('products')
                 ->join($sp, 'products.id = PSales.product_id', 'left')
-                ->join($pp, 'products.id = PCosts.product_id', 'left')				
+                ->join($pp, 'products.id = PCosts.product_id', 'left')
 				->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
 				->join('categories', 'products.category_id=categories.id', 'left')
 				->group_by("products.id");
@@ -929,15 +929,15 @@ class Reports extends MY_Controller
             if ($product) {
                 $this->db->where($this->db->dbprefix('products') . ".id", $product);
             }
-            
+
             if ($category) {
                 $this->db->where($this->db->dbprefix('products') . ".category_id", $category);
             }
-			
+
 			if ($supplier) {
                 $this->db->where("products.supplier1 = '".$supplier."' or products.supplier2 = '".$supplier."' or products.supplier3 = '".$supplier."' or products.supplier4 = '".$supplier."' or products.supplier5 = '".$supplier."'");
             }
-			
+
 			if ($warehouse) {
                 $this->datatables->where('wp.warehouse_id', $warehouse);
                 $this->datatables->where('wp.quantity !=', 0);
@@ -1094,7 +1094,7 @@ class Reports extends MY_Controller
 				CONCAT(COALESCE( PCosts.balacneQty, 0 ), '__', COALESCE( PCosts.balacneValue, 0 )) as balance", FALSE)
                 ->from('products')
                 ->join($sp, 'products.id = PSales.product_id', 'left')
-                ->join($pp, 'products.id = PCosts.product_id', 'left')				
+                ->join($pp, 'products.id = PCosts.product_id', 'left')
 				->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
 				->join('categories', 'products.category_id=categories.id', 'left')
 				->group_by("products.id, category_id")
@@ -1104,12 +1104,12 @@ class Reports extends MY_Controller
             if ($product) {
                 $this->datatables->where($this->db->dbprefix('products') . ".id", $product);
             }
-			
-			if($start_date && $end_date){				
+
+			if($start_date && $end_date){
 				$this->datatables->where("(date(PCosts.date) BETWEEN '{$start_date}' AND  '{$end_date}'
-				OR date(PSales.sdate) BETWEEN '{$start_date}' AND  '{$end_date}' )");				
+				OR date(PSales.sdate) BETWEEN '{$start_date}' AND  '{$end_date}' )");
 			}
-            
+
             if ($category) {
                 $this->datatables->where($this->db->dbprefix('products') . ".category_id", $category);
             }
@@ -1125,7 +1125,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getPurchasedReport($pdf = NULL, $xls = NULL)
     {
         if ($this->input->get('supplier')) {
@@ -1133,19 +1133,19 @@ class Reports extends MY_Controller
         } else {
             $supplier = NULL;
         }
-       
+
         if ($this->input->get('category')) {
             $category = $this->input->get('category');
         } else {
             $category = NULL;
         }
-       
+
 		if ($this->input->get('biller_id')) {
             $biller_id = $this->input->get('biller_id');
         } else {
             $biller_id = NULL;
         }
-		
+
 		if ($this->input->get('warehouse')) {
             $warehouse = $this->input->get('warehouse');
 			$where_sale='where si.warehouse_id='.$warehouse;
@@ -1155,66 +1155,66 @@ class Reports extends MY_Controller
 			$where_purchase = '';
 			$where_sale='';
         }
-        
+
 		if ($start_date) {
             $start_date = $this->erp->fld($start_date);
             $end_date = $end_date ? $this->erp->fld($end_date) : date('Y-m-d');
 
-            $pp = "( SELECT 
-						pi.date as date, pi.product_id, 
-						pi.purchase_id, 
-						COALESCE(SUM( CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQtypurchasedQtypurchasedQty, 
-						SUM(pi.quantity_balance) as balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase 
-						FROM {$this->db->dbprefix('purchase_items')} pi 
-						LEFT JOIN {$this->db->dbprefix('purchases')} p 
-						on p.id = pi.purchase_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-						ON ppv.id=pi.option_id 
-						WHERE p.date >= '{$start_date}' and p.date < '{$end_date}' 
+            $pp = "( SELECT
+						pi.date as date, pi.product_id,
+						pi.purchase_id,
+						COALESCE(SUM( CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQtypurchasedQtypurchasedQty,
+						SUM(pi.quantity_balance) as balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase
+						FROM {$this->db->dbprefix('purchase_items')} pi
+						LEFT JOIN {$this->db->dbprefix('purchases')} p
+						on p.id = pi.purchase_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+						ON ppv.id=pi.option_id
+						WHERE p.date >= '{$start_date}' and p.date < '{$end_date}'
 						GROUP BY pi.product_id ) PCosts";
-            $sp = "( SELECT si.product_id, 
-						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
-						s.date as sdate 
-						FROM " . $this->db->dbprefix('sales') . " s 
-						INNER JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv 
-						ON pv.id=si.option_id 
-						WHERE s.date >= '{$start_date}' 
-						AND s.date < '{$end_date}' 
+            $sp = "( SELECT si.product_id,
+						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
+						s.date as sdate
+						FROM " . $this->db->dbprefix('sales') . " s
+						INNER JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv
+						ON pv.id=si.option_id
+						WHERE s.date >= '{$start_date}'
+						AND s.date < '{$end_date}'
 						GROUP BY si.product_id ) PSales";
-						
+
         } else {
-            $pp = "( SELECT 
-						pi.date as date, 
-						pi.product_id, 
-						pi.purchase_id, 
-						COALESCE(SUM(CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty, 
-						SUM(pi.quantity_balance) as balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase 
-						FROM {$this->db->dbprefix('purchase_items')} pi 
-						LEFT JOIN {$this->db->dbprefix('purchases')} p 
-						ON p.id = pi.purchase_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-						ON ppv.id=pi.option_id ".$where_purchase." 
+            $pp = "( SELECT
+						pi.date as date,
+						pi.product_id,
+						pi.purchase_id,
+						COALESCE(SUM(CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty,
+						SUM(pi.quantity_balance) as balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase
+						FROM {$this->db->dbprefix('purchase_items')} pi
+						LEFT JOIN {$this->db->dbprefix('purchases')} p
+						ON p.id = pi.purchase_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+						ON ppv.id=pi.option_id ".$where_purchase."
 						GROUP BY pi.product_id ) PCosts";
-            $sp = "( SELECT 
-						si.product_id, 
-						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
-						s.date as sdate FROM " . $this->db->dbprefix('sales') . " s 
-						INNER JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv 
-						ON pv.id=si.option_id ".$where_sale." 
+            $sp = "( SELECT
+						si.product_id,
+						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
+						s.date as sdate FROM " . $this->db->dbprefix('sales') . " s
+						INNER JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv
+						ON pv.id=si.option_id ".$where_sale."
 						GROUP BY si.product_id ) PSales";
         }
         if ($pdf || $xls) {
-			
+
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->db
                 ->select($this->db->dbprefix('purchase_items').".id as id, products.image, erp_purchases.date, erp_purchases.reference_no, product_code, product_name,
@@ -1227,7 +1227,7 @@ class Reports extends MY_Controller
 				->join('purchases', 'purchases.id = purchase_items.purchase_id', 'left')
 				->join('products', 'products.id=purchase_items.product_id')
 				->where('purchases.supplier_id',$supplier);
-	
+
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -1249,13 +1249,13 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->SetCellValue('E1', lang('Purchased'));
                 $this->excel->getActiveSheet()->SetCellValue('F1', lang('Profit and/or Loss'));
                 $this->excel->getActiveSheet()->SetCellValue('G1', lang('Stock_in_hand'));
-				
+
                 $row = 2;
                 $purchased = 0;
                 $profit = 0;
                 $stock = 0;
                 foreach ($data as $data_row) {
-					
+
 					$pu = explode("_",$data_row->purchased);
 					$st = explode("_",$data_row->balance);
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $data_row->date);
@@ -1265,7 +1265,7 @@ class Reports extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('E' . $row, '('.$this->erp->formatMoney($pu[0]).')'.$this->erp->formatMoney($pu[2]));
                     $this->excel->getActiveSheet()->SetCellValue('F' . $row, $data_row->Profit);
                     $this->excel->getActiveSheet()->SetCellValue('G' . $row, '('.$this->erp->formatMoney($st[0]).')'.$this->erp->formatMoney($st[2]));
-					
+
                     $purchased += $data_row->purchased;
                     $profit += $data_row->Profit;
                     $stock += $data_row->balance;
@@ -1284,7 +1284,7 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
                 $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
-                
+
 
                 $filename = 'products_report';
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -1350,11 +1350,11 @@ class Reports extends MY_Controller
             if ($supplier) {
                 $this->datatables->where($this->db->dbprefix('purchases') . ".supplier_id", $supplier);
             }
-			
+
 			if($biller_id){
 				$this->datatables->where($this->db->dbprefix('purchases') . ".biller_id", $biller_id);
 			}
-            
+
             if ($category) {
                 $this->datatables->where($this->db->dbprefix('products') . ".category_id", $category);
             }
@@ -1369,7 +1369,7 @@ class Reports extends MY_Controller
     }
 	//========= sokhan purchase supplier ==//
 	function getPurchasedReport4()
-	{	
+	{
 		//$datt =$this->reports_model->getLastDate("erp_purchases","date");
 		if ($this->input->get('supplier')) {
             $supplier_id = $this->input->get('supplier');
@@ -1396,13 +1396,13 @@ class Reports extends MY_Controller
         } else {
             $start_date = NULL;
         }
-      
+
 		if ($this->input->get('end_date2')) {
             $end_date = $this->erp->fsd($this->input->get('end_date2'));
         } else {
             $end_date=NULL;
         }
-		
+
 		$this->load->library('datatables');
 			$this->datatables
 			->select("erp_purchase_items.id as idd, erp_purchase_items.date as date,
@@ -1413,7 +1413,7 @@ class Reports extends MY_Controller
 			(
 				(net_unit_cost + net_shipping) * erp_purchase_items.quantity
 			) as amount
-			
+
 			", false)
 			->from("erp_purchase_items")
 			->join('erp_purchases', 'erp_purchase_items.purchase_id = erp_purchases.id', 'left')
@@ -1432,7 +1432,7 @@ class Reports extends MY_Controller
 				if ($user) {
 					$this->datatables->where('purchases.created_by', $user);
 				}
-			}		
+			}
 			if($reference_no){
 				$this->datatables->where('erp_purchases.reference_no',$reference_no);
 			}
@@ -1446,11 +1446,11 @@ class Reports extends MY_Controller
 	}
     function purchases_product_actions()
 	{
-		
+
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
-		 
+
         if ($this->form_validation->run() == true) {
-			
+
             if (!empty($_POST['val'])) {
                 if ($this->input->post('form_action') == 'delete') {
                     foreach ($_POST['val'] as $id) {
@@ -1533,28 +1533,28 @@ class Reports extends MY_Controller
                 $this->session->set_flashdata('error', lang("no_purchases_report_selected"));
                 redirect($_SERVER["HTTP_REFERER"]);
             }
-        } 
+        }
 	}
-	
-	
-	function getPurchasedSupplierItemsReport() 
+
+
+	function getPurchasedSupplierItemsReport()
 	{
-		
+
 		if ($this->input->get('supplier')) {
             $supplier = $this->input->get('supplier');
         } else {
             $supplier = NULL;
         }
-		
+
 		$this->load->library('datatables');
 			$this->datatables
 				->select("purchases.date, purchases.reference_no, purchases.supplier, purchases.grand_total, purchases.paid, (erp_purchases.grand_total - erp_purchases.paid) as balance")
 				->from('purchases')
 				->where('purchases.supplier_id', $supplier);
-		
+
 		echo $this->datatables->generate();
 	}
-	
+
 	function getProductsBiller($warehouse_id=null,$pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('project', NULL, 'sale_report');
@@ -1564,31 +1564,31 @@ class Reports extends MY_Controller
         } else {
             $biller = NULL;
         }
-		
+
 		if ($this->input->get('sproduct')) {
             $product = $this->input->get('sproduct');
         } else {
             $product = NULL;
         }
-      
+
         if ($this->input->get('category')) {
             $category = $this->input->get('category');
         } else {
             $category = NULL;
         }
-       
+
 		if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
         } else {
             $start_date = NULL;
         }
-      
+
 		if ($this->input->get('end_date')) {
             $end_date = $this->input->get('end_date');
         } else {
             $end_date = NULL;
         }
-		
+
 		if ($this->input->get('warehouse')) {
             $warehouse = $this->input->get('warehouse');
 			$where_sale='where si.warehouse_id='.$warehouse;
@@ -1598,62 +1598,62 @@ class Reports extends MY_Controller
 			$where_purchase = '';
 			$where_sale='';
         }
-        
+
 		if ($start_date) {
             $start_date = $this->erp->fld($start_date);
             $end_date = $end_date ? $this->erp->fld($end_date) : date('Y-m-d');
 
-            $pp = "( SELECT 
-						pi.date as date, pi.product_id, 
-						pi.purchase_id, 
-						COALESCE(SUM( CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQtypurchasedQtypurchasedQty, 
-						SUM(pi.quantity_balance) as balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase 
-						FROM {$this->db->dbprefix('purchase_items')} pi 
-						LEFT JOIN {$this->db->dbprefix('purchases')} p 
-						on p.id = pi.purchase_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-						ON ppv.id=pi.option_id 
-						WHERE p.date >= '{$start_date}' and p.date < '{$end_date}' 
+            $pp = "( SELECT
+						pi.date as date, pi.product_id,
+						pi.purchase_id,
+						COALESCE(SUM( CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQtypurchasedQtypurchasedQty,
+						SUM(pi.quantity_balance) as balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase
+						FROM {$this->db->dbprefix('purchase_items')} pi
+						LEFT JOIN {$this->db->dbprefix('purchases')} p
+						on p.id = pi.purchase_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+						ON ppv.id=pi.option_id
+						WHERE p.date >= '{$start_date}' and p.date < '{$end_date}'
 						GROUP BY pi.product_id ) PCosts";
-            $sp = "( SELECT si.product_id, 
-						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
-						s.date as sdate 
-						FROM " . $this->db->dbprefix('sales') . " s 
-						INNER JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv 
-						ON pv.id=si.option_id 
-						WHERE s.date >= '{$start_date}' 
-						AND s.date < '{$end_date}' 
+            $sp = "( SELECT si.product_id,
+						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
+						s.date as sdate
+						FROM " . $this->db->dbprefix('sales') . " s
+						INNER JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv
+						ON pv.id=si.option_id
+						WHERE s.date >= '{$start_date}'
+						AND s.date < '{$end_date}'
 						GROUP BY si.product_id ) PSales";
-						
+
         } else {
-            $pp = "( SELECT 
-						pi.date as date, 
-						pi.product_id, 
-						pi.purchase_id, 
-						COALESCE(SUM(CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty, 
-						SUM(pi.quantity_balance) as balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase 
-						FROM {$this->db->dbprefix('purchase_items')} pi 
-						LEFT JOIN {$this->db->dbprefix('purchases')} p 
-						ON p.id = pi.purchase_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-						ON ppv.id=pi.option_id ".$where_purchase." 
+            $pp = "( SELECT
+						pi.date as date,
+						pi.product_id,
+						pi.purchase_id,
+						COALESCE(SUM(CASE WHEN pi.purchase_id <> 0 THEN (pi.quantity*(CASE WHEN ppv.qty_unit <> 0 THEN ppv.qty_unit ELSE 1 END)) ELSE 0 END),0) as purchasedQty,
+						SUM(pi.quantity_balance) as balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN ppv.cost ELSE pi.net_unit_cost END) * pi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * (CASE WHEN pi.purchase_id <> 0 THEN pi.quantity ELSE 0 END) ) totalPurchase
+						FROM {$this->db->dbprefix('purchase_items')} pi
+						LEFT JOIN {$this->db->dbprefix('purchases')} p
+						ON p.id = pi.purchase_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+						ON ppv.id=pi.option_id ".$where_purchase."
 						GROUP BY pi.product_id ) PCosts";
-            $sp = "( SELECT 
-						si.product_id, 
-						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
-						s.date as sdate FROM " . $this->db->dbprefix('sales') . " s 
-						INNER JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv 
-						ON pv.id=si.option_id ".$where_sale." 
+            $sp = "( SELECT
+						si.product_id,
+						SUM( si.quantity*(CASE WHEN pv.qty_unit <> 0 THEN pv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
+						s.date as sdate FROM " . $this->db->dbprefix('sales') . " s
+						INNER JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " pv
+						ON pv.id=si.option_id ".$where_sale."
 						GROUP BY si.product_id ) PSales";
         }
         if ($pdf || $xls) {
@@ -1669,7 +1669,7 @@ class Reports extends MY_Controller
                 (COALESCE( PSales.totalSale, 0 ) - COALESCE( PCosts.totalPurchase, 0 )) as Profit", FALSE)
                 ->from('products')
                 ->join($sp, 'products.id = PSales.product_id', 'left')
-                ->join($pp, 'products.id = PCosts.product_id', 'left')				
+                ->join($pp, 'products.id = PCosts.product_id', 'left')
 				->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
 				->join('categories', 'products.category_id=categories.id', 'left')
 				->group_by("products.id");
@@ -1677,7 +1677,7 @@ class Reports extends MY_Controller
             if ($product) {
                 $this->db->where($this->db->dbprefix('products') . ".id", $product);
             }
-            
+
             if ($category) {
                 $this->db->where($this->db->dbprefix('products') . ".category_id", $category);
             }
@@ -1801,10 +1801,10 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang('nothing_found'));
             redirect($_SERVER["HTTP_REFERER"]);
 
-        } 
+        }
 		else {$detail_sale = anchor('reports/view_sale_detail/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Sale_detail'), 'data-toggle="modal" data-target="#myModal"');
 			$detail_purchase = anchor('reports/view_purchase_detail/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Purchase_detail'), 'data-toggle="modal" data-target="#myModal"');
-				
+
 			$action = '<div class="text-center"><div class="btn-group text-left">'
 			. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 			. lang('actions') . ' <span class="caret"></span></button>
@@ -1826,14 +1826,14 @@ class Reports extends MY_Controller
 				->join('purchases', 'purchases.id = purchase_items.purchase_id', 'left')
 				->join('products','erp_products.id =purchase_items.product_id','LEFT');
 				if ($category) {
-                  $this->datatables->where($this->db->dbprefix('products').".category_id",$category);				                 
+                  $this->datatables->where($this->db->dbprefix('products').".category_id",$category);
 				}
-			
+
 				if ($product) {
 					$this->datatables->where($this->db->dbprefix('products') . ".id", $product);
 				}
 
-				
+
 				if ($biller) {
 					$this->datatables->where($this->db->dbprefix('purchases') . ".biller_id", $biller);
 				}
@@ -1841,9 +1841,9 @@ class Reports extends MY_Controller
                     $this->datatables->where('purchase_items.warehouse_id', $warehouse_id);
                     $this->datatables->where('purchase_items.quantity !=', 0);
                 }
-            
-			
-			
+
+
+
 				//->group_by("purchase_items.product_id")
 			$this->datatables->add_column("Action", '<div class="text-center"><div class="btn-group text-left">'. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'. lang('actions') . ' <span class="caret"></span></button><ul class="dropdown-menu pull-right" role="menu"><li>' . $detail_purchase . '</li><li>' . $detail_sale . '</li><ul></div></div>', $this->db->dbprefix('purchase_items') . ".product_code");
             echo $this->datatables->generate();
@@ -1851,22 +1851,22 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getProductsReportInOut($pdf = NULL, $xls = NULL)
     {
-       
+
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
             $product = NULL;
         }
-		
+
 		if ($this->input->get('biller_ids')) {
             $biller_id = $this->input->get('biller_ids');
         } else {
             $biller_id = $this->input->get('biller_id');
         }
-        
+
         if ($this->input->get('category')) {
             $category = $this->input->get('category');
         } else {
@@ -1901,7 +1901,7 @@ class Reports extends MY_Controller
 			$where_purchase = "where 1=1 AND {$this->db->dbprefix('purchase_items')}.status <> 'ordered' AND {$this->db->dbprefix('purchase_items')}.purchase_id != ''";
 			$where_sale='where 1=1';
         }
-		
+
 		if($biller_id){
 			$where_p_biller = "AND pp.biller_id = {$biller_id} ";
 			$where_s_biller = "AND s.biller_id = {$biller_id} ";
@@ -1909,214 +1909,214 @@ class Reports extends MY_Controller
 			$where_p_biller = 'AND 1=1 ';
 			$where_s_biller = 'AND 1=1 ';
 		}
-		
+
         if ($start_date) {
             $start_date = $this->erp->fld($start_date);
             $end_date = $end_date ? $this->erp->fld($end_date) : date('Y-m-d');
 
-            $pp = "( SELECT pi.product_id, 
-						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * pi.quantity ) totalPurchase, 
+            $pp = "( SELECT pi.product_id,
+						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * pi.quantity ) totalPurchase,
                         SUM(pi.unit_cost) AS totalCost,
 						SUM(pi.quantity) AS Pquantity,
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
-									ppv.quantity AS vquantity 
-									FROM erp_purchase_items 
-									INNER JOIN " . $this->db->dbprefix('purchases') . " pp 
-									ON pp.id = {$this->db->dbprefix('purchase_items')}.purchase_id  
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
-									WHERE {$this->db->dbprefix('purchase_items')}.date >= '{$start_date}' AND {$this->db->dbprefix('purchase_items')}.date < '{$end_date}' 
+									ppv.quantity AS vquantity
+									FROM erp_purchase_items
+									INNER JOIN " . $this->db->dbprefix('purchases') . " pp
+									ON pp.id = {$this->db->dbprefix('purchase_items')}.purchase_id
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
+									WHERE {$this->db->dbprefix('purchase_items')}.date >= '{$start_date}' AND {$this->db->dbprefix('purchase_items')}.date < '{$end_date}'
 									".$where_p_biller."
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} 
-										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id 
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')}
+										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id
 						GROUP BY pi.product_id ) PCosts";
 
-			$sp = "( SELECT si.product_id, 
-						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
+			$sp = "( SELECT si.product_id,
+						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
-						WHERE s.date >= '{$start_date}' AND s.date < '{$end_date}' 
+						WHERE s.date >= '{$start_date}' AND s.date < '{$end_date}'
 						".$where_s_biller."
 						GROUP BY si.product_id ) PSales";
 
-			$ppb = "( SELECT pi.product_id, 
-						SUM( pi.quantity ) purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * pi.quantity ) totalPurchase, 
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+			$ppb = "( SELECT pi.product_id,
+						SUM( pi.quantity ) purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * pi.quantity ) totalPurchase,
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
-									ppv.quantity AS vquantity 
-									FROM erp_purchase_items 
-									LEFT JOIN " . $this->db->dbprefix('purchases') . " pp 
-									ON pp.id={$this->db->dbprefix('purchase_items')}.purchase_id  
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
+									ppv.quantity AS vquantity
+									FROM erp_purchase_items
+									LEFT JOIN " . $this->db->dbprefix('purchases') . " pp
+									ON pp.id={$this->db->dbprefix('purchase_items')}.purchase_id
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
 									WHERE {$this->db->dbprefix('purchase_items')}.date <= '{$start_date}'
 									".$where_p_biller."
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} 
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')}
 										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id GROUP BY pi.product_id ) PCostsBegin";
-            
-			$spb = "( SELECT si.product_id, 
-						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) saleQty, 
-						SUM( si.subtotal ) totalSale, 
+
+			$spb = "( SELECT si.product_id,
+						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) saleQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
-						WHERE s.date <= '{$start_date}' 
+						WHERE s.date <= '{$start_date}'
 						".$where_s_biller."
 						GROUP BY si.product_id ) PSalesBegin";
         } else {
 			$current_date = date('Y-m-d');
 			$prevouse_date = date('Y').'-'.date('m').'-'.'01';
-            $pp = "( SELECT pi.product_id, 
-						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * pi.quantity ) totalPurchase, 
+            $pp = "( SELECT pi.product_id,
+						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * pi.quantity ) totalPurchase,
                         SUM(pi.unit_cost) AS totalCost,
 						SUM(pi.quantity) AS Pquantity,
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost ,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
 									ppv.quantity AS vquantity
-									FROM {$this->db->dbprefix('purchase_items')} 
-									LEFT JOIN " . $this->db->dbprefix('purchases') . " pp 
-									ON pp.id = {$this->db->dbprefix('purchase_items')}.purchase_id  
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
-									".$where_purchase." 
+									FROM {$this->db->dbprefix('purchase_items')}
+									LEFT JOIN " . $this->db->dbprefix('purchases') . " pp
+									ON pp.id = {$this->db->dbprefix('purchase_items')}.purchase_id
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
+									".$where_purchase."
 									".$where_p_biller."
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 			
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} GROUP BY product_id 
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')} GROUP BY product_id
 									) tpi on tpi.product_id = pi.product_id GROUP BY pi.product_id ) PCosts";
 
-			$sp = "( SELECT si.product_id, 
-						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) soldQty, 
-						SUM( si.subtotal ) totalSale, 
+			$sp = "( SELECT si.product_id,
+						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) soldQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
 						".$where_sale."
 						".$where_s_biller."
 						GROUP BY si.product_id ) PSales";
 
-			
-			$ppb = "( SELECT pi.product_id, 
-						SUM(pi.quantity) AS purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) * tpi.quantity_balance ) balacneValue, 
-						SUM(pi.unit_cost * pi.quantity) totalPurchase, 
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+
+			$ppb = "( SELECT pi.product_id,
+						SUM(pi.quantity) AS purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) * tpi.quantity_balance ) balacneValue,
+						SUM(pi.unit_cost * pi.quantity) totalPurchase,
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost ,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
 									ppv.quantity AS vquantity
-									FROM {$this->db->dbprefix('purchase_items')} 
-									LEFT JOIN " . $this->db->dbprefix('purchases') . " pp 
-									ON pp.id={$this->db->dbprefix('purchase_items')}.purchase_id  
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
-									".$where_purchase." 
+									FROM {$this->db->dbprefix('purchase_items')}
+									LEFT JOIN " . $this->db->dbprefix('purchases') . " pp
+									ON pp.id={$this->db->dbprefix('purchase_items')}.purchase_id
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
+									".$where_purchase."
 									".$where_p_biller."
-									AND {$this->db->dbprefix('purchase_items')}.date < '{$prevouse_date}' 
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 			
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} 
+									AND {$this->db->dbprefix('purchase_items')}.date < '{$prevouse_date}'
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')}
 										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id GROUP BY pi.product_id ) PCostsBegin";
-			
-            $spb = "( SELECT si.product_id, 
-						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) saleQty, 
-						SUM( si.subtotal ) totalSale, 
+
+            $spb = "( SELECT si.product_id,
+						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) saleQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
 						".$where_sale."
 						".$where_s_biller."
 						AND s.date < '{$prevouse_date}'
 						GROUP BY si.product_id ) PSalesBegin";
         }
-		
-        if ($pdf || $xls) 
+
+        if ($pdf || $xls)
 		{
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->db
-                ->select($this->db->dbprefix('products') . ".id as product_id, 
+                ->select($this->db->dbprefix('products') . ".id as product_id,
 				" . $this->db->dbprefix('products') . ".code as product_code,
 				" . $this->db->dbprefix('products') . ".name,
 				COALESCE ((
-					SELECT 
+					SELECT
 						SUM(
 							" . $this->db->dbprefix('purchase_items') . ".quantity_balance
 						) AS quantity
 					FROM
 						". $this->db->dbprefix('purchase_items') ."
 					JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
-					LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id 
+					LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id
 					WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '".$LYMD."'
 					AND " . $this->db->dbprefix('products') . ".id = (p.id)
 					AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
@@ -2144,8 +2144,8 @@ class Reports extends MY_Controller
                         0
                     ) as sold,
 					COALESCE((
-							COALESCE (erp_products.quantity, 0) - COALESCE (PCosts.Pquantity, 0) + COALESCE (PSales.Squantity, 0) + COALESCE (PCosts.Pquantity, 0)) 
-							- 
+							COALESCE (erp_products.quantity, 0) - COALESCE (PCosts.Pquantity, 0) + COALESCE (PSales.Squantity, 0) + COALESCE (PCosts.Pquantity, 0))
+							-
 							COALESCE (PSales.Squantity, 0) + COALESCE (
 							(
 							SELECT
@@ -2157,7 +2157,7 @@ class Reports extends MY_Controller
 								ci.item_code = erp_products.code
 							),
 							0), 0)
-					AS balance", 
+					AS balance",
 				FALSE)
                 ->from('products')
                 ->join($sp, 'products.id = PSales.product_id', 'left')
@@ -2167,13 +2167,13 @@ class Reports extends MY_Controller
 				->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
 				->join('categories', 'products.category_id=categories.id', 'left')
 				->group_by("products.id");
-            
+
 			if ($supplier) {
 				$this->db->where("products.supplier1 = '".$supplier."' or products.supplier2 = '".$supplier."' or products.supplier3 = '".$supplier."' or products.supplier4 = '".$supplier."' or products.supplier5 = '".$supplier."'");
             }else{
 				//$this->db->where("COALESCE( PCosts.purchasedQty, 0 ) > 0 OR COALESCE( PSales.soldQty, 0 ) > 0");
 			}
-			
+
             if($in_out){
                 if($in_out == 'in'){
                     $this->db->order_by('PCosts.purchasedQty', 'DESC');
@@ -2181,15 +2181,15 @@ class Reports extends MY_Controller
                     $this->db->order_by('PSales.soldQty', 'DESC');
                 }
             }
-			
+
 			if($start_date && $end_date){
-				
-				$this->datatables->where("( 
-				PCostsBegin.pdate BETWEEN '{$start_date}' AND '{$end_date}' 
+
+				$this->datatables->where("(
+				PCostsBegin.pdate BETWEEN '{$start_date}' AND '{$end_date}'
 				OR PSalesBegin.sdate BETWEEN '{$start_date}' AND  '{$end_date}'
 				OR PCosts.pdate BETWEEN '{$start_date}' AND  '{$end_date}'
 				OR PSales.sdate BETWEEN '{$start_date}' AND  '{$end_date}' )");
-				
+
 			}
 
             if ($product) {
@@ -2198,12 +2198,12 @@ class Reports extends MY_Controller
             if ($category) {
                 $this->db->where($this->db->dbprefix('products') . ".category_id", $category);
             }
-			
+
 			if ($warehouse) {
                 $this->db->where('wp.warehouse_id', $warehouse);
                 $this->db->where('wp.quantity !=', 0);
             }
-            
+
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -2306,31 +2306,31 @@ class Reports extends MY_Controller
 			}
 			$detail_sale = anchor('reports/view_sale_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Sale_detail'), 'data-toggle="modal" data-target="#myModal"');
 			$detail_purchase = anchor('reports/view_purchase_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Purchase_detail'), 'data-toggle="modal" data-target="#myModal"');
-					
+
 			$action = '<div class="text-center"><div class="btn-group text-left">'
 			. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 			. lang('actions') . ' <span class="caret"></span></button>
 				<ul class="dropdown-menu pull-right" role="menu">
 					<li>' . $detail_purchase . '</li>
-					<li>' . $detail_sale . '</li>					
+					<li>' . $detail_sale . '</li>
 				<ul>
 			</div></div>';
-			
+
             $this->load->library('datatables');
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->datatables
-                ->select($this->db->dbprefix('products') . ".id as product_id, 
+                ->select($this->db->dbprefix('products') . ".id as product_id,
 				" . $this->db->dbprefix('products') . ".code as product_code,
 				" . $this->db->dbprefix('products') . ".name,
 				COALESCE ((
-					SELECT 
+					SELECT
 						SUM(
 							" . $this->db->dbprefix('purchase_items') . ".quantity_balance
 						) AS quantity
 					FROM
 						". $this->db->dbprefix('purchase_items') ."
 					JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
-					LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id 
+					LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id
 					WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '".$LYMD."'
 					AND " . $this->db->dbprefix('products') . ".id = (p.id)
 					AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
@@ -2371,7 +2371,7 @@ class Reports extends MY_Controller
 					),
 					0
 					), 0)
-					AS balance", 
+					AS balance",
 				FALSE)
                 ->from('products')
                 ->join($sp, 'products.id = PSales.product_id', 'left')
@@ -2382,17 +2382,17 @@ class Reports extends MY_Controller
 				->join('categories', 'products.category_id=categories.id', 'left')
 				->group_by("products.id")
 				->add_column("Action", $action, "product_code");
-				
+
 			if ($supplier) {
-				$this->datatables->where("products.supplier1 = '".$supplier."' 
-				or products.supplier2 = '".$supplier."' 
-				or products.supplier3 = '".$supplier."' 
-				or products.supplier4 = '".$supplier."' 
+				$this->datatables->where("products.supplier1 = '".$supplier."'
+				or products.supplier2 = '".$supplier."'
+				or products.supplier3 = '".$supplier."'
+				or products.supplier4 = '".$supplier."'
 				or products.supplier5 = '".$supplier."'");
             }else{
 				//$this->datatables->where("COALESCE( PCosts.purchasedQty, 0 ) > 0 OR COALESCE( PSales.soldQty, 0 ) > 0");
 			}
-			
+
             if($in_out){
                 if($in_out == 'in'){
                     $this->datatables->where('PCosts.purchasedQty >=', 0);
@@ -2400,38 +2400,38 @@ class Reports extends MY_Controller
                     $this->datatables->where('PSales.soldQty >=', 0);
                 }
             }
-			
+
 			if($start_date && $end_date){
-				
-				$this->datatables->where("( 
-				/*PCostsBegin.pdate BETWEEN '{$start_date}' AND '{$end_date}' 
+
+				$this->datatables->where("(
+				/*PCostsBegin.pdate BETWEEN '{$start_date}' AND '{$end_date}'
 				OR PSalesBegin.sdate BETWEEN '{$start_date}' AND  '{$end_date}'
 				OR*/ PCosts.pdate BETWEEN '{$start_date}' AND  '{$end_date}'
 				OR PSales.sdate BETWEEN '{$start_date}' AND  '{$end_date}' )");
-				
+
 			}
-			
+
             if ($product) {
                 $this->datatables->where($this->db->dbprefix('products') . ".id", $product);
             }
-			
+
             if ($category) {
                 $this->datatables->where($this->db->dbprefix('products') . ".category_id", $category);
             }
-			
+
 			if ($warehouse) {
                 $this->datatables->where('wp.warehouse_id', $warehouse);
                 $this->datatables->where('wp.quantity !=', 0);
             }
-			
+
             echo $this->datatables->generate();
 
         }
 	}
-	
+
     function getProductsDaily($pdf = NULL, $xls = NULL)
     {
-        
+
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
@@ -2449,7 +2449,7 @@ class Reports extends MY_Controller
         } else {
             $month = 'NULL';
         }
-		
+
         if ($this->input->get('category')) {
             $category = $this->input->get('category');
         } else {
@@ -2460,22 +2460,22 @@ class Reports extends MY_Controller
         } else {
             $in_out = 'all';
         }
-        
+
         if ($this->input->get('warehouse')) {
             $warehouse = $this->input->get('warehouse');
         } else {
             $warehouse = NULL;
         }
-         
+
 		$YMD = $this->site->months($year,$month);
 		if($YMD->date == ""){
 			$LYMD = "0000-00-00";
 		}else{
 			$LYMD = $YMD->date;
 		}
-		 
+
 		if($in_out == 'in'){
-			
+
 		}
 	   $part1 = "COALESCE(
 					CASE WHEN 'in' = '" . $in_out . "' or 'all' = '" . $in_out . "' THEN
@@ -2489,37 +2489,37 @@ class Reports extends MY_Controller
 								" . $this->db->dbprefix('purchase_items') . "
 							JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
 							LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id ";
-                            
+
 		$part2 = " 		GROUP BY
 								DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m'),
 								erp_products.id
-						) + 
+						) +
 						(
-							CASE WHEN 
-								(SELECT 
+							CASE WHEN
+								(SELECT
 									SUM(
 										" . $this->db->dbprefix('purchase_items') . ".quantity_balance
 									) AS quantity
 								FROM
 									". $this->db->dbprefix('purchase_items') ."
 								JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
-								LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id 
+								LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id
 								WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '".$LYMD."'
 								AND " . $this->db->dbprefix('products') . ".id = (p.id)
 								AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
 								GROUP BY
 									DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m'),
 									erp_products.id
-								) IS NULL THEN 0 
+								) IS NULL THEN 0
 							ELSE
-								(SELECT 
+								(SELECT
 									SUM(
 										" . $this->db->dbprefix('purchase_items') . ".quantity_balance
 									) AS quantity
 								FROM
 									". $this->db->dbprefix('purchase_items') ."
 								JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
-								LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id 
+								LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id
 								WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '".$LYMD."'
 								AND " . $this->db->dbprefix('products') . ".id = (p.id)
 								AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
@@ -2529,14 +2529,14 @@ class Reports extends MY_Controller
 								)
 							END
 						)
-					) ELSE 0 END, 
+					) ELSE 0 END,
 				0)";
 
             $list=array();
             for($d=1; $d<=31; $d++)
             {
-                $time=mktime(12, 0, 0, $month, $d, $year);          
-                if (date('m', $time)==$month)       
+                $time=mktime(12, 0, 0, $month, $d, $year);
+                if (date('m', $time)==$month)
                     $list[]= date('Y-m-d', $time);
             }
             $d  = 1;
@@ -2546,252 +2546,252 @@ class Reports extends MY_Controller
                 $dnumber    = $d;
 
                 if(1 == $d):
-                    $D1 = " ". $part1 ." 
+                    $D1 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                             AS " . "DayNumber".$d . " ";
                 endif;
 
                 if(2 == $d):
-                    $D2 = " ". $part1 ." 
+                    $D2 = " ". $part1 ."
 							WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
 						    AS " . "DayNumber".$d . " ";
                 endif;
                 if(3 == $d):
-                    $D3 = " ". $part1 ." 
+                    $D3 = " ". $part1 ."
 							WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(4 == $d):
-                    $D4 = " ". $part1 ." 
+                    $D4 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(5 == $d):
-                    $D5 = " ". $part1 ." 
+                    $D5 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(6 == $d):
-                    $D6 = " ". $part1 ." 
+                    $D6 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(7 == $d):
-                    $D7 = " ". $part1 ." 
+                    $D7 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(8 == $d):
-                    $D8 = " ". $part1 ." 
+                    $D8 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(9 == $d):
-                    $D9 = " ". $part1 ." 
+                    $D9 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(10 == $d):
-                    $D10 = " ". $part1 ." 
+                    $D10 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(11 == $d):
-                    $D11 = " ". $part1 ." 
+                    $D11 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(12 == $d):
-                    $D12 = " ". $part1 ." 
+                    $D12 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(13 == $d):
-                    $D13 = " ". $part1 ." 
+                    $D13 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(14 == $d):
-                    $D14 = " ". $part1 ." 
+                    $D14 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(15 == $d):
-                    $D15 = " ". $part1 ." 
+                    $D15 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(16 == $d):
-                    $D16 = " ". $part1 ." 
+                    $D16 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(17 == $d):
-                    $D17 = " ". $part1 ." 
+                    $D17 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(18 == $d):
-                    $D18 = " ". $part1 ." 
+                    $D18 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(19 == $d):
-                    $D19 = " ". $part1 ." 
+                    $D19 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(20 == $d):
-                    $D20 = " ". $part1 ." 
+                    $D20 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(21 == $d):
-                    $D21 = " ". $part1 ." 
+                    $D21 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(22 == $d):
-                    $D22 = " ". $part1 ." 
+                    $D22 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(23 == $d):
-                    $D23 = " ". $part1 ." 
+                    $D23 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(24 == $d):
-                    $D24 = " ". $part1 ." 
+                    $D24 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(25 == $d):
-                    $D25 = " ". $part1 ." 
+                    $D25 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(26 == $d):
-                    $D26 = " ". $part1 ." 
+                    $D26 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(27 == $d):
-                    $D27 = " ". $part1 ." 
+                    $D27 = " ". $part1 ."
                             WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(28 == $d):
-                    $D28 = " ". $part1 ." 
+                    $D28 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(29 == $d):
-                    $D29 = " ". $part1 ." 
+                    $D29 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(30 == $d):
-                    $D30 = " ". $part1 ." 
+                    $D30 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
                 if(31 == $d):
-                    $D31 = " ". $part1 ." 
+                    $D31 = " ". $part1 ."
                            WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m-%d') = '$rws'
                             AND " . $this->db->dbprefix('products') . ".id = (p.id)
                             AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
-                            ". $part2 ." 
+                            ". $part2 ."
                              AS " . "DayNumber".$d . " ";
                 endif;
 
@@ -2799,65 +2799,65 @@ class Reports extends MY_Controller
             }
             $detail_sale = anchor('reports/view_sale_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Sale_detail'), 'data-toggle="modal" data-target="#myModal"');
             $detail_purchase = anchor('reports/view_purchase_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Purchase_detail'), 'data-toggle="modal" data-target="#myModal"');
-                    
+
             $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
             . lang('actions') . ' <span class="caret"></span></button>
             <ul class="dropdown-menu pull-right" role="menu">
                 <li>' . $detail_purchase . '</li>
-                <li>' . $detail_sale . '</li>                   
+                <li>' . $detail_sale . '</li>
             <ul>
             </div></div>';
 
             $this->load->library('datatables');
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->datatables
-                ->select($this->db->dbprefix('products') . ".code as product_code, 
+                ->select($this->db->dbprefix('products') . ".code as product_code,
                 " . $this->db->dbprefix('products') . ".name ,
-                ".  $D1 ." , 
-                ".  $D2 ." , 
-                ".  $D3 ." , 
-                ".  $D4 ." , 
-                ".  $D5 ." , 
-                ".  $D6 ." , 
-                ".  $D7 ." , 
-                ".  $D8 ." , 
-                ".  $D9 ." , 
-                ".  $D10 ." , 
-                ".  $D11 ." , 
-                ".  $D12 ." , 
-                ".  $D13 ." , 
-                ".  $D14 ." , 
-                ".  $D15 ." , 
-                ".  $D16 ." , 
-                ".  $D17 ." , 
-                ".  $D18 ." , 
-                ".  $D19 ." , 
-                ".  $D20 ." , 
-                ".  $D21 ." , 
-                ".  $D22 ." , 
-                ".  $D23 ." , 
-                ".  $D24 ." , 
-                ".  $D25 ." , 
-                ".  $D26 ." 
+                ".  $D1 ." ,
+                ".  $D2 ." ,
+                ".  $D3 ." ,
+                ".  $D4 ." ,
+                ".  $D5 ." ,
+                ".  $D6 ." ,
+                ".  $D7 ." ,
+                ".  $D8 ." ,
+                ".  $D9 ." ,
+                ".  $D10 ." ,
+                ".  $D11 ." ,
+                ".  $D12 ." ,
+                ".  $D13 ." ,
+                ".  $D14 ." ,
+                ".  $D15 ." ,
+                ".  $D16 ." ,
+                ".  $D17 ." ,
+                ".  $D18 ." ,
+                ".  $D19 ." ,
+                ".  $D20 ." ,
+                ".  $D21 ." ,
+                ".  $D22 ." ,
+                ".  $D23 ." ,
+                ".  $D24 ." ,
+                ".  $D25 ." ,
+                ".  $D26 ."
                 ".  ($D27 != "" ? ", " . $D27 : "") ."
-                ".  ($D28 != "" ? ", " . $D28 : "") ." 
-                ".  ($D29 != "" ? ", " . $D29 : "") ." 
-                ".  ($D30 != "" ? ", " . $D30 : "") ." 
-                ".  ($D31 != "" ? ", " . $D31 : "") ." ", 
+                ".  ($D28 != "" ? ", " . $D28 : "") ."
+                ".  ($D29 != "" ? ", " . $D29 : "") ."
+                ".  ($D30 != "" ? ", " . $D30 : "") ."
+                ".  ($D31 != "" ? ", " . $D31 : "") ." ",
                 FALSE)
                 ->from('products')
                 ->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
                 ->join('categories', 'products.category_id=categories.id', 'left')
                 ->group_by("products.id");
-            
+
             if ($product) {
                 $this->datatables->where($this->db->dbprefix('products') . ".id", $product);
             }
             if ($category) {
                 $this->datatables->where($this->db->dbprefix('products') . ".category_id", $category);
             }
-            
+
             if ($warehouse) {
                 $this->datatables->where('wp.warehouse_id', $warehouse);
                 $this->datatables->where('wp.quantity !=', 0);
@@ -2867,10 +2867,10 @@ class Reports extends MY_Controller
             $this->datatables->add_column("Actions", "product_code");
             echo $this->datatables->generate();
     }
-	
+
 	function getProductsMonthly($pdf = NULL, $xls = NULL)
     {
-        
+
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
@@ -2887,7 +2887,7 @@ class Reports extends MY_Controller
         } else {
             $in_out = 'all';
         }
-		
+
 		if ($this->input->get('warehouse')) {
             $warehouse = $this->input->get('warehouse');
         } else {
@@ -2905,18 +2905,18 @@ class Reports extends MY_Controller
 								FROM
 									" . $this->db->dbprefix('purchase_items') . "
 								JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
-								LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id"; 
+								LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id";
 		$part2 = "
 									AND " . $this->db->dbprefix('products') . ".id = (p.id)
 									AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
 									GROUP BY
 									DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m'),
 									erp_products.id
-							) + 
+							) +
 							(
-								CASE WHEN 
+								CASE WHEN
 									(
-										SELECT 
+										SELECT
 											SUM(
 												" . $this->db->dbprefix('purchase_items') . ".quantity_balance
 											) AS quantity
@@ -2924,16 +2924,16 @@ class Reports extends MY_Controller
 											". $this->db->dbprefix('purchase_items') ."
 										JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
 										LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id";
-		
+
 		$part3 = "					AND " . $this->db->dbprefix('products') . ".id = (p.id)
 										AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
 										GROUP BY
 											DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m'),
 											erp_products.id
-									) IS NULL THEN 0 
+									) IS NULL THEN 0
 								ELSE
 									(
-										SELECT 
+										SELECT
 											SUM(
 												" . $this->db->dbprefix('purchase_items') . ".quantity_balance
 											) AS quantity
@@ -2941,7 +2941,7 @@ class Reports extends MY_Controller
 											". $this->db->dbprefix('purchase_items') ."
 										JOIN " . $this->db->dbprefix('products') . "  p ON p.id = " . $this->db->dbprefix('purchase_items') . ".product_id
 										LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv ON ppv.id =" . $this->db->dbprefix('purchase_items') . ".option_id ";
-									
+
 		$part4 = "					AND " . $this->db->dbprefix('products') . ".id = (p.id)
 										AND " . $this->db->dbprefix('purchase_items') . ".status <> 'ordered'
 										GROUP BY
@@ -2951,27 +2951,27 @@ class Reports extends MY_Controller
 								END
 							)
 						) ELSE  ";
-		
+
 		$part5 = "(SELECT SUM(erp_sale_items.quantity) FROM erp_sales
 					JOIN erp_sale_items ON erp_sales.id = sale_id
 					JOIN erp_products p ON p.id = erp_sale_items.product_id
 					LEFT JOIN erp_product_variants ON erp_product_variants.id = erp_sale_items.option_id";
-			
+
 		$detail_sale = anchor('reports/view_sale_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Sale_detail'), 'data-toggle="modal" data-target="#myModal"');
 		$detail_purchase = anchor('reports/view_purchase_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Purchase_detail'), 'data-toggle="modal" data-target="#myModal"');
-				
+
 		$action = '<div class="text-center"><div class="btn-group text-left">'
 		. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 		. lang('actions') . ' <span class="caret"></span></button>
 		<ul class="dropdown-menu pull-right" role="menu">
 			<li>' . $detail_purchase . '</li>
-			<li>' . $detail_sale . '</li>					
+			<li>' . $detail_sale . '</li>
 		<ul>
 		</div></div>';
 		$this->load->library('datatables');
 		$this->db->query('SET SQL_BIG_SELECTS=1');
 		$this->datatables
-			->select($this->db->dbprefix('products') . ".code as product_code, 
+			->select($this->db->dbprefix('products') . ".code as product_code,
 			" . $this->db->dbprefix('products') . ".name ,
 			(
 				". $part1 ."
@@ -3084,7 +3084,7 @@ class Reports extends MY_Controller
 						GROUP BY DATE_FORMAT(date(erp_sales.date),'%Y-%m'),erp_products.id)
 				 		END,0)
 			)
-			AS august, 
+			AS august,
 			(
 				". $part1 ."
 						WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m') = CONCAT(YEAR(CURDATE()),'-09')
@@ -3098,7 +3098,7 @@ class Reports extends MY_Controller
 						GROUP BY DATE_FORMAT(date(erp_sales.date),'%Y-%m'),erp_products.id)
 				 		END,0)
 			)
-			AS september, 
+			AS september,
 			(
 				". $part1 ."
 						WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m') = CONCAT(YEAR(CURDATE()),'-10')
@@ -3112,7 +3112,7 @@ class Reports extends MY_Controller
 						GROUP BY DATE_FORMAT(date(erp_sales.date),'%Y-%m'),erp_products.id)
 				 		END,0)
 			)
-			AS october, 
+			AS october,
 			(
 				". $part1 ."
 						WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m') = CONCAT(YEAR(CURDATE()),'-11')
@@ -3126,7 +3126,7 @@ class Reports extends MY_Controller
 						GROUP BY DATE_FORMAT(date(erp_sales.date),'%Y-%m'),erp_products.id)
 				 		END,0)
 			)
-			AS november, 
+			AS november,
 			(
 				". $part1 ."
 						WHERE DATE_FORMAT(" . $this->db->dbprefix('purchase_items') . ".date, '%Y-%m') = CONCAT(YEAR(CURDATE()),'-12')
@@ -3140,20 +3140,20 @@ class Reports extends MY_Controller
 						GROUP BY DATE_FORMAT(date(erp_sales.date),'%Y-%m'),erp_products.id)
 				 		END,0)
 			)
-			AS december",  
+			AS december",
 			FALSE)
 			->from('products')
 			->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
 			->join('categories', 'products.category_id=categories.id', 'left')
 			->group_by("products.id");
-		
+
 		if ($product) {
 			$this->datatables->where($this->db->dbprefix('products') . ".id", $product);
 		}
 		if ($category) {
 			$this->datatables->where($this->db->dbprefix('products') . ".category_id", $category);
 		}
-		
+
 		if ($warehouse) {
 			$this->datatables->where('wp.warehouse_id', $warehouse);
 			$this->datatables->where('wp.quantity !=', 0);
@@ -3164,13 +3164,13 @@ class Reports extends MY_Controller
 
     function getCategoriesReport($pdf = NULL, $xls = NULL)
     {
-		
+
         if ($this->input->get('category')) {
             $category = $this->input->get('category');
         } else {
             $category = NULL;
         }
-		
+
 		if ($this->input->get('biller_id')) {
             $biller_id = $this->input->get('biller_id');
         } else {
@@ -3195,7 +3195,7 @@ class Reports extends MY_Controller
 			$end_date = $this->reports_model->getLastDate("purchases","date");
 			$end_date2 = $this->reports_model->getLastDate("sales","date");
 		 }
-		
+
 		if($biller_id){
 			$where_p_biller = "AND p.biller_id = {$biller_id} ";
 			$where_s_biller = "AND s.biller_id = {$biller_id} ";
@@ -3208,83 +3208,83 @@ class Reports extends MY_Controller
 			$where_s_biller_where = "WHERE 1=1 ";
 		}
 		$wid = $this->reports_model->getWareByUserID();
-		
+
         if ($start_date && $end_date) {
-           
+
 			if($warehouse){
-				
+
 				$pp = "( SELECT pp.category_id as category, pi.product_id, SUM( pi.quantity ) purchasedQty, SUM( pi.net_unit_cost * pi.quantity ) totalPurchase, p.date as pdate from " . $this->db->dbprefix('products') . " pp
                 left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id
                 left join " . $this->db->dbprefix('purchases') . " p ON p.id = pi.purchase_id
-				where p.date >= '$start_date' AND p.date <= '$end_date' AND p.warehouse_id = '$warehouse' group by pp.category_id 
+				where p.date >= '$start_date' AND p.date <= '$end_date' AND p.warehouse_id = '$warehouse' group by pp.category_id
                 ) PCosts";
-				
+
             $sp = "( SELECT sp.category_id as category, si.product_id, SUM( si.quantity ) soldQty, SUM( si.subtotal ) totalSale, s.date as sdate from " . $this->db->dbprefix('products') . " sp
                 left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id
                 left join " . $this->db->dbprefix('sales') . " s ON s.id = si.sale_id
-                where s.date >= '$start_date2' and s.date <= '$end_date2'  AND s.warehouse_id = '$warehouse' group by sp.category_id 
+                where s.date >= '$start_date2' and s.date <= '$end_date2'  AND s.warehouse_id = '$warehouse' group by sp.category_id
                 ) PSales";
 			}else{
 				if($wid){
 				$pp = "( SELECT pp.category_id as category, pi.product_id, SUM( pi.quantity ) purchasedQty, SUM( pi.net_unit_cost * pi.quantity ) totalPurchase, p.date as pdate from " . $this->db->dbprefix('products') . " pp
 					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id
 					left join " . $this->db->dbprefix('purchases') . " p ON p.id = pi.purchase_id
-					where p.date >= '$start_date' AND p.date <= '$end_date' AND p.warehouse_id IN ($wid) group by pp.category_id 
+					where p.date >= '$start_date' AND p.date <= '$end_date' AND p.warehouse_id IN ($wid) group by pp.category_id
 					) PCosts";
-					
+
 				$sp = "( SELECT sp.category_id as category, si.product_id, SUM( si.quantity ) soldQty, SUM( si.subtotal ) totalSale, s.date as sdate from " . $this->db->dbprefix('products') . " sp
 					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id
 					left join " . $this->db->dbprefix('sales') . " s ON s.id = si.sale_id
-					where s.date >= '$start_date2' and s.date <= '$end_date2'  AND s.warehouse_id IN ($wid) group by sp.category_id 
+					where s.date >= '$start_date2' and s.date <= '$end_date2'  AND s.warehouse_id IN ($wid) group by sp.category_id
 					) PSales";
 				}else{
-					
+
 					$pp = "( SELECT pp.category_id as category, pi.product_id, SUM( pi.quantity ) purchasedQty, SUM( pi.net_unit_cost * pi.quantity ) totalPurchase, p.date as pdate from " . $this->db->dbprefix('products') . " pp
 					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id
 					left join " . $this->db->dbprefix('purchases') . " p ON p.id = pi.purchase_id
-					where p.date >= '$start_date 00:00:00' AND p.date <= '$end_date 23:59:00'  group by pp.category_id 
+					where p.date >= '$start_date 00:00:00' AND p.date <= '$end_date 23:59:00'  group by pp.category_id
 					) PCosts";
 					$sp = "( SELECT sp.category_id as category, si.product_id, SUM( si.quantity ) soldQty, SUM( si.subtotal ) totalSale, s.date as sdate from " . $this->db->dbprefix('products') . " sp
 					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id
 					left join " . $this->db->dbprefix('sales') . " s ON s.id = si.sale_id
-					where s.date >= '$start_date2 00:00:00' and s.date <= '$end_date2 23:59:00'  group by sp.category_id 
+					where s.date >= '$start_date2 00:00:00' and s.date <= '$end_date2 23:59:00'  group by sp.category_id
 					) PSales";
 				}
 			}
         } else {
 			if($warehouse){
 				$pp = "( SELECT pp.category_id as category, pi.product_id, SUM( pi.quantity ) purchasedQty, SUM( pi.net_unit_cost * pi.quantity ) totalPurchase from " . $this->db->dbprefix('products') . " pp
-					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id 
+					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id
 					where pi.warehouse_id = '$warehouse'
 					group by pp.category_id
 					) PCosts";
 				$sp = "( SELECT sp.category_id as category, si.product_id, SUM( si.quantity ) soldQty, SUM( si.subtotal ) totalSale from " . $this->db->dbprefix('products') . " sp
-					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id 
+					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id
 					where si.warehouse_id = '$warehouse'
-					group by sp.category_id 
+					group by sp.category_id
 					) PSales";
 			}else{
 				if($wid){
 				$pp = "( SELECT pp.category_id as category, pi.product_id, SUM( pi.quantity ) purchasedQty, SUM( pi.net_unit_cost * pi.quantity ) totalPurchase from " . $this->db->dbprefix('products') . " pp
-					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id 
+					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id
 					where pi.warehouse_id IN ($wid)
 					group by pp.category_id
 					) PCosts";
 				$sp = "( SELECT sp.category_id as category, si.product_id, SUM( si.quantity ) soldQty, SUM( si.subtotal ) totalSale from " . $this->db->dbprefix('products') . " sp
-					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id 
+					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id
 					where si.warehouse_id IN ($wid)
-					group by sp.category_id 
+					group by sp.category_id
 					) PSales";
 				}else{
 					$pp = "( SELECT pp.category_id as category, pi.product_id, SUM( pi.quantity ) purchasedQty, SUM( pi.net_unit_cost * pi.quantity ) totalPurchase from " . $this->db->dbprefix('products') . " pp
-					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id 
+					left JOIN " . $this->db->dbprefix('purchase_items') . " pi on pp.id = pi.product_id
 					group by pp.category_id
 					) PCosts";
 				$sp = "( SELECT sp.category_id as category, si.product_id, SUM( si.quantity ) soldQty, SUM( si.subtotal ) totalSale from " . $this->db->dbprefix('products') . " sp
-					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id 
-					group by sp.category_id 
+					left JOIN " . $this->db->dbprefix('sale_items') . " si on sp.id = si.product_id
+					group by sp.category_id
 					) PSales";
-					
+
 				}
 			}
         }
@@ -3414,7 +3414,7 @@ class Reports extends MY_Controller
 
         } else {
 
-			
+
             $this->load->library('datatables');
             $this->datatables
                 ->select($this->db->dbprefix('categories') . ".id as cidd, " .$this->db->dbprefix('categories') . ".code, " . $this->db->dbprefix('categories') . ".name,
@@ -3437,20 +3437,20 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getCategoriesValueReport($pdf = NULL, $xls = NULL)
-    {       
+    {
 		$wid = $this->reports_model->getWareByUserID();
         if ($pdf || $xls) {
 
             $this->db
                 ->select('
-					categories.id AS cid, 
-					categories.code, 
-					categories.name, 
-					COALESCE(SUM(erp_products.quantity), 0) AS current_stock, 
-					COALESCE(SUM(cost*erp_products.quantity), 0) AS total_cost, 
-					COALESCE(SUM(price*erp_products.quantity), 0) AS total_price,				
+					categories.id AS cid,
+					categories.code,
+					categories.name,
+					COALESCE(SUM(erp_products.quantity), 0) AS current_stock,
+					COALESCE(SUM(cost*erp_products.quantity), 0) AS total_cost,
+					COALESCE(SUM(price*erp_products.quantity), 0) AS total_price,
 					COALESCE(SUM(price*erp_products.quantity) - SUM(cost*erp_products.quantity), 0) as balance')
 				->from('categories')
 				->join('products', 'products.category_id = categories.id', 'left')
@@ -3479,7 +3479,7 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->SetCellValue('D1', lang('costs'));
                 $this->excel->getActiveSheet()->SetCellValue('E1', lang('price'));
 				$this->excel->getActiveSheet()->SetCellValue('F1', lang('balance'));
-				
+
                 $row = 2;
                 $sQty = 0;
                 $cQty = 0;
@@ -3493,7 +3493,7 @@ class Reports extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('D' . $row, $data_row->total_cost);
                     $this->excel->getActiveSheet()->SetCellValue('E' . $row, $data_row->total_price);
 					$this->excel->getActiveSheet()->SetCellValue('F' . $row, $data_row->balance);
-					
+
                     $sQty += $data_row->current_stock;
                     $cQty += $data_row->total_cost;
                     $pAmt += $data_row->total_price;
@@ -3505,14 +3505,14 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->SetCellValue('D' . $row, $cQty);
                 $this->excel->getActiveSheet()->SetCellValue('E' . $row, $pAmt);
 				$this->excel->getActiveSheet()->SetCellValue('F' . $row, $balance);
-				
+
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(35);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(35);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
-				$this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);	
-				
+				$this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
+
                 $filename = 'categories_report';
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($pdf) {
@@ -3559,13 +3559,13 @@ class Reports extends MY_Controller
             $this->load->library('datatables');
             $this->datatables
                 ->select('
-				categories.id AS id, 
-				categories.id AS cid, 
-				categories.code, 
-				categories.name, 
-				COALESCE(SUM(erp_products.quantity), 0) AS current_stock, 
-				COALESCE(SUM(cost*erp_products.quantity), 0) AS total_cost, 
-				COALESCE(SUM(price*erp_products.quantity), 0) AS total_price,				
+				categories.id AS id,
+				categories.id AS cid,
+				categories.code,
+				categories.name,
+				COALESCE(SUM(erp_products.quantity), 0) AS current_stock,
+				COALESCE(SUM(cost*erp_products.quantity), 0) AS total_cost,
+				COALESCE(SUM(price*erp_products.quantity), 0) AS total_price,
 				COALESCE(SUM(price*erp_products.quantity) - SUM(cost*erp_products.quantity), 0) as balance')
 				->from('categories')
 				->join('products', 'products.category_id = categories.id', 'left');
@@ -3579,7 +3579,7 @@ class Reports extends MY_Controller
             echo $this->datatables->generate();
         }
     }
-	
+
 	function shops()
     {
         $this->erp->checkPermissions('project',NULL,'sale_report');
@@ -3589,7 +3589,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('billers_report'), 'bc' => $bc);
         $this->page_construct('reports/shops', $meta, $this->data);
     }
-	
+
 	function getShops($pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('customers', TRUE);
@@ -3706,7 +3706,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getBillers($pdf = NULL, $xls = NULL)
     {
         if ($pdf || $xls) {
@@ -3825,7 +3825,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function shop_report($user_id = NULL)
     {
         $this->erp->checkPermissions('customers', TRUE);
@@ -3841,11 +3841,11 @@ class Reports extends MY_Controller
         $this->data['users'] = $this->reports_model->getStaff();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
         $this->data['billers'] = $this->site->getAllCompanies('biller');
-			
+
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
-		
+
 		$this->data['date'] = $date;
-		
+
         $this->data['user_id'] = $user_id;
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('billers_report')));
         $meta = array('page_title' => lang('billers_report'), 'bc' => $bc);
@@ -3893,7 +3893,7 @@ class Reports extends MY_Controller
         $this->data['sales'] = $this->reports_model->getSaleDailyByPM($date, $user_id);
         $this->load->view($this->theme . 'reports/profit', $this->data);
     }
-	
+
 	function profitPurchase($date = NULL)
     {
         $this->erp->checkPermissions('daily', false, 'purchase_report');
@@ -3904,14 +3904,14 @@ class Reports extends MY_Controller
 		 if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-		
+
 		if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 			if ($user) {
 				$this->db->where('purchases.created_by', $user);
 			}
 		}
         if ( ! $date) { $date = date('Y-m-d'); }
-        $this->data['purchase'] = $this->reports_model->getPurchaseing($date);		
+        $this->data['purchase'] = $this->reports_model->getPurchaseing($date);
         $this->data['date'] = $date;
         $this->load->view($this->theme . 'reports/purchasesreport', $this->data);
     }
@@ -3919,21 +3919,21 @@ class Reports extends MY_Controller
     {
         $this->erp->checkPermissions('daily', false, 'sale_report');
         if ( ! $date) { $date = date('Y-m-d'); }
-        $this->data['sales'] = $this->reports_model->getSaleDailies($date);		
+        $this->data['sales'] = $this->reports_model->getSaleDailies($date);
         $this->data['date'] = $date;
         $this->load->view($this->theme . 'reports/profit', $this->data);
     }
 	function profit_staff($id,$date = NULL)
     {
         if ( ! $date) { $date = date('Y-m-d'); }
-        $this->data['sales'] = $this->reports_model->getSaleDailieStaff($id,$date);		
+        $this->data['sales'] = $this->reports_model->getSaleDailieStaff($id,$date);
         $this->data['date'] = $date;
         $this->load->view($this->theme . 'reports/profit_staff', $this->data);
     }
 	function profit_staff1($id,$date = NULL)
     {
         if ( ! $date) { $date = date('Y-m-d'); }
-        $this->data['sales'] = $this->reports_model->getPurchaseDailieStaff($id,$date);		
+        $this->data['sales'] = $this->reports_model->getPurchaseDailieStaff($id,$date);
         $this->data['date'] = $date;
         $this->load->view($this->theme . 'reports/profit_staff1', $this->data);
     }
@@ -3958,7 +3958,7 @@ class Reports extends MY_Controller
             'day_type' => 'long'
         );
 
-        $config['template'] = '{table_open}<table border="0" cellpadding="0" cellspacing="0" 
+        $config['template'] = '{table_open}<table border="0" cellpadding="0" cellspacing="0"
 		class="table table-bordered dfTable">{/table_open}
 		{heading_row_start}<tr>{/heading_row_start}
 		{heading_previous_cell}<th><a href="{previous_url}">&lt;&lt;</a></th>{/heading_previous_cell}
@@ -3987,12 +3987,12 @@ class Reports extends MY_Controller
 
         $this->load->library('calendar', $config);
         $sales = $user_id ? $sales = $this->reports_model->getStaffDailySales($user_id, $year, $month) : $this->reports_model->getDailySales($year, $month);
-		
+
         if (!empty($sales)) {
             foreach ($sales as $sale) {
 				$d = date('Y-m-d', strtotime($year . '-' . $month . '-' . $sale->date));
 				$refund = $this->reports_model->getSalesReturnDate($d);
-                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'>				
+                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'>
 				<tr><td>" . lang("amount") . "</td><td>" . $this->erp->formatMoney($sale->total) . "</td></tr>
 				<tr><td>" . lang("order_discount") . "</td><td>" . $this->erp->formatMoney($sale->order_discount) . "</td></tr>
 				<tr><td>" . lang("shipping") . "</td><td>" . $this->erp->formatMoney($sale->shipping) . "</td></tr>
@@ -4006,7 +4006,7 @@ class Reports extends MY_Controller
         } else {
             $daily_sale = array();
         }
-		
+
         $this->data['calender'] = $this->calendar->generate($year, $month, $daily_sale);
         $this->data['year'] = $year;
         $this->data['month'] = $month;
@@ -4021,7 +4021,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('daily_sales_report'), 'bc' => $bc);
         $this->page_construct('reports/daily', $meta, $this->data);
     }
-    
+
 
     function monthly_sales($year = NULL, $pdf = NULL, $user_id = NULL)
     {
@@ -4044,18 +4044,18 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('monthly_sales_report'), 'bc' => $bc);
         $this->page_construct('reports/monthly', $meta, $this->data);
     }
-	
+
 	 function monthly_profits($id,$year, $month, $warehouse_id = NULL)
     {
         $this->erp->checkPermissions('monthly', NULL, 'sale_report');
-        
+
         $this->data['costing'] = $this->reports_model->getMonthSale($id,NULL, $warehouse_id, $year, $month);
         $this->data['date'] = date('F Y', strtotime($year.'-'.$month.'-'.'01'));
         $this->load->view($this->theme . 'reports/monthly_profit', $this->data);
     }
      function monthly_profits1($id,$year, $month, $warehouse_id = NULL)
     {
-        $this->data['costing'] = $this->reports_model->getMonthPurchase($id,NULL, $warehouse_id, $year, $month); 
+        $this->data['costing'] = $this->reports_model->getMonthPurchase($id,NULL, $warehouse_id, $year, $month);
         $this->data['date'] = date('F Y', strtotime($year.'-'.$month.'-'.'01'));
         $this->load->view($this->theme . 'reports/monthly_profit1', $this->data);
     }
@@ -4111,12 +4111,12 @@ class Reports extends MY_Controller
 				$this->db->where('purchases.created_by', $user);
 			}
 		}
-		
+
         /*if ( ! $this->Owner) {
             $this->session->set_flashdata('error', lang('access_denied'));
             $this->erp->md();
         }*/
-        
+
         $this->data['costing'] = $this->reports_model->getMonthPurchaseing(NULL, $warehouse_id, $year, $month);
         $this->data['date'] = date('F Y', strtotime($year.'-'.$month.'-'.'01'));
         $this->load->view($this->theme . 'reports/purchase_monthly', $this->data);
@@ -4124,7 +4124,7 @@ class Reports extends MY_Controller
     function monthly_profit($year, $month, $warehouse_id = NULL)
     {
         $this->erp->checkPermissions('monthly', false, 'sale_report');
-        
+
         $this->data['costing'] = $this->reports_model->getMonthSales(NULL, $warehouse_id, $year, $month);
         $this->data['date'] = date('F Y', strtotime($year.'-'.$month.'-'.'01'));
         $this->load->view($this->theme . 'reports/monthly_profit', $this->data);
@@ -4132,7 +4132,7 @@ class Reports extends MY_Controller
 	public function getMonthSales($date, $warehouse_id = NULL, $year = NULL, $month = NULL)
     {
         $this->db->select("date, reference_no, customer, total_discount, sale_status, grand_total, paid, (grand_total-paid) as balance, payment_status");
-		
+
 		if($date) {
             $this->db->where('sales.date', $date);
         }elseif ($month) {
@@ -4141,7 +4141,7 @@ class Reports extends MY_Controller
             $this->db->where('sales.date >=', $year.'-'.$month.'-01 00:00:00');
             $this->db->where('sales.date <=', $year.'-'.$month.'-'.$last_day.' 23:59:59');
         }
-		
+
         $q = $this->db->get('sales');
         if ($q->num_rows() > 0) {
             return $q->result();
@@ -4158,20 +4158,20 @@ class Reports extends MY_Controller
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             $this->data['warehouse_id'] = $warehouse_id;
             $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-			
+
         } else {
-			
+
             $this->data['warehouses'] = $this->products_model->getUserWarehouses();
 			if($warehouse_id){
 				$this->data['warehouse_id'] = $warehouse_id;
 				$this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
 			}else{
-				
+
 				$this->data['warehouse_id'] = str_replace(',', '-',$this->session->userdata('warehouse_id'));
 				$this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->products_model->getUserWarehouses() : NULL;
 			}
         }
-        
+
 		$user = $this->site->getUser();
 		if($biller_id != NULL){
 			$this->data['biller_id'] = $biller_id;
@@ -4215,13 +4215,13 @@ class Reports extends MY_Controller
         } else {
             $product = NULL;
         }
-		
+
 		if ($this->input->get('biller_id')) {
             $biller_id = $this->input->get('biller_id');
         } else {
             $biller_id = NULL;
         }
-		
+
         if ($this->input->get('user')) {
             $user = $this->input->get('user');
         } else {
@@ -4257,8 +4257,8 @@ class Reports extends MY_Controller
 		   $customer_group = $this->input->get("customer_group");
         }else {
 		   $customer_group = NULL;
-        }        
-	
+        }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->erp->fsd($this->input->get('start_date'));
         } else {
@@ -4274,11 +4274,11 @@ class Reports extends MY_Controller
         } else {
             $serial = NULL;
         }
-        
+
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-		
+
 		$p_cost = "COALESCE (
 						(
 							SELECT
@@ -4344,10 +4344,10 @@ class Reports extends MY_Controller
 					->from('sales')
 					->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
 					->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-					->join('companies', 'companies.id=sales.customer_id','left')                
+					->join('companies', 'companies.id=sales.customer_id','left')
 					->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
 					->group_by('sales.id');
-            
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user){
 					$this->db->where('sales.created_by', $user);
@@ -4509,7 +4509,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
 
         } else {
-			
+
             $this->load->library('datatables');
 
 				$this->datatables
@@ -4527,7 +4527,7 @@ class Reports extends MY_Controller
 					->join('sale_items', 'sale_items.sale_id=sales.id', 'inner')
 					->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
 					->join('companies', 'companies.id=sales.customer_id','left')
-					->join('erp_gl_trans','erp_gl_trans.sale_id=erp_sales.id','left')             
+					->join('erp_gl_trans','erp_gl_trans.sale_id=erp_sales.id','left')
 					->join('customer_groups','customer_groups.id=companies.customer_group_id','left');
 					 if(!$this->Owner && !$this->Admin){
 						$warehouse_id = $this->session->userdata('warehouse_id');
@@ -4536,7 +4536,7 @@ class Reports extends MY_Controller
 				        $this->datatables->where_in('erp_sales.warehouse_id',$warehouses);
 					}
 					$this->datatables->group_by('sales.id');
-            
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('sales.created_by', $user);
@@ -4560,7 +4560,7 @@ class Reports extends MY_Controller
                 $this->datatables->where('sales.customer_id', $customer);
             }
             if($customer_group){
-			   $this->datatables->where('companies.customer_group_id', $customer_group);                
+			   $this->datatables->where('companies.customer_group_id', $customer_group);
             }
             if ($warehouse) {
                 $this->datatables->where('sales.warehouse_id', $warehouse);
@@ -4577,8 +4577,8 @@ class Reports extends MY_Controller
             echo $this->datatables->generate();
         }
 
-    }		
-	
+    }
+
     function sales($biller_id = NULL)
     {
         $this->erp->checkPermissions('report_sale',NULL,'sale_report');
@@ -4624,21 +4624,21 @@ class Reports extends MY_Controller
 
      function getSalesReport($pdf = NULL, $xls = NULL)
     {
-		 
-        $customer = $this->input->get('customer');  
+
+        $customer = $this->input->get('customer');
         $datt =$this->reports_model->getLastDate("sales","date");
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
             $product = NULL;
         }
-		
+
 		if ($this->input->get('biller_id')) {
             $biller_id = $this->input->get('biller_id');
         } else {
             $biller_id = NULL;
         }
-		
+
         if ($this->input->get('user')) {
             $user = $this->input->get('user');
         } else {
@@ -4668,8 +4668,8 @@ class Reports extends MY_Controller
 		   $customer_group = $this->input->get("customer_group");
         }else {
 		   $customer_group = NULL;
-        }        
-	
+        }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->erp->fsd($this->input->get('start_date'));
         } else {
@@ -4686,16 +4686,16 @@ class Reports extends MY_Controller
             $serial = NULL;
         }
 
-		
+
 		if ($this->input->get('types')) {
             $types = $this->input->get('types');
         } else {
             $types = NULL;
-        } 
+        }
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-		
+
 		$p_cost = "COALESCE (
 						(
 							SELECT
@@ -4755,7 +4755,7 @@ class Reports extends MY_Controller
             } else {
                 $data = NULL;
             }
-           
+
             if (!empty($data)) {
                 $this->load->library('excel');
                 $this->excel->setActiveSheetIndex(0);
@@ -4798,7 +4798,7 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
-            
+
                 $filename = 'sales_report';
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($pdf) {
@@ -4857,13 +4857,13 @@ class Reports extends MY_Controller
 			$this->load->library('datatables');
 				$this->datatables
 				->select("
-				erp_sales.id, 
-				erp_sales.date, 
-				reference_no, 
-				biller, 
-				customer, 				
+				erp_sales.id,
+				erp_sales.date,
+				reference_no,
+				biller,
+				customer,
 				grand_total,
-				paid, 
+				paid,
 				(erp_sales.grand_total - erp_sales.paid) as balance,
 				payment_status", FALSE)
 				->from('sales')
@@ -4872,7 +4872,7 @@ class Reports extends MY_Controller
 				->join('companies', 'companies.id=sales.customer_id','left')
 				->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
 				->group_by('sales.id');
-            
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('sales.created_by', $user);
@@ -4897,7 +4897,7 @@ class Reports extends MY_Controller
                 $this->datatables->where('sales.customer_id', $customer);
             }
             if($customer_group){
-			   $this->datatables->where('companies.customer_group_id', $customer_group);                
+			   $this->datatables->where('companies.customer_group_id', $customer_group);
             }
             if ($warehouse) {
                 $this->datatables->where('sales.warehouse_id', $warehouse);
@@ -4929,7 +4929,7 @@ class Reports extends MY_Controller
          $data = $this->input->post('idd1');
 
         $dd = explode(',',$data);
-        
+
         $this->erp->checkPermissions('sales', TRUE);
         $this->load->library('excel');
         $this->excel->setActiveSheetIndex(0);
@@ -4941,11 +4941,11 @@ class Reports extends MY_Controller
         $this->excel->getActiveSheet()->SetCellValue('E1', lang('paid'));
         $this->excel->getActiveSheet()->SetCellValue('F1', lang('balance'));
         $this->excel->getActiveSheet()->SetCellValue('G1', lang('note'));
-        
+
         $customer = $this->input->post('customer1');
        if(is_array($dd)){
         foreach ($dd as $id) {
-            
+
             $data_row = $this->reports_model->getSaleCustomerReport($id,$customer);
             $this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->erp->hrld($data_row->date));
             $this->excel->getActiveSheet()->SetCellValue('B' . $row, $data_row->reference_no);
@@ -4972,7 +4972,7 @@ class Reports extends MY_Controller
             $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
             $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
             $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
-            
+
             $filename = 'sales_report';
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             if ($this->input->post('form_action1') == 'export_pdf') {
@@ -5027,7 +5027,7 @@ class Reports extends MY_Controller
 		}
 
 }
-	
+
 	function getSalemanReport($pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('sales', TRUE);
@@ -5065,8 +5065,8 @@ class Reports extends MY_Controller
 		   $customer_group = $this->input->get("customer_group");
         }else {
 		   $customer_group = NULL;
-        }        
-	
+        }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
         } else {
@@ -5098,7 +5098,7 @@ class Reports extends MY_Controller
 					->from('sales')
 					->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
 					->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-					->join('companies', 'companies.id=sales.customer_id','left')                
+					->join('companies', 'companies.id=sales.customer_id','left')
 					->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
 					->group_by('sales.id');
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
@@ -5243,10 +5243,10 @@ class Reports extends MY_Controller
 					->from('sales')
 					->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
 					->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-					->join('companies', 'companies.id=sales.customer_id','left')                
+					->join('companies', 'companies.id=sales.customer_id','left')
 					->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
 					->group_by('sales.id');
-            
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('sales.created_by', $user);
@@ -5265,7 +5265,7 @@ class Reports extends MY_Controller
                 $this->datatables->where('sales.customer_id', $customer);
             }
             if($customer_group){
-			   $this->datatables->where('companies.customer_group_id', $customer_group);                
+			   $this->datatables->where('companies.customer_group_id', $customer_group);
             }
             if ($warehouse) {
                 $this->datatables->where('sales.warehouse_id', $warehouse);
@@ -5281,12 +5281,12 @@ class Reports extends MY_Controller
 
     }
 
-    function view_saleman_report($user_id = NULL) 
+    function view_saleman_report($user_id = NULL)
     {
-        
-        if (!$user_id && $_GET['d'] == null) {           
+
+        if (!$user_id && $_GET['d'] == null) {
             redirect($_SERVER["HTTP_REFERER"]);
-        }   
+        }
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
         $this->data['date'] = date('Y-m-d');
         $this->data['user_id'] = $user_id;
@@ -5299,7 +5299,7 @@ class Reports extends MY_Controller
     function getSalemanReportDetail($warehouse_id = NULL, $dt = NULL)
     {
         $this->erp->checkPermissions('index');
-        
+
         if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
         } else {
@@ -5343,13 +5343,13 @@ class Reports extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-        ->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, sales.note, 
-                    sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
-                    (SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id) as return_sale, 
-                    COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
-                    (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id) as deposit, 
-                    (SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id) as discount, 
-                    (COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance, 
+        ->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, sales.note,
+                    sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,
+                    (SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id) as return_sale,
+                    COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
+                    (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id) as deposit,
+                    (SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id) as discount,
+                    (COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance,
                     payment_status")
         ->from('sales')
         ->join('companies', 'sales.customer_id = companies.id', 'left')
@@ -5363,26 +5363,26 @@ class Reports extends MY_Controller
                 $this->datatables->where('customer_id', $this->session->userdata('user_id'));
             }
         }
-        
+
         if ($customer) {
             $this->datatables->where('sales.saleman_by', $customer);
         }
-        
+
         if ($reference_no) {
             $this->datatables->where('sales.reference_no', $reference_no);
         }
-        
+
         if($this->session->userdata('biller_id') ) {
             $this->datatables->where('sales.biller_id', $this->session->userdata('biller_id') );
         }
-        
+
         if ($biller) {
             $this->datatables->where('sales.biller_id', $biller);
         }
         if ($start_date) {
             $this->datatables->where('date_format(erp_sales.date,"%Y-%m-%d") BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         }
-        
+
         $this->datatables->add_column("Actions", $action, "sales.id");
         echo $this->datatables->generate();
     }
@@ -5425,8 +5425,8 @@ class Reports extends MY_Controller
 		   $customer_group = $this->input->get("customer_group");
         }else {
 		   $customer_group = NULL;
-        }        
-	
+        }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
         } else {
@@ -5457,7 +5457,7 @@ class Reports extends MY_Controller
                 ->join('companies', 'sales.biller_id=companies.id','left')
                 ->group_by('sales.id')
                 ->order_by('sales.date desc');
-            
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('sales.created_by', $user);
@@ -5603,7 +5603,7 @@ class Reports extends MY_Controller
 					->where('sales.biller_id', $biller)
 					//->join('customer_groups','customer_groups.id=companies.customer_group_id','inner')
 					->group_by('sales.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('sales.created_by', $user);
@@ -5625,8 +5625,8 @@ class Reports extends MY_Controller
                 $this->datatables->where('sales.customer_id', $customer);
             }
             if($customer_group){
-			   $this->datatables->where('companies.customer_group_id', $customer_group);                
-            }            
+			   $this->datatables->where('companies.customer_group_id', $customer_group);
+            }
             if ($warehouse) {
                 $this->datatables->where('sales.warehouse_id', $warehouse);
             }
@@ -5654,7 +5654,7 @@ class Reports extends MY_Controller
 			 $this->data['reference_no'] =$reference_no;
 		}else{
 			 $reference_no =null;
-		} 
+		}
 		if($this->input->get('customer')){
 			 $customer = $this->input->get('customer');
 			 $str .="&customer=".$customer;
@@ -5692,7 +5692,7 @@ class Reports extends MY_Controller
 			$end_date =$datt;
 			$this->data['end_date'] =$end_date;
 		}
-		
+
 		$this->db->select("erp_deliveries.*");
 		if(isset($reference_no) !=''){
 			$this->db->where("erp_deliveries.do_reference_no",$reference_no);
@@ -5712,13 +5712,13 @@ class Reports extends MY_Controller
 		}
 		$this->db->group_by('id');
 		$sales_nums = $this->db->get('deliveries')->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".isset($str);
         $config["base_url"] = base_url() . "reports/sales_detail_delivery/";
 		$config["total_rows"] = $sales_nums;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] = 50; 
+        $config["per_page"] = 50;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -5734,9 +5734,9 @@ class Reports extends MY_Controller
 		$config['last_tag_close'] = '<li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		 
+
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 		$this->data['deliveries'] = $this->reports_model->getAlldelivery($reference_no,$customer,$driver,$start_date,$end_date,$warehouse,$config["ob_set"],$config['per_page']);
         $this->data['users'] = $this->reports_model->getStaff();
@@ -5747,7 +5747,7 @@ class Reports extends MY_Controller
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' =>site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' =>lang('sale_detail_delivery')));
         $meta = array('page_title' => lang('sale_detial_delivery'), 'bc' => $bc);
         $this->page_construct('reports/sale_detial_delivery', $meta, $this->data);
-    } 
+    }
     function list_using_stock_report()
     {
 		$this->load->library("pagination");
@@ -5762,7 +5762,7 @@ class Reports extends MY_Controller
 			 $this->data['reference_no'] =$reference_no;
 		}else{
 			 $reference_no =null;
-		} 
+		}
 		if($this->input->get('employee')){
 			 $employee = $this->input->get('employee');
 			 $str.="&employee=".$employee;
@@ -5800,7 +5800,7 @@ class Reports extends MY_Controller
 			$end_date =$datt;
 			 $this->data['end_date'] =$end_date;
 		}
-		
+
 		$this->db->select("enter_using_stock.*");
 		if($employee){
 			$this->db->where('erp_enter_using_stock.employee_id',$employee);
@@ -5824,13 +5824,13 @@ class Reports extends MY_Controller
 		$this->db->group_by('reference_no');
 		$sales_nums = $this->db->get('enter_using_stock')
 		->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
         $config["base_url"] = base_url() . "reports/list_using_stock_report/";
 		$config["total_rows"] = $sales_nums;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] = 50; 
+        $config["per_page"] = 50;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -5846,10 +5846,10 @@ class Reports extends MY_Controller
 		$config['last_tag_close'] = '<li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
-		
+
+
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 		$this->data['using_stock'] = $this->reports_model->getUsingStock($reference_no,$employee,$biller,$warehouse,$wid,$start_date,$end_date,$config["ob_set"],$config["per_page"]);
         $this->data['Employee'] = $this->reports_model->getUser();
@@ -5861,7 +5861,7 @@ class Reports extends MY_Controller
 		$this->data['customers'] = $this->site->getCustomers();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' =>site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' =>lang('report_list_using_stock')));
         $meta = array('page_title' => lang('report_list_using_stock'), 'bc' => $bc);
-        $this->page_construct('reports/enter_using_stock_report', $meta, $this->data);  
+        $this->page_construct('reports/enter_using_stock_report', $meta, $this->data);
 	}
 	/*function convert_reports(){
 		$this->erp->checkPermissions('report_sale',NULL,'sale_report');
@@ -5871,12 +5871,12 @@ class Reports extends MY_Controller
 			$product =$this->input->get('product');
 			$str.="&product=".$product;
 			$this->data['product']=$product;
-		} 
+		}
 		if($this->input->get('start_date')){
 			$start_date =$this->input->get('start_date');
 			$str.="&start_date=".$start_date;
 			$this->data['start_date']=$start_date;
-		} 
+		}
 		if($this->input->get('end_date')){
 			$end_date =$this->input->get('end_date');
 			$str.="&end_date=".$end_date;
@@ -5890,11 +5890,11 @@ class Reports extends MY_Controller
 			$warehouse =$this->input->get('warehouse');
 			$str.="&warehouse=".$warehouse;
 			$this->data['warehouse']=$warehouse;
-		} 
+		}
 		$this->db->select("erp_convert.*")
 		->join('erp_product_variants','erp_product_variants.id = erp_convert_items.option_id','LEFT')
 		->join('erp_products','erp_products.id=erp_convert_items.product_id','LEFT')
-		->join('erp_units','erp_units.id=erp_products.unit','left') 
+		->join('erp_units','erp_units.id=erp_products.unit','left')
 		->join('erp_convert','erp_convert.id=erp_convert_items.convert_id','left');
 		if($product){
 			$this->db->where('erp_convert_items.product_id',$product);
@@ -5905,13 +5905,13 @@ class Reports extends MY_Controller
 		$this->db->where("erp_convert_items.status","add")
 		->group_by("erp_convert_items.product_id");
 		$sales_nums = $this->db->get('erp_convert_items')->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$uri;
         $config["base_url"] = base_url() . "reports/convert_reports/";
 		$config["total_rows"] = $sales_nums;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] = 50; 
+        $config["per_page"] = 50;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -5927,12 +5927,12 @@ class Reports extends MY_Controller
 		$config['last_tag_close'] = '<li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
-		
+
+
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-		$this->data['convert'] = $this->reports_model->getconvert($product,$warehouse,$start_date,$end_date,$config["per_page"],$config["ob_set"]);      
+		$this->data['convert'] = $this->reports_model->getconvert($product,$warehouse,$start_date,$end_date,$config["per_page"],$config["ob_set"]);
 	    $this->data['products'] = $this->site->getAllProducts();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
 		$this->data['billers'] = $this->reports_model->getBillers();
@@ -5940,7 +5940,7 @@ class Reports extends MY_Controller
 		$this->data['customers'] = $this->site->getCustomers();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' =>site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' =>lang('report_list_using_stock')));
         $meta = array('page_title' => lang('convert_reports'), 'bc' => $bc);
-        $this->page_construct('reports/convert_report', $meta, $this->data);  
+        $this->page_construct('reports/convert_report', $meta, $this->data);
 	}*/
 	/*function getConvertReports(){
 		$wid = $this->reports_model->getWareByUserID();
@@ -5963,7 +5963,7 @@ class Reports extends MY_Controller
 		}else{
 			$end_date= $datt;
 		}
-		
+
 		$detail_link = anchor('reports/convert_report_detail/$1', '<i class="fa fa-file-text-o"></i> ' . lang('view-detail'));
         $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
@@ -5975,16 +5975,16 @@ class Reports extends MY_Controller
 		. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 				. lang('actions') . ' <span class="caret"></span></button>
 		<ul class="dropdown-menu pull-right" role="menu">
-			<li>' . $detail_link . '</li>  
+			<li>' . $detail_link . '</li>
 		</ul>
     	</div></div>';
-		 $this->load->library('datatables');     
+		 $this->load->library('datatables');
 		$this->datatables->select("erp_convert_items.id,erp_convert_items.product_id as pro_id,erp_convert_items.product_code,erp_convert_items.product_name,SUM(erp_convert_items.quantity) as con_qty,(Case when erp_product_variants.name <> null then erp_product_variants.name ELSE erp_units.name END)")
 		->from("erp_convert_items")
 		->join('erp_product_variants','erp_product_variants.id = erp_convert_items.option_id','LEFT')
 		->join('erp_products','erp_products.id=erp_convert_items.product_id','LEFT')
 		->join('erp_warehouses_products','erp_warehouses_products.product_id=erp_products.id','LEFT')
-		->join('erp_units','erp_units.id=erp_products.unit','left') 
+		->join('erp_units','erp_units.id=erp_products.unit','left')
 		->join('erp_convert','erp_convert.id=erp_convert_items.convert_id','left')
 		->where("erp_convert_items.status","add")
 		->group_by("erp_convert_items.product_id");
@@ -6016,7 +6016,7 @@ class Reports extends MY_Controller
 		}else{
 			$end_date= $datt;
 		}*/
-		
+
 		$detail_link = anchor('reports/convert_report_detail?id_id=$1', '<i class="fa fa-file-text-o"></i> ' . lang('view-detail'));
         $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
@@ -6028,10 +6028,10 @@ class Reports extends MY_Controller
 		. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 				. lang('actions') . ' <span class="caret"></span></button>
 		<ul class="dropdown-menu pull-right" role="menu">
-			<li>' . $detail_link . '</li>  
+			<li>' . $detail_link . '</li>
 		</ul>
     	</div></div>';
-		 $this->load->library('datatables');     
+		 $this->load->library('datatables');
 		$this->datatables->select("bom.id,name")->join("convert","convert.bom_id=bom.id","LEFT")->from("bom");
 		$this->datatables->where("convert.bom_id!=",null);
 		$this->datatables->group_by("convert.bom_id");
@@ -6039,11 +6039,11 @@ class Reports extends MY_Controller
 	    $this->datatables->add_column("Actions", $action, "bom.id");
         echo $this->datatables->generate();
 	}
-	
-	function convert_reports(){  
+
+	function convert_reports(){
 		$datt =$this->reports_model->getLastDate("erp_transfers","date");
         //$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-		//$this->data['convert'] = $this->reports_model->getconvert($product,$warehouse,$start_date,$end_date,$config["per_page"],$config["ob_set"]);   
+		//$this->data['convert'] = $this->reports_model->getconvert($product,$warehouse,$start_date,$end_date,$config["per_page"],$config["ob_set"]);
 		if($this->input->post('start_date')){
 			$this->data['start_date']= $this->erp->fsd($this->input->post('start_date'));
 		}else{
@@ -6079,11 +6079,11 @@ class Reports extends MY_Controller
 			$id = $this->input->get('id_id');
 			$str.="&id_id=".$id;
 		}
-		
+
 		if($this->input->get('start_date')){
 			$start = $this->input->get('start_date');
 			$str.="&start_date=".$start;
-			
+
 		}else{
 			$start = $this->erp->hrsd($datt);
 			$this->data['start_date'] = $start;
@@ -6091,13 +6091,13 @@ class Reports extends MY_Controller
 		if($this->input->get('end_date')){
 			$end = $this->input->get('end_date');
 			$str.="&end_date=".$end;
-			
+
 		}else{
 			$end = $this->erp->hrsd($datt);
 			$this->data['end_date'] = $end;
 		}
-		
-	   
+
+
 		$reference_no = "";
 		$warehouse_id = "";
 		$created_by = "";
@@ -6117,8 +6117,8 @@ class Reports extends MY_Controller
 			$str.="&created_by=".$created_by;
 			$this->data['created_by2']= $created_by;
 		}
-		
-		$this->db->select("*") 
+
+		$this->db->select("*")
 		->join('erp_warehouses','erp_warehouses.id=erp_convert.warehouse_id','LEFT')
 		->join('erp_users','erp_users.id=erp_convert.created_by','LEFT')
 		->where('erp_convert.bom_id',$id);
@@ -6140,13 +6140,13 @@ class Reports extends MY_Controller
 		}
 		$sales_nums = $this->db->get("erp_convert")
 		->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
         $config["base_url"] = site_url("reports/convert_report_detail");
 		$config["total_rows"] = $sales_nums;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] = 20; 
+        $config["per_page"] = 20;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -6162,12 +6162,12 @@ class Reports extends MY_Controller
 		$config['last_tag_close'] = '<li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
+
 		$this->pagination->initialize($config);
 		$this->data["pagination"] = $this->pagination->create_links();
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 	    $this->data['convert'] = $this->reports_model->getConvertDetailByID($id,$start,$end);
-		
+
 		$this->data['id'] = $id;
         $this->data['convert_detail'] = $this->reports_model->getconvertDetail($id,$start,$end,$config["ob_set"],$config["per_page"],$reference_no,$warehouse_id,$created_by,$wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
@@ -6177,7 +6177,7 @@ class Reports extends MY_Controller
 		$this->data['products'] =$this->site->getAllProducts();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' =>site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' =>lang('report_convert_detail')));
         $meta = array('page_title' => lang('report_convert_detail'), 'bc' => $bc);
-        $this->page_construct('reports/report_convert_detail', $meta, $this->data); 		
+        $this->page_construct('reports/report_convert_detail', $meta, $this->data);
 	}
 
 	function transfers_report()
@@ -6188,7 +6188,7 @@ class Reports extends MY_Controller
 			 $to_warehouse =$this->input->post('to_warehouse');
 		}else{
 			$to_warehouse =null;
-		} 
+		}
 		if($this->input->post('from_warehouse')){
 			 $from_warehouse =$this->input->post('from_warehouse');
 		}else{
@@ -6235,29 +6235,29 @@ class Reports extends MY_Controller
 		}else{
 			$end_date = $datt;
 			$this->data['end_date']=$datt;
-		}		
-		
+		}
+
 		$this->db->select("erp_transfers.*");
 		if($reference_no){
 			$this->db->where("erp_transfers.transfer_no",$reference_no);
-		}   
+		}
         if($to_warehouse){
-			$this->db->where("erp_transfers.from_warehouse_id",$from_warehouse) 
+			$this->db->where("erp_transfers.from_warehouse_id",$from_warehouse)
 			         ->where("erp_transfers.to_warehouse_id",$to_warehouse);
 		}
         if($start_date){
 	        $this->db->where("date_format(erp_transfers.date,'%Y-%m-%d') BETWEEN '$start_date' AND '$end_date'");
-        }		
+        }
 		$this->db->group_by('transfer_no');
 		$transfer_num = $this->db->get('erp_transfers')->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
         $config["base_url"] = base_url() . "reports/transfers_report/";
 		$config["total_rows"] = $transfer_num;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] = 50; 
-		$config["uri_segment"] = 3; 
+        $config["per_page"] = 50;
+		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
 		$config['next_tag_open'] = '<li class="next">';
@@ -6274,7 +6274,7 @@ class Reports extends MY_Controller
 		$config['num_tag_close'] = '</li>';
 
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 		$this->data['transfers'] = $this->reports_model->getTransfersReport($reference_no,$start_date,$end_date,$from_warehouse,$to_warehouse,$config["ob_set"],$config["per_page"],$wid);
         $this->data['users'] = $this->reports_model->getStaff();
@@ -6287,11 +6287,11 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('transfers_report'), 'bc' => $bc);
         $this->page_construct('reports/transfers_report', $meta, $this->data);
     }
-	
+
 	function deliveries($start_date = NULL, $end_date = NULL)
     {
        $this->erp->checkPermissions('by_delivery_person',NULL,'sale_report');
-		
+
 		if (!$start_date) {
             //$start = $this->db->escape(date('Y-m') . '-1');
            // $start_date = date('Y-m') . '-1';
@@ -6306,43 +6306,43 @@ class Reports extends MY_Controller
         }
 
         $data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
         $this->page_construct('reports/deliveries', $meta, $this->data);
     }
-	function deliveriess() 
+	function deliveriess()
 	{
-		
-		
+
+
 		if (!$start_date) {
             //$start = $this->db->escape(date('Y-m') . '-1');
            // $start_date = date('Y-m') . '-1';
         } else {
             $start = $this->db->escape(urldecode($start_date));
         }
-		
+
         if (!$end_date) {
             //$end = $this->db->escape(date('Y-m-d H:i'));
             //$end_date = date('Y-m-d H:i');
         } else {
             $end = $this->db->escape(urldecode($end_date));
-        } 
+        }
         $data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('sale_by_delivery_person')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
         $this->page_construct('reports/deliveries', $meta, $this->data);
 	}
-	
+
 	function getDeliveries($start = NULL, $end = NULL)
-    {        
+    {
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
         $detail_link = anchor('sales/view_delivery/$1', '<i class="fa fa-file-text-o"></i> ' . lang('delivery_details'), 'data-toggle="modal" data-target="#myModal"');
         $email_link = anchor('sales/email_delivery/$1', '<i class="fa fa-envelope"></i> ' . lang('email_delivery'), 'data-toggle="modal" data-target="#myModal"');
@@ -6356,19 +6356,19 @@ class Reports extends MY_Controller
 						. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 						. lang('actions') . ' <span class="caret"></span></button>
 				<ul class="dropdown-menu pull-right" role="menu">
-					<li>' . $print_cabon_link . '</li> 
-					<li>' . $pdf_link . '</li> 
+					<li>' . $print_cabon_link . '</li>
+					<li>' . $pdf_link . '</li>
 				</ul>
 			</div></div>';
 
-        $this->load->library('datatables');     
+        $this->load->library('datatables');
 		$this->datatables
             ->select("
-			deliveries.id as id, 
-			deliveries.date, 
-			username, 
-			deliveries.do_reference_no, 
-			sale_reference_no, 
+			deliveries.id as id,
+			deliveries.date,
+			username,
+			deliveries.do_reference_no,
+			sale_reference_no,
 			quantity_received,
 			deliveries.delivery_status")
             ->from('deliveries')
@@ -6387,11 +6387,11 @@ class Reports extends MY_Controller
 			}
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
-		}		
+		}
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
     }
-	
+
 	function return_sales($warehouse_id = NULL)
     {
         $this->erp->checkPermissions();
@@ -6412,7 +6412,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('return_sales'), 'bc' => $bc);
         $this->page_construct('reports/return_sales', $meta, $this->data);
     }
-	
+
     function getQuotesReport($pdf = NULL, $xls = NULL)
     {
 
@@ -6468,7 +6468,7 @@ class Reports extends MY_Controller
                 ->join('quote_items', 'quote_items.quote_id=quotes.id', 'left')
                 ->join('warehouses', 'warehouses.id=quotes.warehouse_id', 'left')
                 ->group_by('quotes.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('quotes.created_by', $user);
@@ -6588,7 +6588,7 @@ class Reports extends MY_Controller
                 ->join('quote_items', 'quote_items.quote_id=quotes.id', 'left')
                 ->join('warehouses', 'warehouses.id=quotes.warehouse_id', 'left')
                 ->group_by('quotes.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('quotes.created_by', $user);
@@ -6618,7 +6618,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getQuotesReport2($pdf = NULL, $xls = NULL)
     {
 
@@ -6674,7 +6674,7 @@ class Reports extends MY_Controller
                 ->join('quote_items', 'quote_items.quote_id=quotes.id', 'left')
                 ->join('warehouses', 'warehouses.id=quotes.warehouse_id', 'left')
                 ->group_by('quotes.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('quotes.created_by', $user);
@@ -6794,7 +6794,7 @@ class Reports extends MY_Controller
                 ->join('quote_items', 'quote_items.quote_id=quotes.id', 'left')
                 ->join('warehouses', 'warehouses.id=quotes.warehouse_id', 'left')
                 ->group_by('quotes.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('quotes.created_by', $user);
@@ -6956,7 +6956,7 @@ class Reports extends MY_Controller
         } else {
             $product = NULL;
         }
-		
+
 		if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
         } else {
@@ -7072,18 +7072,18 @@ class Reports extends MY_Controller
                 ->join('return_items', 'return_items.return_id=return_sales.id', 'left')
                 ->group_by('return_sales.id');
             //->where('return_sales.warehouse_id', $warehouse_id);
-			
+
 			if ($customer) {
                 $this->datatables->where($this->db->dbprefix('return_sales') . ".customer_id", $customer);
             }
-			
+
             if ($product) {
                 $this->datatables->like($this->db->dbprefix('return_items') . ".product_id", $product);
             }
             echo $this->datatables->generate();
         }
     }
-	
+
 	function getDepositsReport($pdf = NULL, $xls = NULL)
     {
         if ($this->input->get('customer')) {
@@ -7203,7 +7203,7 @@ class Reports extends MY_Controller
             echo $this->datatables->generate();
         }
     }
-	
+
 	function getProductsReports2()
 	{
 		if ($this->input->get('customer')) {
@@ -7227,12 +7227,12 @@ class Reports extends MY_Controller
         }
 		$this->load->library('datatables');
 		$this->datatables
-			->select("sales.id as id, 
-			reference_no, 
-			products.code, 
-			products.name as pname, 
-			categories.name as cname, 
-			sum(erp_sale_items.quantity), 
+			->select("sales.id as id,
+			reference_no,
+			products.code,
+			products.name as pname,
+			categories.name as cname,
+			sum(erp_sale_items.quantity),
 			variants.name", false)
 			->from("sales")
 			->join('sale_items', 'sales.id=sale_items.sale_id', 'inner')
@@ -7273,8 +7273,8 @@ class Reports extends MY_Controller
 		}
 		 if (!$this->input->post('start_date')) {
             $this->data['start_date']= $datt;
-        } 
-		
+        }
+
         if (!$this->input->post('end_date')) {
             $this->data['end_date']= $datt;
         }
@@ -7329,10 +7329,10 @@ class Reports extends MY_Controller
 			$end_date= $datt;
 			$this->data['end_date'] =$datt;
 		}
-		
-		$this->db->select("erp_adjustments.*");  
+
+		$this->db->select("erp_adjustments.*");
 		if($reference_no){
-		    $this->db->where("erp_adjustments.reference_no",$reference_no); 	
+		    $this->db->where("erp_adjustments.reference_no",$reference_no);
 		}
 		if($created_by){
 			$this->db->where("erp_adjustments.created_by",$created_by);
@@ -7349,13 +7349,13 @@ class Reports extends MY_Controller
 		}
 	    $this->db->group_by('reference_no');
 		$adjusts=$this->db->get('adjustments')->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
         $config["base_url"] = base_url() . "reports/adjustment_report/";
 		$config["total_rows"] = $adjusts;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] = 50; 
+        $config["per_page"] = 50;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -7371,15 +7371,15 @@ class Reports extends MY_Controller
 		$config['last_tag_close'] = '<li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
-		
+
+
 		$this->data['warehouses'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links(); 
-        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error'); 
+		$this->data["pagination"] = $this->pagination->create_links();
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['items'] = $this->reports_model->getAlladjustment($reference_no,$warehouse_id,$wid,$created_by,$start_date,$end_date,$config["per_page"],$config["ob_set"]);
         //$this->data['warehouses'] = $this->site->getAllWarehouses();
-		
+
 		$this->data['created'] =$this->site->getAllUsers();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('adjustment_report')));
         $meta = array('page_title' => lang('adjustment_report'), 'bc' => $bc);
@@ -7393,13 +7393,13 @@ class Reports extends MY_Controller
         } else {
             $product = NULL;
         }
-		
+
 		if ($this->input->get('biller_id')) {
             $biller_id = $this->input->get('biller_id');
         } else {
             $biller_id = NULL;
         }
-		
+
         if ($this->input->get('user')) {
             $user = $this->input->get('user');
         } else {
@@ -7425,14 +7425,14 @@ class Reports extends MY_Controller
         } else {
             $start_date =$datt;
         }
-		
+
         if ($this->input->get('end_date')) {
             $end_date = $this->erp->fsd($this->input->get('end_date'));
         } else {
             $end_date = $datt;
         }
-		
-       
+
+
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
@@ -7440,13 +7440,13 @@ class Reports extends MY_Controller
         if ($pdf || $xls) {
 
             $this->db
-                ->select($this->db->dbprefix('purchases') . ".id, date, reference_no, " . 
-				 $this->db->dbprefix('warehouses') . ".name as wname, 
-				 supplier, 
-				 (SELECT GROUP_CONCAT(pi.product_name SEPARATOR '<br/>') FROM " . $this->db->dbprefix('purchase_items') . " pi WHERE pi.purchase_id = " . $this->db->dbprefix('purchase_items') . ".purchase_id) AS iname,  
-				 GROUP_CONCAT(ROUND(" . $this->db->dbprefix('purchase_items') . ".quantity) SEPARATOR '<br/>') as iqty, 
-				 grand_total, 
-				 paid, 
+                ->select($this->db->dbprefix('purchases') . ".id, date, reference_no, " .
+				 $this->db->dbprefix('warehouses') . ".name as wname,
+				 supplier,
+				 (SELECT GROUP_CONCAT(pi.product_name SEPARATOR '<br/>') FROM " . $this->db->dbprefix('purchase_items') . " pi WHERE pi.purchase_id = " . $this->db->dbprefix('purchase_items') . ".purchase_id) AS iname,
+				 GROUP_CONCAT(ROUND(" . $this->db->dbprefix('purchase_items') . ".quantity) SEPARATOR '<br/>') as iqty,
+				 grand_total,
+				 paid,
 				 " . $this->db->dbprefix('purchases') . ".status", FALSE)
                 ->from('purchases')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
@@ -7454,7 +7454,7 @@ class Reports extends MY_Controller
 				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
                 ->group_by('purchases.id')
                 ->order_by('purchases.date desc');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('purchases.created_by', $user);
@@ -7478,7 +7478,7 @@ class Reports extends MY_Controller
             if ($start_date) {
                 $this->db->where('date_format('.$this->db->dbprefix('purchases').'.date,"%Y-%m-%d") BETWEEN "' . $start_date . '" and "' . $end_date . '"');
             }
-			
+
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -7594,16 +7594,16 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang('nothing_found'));
             redirect($_SERVER["HTTP_REFERER"]);
 
-        } else {	
+        } else {
             $this->load->library('datatables');
-			$this->datatables->select($this->db->dbprefix('purchases') . ".id, 
-			".$this->db->dbprefix('purchases') . ".date, 
-			reference_no, 
-			" .$this->db->dbprefix('warehouses') . ".name as wname, 
+			$this->datatables->select($this->db->dbprefix('purchases') . ".id,
+			".$this->db->dbprefix('purchases') . ".date,
+			reference_no,
+			" .$this->db->dbprefix('warehouses') . ".name as wname,
 			supplier ,
-			grand_total, 
-			paid, 
-			(grand_total-paid) as balance, 
+			grand_total,
+			paid,
+			(grand_total-paid) as balance,
 			" . $this->db->dbprefix('purchases') . ".status,CONCAT(erp_users.first_name,' ',erp_users.last_name) as create_by", FALSE)
 			->from('purchases')
 			->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
@@ -7611,13 +7611,13 @@ class Reports extends MY_Controller
 			->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
 			->join('users', 'users.id = purchases.created_by', 'left')
 			->group_by('purchases.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('purchases.created_by', $user);
 				}
 			}
-			
+
 			if ($biller_id) {
                 $this->datatables->where('purchases.biller_id', $biller_id);
             }
@@ -7649,13 +7649,13 @@ class Reports extends MY_Controller
         } else {
             $product = NULL;
         }
-		
+
 		if ($this->input->get('biller_id')) {
             $biller = $this->input->get('biller_id');
         } else {
             $biller = NULL;
         }
-		
+
         if ($this->input->get('user')) {
             $user = $this->input->get('user');
         } else {
@@ -7686,15 +7686,15 @@ class Reports extends MY_Controller
         } else {
             $end_date = $datt;
         }
-      
+
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
 
         if ($pdf || $xls) {
             $this->db
-                ->select($this->db->dbprefix('purchases') . ".id, purchases.date, reference_no, " . 
-						 $this->db->dbprefix('warehouses') . ".name as wname, supplier , 
+                ->select($this->db->dbprefix('purchases') . ".id, purchases.date, reference_no, " .
+						 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
 						 grand_total, paid, " . $this->db->dbprefix('purchases') . ".status", FALSE)
                 ->from('purchases')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
@@ -7702,7 +7702,7 @@ class Reports extends MY_Controller
 				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
                 ->group_by('purchases.id')
                 ->order_by('purchases.date desc');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('purchases.created_by', $user);
@@ -7842,20 +7842,21 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang('nothing_found'));
             redirect($_SERVER["HTTP_REFERER"]);
 
-        } else { 
-			
+        } else {
+
             $this->load->library('datatables');
 
 			$this->datatables
-			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, reference_no, " . 
-						 $this->db->dbprefix('warehouses') . ".name as wname, supplier ,
-						 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".status", FALSE)
+			->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, purchases_order.reference_no as po_ref, purchases.reference_no, " .
+						 $this->db->dbprefix('warehouses') . ".name as wname, companies.name as supplier,
+						 purchases.grand_total, purchases.order_discount, purchases.paid, (erp_purchases.grand_total - erp_purchases.paid) as balance, " . $this->db->dbprefix('purchases') . ".status", FALSE)
                 ->from('purchases')
+                ->join('purchases_order', 'purchases.order_id = purchases_order.id', 'left')
                 ->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
                 ->join('warehouses', 'warehouses.id=purchases.warehouse_id', 'left')
-				->join('companies', 'companies.id = purchase_items.supplier_id', 'left')
+				->join('companies', 'companies.id = purchases.supplier_id', 'left')
                 ->group_by('purchases.id');
-			
+
 			if ($user) {
 					$this->datatables->where('purchases.created_by', $user);
 				}
@@ -7881,7 +7882,7 @@ class Reports extends MY_Controller
             echo $this->datatables->generate();
         }
     }
-	
+
 	function getSalesDiscountReport($pdf = NULL, $xls = NULL)
     {
 		$datt =$this->reports_model->getLastDate("sales","date");
@@ -7900,7 +7901,7 @@ class Reports extends MY_Controller
         } else {
             $end_date = $datt;
         }
-       
+
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
@@ -7913,7 +7914,7 @@ class Reports extends MY_Controller
                 ->join('purchases', 'payments.purchase_id=purchases.id', 'left')
                 ->group_by('payments.id')
                 ->order_by('payments.date desc');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('payments.created_by', $user);
@@ -7949,7 +7950,7 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->SetCellValue('G1', lang('type'));
                 $row = 2;
                 $total = 0;
-				
+
                 foreach ($data as $data_row) {
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->erp->hrld($data_row->date));
                     $this->excel->getActiveSheet()->SetCellValue('B' . $row, $data_row->payment_ref);
@@ -8024,16 +8025,16 @@ class Reports extends MY_Controller
 
             $this->load->library('datatables');
             $this->datatables->select("
-			sales.id as idd, 
+			sales.id as idd,
 			sales.date,
-            sales.customer,			
-			sale_items.product_code, 
-			sale_items.product_name, 
-			 
+            sales.customer,
+			sale_items.product_code,
+			sale_items.product_name,
+
 			sale_items.unit_price ,
-			sale_items.quantity, 
+			sale_items.quantity,
 			sale_items.discount,
-			(CASE WHEN erp_sale_items.discount = '100%' THEN 
+			(CASE WHEN erp_sale_items.discount = '100%' THEN
 				'free'
 			ELSE
 				erp_sales.payment_status
@@ -8043,7 +8044,7 @@ class Reports extends MY_Controller
 			->join('sales', 'sales.id = sale_items.sale_id', 'left')
 			->join('products', 'products.id = sale_items.product_id', 'left')
 			->where('sale_items.discount <>', 0);
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('sales.created_by', $user);
@@ -8070,7 +8071,7 @@ class Reports extends MY_Controller
             echo $this->datatables->generate();
         }
     }
-	
+
 	function sales_discount()
     {
 		$datt =$this->reports_model->getLastDate("sales","date");
@@ -8092,7 +8093,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('sales_discount_report'), 'bc' => $bc);
         $this->page_construct('reports/sales_discount', $meta, $this->data);
     }
-	
+
     function payments($biller_id = NULL)
     {
         $datt =$this->reports_model->getLastDate("payments","date");
@@ -8179,7 +8180,7 @@ class Reports extends MY_Controller
         } else {
             $end_date = $datt;
         }
-        
+
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
@@ -8191,7 +8192,7 @@ class Reports extends MY_Controller
                 ->join('sales', 'payments.sale_id=sales.id', 'left')
                 ->join('purchases', 'payments.purchase_id=purchases.id', 'left')
                 ->group_by('payments.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('payments.created_by', $user);
@@ -8223,7 +8224,7 @@ class Reports extends MY_Controller
 			}
 
             $q = $this->db->get();
-			
+
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
                     $data[] = $row;
@@ -8321,13 +8322,13 @@ class Reports extends MY_Controller
 
             $this->load->library('datatables');
             $this->datatables
-                ->select($this->db->dbprefix('payments') . ".id as idd, ". $this->db->dbprefix('payments'). ".date, " . $this->db->dbprefix('payments') . ".reference_no as payment_ref, " . $this->db->dbprefix('sales') . ".reference_no as sale_ref, " . $this->db->dbprefix('purchases') . ".reference_no as purchase_ref, 
+                ->select($this->db->dbprefix('payments') . ".id as idd, ". $this->db->dbprefix('payments'). ".date, " . $this->db->dbprefix('payments') . ".reference_no as payment_ref, " . $this->db->dbprefix('sales') . ".reference_no as sale_ref, " . $this->db->dbprefix('purchases') . ".reference_no as purchase_ref,
 				(
-					CASE 
-						WHEN " . $this->db->dbprefix('payments') . ".note = ' ' THEN 
-								".$this->db->dbprefix('sales') . ".suspend_note 
-						WHEN " . $this->db->dbprefix('sales') . ".suspend_note != ''  THEN 
-								CONCAT(".$this->db->dbprefix('sales') . ".suspend_note, ' - ',  " . $this->db->dbprefix('payments') . ".note) 
+					CASE
+						WHEN " . $this->db->dbprefix('payments') . ".note = ' ' THEN
+								".$this->db->dbprefix('sales') . ".suspend_note
+						WHEN " . $this->db->dbprefix('sales') . ".suspend_note != ''  THEN
+								CONCAT(".$this->db->dbprefix('sales') . ".suspend_note, ' - ',  " . $this->db->dbprefix('payments') . ".note)
 					ELSE " . $this->db->dbprefix('payments') . ".note END
 				) as note,
 				,payments.paid_by,amount, erp_payments.type,CONCAT(erp_users.first_name,' ',erp_users.last_name) as create_by")
@@ -8336,7 +8337,7 @@ class Reports extends MY_Controller
 				 ->join('users', 'users.id=payments.created_by', 'left')
                 ->join('purchases', 'payments.purchase_id=purchases.id', 'left')
                 ->group_by('payments.id');
-			
+
 			if ($user) {
 					$this->datatables->where('payments.created_by', $user);
 				}
@@ -8370,7 +8371,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getPaymentsReportStaff($pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('staff', NULL, 'sale_report');
@@ -8436,7 +8437,7 @@ class Reports extends MY_Controller
                 ->join('purchases', 'payments.purchase_id=purchases.id', 'left')
                 ->group_by('payments.id')
                 ->order_by('payments.date desc');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('payments.created_by', $user);
@@ -8570,7 +8571,7 @@ class Reports extends MY_Controller
                 ->join('sales', 'payments.sale_id=sales.id', 'left')
                 ->join('purchases', 'payments.purchase_id=purchases.id', 'left')
                 ->group_by('payments.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('payments.created_by', $user);
@@ -8606,7 +8607,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
     function customers()
     {
 		$datt =$this->reports_model->getLastDate("erp_deliveries","date");
@@ -8635,7 +8636,7 @@ class Reports extends MY_Controller
 
     function getCustomers($pdf = NULL, $xls = NULL)
     {
-        
+
         if ($pdf || $xls) {
             $this->db
                 ->select($this->db->dbprefix('companies') . ".id as idd, company, name, phone, email, group_areas.areas_group, count(" . $this->db->dbprefix('sales') . ".id) as total, COALESCE(sum(grand_total), 0) as total_amount, COALESCE(sum(paid), 0) as paid, (CASE WHEN (COALESCE(sum(grand_total), 0) - COALESCE(sum(paid), 0)) < 0 THEN 0 ELSE (COALESCE(sum(grand_total), 0) - COALESCE(sum(paid), 0)) END) as balance", FALSE)
@@ -8736,13 +8737,13 @@ class Reports extends MY_Controller
         } else {
 			if ($this->input->get('group_area')) {
             $group_area = $this->input->get('group_area');
-				
+
 			} else {
 				$group_area = NULL;
 			}
 			if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
-				
+
 			} else {
 				$customer = NULL;
 			}
@@ -8766,7 +8767,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function getSellers($pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('customers', TRUE);
@@ -8900,21 +8901,21 @@ class Reports extends MY_Controller
         $this->data['users'] = $this->reports_model->getStaff();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
         $this->data['billers'] = $this->site->getAllCompanies('biller');
-			
+
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
-		
+
 		$this->data['date'] = $date;
-		
+
         $this->data['user_id'] = $user_id;
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('customers_report')));
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
-		
+
         $this->page_construct('reports/customer_report', $meta, $this->data);
 
     }
-	
+
 	function biller_report($user_id = NULL, $warehouse_id = NULL)
-    {	
+    {
         // $this->erp->print_arrays($warehouse_id);
         $this->erp->checkPermissions('project', false, 'sale_report');
         if (!$user_id && $_GET['d'] == null) {
@@ -8929,15 +8930,15 @@ class Reports extends MY_Controller
         $this->data['users'] = $this->reports_model->getStaff();
         // $this->data['warehouses'] = $this->site->getAllWarehouses();
         $this->data['billers'] = $this->site->getAllCompanies('biller');
-			
+
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
         if ($this->Owner || $this->Admin || !$this->session->userdata('warehouse_id')) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             $this->data['warehouse_id'] = $warehouse_id;
             $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-            
+
         } else {
-            
+
             $this->data['warehouses'] = $this->products_model->getUserWarehouses();
             if($warehouse_id){
                 $this->data['warehouse_id'] = $warehouse_id;
@@ -8948,9 +8949,9 @@ class Reports extends MY_Controller
                 $this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->products_model->getUserWarehouses() : NULL;
             }
         }
-		
+
 		$this->data['date'] = isset($date);
-		
+
         $this->data['user_id'] = $user_id;
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('project_report')));
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
@@ -8986,7 +8987,7 @@ class Reports extends MY_Controller
 				if ($user) {
 					$this->datatables->where('purchases.created_by', $user);
 				}
-			}		
+			}
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -9084,13 +9085,13 @@ class Reports extends MY_Controller
                 ->group_by('companies.id')
                 ->add_column("Actions", "<div class='text-center'><a class=\"tip\" title='" . lang("view_report") . "' href='" . site_url('reports/supplier_report/$1') . "'><span class='label label-primary'>" . lang("view_report") . "</span></a></div>", "idd")
                 ->unset_column('id');
-				
+
 				if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('purchases.created_by', $user);
 				}
-			}		
-				
+			}
+
             echo $this->datatables->generate();
 
         }
@@ -9107,7 +9108,7 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang("no_supplier_selected"));
             redirect('reports/suppliers');
         }
-		
+
 		if($biller_id != NULL){
 			$this->data['biller_id'] = $biller_id;
 		}else{
@@ -9130,9 +9131,9 @@ class Reports extends MY_Controller
         if ($this->input->post('end_date')) {
             $this->data['end_date1'] =  $this->erp->fsd($this->input->post('end_date'));
         } else {
-            $this->data['end_date1']  = null;	
+            $this->data['end_date1']  = null;
         }
-		
+
 		if ($this->input->post('pay_start_date')) {
 			$this->data['start_date2']  = $this->erp->fsd($this->input->post('pay_start_date'));
         } else {
@@ -9143,7 +9144,7 @@ class Reports extends MY_Controller
         } else {
 			$this->data['end_date2']  = null;
         }
-		
+
 		if ($this->input->post('start_date2')) {
 			$this->data['start_date3']  = $this->erp->fsd($this->input->post('start_date2'));
         } else {
@@ -9169,10 +9170,10 @@ class Reports extends MY_Controller
         $this->page_construct('reports/supplier_report', $meta, $this->data);
 
     }
-    
+
     function getSupplierByItems($pdf = NULL, $xls = NULL)
     {
-       
+
         if ($pdf || $xls) {
 
             $this->db
@@ -9295,7 +9296,7 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang("no_supplier_selected"));
             redirect('reports/suppliers');
         }
-		
+
 		$user = $this->site->getUser();
 		if($biller_id != NULL){
 			$this->data['biller_id'] = $biller_id;
@@ -9315,7 +9316,7 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
         $this->data['purchases'] = $this->reports_model->getPurchasesTotals($user_id);
         $this->data['total_purchases'] = $this->reports_model->getSupplierPurchases($user_id);
         $this->data['users'] = $this->reports_model->getStaff();
@@ -9329,7 +9330,7 @@ class Reports extends MY_Controller
         $this->page_construct('reports/supplier_by_items_report', $meta, $this->data);
 
     }
-    
+
     function supplier_by_items()
     {
         $this->erp->checkPermissions('suppliers',NULL,'product_report');
@@ -9347,7 +9348,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('staff_report'), 'bc' => $bc);
         $this->page_construct('reports/project_managers', $meta, $this->data);
     }
-	
+
 	function users()
     {
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
@@ -9374,7 +9375,7 @@ class Reports extends MY_Controller
             ->unset_column('id');
         echo $this->datatables->generate();
     }
-	
+
 	function getProjectUsers()
     {
         $this->load->library('datatables');
@@ -9393,7 +9394,7 @@ class Reports extends MY_Controller
             ->unset_column('id');
         echo $this->datatables->generate();
     }
-	
+
 	 function project_users_report($user_id = NULL, $year = NULL, $month = NULL, $pdf = NULL, $cal = 0)
     {
         if (!$user_id) {
@@ -9547,9 +9548,9 @@ class Reports extends MY_Controller
             $daily_sale = array();
         }
         $this->data['calender'] = $this->calendar->generate($year, $month, $daily_sale);
-		
+
         /* purchase daily */
-		
+
 		$configs = array(
             'show_next_prev' => TRUE,
             'next_prev_url' => site_url('reports/staff_report/'.$user_id),
@@ -9596,7 +9597,7 @@ class Reports extends MY_Controller
             $daily_purchase = array();
         }
         $this->data['calenders'] = $this->calendar->generate($year, $month, $daily_purchase);
-		
+
         $this->data['year'] = $year;
         $this->data['month'] = $month;
         $this->data['msales'] = $this->reports_model->getStaffMonthlySaleman($user_id, $year);
@@ -9725,7 +9726,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
     function getSaleProduct($id = NULL, $pdf = NULL, $xls = NULL) {
         // if ($this->input->get($Sdate)) {
         if ($this->input->get('start_date')) {
@@ -9829,7 +9830,7 @@ class Reports extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                     $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                     $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
@@ -9850,7 +9851,7 @@ class Reports extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                     $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                     $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
@@ -9930,7 +9931,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function email_profit()
     {
         $this->erp->checkPermissions('index');
@@ -9954,9 +9955,9 @@ class Reports extends MY_Controller
 		$this->data['count_dis'] = $this->reports_model->Count_Sale_discount($date);
 		$this->data['date'] = $date;
 		$this->data['sendemail'] = '1';
-		
+
 		$receipt = $this->load->view($this->theme . 'reports/profit', $this->data, TRUE);
-		
+
         //$receipt = $this->load->view($this->theme . 'pos/email_receipt', $this->data, TRUE);
 
         if ($this->erp->send_email($to, 'Profit', $receipt)) {
@@ -9966,7 +9967,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
     function getCustomerLogins($id = NULL)
     {
         if ($this->input->get('login_start_date')) {
@@ -10117,7 +10118,7 @@ class Reports extends MY_Controller
                 ->join('users', 'users.id=pos_register.user_id', 'left')
                 ->order_by('date desc');
             //->where('status', 'close');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('pos_register.user_id', $user);
@@ -10237,7 +10238,7 @@ class Reports extends MY_Controller
                 ->select("erp_pos_register.id as idd, date, closed_at, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as user, cash_in_hand, CONCAT(total_cc_slips, ' (', total_cc_slips_submitted, ')'), CONCAT(total_cheques, ' (', total_cheques_submitted, ')'), CONCAT(total_member_slips, ' (', total_member_slips_submitted, ')'),CONCAT(total_voucher_slips, ' (', total_voucher_slips_submitted, ')'), CONCAT(total_cash, ' (', total_cash_submitted, ')'), pos_register.note", FALSE)
                 ->from("pos_register")
                 ->join('users', 'users.id=pos_register.user_id', 'left');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('pos_register.user_id', $user);
@@ -10252,53 +10253,53 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function view_sale_detail($product_code = NULL)
-    {		
+    {
         $this->erp->checkPermissions('product', false, 'product_report');
-        $this->data['sale_details'] = $this->reports_model->getSaleDetail($product_code);	
-		
+        $this->data['sale_details'] = $this->reports_model->getSaleDetail($product_code);
+
         $this->load->view($this->theme . 'reports/view_sale_detail', $this->data);
 		 //$this->page_construct('reports/index', $meta, $this->data);
     }
-	
+
 	function view_purchase_detail($product_code = NULL, $supplier_id = NULL)
-    {		
+    {
         $this->erp->checkPermissions('product', false, 'product_report');
 		if($supplier_id){
-			$this->data['purchase_details'] = $this->reports_model->getPurchaseDetailSupplier($product_code, $supplier_id);	
+			$this->data['purchase_details'] = $this->reports_model->getPurchaseDetailSupplier($product_code, $supplier_id);
 		}else{
-			$this->data['purchase_details'] = $this->reports_model->getPurchaseDetail($product_code);	
+			$this->data['purchase_details'] = $this->reports_model->getPurchaseDetail($product_code);
 		}
 
         $this->load->view($this->theme . 'reports/view_purchase_detail', $this->data);
 		 //$this->page_construct('reports/index', $meta, $this->data);
     }
-	
+
 	function view_sale_detail_in_out($product_code = NULL)
-    {		
+    {
         $this->erp->checkPermissions('in_out', false, 'product_report');
-        $this->data['sale_details'] = $this->reports_model->getSaleDetail($product_code);	
-		
+        $this->data['sale_details'] = $this->reports_model->getSaleDetail($product_code);
+
         $this->load->view($this->theme . 'reports/view_sale_detail_in_out', $this->data);
 		 //$this->page_construct('reports/index', $meta, $this->data);
     }
-	
+
 	function view_purchase_detail_in_out($product_code = NULL)
-    {		
+    {
         $this->erp->checkPermissions('in_out', false, 'product_report');
-        $this->data['purchase_details'] = $this->reports_model->getPurchaseDetail($product_code);	
-		
+        $this->data['purchase_details'] = $this->reports_model->getPurchaseDetail($product_code);
+
         $this->load->view($this->theme . 'reports/view_purchase_detail_in_out', $this->data);
 		 //$this->page_construct('reports/index', $meta, $this->data);
     }
-	
+
 	function view_profit_lost_purchase($start_date=null, $end_date=null)
     {
        $end_date_time=explode('_',$end_date);
 	   $end_date=$end_date_time[0]." ".str_replace('-',':',$end_date_time[1]);
        $this->erp->checkPermissions(false, true);
-	   
+
        $this->data['purchase_info']= $this->db
                 ->select("id, date, reference_no, supplier, status, grand_total, paid, (grand_total-paid) as balance, payment_status")
                 ->from('purchases')
@@ -10308,7 +10309,7 @@ class Reports extends MY_Controller
 				->get();
          $this->load->view($this->theme . 'reports/modal_profit_lost_purchase', $this->data);
     }
-	
+
     function view_profit_lost_sale($start_date=null,$end_date=null)
 	{
 		$end_date_time=explode('_',$end_date);
@@ -10322,7 +10323,7 @@ class Reports extends MY_Controller
 				->get();
 		$this->load->view($this->theme .'reports/modal_profit_lost_sale',$this->data);
 	}
-	
+
 	function view_expense($start_date=null,$end_date=null)
 	{
 		$end_date_time=explode('_',$end_date);
@@ -10336,14 +10337,14 @@ class Reports extends MY_Controller
 				->get();
 		$this->load->view($this->theme.'reports/modal_view_expense',$this->data);
 	}
-	
+
 	function view_profit_payment($start_date=null,$end_date=null)
 	{
 		$end_date_time=explode('_',$end_date);
 		$end_date=$end_date_time[0]." ".str_replace('-',':',$end_date_time[1]);
 		$this->erp->checkPermissions(false,true);
-		
-		$this->data['payment_info']=$this->db	
+
+		$this->data['payment_info']=$this->db
 				->select("payments.id as id,payments.date as date1,payments.reference_no as ref_no1,sales.reference_no as sale_ref1,purchases.reference_no as pur_ref1,payments.paid_by as paid_by1,payments.amount as amount1,payments.type as type1")
 				->from('payments')
 				->join('sales','sales.id=payments.id','left')
@@ -10351,16 +10352,16 @@ class Reports extends MY_Controller
 				->where('payments.date >= ',$start_date)
 				->where('payments.date <=',$end_date)
 				->get();
-				
+
 		$this->load->view($this->theme.'reports/modal_view_payment',$this->data);
 	}
-	
+
 	function view_profit_payments_received($start_date=null,$end_date=null)
 	{
 		$end_date_time=explode('_',$end_date);
 		$end_date=$end_date_time[0]." ".str_replace('-',':',$end_date_time[1]);
 		$this->erp->checkPermissions(false,true);
-		$this->data['payment_received_info']=$this->db	
+		$this->data['payment_received_info']=$this->db
 				->select("payments.id as id,payments.date as date,payments.reference_no as ref_no,sales.reference_no as sale_ref,purchases.reference_no as pur_ref,payments.paid_by as paid_by,payments.amount as amount,payments.type as type")
 				->from('payments')
 				->join('sales','sales.id=payments.id','left')
@@ -10371,7 +10372,7 @@ class Reports extends MY_Controller
 				->get();
 		$this->load->view($this->theme.'reports/modal_view_payment_received',$this->data);
 	}
-	
+
 	function view_profit_payment_sent($start_date=null,$end_date=null)
 	{
 		$end_date_time=explode('_',$end_date);
@@ -10388,7 +10389,7 @@ class Reports extends MY_Controller
 				->get();
 		$this->load->view($this->theme.'reports/modal_view_payment_sent',$this->data);
 	}
-	
+
 	function view_profit_payment_return($start_date=null,$end_date=null)
 	{
 		$end_date_time=explode('_',$end_date);
@@ -10405,7 +10406,7 @@ class Reports extends MY_Controller
 				->get();
 		$this->load->view($this->theme.'reports/modal_view_payment_return',$this->data);
 	}
-	
+
 	function billReceipt()
     {
         $this->erp->checkPermissions('payments');
@@ -10416,7 +10417,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('payments_report'), 'bc' => $bc);
         $this->page_construct('reports/bill_reciept', $meta, $this->data);
     }
-	
+
 	function getBillReciept($pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('payments', TRUE);
@@ -10475,8 +10476,8 @@ class Reports extends MY_Controller
         if ($pdf || $xls) {
 
             $this->db
-                ->select("" . $this->db->dbprefix('payments') . ".date, 
-				" . $this->db->dbprefix('payments') . ".reference_no as payment_ref, 
+                ->select("" . $this->db->dbprefix('payments') . ".date,
+				" . $this->db->dbprefix('payments') . ".reference_no as payment_ref,
 				" . $this->db->dbprefix('sales') . ".reference_no as sale_ref,customer,paid_by, amount, type")
                 ->from('payments')
                 ->join('sales', 'payments.sale_id=sales.id', 'left')
@@ -10485,7 +10486,7 @@ class Reports extends MY_Controller
                 ->order_by('payments.date asc');
 				$this->db->where('payments.type != "sent"');
 			//	$this->db->where('sales.customer !=""');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('payments.created_by', $user);
@@ -10615,7 +10616,7 @@ class Reports extends MY_Controller
                 ->select($this->db->dbprefix('payments') . ".id,
 				" . $this->db->dbprefix('sales') . ".suspend_note AS noted,
 				" . $this->db->dbprefix('payments') . ".date AS date,
-				" . $this->db->dbprefix('payments') . ".reference_no as payment_ref, 
+				" . $this->db->dbprefix('payments') . ".reference_no as payment_ref,
 				" . $this->db->dbprefix('sales') . ".reference_no as sale_ref, customer,paid_by, amount, type", $this->db->dbprefix('payments') . ".id")
                 ->from('payments')
                 ->join('sales', 'payments.sale_id=sales.id', 'left')
@@ -10624,7 +10625,7 @@ class Reports extends MY_Controller
 				->order_by('payments.date desc');
 				$this->db->where('payments.type != "sent"');
 				$this->db->where('sales.customer !=""');
-            
+
             if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
                 if (isset($user)) {
                     $this->datatables->where('payments.created_by', $user);
@@ -10660,14 +10661,14 @@ class Reports extends MY_Controller
             if (isset($start_date)) {
                 $this->datatables->where($this->db->dbprefix('payments').'.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
             }
-           
+
 
             echo $this->datatables->generate();
 
         }
 
     }
-	
+
 	function billPayable()
     {
         $this->erp->checkPermissions('payments');
@@ -10678,7 +10679,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('payments_report'), 'bc' => $bc);
         $this->page_construct('reports/bill_payable', $meta, $this->data);
     }
-	
+
 	function getBillPaymentReport($pdf = NULL, $xls = NULL)
     {
         $this->erp->checkPermissions('payments', TRUE);
@@ -10737,7 +10738,7 @@ class Reports extends MY_Controller
         if ($pdf || $xls) {
 
             $this->db
-                ->select($this->db->dbprefix('purchases') . ".date, 
+                ->select($this->db->dbprefix('purchases') . ".date,
 				" . $this->db->dbprefix('purchases') . ".reference_no,
 				" . $this->db->dbprefix('purchases') . ".supplier as purchase_ref,
 				" . $this->db->dbprefix('payments') . ".paid_by,
@@ -10747,7 +10748,7 @@ class Reports extends MY_Controller
                 ->from('purchases')
 				->JOIN('payments','purchases.id=payments.purchase_id','left')
                 ->group_by('purchases.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->db->where('payments.created_by', $user);
@@ -10875,7 +10876,7 @@ class Reports extends MY_Controller
 
             $this->load->library('datatables');
             $this->datatables
-                ->select($this->db->dbprefix('purchases') . ".date, 
+                ->select($this->db->dbprefix('purchases') . ".date,
 				" . $this->db->dbprefix('purchases') . ".reference_no as payment_ref,
 				" . $this->db->dbprefix('purchases') . ".supplier as purchase_ref,
 				" . $this->db->dbprefix('payments') . ".paid_by,
@@ -10885,7 +10886,7 @@ class Reports extends MY_Controller
                 ->from('purchases')
 				->JOIN('payments','purchases.id=payments.purchase_id','left')
                 ->group_by('purchases.id');
-			
+
 			if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 				if ($user) {
 					$this->datatables->where('payments.created_by', $user);
@@ -10921,7 +10922,7 @@ class Reports extends MY_Controller
         }
 
     }
-	
+
 	function income_statement($start_date = NULL, $end_date = NULL, $pdf = NULL, $xls = NULL, $biller_id = NULL)
     {
 		$no_search_date = true;
@@ -10945,7 +10946,7 @@ class Reports extends MY_Controller
 		if($biller_id != NULL){
 			$this->data['biller_id_no_sep'] = $biller_id;
 			$biller_sep = explode('-', $biller_id);
-			
+
 			$bills = '';
 			for($i=0; $i < count($biller_sep); $i++){
 				$bills .= $biller_sep[$i] . ',';
@@ -10969,7 +10970,7 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
         $totalBeforeAyear = date('Y', strtotime($this->data['start'])) - 1;
@@ -10980,24 +10981,24 @@ class Reports extends MY_Controller
 		$to_date = date('Y-m-d',strtotime(urldecode($end_date. ' +1 day')));//'2015-09-01';
 		$this->data['from_date'] = $from_date;
 		$this->data['to_date'] = $to_date;
-		
+
 		$dataIncome = $this->accounts_model->getStatementByBalaneSheetDate('40,70',$from_date,$to_date,$biller_id);
-	
+
 		$dataCost = $this->accounts_model->getStatementByBalaneSheetDate('50',$from_date,$to_date,$biller_id);
 		$dataExpense = $this->accounts_model->getStatementByBalaneSheetDate('60,80,90',$from_date,$to_date,$biller_id);
 		$IncomeData = $this->accounts_model->getStatementByBalaneSheetDate('40,70',$from_date,$to_date,$biller_id);
         $this->data['totalBeforeAyear'] = $totalBeforeAyear;
-		$this->data['dataIncome'] = $dataIncome;		
+		$this->data['dataIncome'] = $dataIncome;
 		$this->data['dataCost'] = $dataCost;
 		$this->data['dataExpense'] = $dataExpense;
-		
+
 		if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/income_statement', $this->data, true);
             $name = lang("income_statement") . "_" . date('Y_m_d_H_i_s') . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_income_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
+
 		if($xls){
 			$styleArray = array(
 				'font'  => array(
@@ -11027,9 +11028,9 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('B1', lang('income_statement'));
 			$this->excel->getActiveSheet()->getStyle('B1')->applyFromArray($header_title);
 			$this->excel->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$this->excel->getActiveSheet()->SetCellValue('A3', lang('account_name'));							
+			$this->excel->getActiveSheet()->SetCellValue('A3', lang('account_name'));
 			$this->excel->getActiveSheet()->SetCellValue('B3', lang('amount'));
-			$this->excel->getActiveSheet()->SetCellValue('C3', lang('total'));			
+			$this->excel->getActiveSheet()->SetCellValue('C3', lang('total'));
 			$this->excel->getActiveSheet()->getStyle('A4:B4')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A4:B4')->setCellValue('A4' , lang('income'));
 			$this->excel->getActiveSheet()->mergeCells('C4:D4');
@@ -11052,8 +11053,8 @@ class Reports extends MY_Controller
 				$this->excel->getActiveSheet()->SetCellValue('C' . $income, '');
 				$income++;
 			}
-			
-			$this->excel->getActiveSheet()->getStyle('A3:A'.($income-1))->getAlignment()->setIndent(2);	
+
+			$this->excel->getActiveSheet()->getStyle('A3:A'.($income-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->mergeCells('A'.$income.':B'.$income)->setCellValue('A'.$income , lang('total_income'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $income, number_format((-1)*($total_income),2));
 			$this->excel->getActiveSheet()->getStyle('A'.($income + 1).':B'.($income +1))->applyFromArray($bold);
@@ -11078,17 +11079,17 @@ class Reports extends MY_Controller
 				$cost++;
 			}
 
-			$this->excel->getActiveSheet()->getStyle('A'.($income+2).':A'.($cost-1))->getAlignment()->setIndent(2);	
+			$this->excel->getActiveSheet()->getStyle('A'.($income+2).':A'.($cost-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->mergeCells('A'.$cost.':B'.$cost)->setCellValue('A'.$cost , lang('total_cost'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $cost, number_format((-1)*$total_cost,2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('C'.($cost + 1).':D'.($cost + 1))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($cost + 1).':B'.($cost + 1))->setCellValue('A'.($cost + 1) , lang('gross_margin'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . ($cost +1), number_format((-1)*($total_cost+$total_income),2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($cost + 2).':B'.($cost + 2))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($cost + 2).':B'.($cost + 2))->setCellValue('A'. ($cost + 2) , lang('operating_expense'));
-			
+
 			$total_expense = 0;
 			$totalBeforeAyear_expense = 0;
 			$expene = $cost + 3;
@@ -11126,12 +11127,12 @@ class Reports extends MY_Controller
 				return $objWriter->save('php://output');
 			}
 
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
-		
+
         $this->page_construct('reports/income_statement', $meta, $this->data);
 	}
-	
+
 	function income_statement_by_customer($start_date = NULL, $end_date = NULL, $pdf = NULL, $xls = NULL, $customer_id = NULL)
     {
 		$no_search_date = true;
@@ -11152,9 +11153,9 @@ class Reports extends MY_Controller
             $end = $this->db->escape(urldecode($end_date));
         }
 		$user = $this->site->getUser();
-		if($customer_id != NULL){			
+		if($customer_id != NULL){
 			$customer_sep = explode('-', $customer_id);
-			
+
 			$customers = '';
 			for($i=0; $i < count($customer_sep); $i++){
 				$customers .= $customer_sep[$i] . ',';
@@ -11164,10 +11165,10 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['customer_id'] = "";
 		}
-		
+
 		$this->data['customers'] = $this->site->getAllCompanies('customer');
-		
-		
+
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
         $totalBeforeAyear = date('Y', strtotime($this->data['start'])) - 1;
@@ -11178,24 +11179,24 @@ class Reports extends MY_Controller
 		$to_date = date('Y-m-d',strtotime(urldecode($end_date. ' +1 day')));//'2015-09-01';
 		$this->data['from_date'] = $from_date;
 		$this->data['to_date'] = $to_date;
-		
+
 		$dataIncome = $this->accounts_model->getStatementByBalaneSheetDateByCustomer('40,70',$from_date,$to_date,$customer_id);
-	
+
 		$dataCost = $this->accounts_model->getStatementByBalaneSheetDateByCustomer('50',$from_date,$to_date,$customer_id);
 		$dataExpense = $this->accounts_model->getStatementByBalaneSheetDateByCustomer('60,80,90',$from_date,$to_date,$customer_id);
 		$IncomeData = $this->accounts_model->getStatementByBalaneSheetDateByCustomer('40,70',$from_date,$to_date,$customer_id);
         $this->data['totalBeforeAyear'] = $totalBeforeAyear;
-		$this->data['dataIncome'] = $dataIncome;		
+		$this->data['dataIncome'] = $dataIncome;
 		$this->data['dataCost'] = $dataCost;
 		$this->data['dataExpense'] = $dataExpense;
-		
+
 		if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/income_statement_by_customer', $this->data, true);
             $name = lang("income_statement_by_customer") . "_" . date('Y_m_d_H_i_s') . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_income_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
+
 		if($xls){
 			$styleArray = array(
 				'font'  => array(
@@ -11225,9 +11226,9 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('B1', lang('income_statement'));
 			$this->excel->getActiveSheet()->getStyle('B1')->applyFromArray($header_title);
 			$this->excel->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$this->excel->getActiveSheet()->SetCellValue('A3', lang('account_name'));							
+			$this->excel->getActiveSheet()->SetCellValue('A3', lang('account_name'));
 			$this->excel->getActiveSheet()->SetCellValue('B3', lang('amount'));
-			$this->excel->getActiveSheet()->SetCellValue('C3', lang('total'));			
+			$this->excel->getActiveSheet()->SetCellValue('C3', lang('total'));
 			$this->excel->getActiveSheet()->getStyle('A4:B4')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A4:B4')->setCellValue('A4' , lang('income'));
 			$this->excel->getActiveSheet()->mergeCells('C4:D4');
@@ -11250,8 +11251,8 @@ class Reports extends MY_Controller
 				$this->excel->getActiveSheet()->SetCellValue('C' . $income, '');
 				$income++;
 			}
-			
-			$this->excel->getActiveSheet()->getStyle('A3:A'.($income-1))->getAlignment()->setIndent(2);	
+
+			$this->excel->getActiveSheet()->getStyle('A3:A'.($income-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->mergeCells('A'.$income.':B'.$income)->setCellValue('A'.$income , lang('total_income'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $income, number_format((-1)*($total_income),2));
 			$this->excel->getActiveSheet()->getStyle('A'.($income + 1).':B'.($income +1))->applyFromArray($bold);
@@ -11276,17 +11277,17 @@ class Reports extends MY_Controller
 				$cost++;
 			}
 
-			$this->excel->getActiveSheet()->getStyle('A'.($income+2).':A'.($cost-1))->getAlignment()->setIndent(2);	
+			$this->excel->getActiveSheet()->getStyle('A'.($income+2).':A'.($cost-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->mergeCells('A'.$cost.':B'.$cost)->setCellValue('A'.$cost , lang('total_cost'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $cost, number_format((-1)*$total_cost,2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('C'.($cost + 1).':D'.($cost + 1))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($cost + 1).':B'.($cost + 1))->setCellValue('A'.($cost + 1) , lang('gross_margin'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . ($cost +1), number_format((-1)*($total_cost+$total_income),2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($cost + 2).':B'.($cost + 2))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($cost + 2).':B'.($cost + 2))->setCellValue('A'. ($cost + 2) , lang('operating_expense'));
-			
+
 			$total_expense = 0;
 			$totalBeforeAyear_expense = 0;
 			$expene = $cost + 3;
@@ -11324,12 +11325,12 @@ class Reports extends MY_Controller
 				return $objWriter->save('php://output');
 			}
 
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
-		
+
         $this->page_construct('reports/income_statement_by_customer', $meta, $this->data);
 	}
-	
+
 	function income_statement_detail($start_date = NULL, $end_date = NULL, $pdf = NULL, $xls = NULL, $biller_id = NULL)
     {
         $this->erp->checkPermissions('income_statement_detail',NULL,'account_report');
@@ -11338,7 +11339,7 @@ class Reports extends MY_Controller
 		if($start_date && $end_date){
 			$no_search_date = false;
 		}
-		
+
 		if (!$start_date) {
             $start = $this->db->escape(date('Y-m') . '-1');
             $start_date = date('Y-m') . '-1';
@@ -11355,7 +11356,7 @@ class Reports extends MY_Controller
 		if($biller_id != NULL){
 			$this->data['biller_id_no_sep'] = $biller_id;
 			$biller_sep = explode('-', $biller_id);
-			
+
 			$bills = '';
 			for($i=0; $i < count($biller_sep); $i++){
 				$bills .= $biller_sep[$i] . ',';
@@ -11379,56 +11380,56 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
         $totalBeforeAyear = date('Y', strtotime($this->data['start'])) - 1;
-		
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-      
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('income_statement_detail')));
         $meta = array('page_title' => lang('income_statement_detail'), 'bc' => $bc);
-		
+
 		$from_date = date('Y-m-d H:m',strtotime(urldecode($start_date)));//'2014-08-01';
 		$to_date = date('Y-m-d H:m',strtotime(urldecode($end_date. ' +1 day')));//'2015-09-01';
-		
+
 		$this->data['from_date'] = $from_date;
 		$this->data['to_date'] = $to_date;
-		
+
 		$acc_setting = $this->site->get_Acc_setting();
 		$this->data['acc_setting'] = $acc_setting;
 
 		$dataIncome = $this->accounts_model->getStatementByDate('40,70',$from_date,$to_date,$biller_id);
 		$IncomeData = $this->accounts_model->getStatementByDate('40,70',$from_date,$to_date,$biller_id);
 		$dataCost = $this->accounts_model->getStatementByDate('50',$from_date,$to_date,$biller_id);
-		
+
 		$income_couple = $this->accounts_model->getStatementDetailByAccCode($acc_setting->default_receivable, '40,70,10',$from_date,$to_date,$biller_id);
-		
+
 		$cost_couple = $this->accounts_model->getStatementDetailByAccCode($acc_setting->default_stock, '50',$from_date,$to_date,$biller_id);
 		$dataExpense = $this->accounts_model->getStatementByDate('60,80,90',$from_date,$to_date,$biller_id);
 
 		$this->data['from_date'] = $from_date;
 		$this->data['to_date'] = $to_date;
         $this->data['totalBeforeAyear'] = $totalBeforeAyear;
-		
-		
+
+
 		$this->data['dataIncome'] = $dataIncome;
 		$this->data['idetails'] = $income_couple->result();
-		
+
 		$this->data['dataCost'] = $dataCost;
 		$this->data['cdetail'] = $cost_couple->result();
 		//$this->erp->print_arrays($cost_couple->resutt());
-		
+
 		$this->data['dataExpense'] = $dataExpense;
-		
+
 		if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/income_statement', $this->data, true);
             $name = lang("income_statement") . "_" . date('Y_m_d_H_i_s') . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_income_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
+
 		if($xls){
 			$styleArray = array(
 				'font'  => array(
@@ -11451,7 +11452,7 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('B1', lang('amount'));
 			$this->excel->getActiveSheet()->SetCellValue('C1', lang('total'));
 			//$this->excel->getActiveSheet()->SetCellValue('D1', lang("total") . ' ('.$totalBeforeAyear.')');
-			
+
 			$this->excel->getActiveSheet()->getStyle('A2:B2')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A2:B2')->setCellValue('A2' , lang('income'));
 			$this->excel->getActiveSheet()->mergeCells('C2:D2');
@@ -11475,16 +11476,16 @@ class Reports extends MY_Controller
 				//$this->excel->getActiveSheet()->SetCellValue('D' . $income, number_format(abs($totalBeforeAyearRows->amount),2));
 				$income++;
 			}
-			
-			$this->excel->getActiveSheet()->getStyle('A3:A'.($income-1))->getAlignment()->setIndent(2);	
+
+			$this->excel->getActiveSheet()->getStyle('A3:A'.($income-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->mergeCells('A'.$income.':B'.$income)->setCellValue('A'.$income , lang('total_income'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $income, number_format((-1)*($total_income),2));
 			//$this->excel->getActiveSheet()->SetCellValue('D' . $income, number_format((-1)*($totalBeforeAyear_income),2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($income + 1).':B'.($income +1))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($income + 1).':B'.($income +1))->setCellValue('A'. ($income + 1) , lang('cost'));
 			//$this->excel->getActiveSheet()->mergeCells('C'.($income + 1).':D'.($income +1));
-			
+
 			$total_cost = 0;
 			$totalBeforeAyear_cost = 0;
 			$cost = $income + 2;
@@ -11506,7 +11507,7 @@ class Reports extends MY_Controller
 				$cost++;
 			}
 
-			$this->excel->getActiveSheet()->getStyle('A'.($income+2).':A'.($cost-1))->getAlignment()->setIndent(2);	
+			$this->excel->getActiveSheet()->getStyle('A'.($income+2).':A'.($cost-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->mergeCells('A'.$cost.':B'.$cost)->setCellValue('A'.$cost , lang('total_cost'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $cost, number_format((-1)*$total_cost,2));
 			//$this->excel->getActiveSheet()->SetCellValue('D' . $cost, number_format((-1)*$totalBeforeAyear_cost,2));
@@ -11515,11 +11516,11 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->mergeCells('A'.($cost + 1).':B'.($cost + 1))->setCellValue('A'.($cost + 1) , lang('gross_margin'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . ($cost +1), number_format((-1)*($total_cost+$total_income),2));
 			//$this->excel->getActiveSheet()->SetCellValue('D' . ($cost +1), number_format((-1)*($totalBeforeAyear_income+$totalBeforeAyear_cost),2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($cost + 2).':B'.($cost + 2))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($cost + 2).':B'.($cost + 2))->setCellValue('A'. ($cost + 2) , lang('operating_expense'));
 			//$this->excel->getActiveSheet()->mergeCells('C'.($cost + 2).':D'.($cost + 2));
-			
+
 			$total_expense = 0;
 			$totalBeforeAyear_expense = 0;
 			$expene = $cost + 3;
@@ -11542,12 +11543,12 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->mergeCells('A'.$expene.':B'.$expene)->setCellValue('A'.$expene , lang('total_expense'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $expene, number_format((-1)*$total_expense,2));
 			//$this->excel->getActiveSheet()->SetCellValue('D' . $expene, number_format((-1)*$totalBeforeAyear_expense,2));
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($expene + 1).':C'.($expene + 1))->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.($expene + 1).':B'.($expene + 1))->setCellValue('A'. ($expene + 1) , lang('profits'));
 			$this->excel->getActiveSheet()->SetCellValue('C' . ($expene + 1), number_format((-1)*$total_income-($total_cost+$total_expense),2));
 			//$this->excel->getActiveSheet()->SetCellValue('D' . ($expene + 1), number_format((-1)*$totalBeforeAyear_income-($totalBeforeAyear_cost+$totalBeforeAyear_expense),2));
-			
+
 			$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
 			$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 			$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -11563,12 +11564,12 @@ class Reports extends MY_Controller
 				return $objWriter->save('php://output');
 			}
 
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
-		
+
         $this->page_construct('reports/income_statement_detail', $meta, $this->data);
 	}
-	
+
 	function balance_sheet($start_date = NULL, $end_date = NULL, $pdf = NULL, $xls = NULL, $biller_id = NULL)
     {
 		$this->erp->checkPermissions('balance_sheet',NULL,'account_report');
@@ -11585,9 +11586,9 @@ class Reports extends MY_Controller
         } else {
             $end = $this->db->escape(urldecode($end_date));
         }
-		
+
 		if($biller_id != NULL){
-			
+
 			$this->data['biller_id_no_sep'] = $biller_id;
 			$biller_sep = explode('-', $biller_id);
 			$this->data['excel_biller_id'] = $biller_id;
@@ -11595,7 +11596,7 @@ class Reports extends MY_Controller
 			for($i=0; $i < count($biller_sep); $i++){
 				$bills .= $biller_sep[$i] . ',';
 			}
-			$biller_id =  rtrim($bills, ',');	
+			$biller_id =  rtrim($bills, ',');
 			$this->data['biller_id'] = $biller_id;
 		}else{
 			if($user->biller_id){
@@ -11620,56 +11621,56 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports/balance_sheet')));
         $meta = array('page_title' => lang('balance_sheet'), 'bc' => $bc);
 		$from_date = date('Y-m-d',strtotime(urldecode($start_date)));//'2014-08-01';
 		$to_date = date('Y-m-d',strtotime(urldecode($end_date)));//'2015-09-01'; before, it use in select query.
-		
+
 		$this->data['from_date'] = $from_date;
 		$this->data['to_date'] = $to_date;
-		
+
 		$rep_space_end=str_replace(' ','_',urldecode($end_date));
 		$end_dates=str_replace(':','-',$rep_space_end);//replace  $to_date.
-		
+
 		$totalBeforeAyear = date('Y', strtotime($this->data['start'])) - 1;
 
         $this->data['totalBeforeAyear'] = $totalBeforeAyear;
-		
+
 		$dataAsset = $this->accounts_model->getStatementByBalaneSheetDate('10,11',$from_date,$to_date,$biller_id);
 		$this->data['dataAsset'] = $dataAsset;
-		
+
 		$dataLiability = $this->accounts_model->getStatementByBalaneSheetDate('20,21',$from_date,$to_date,$biller_id);
 		$this->data['dataLiability'] = $dataLiability;
-		
+
 		$dataEquity = $this->accounts_model->getStatementByBalaneSheetDate('30',$from_date,$to_date,$biller_id);
 		$this->data['dataEquity'] = $dataEquity;
-		
+
 		$dataIncome = $this->accounts_model->getStatementByBalaneSheetDate('40,70',$from_date,$to_date,$biller_id);
 		$this->data['dataIncome'] = $dataIncome;
-		
+
 		$dataAllIncome = $this->accounts_model->getStatementBalaneSheetByDateBill('40,70',$from_date,$to_date,$biller_id);
 		$this->data['dataAllIncome'] = $dataAllIncome;
-		
+
 		$dataAllExpense = $this->accounts_model->getStatementBalaneSheetByDateBill('50,60,80,90',$from_date,$to_date,$biller_id);
 		$this->data['dataAllExpense'] = $dataAllExpense;
-		
+
 		$dataExpense = $this->accounts_model->getStatementByBalaneSheetDate('50,60,80,90',$from_date,$to_date,$biller_id);
 		$this->data['dataExpense'] = $dataExpense;
-		
+
 		if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/balance_sheet', $this->data, true);
             $name = lang("balance_sheet") . "_" . date('Y_m_d_H_i_s') . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_balance_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
-		
+
+
 		 if($xls){
 			$styleArray = array(
 				'font'  => array(
@@ -11705,10 +11706,10 @@ class Reports extends MY_Controller
 			foreach($billers as $biller){
 				$this->excel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $biller->name);
 				$col++;
-			} 
+			}
 			$this->excel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, lang('total_amount'));
 			$this->excel->getActiveSheet()->SetCellValue('A4', lang('asset'));
-			
+
 			$cl = 5;
 			$rw = 5;
 			$total_asset = 0;
@@ -11725,7 +11726,7 @@ class Reports extends MY_Controller
 					biller_id IN($biller_id) AND DATE(tran_date) BETWEEN '$from_date' AND '$to_date' AND account_code = '" . $row->account_code . "';");
 				$totalBeforeAyearRows = $query->row();
 				$totalBeforeAyear_asset += ($totalBeforeAyearRows->NegativeTotal + $totalBeforeAyearRows->PostiveTotal);
-				
+
 				if ($row->amount>0){
 					$this->excel->getActiveSheet()->setCellValueByColumnAndRow($cl, $rw, $row->account_code.' - '.$row->accountname);
 					$this->excel->getActiveSheet()->setCellValueByColumnAndRow($cl, $rw, number_format(abs($row->amount),2));
@@ -11784,7 +11785,7 @@ class Reports extends MY_Controller
 				}
 				$Liability++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($Asset+2).':A'.($Liability-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->getStyle('B'.$Liability.':E'.$Liability)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $Liability, lang('total_liabilities'));
@@ -11792,7 +11793,7 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C' . $Liability, number_format(abs($total_liability),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $Liability, '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $Liability, number_format(abs($totalBeforeAyear_liability),2));
-			
+
 			$equ = $Liability + 1;
 			$this->excel->getActiveSheet()->getStyle('A'.$equ.':B'.$equ)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$equ.':B'.$equ)->setCellValue('A' . $equ , lang('equities'));
@@ -11837,7 +11838,7 @@ class Reports extends MY_Controller
 				$this->excel->getActiveSheet()->SetCellValue('D' . $equities, '');
 				$this->excel->getActiveSheet()->SetCellValue('E' . $equities, number_format($total_returned_beforeAyear,2));
 			}
-			
+
 			$total_equity = 0;
 			$totalBeforeAyear_equity = 0;
 			$equity = $equities + 1;
@@ -11867,16 +11868,16 @@ class Reports extends MY_Controller
 				}
 				$equity++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($Liability+2).':A'.($equity-1))->getAlignment()->setIndent(2);
-			
+
 			$this->excel->getActiveSheet()->getStyle('B'.$equity.':E'.$equity)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $equity, lang('total_equities'));
 			$this->excel->getActiveSheet()->SetCellValue('B' . $equity, '');
 			$this->excel->getActiveSheet()->SetCellValue('C' . $equity, number_format(abs($total_equity-$total_returned),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $equity,  '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $equity, number_format(abs($totalBeforeAyear_equity-$total_returned_beforeAyear),2));
-			
+
 			$totalL = $equity + 1;
 			$this->excel->getActiveSheet()->getStyle('B'.$totalL.':E'.$totalL)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $totalL, lang('total_liabilities_equities'));
@@ -11884,7 +11885,7 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C' . $totalL, number_format(abs($total_equity+$total_liability-$total_returned),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $totalL,  '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $totalL, number_format(abs($totalBeforeAyear_equity+$totalBeforeAyear_liability-$total_returned_beforeAyear),2));
-			
+
 			$totalA = $totalL + 1;
 			$this->excel->getActiveSheet()->getStyle('A'.$totalA.':E'.$totalA)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $totalA, lang('Total ASSET = LIABILITIES + EQUITY'));
@@ -11892,8 +11893,8 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C' . $totalA, number_format(abs($total_equity+$total_liability-$total_returned)-abs($total_asset),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $totalA,  '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $totalA, number_format(abs($totalBeforeAyear_equity+$totalBeforeAyear_liability+$total_returned_beforeAyear)-abs($totalBeforeAyear_asset),2));
-			
-			
+
+
 			$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
 			$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 			$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -11910,11 +11911,11 @@ class Reports extends MY_Controller
 				return $objWriter->save('php://output');
 			}
 
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
         $this->page_construct('reports/balance_sheet', $meta, $this->data);
 	}
-	
+
 	function balance_sheet_details($start_date = NULL, $end_date = NULL, $pdf = NULL, $xls = NULL, $biller_id = NULL)
     {
         $this->erp->checkPermissions('balance_sheet',NULL,'account_report');
@@ -11937,11 +11938,11 @@ class Reports extends MY_Controller
         } else {
             $end = $this->db->escape(urldecode($end_date));
         }
-		
+
 		if($biller_id != NULL){
 			$this->data['biller_id_no_sep'] = $biller_id;
 			$biller_sep = explode('-', $biller_id);
-			
+
 			$bills = '';
 			for($i=0; $i < count($biller_sep); $i++){
 				$bills .= $biller_sep[$i] . ',';
@@ -11953,7 +11954,7 @@ class Reports extends MY_Controller
 			if($user->biller_id){
 				$this->data['biller_id'] = $user->biller_id;
 				$biller_id = $user->biller_id;
-				
+
 			}else{
 				$this->data['biller_id'] = "";
 			}
@@ -11967,44 +11968,44 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
 		$acc_setting = $this->site->get_Acc_setting();
 		$this->data['acc_setting'] = $acc_setting;
 
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports/balance_sheet')));
         $meta = array('page_title' => lang('balance_sheet'), 'bc' => $bc);
 		$from_date = date('Y-m-d',strtotime(urldecode($start_date)));//'2014-08-01';
 		$to_date = date('Y-m-d',strtotime(urldecode($end_date)));//'2015-09-01'; before, it use in select query.
-		
+
 		$rep_space_end=str_replace(' ','_',urldecode($end_date));
 		$end_dates=str_replace(':','-',$rep_space_end);//replace  $to_date.
-		
+
 		$totalBeforeAyear = date('Y', strtotime($this->data['start'])) - 1;
 
         $this->data['totalBeforeAyear'] = $totalBeforeAyear;
 		$dataAsset = $this->accounts_model->getStatementByDate('10,11',$from_date,$to_date,$biller_id);
 		$this->data['dataAsset'] = $dataAsset;
-		
+
 		$dataLiability = $this->accounts_model->getStatementByDate('20,21',$from_date,$to_date,$biller_id);
 		$this->data['dataLiability'] = $dataLiability;
-		
+
 		$dataEquity = $this->accounts_model->getStatementByDate('30',$from_date,$to_date,$biller_id);
 		$this->data['dataEquity'] = $dataEquity;
-		
+
 		$dataIncome = $this->accounts_model->getStatementByDate('40,70',$from_date,$to_date,$biller_id);
 		$this->data['dataIncome'] = $dataIncome;
-		
+
 		$dataAllIncome = $this->accounts_model->getStatementByDateBill('40,70',$from_date,$to_date,$biller_id);
 		$this->data['dataAllIncome'] = $dataAllIncome;
-		
+
 		$dataAllExpense = $this->accounts_model->getStatementByDateBill('50,60,80,90',$from_date,$to_date,$biller_id);
 		$this->data['dataAllExpense'] = $dataAllExpense;
-		
+
 		$dataExpense = $this->accounts_model->getStatementByDate('50,60,80,90',$from_date,$to_date,$biller_id);
 		$this->data['dataExpense'] = $dataExpense;
 
@@ -12012,7 +12013,7 @@ class Reports extends MY_Controller
 
 		$this->data['from_date'] = $from_date;
 		$this->data['end_dates'] = $to_date;
-		
+
 		if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/balance_sheet', $this->data, true);
             $name = lang("balance_sheet") . "_" . date('Y_m_d_H_i_s') . ".pdf";
@@ -12042,7 +12043,7 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C1', lang('credit'));
 			$this->excel->getActiveSheet()->SetCellValue('D1', lang("debit") . ' (' . $totalBeforeAyear . ')');
 			$this->excel->getActiveSheet()->SetCellValue('E1', lang("credit") . ' (' . $totalBeforeAyear . ')');
-			
+
 			$this->excel->getActiveSheet()->getStyle('A2:B2')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A2:B2')->setCellValue('A2' , lang('asset'));
 			$this->excel->getActiveSheet()->mergeCells('C2:E2');
@@ -12060,7 +12061,7 @@ class Reports extends MY_Controller
 					DATE(tran_date) = '$totalBeforeAyear' AND account_code = '" . $row->account_code . "';");
 				$totalBeforeAyearRows = $query->row();
 				$totalBeforeAyear_asset += ($totalBeforeAyearRows->NegativeTotal + $totalBeforeAyearRows->PostiveTotal);
-				
+
 				if ($row->amount>0){
 					$this->excel->getActiveSheet()->SetCellValue('A' . $Asset, $row->account_code.' - '.$row->accountname);
 					$this->excel->getActiveSheet()->SetCellValue('B' . $Asset, number_format(abs($row->amount),2));
@@ -12076,16 +12077,16 @@ class Reports extends MY_Controller
 				}
 				$Asset++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A3:A'.($Asset-1))->getAlignment()->setIndent(2);
-			
+
 			$this->excel->getActiveSheet()->getStyle('B'.$Asset.':E'.$Asset)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $Asset, lang('total_asset'));
 			$this->excel->getActiveSheet()->SetCellValue('B' . $Asset, number_format(abs($total_asset),2));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $Asset, '');
 			$this->excel->getActiveSheet()->SetCellValue('D' . $Asset,  number_format(abs($totalBeforeAyear_asset),2));
 			$this->excel->getActiveSheet()->SetCellValue('E' . $Asset, '');
-			
+
 			$eq = $Asset + 1;
 			$this->excel->getActiveSheet()->getStyle('A'.$eq.':B'.$eq)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$eq.':B'.$eq)->setCellValue('A' . $eq , lang('liabilities'));
@@ -12120,7 +12121,7 @@ class Reports extends MY_Controller
 				}
 				$Liability++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($Asset+2).':A'.($Liability-1))->getAlignment()->setIndent(2);
 			$this->excel->getActiveSheet()->getStyle('B'.$Liability.':E'.$Liability)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $Liability, lang('total_liabilities'));
@@ -12128,7 +12129,7 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C' . $Liability, number_format(abs($total_liability),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $Liability, '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $Liability, number_format(abs($totalBeforeAyear_liability),2));
-			
+
 			$equ = $Liability + 1;
 			$this->excel->getActiveSheet()->getStyle('A'.$equ.':B'.$equ)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$equ.':B'.$equ)->setCellValue('A' . $equ , lang('equities'));
@@ -12173,7 +12174,7 @@ class Reports extends MY_Controller
 				$this->excel->getActiveSheet()->SetCellValue('D' . $equities, '');
 				$this->excel->getActiveSheet()->SetCellValue('E' . $equities, number_format($total_returned_beforeAyear,2));
 			}
-			
+
 			$total_equity = 0;
 			$totalBeforeAyear_equity = 0;
 			$equity = $equities + 1;
@@ -12203,16 +12204,16 @@ class Reports extends MY_Controller
 				}
 				$equity++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.($Liability+2).':A'.($equity-1))->getAlignment()->setIndent(2);
-			
+
 			$this->excel->getActiveSheet()->getStyle('B'.$equity.':E'.$equity)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $equity, lang('total_equities'));
 			$this->excel->getActiveSheet()->SetCellValue('B' . $equity, '');
 			$this->excel->getActiveSheet()->SetCellValue('C' . $equity, number_format(abs($total_equity-$total_returned),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $equity,  '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $equity, number_format(abs($totalBeforeAyear_equity-$total_returned_beforeAyear),2));
-			
+
 			$totalL = $equity + 1;
 			$this->excel->getActiveSheet()->getStyle('B'.$totalL.':E'.$totalL)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $totalL, lang('total_liabilities_equities'));
@@ -12220,7 +12221,7 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C' . $totalL, number_format(abs($total_equity+$total_liability-$total_returned),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $totalL,  '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $totalL, number_format(abs($totalBeforeAyear_equity+$totalBeforeAyear_liability-$total_returned_beforeAyear),2));
-			
+
 			$totalA = $totalL + 1;
 			$this->excel->getActiveSheet()->getStyle('A'.$totalA.':E'.$totalA)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $totalA, lang('Total ASSET = LIABILITIES + EQUITY'));
@@ -12228,8 +12229,8 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('C' . $totalA, number_format(abs($total_equity+$total_liability-$total_returned)-abs($total_asset),2));
 			$this->excel->getActiveSheet()->SetCellValue('D' . $totalA,  '');
 			$this->excel->getActiveSheet()->SetCellValue('E' . $totalA, number_format(abs($totalBeforeAyear_equity+$totalBeforeAyear_liability+$total_returned_beforeAyear)-abs($totalBeforeAyear_asset),2));
-			
-			
+
+
 			$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
 			$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 			$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -12246,15 +12247,15 @@ class Reports extends MY_Controller
 				return $objWriter->save('php://output');
 			}
 
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
         $this->page_construct('reports/balance_sheet_details', $meta, $this->data);
 	}
-	
+
 	function trial_balance($start_date = NULL, $end_date = NULL, $pdf= NULL, $xls = NULL, $biller_id = NULL)
     {
         $this->erp->checkPermissions('trail_balance',NULL,'account_report');
-		
+
 		if (!$start_date) {
             $start = $this->db->escape(date('Y-m') . '-1');
             $start_date = date('Y-m') . '-1';
@@ -12284,51 +12285,51 @@ class Reports extends MY_Controller
 		}
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports/trial_balance')));
         $meta = array('page_title' => lang('trial_balance'), 'bc' => $bc);
 		$from_date = date('Y-m-d H:m',strtotime(urldecode($start_date)));//'2014-08-01';
-		$to_date = date('Y-m-d H:m',strtotime(urldecode($end_date)));//'2015-09-01';
-		
+		$to_date = $end_date;//'2015-09-01';
+
 		$data10 = $this->accounts_model->getStatementByDate('10',$from_date,$to_date,$biller_id);
 		$this->data['data10'] = $data10;
-		
+
 		$data11 = $this->accounts_model->getStatementByDate('11',$from_date,$to_date,$biller_id);
 		$this->data['data11'] = $data11;
-		
+
 		$data20 = $this->accounts_model->getStatementByDate('20',$from_date,$to_date,$biller_id);
 		$this->data['data20'] = $data20;
-		
+
 		$data21 = $this->accounts_model->getStatementByDate('21',$from_date,$to_date,$biller_id);
 		$this->data['data21'] = $data21;
-		
+
 		$data30 = $this->accounts_model->getStatementByDate('30',$from_date,$to_date,$biller_id);
 		$this->data['data30'] = $data30;
-		
+
 		$data40 = $this->accounts_model->getStatementByDate('40',$from_date,$to_date,$biller_id);
 		$this->data['data40'] = $data40;
-		
+
 		$data50 = $this->accounts_model->getStatementByDate('50',$from_date,$to_date,$biller_id);
 		$this->data['data50'] = $data50;
-		
+
 		$data60 = $this->accounts_model->getStatementByDate('60',$from_date,$to_date,$biller_id);
 		$this->data['data60'] = $data60;
-		
+
 		$data70 = $this->accounts_model->getStatementByDate('70',$from_date,$to_date,$biller_id);
 		$this->data['data70'] = $data70;
-		
+
 		$data80 = $this->accounts_model->getStatementByDate('80',$from_date,$to_date,$biller_id);
-		$this->data['data80'] = $data80;		
-		
+		$this->data['data80'] = $data80;
+
 		if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/trial_balance', $this->data, true);
             $name = lang("trial_balance") . "_" . date('Y_m_d_H_i_s') . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_trial_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
+
 		if($xls){
 			$styleArray = array(
 				'font'  => array(
@@ -12371,7 +12372,7 @@ class Reports extends MY_Controller
 				}
 				$r10++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r10.':B'.$r10)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r10.':B'.$r10)->setCellValue('A' . $r10 , lang('fixed_assets'));
 			$total_11 = 0;
@@ -12391,7 +12392,7 @@ class Reports extends MY_Controller
 				}
 				$r11++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r11.':B'.$r11)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r11.':B'.$r11)->setCellValue('A' . $r11 , lang('current_liabilities'));
 			$total_20 = 0;
@@ -12416,8 +12417,8 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->SetCellValue('C' . $r20, number_format(abs($row20->amount),2));
 				}
 				$r20++;
-			}			
-			
+			}
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r20.':B'.$r20)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r20.':B'.$r20)->setCellValue('A' . $r20 , lang('non_liabilities'));
 			$total_21 = 0;
@@ -12436,7 +12437,7 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->SetCellValue('C' . $r21, number_format(abs($row21->amount),2));
 				}
 				$r21++;
-			}	
+			}
 
 			$this->excel->getActiveSheet()->getStyle('A'.$r21.':B'.$r21)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r21.':B'.$r21)->setCellValue('A' . $r21 , lang('equity_retained_erning'));
@@ -12477,7 +12478,7 @@ class Reports extends MY_Controller
 				}
 				$r40++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r40.':B'.$r40)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r40.':B'.$r40)->setCellValue('A' . $r40 , lang('cost'));
 			$total_50 = 0;
@@ -12497,7 +12498,7 @@ class Reports extends MY_Controller
 				}
 				$r50++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r50.':B'.$r50)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r50.':B'.$r50)->setCellValue('A' . $r50 , lang('operating_expense'));
 			$total_60 = 0;
@@ -12517,7 +12518,7 @@ class Reports extends MY_Controller
 				}
 				$r60++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r60.':B'.$r60)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r60.':B'.$r60)->setCellValue('A' . $r60 , lang('other_income'));
 			$total_70 = 0;
@@ -12537,7 +12538,7 @@ class Reports extends MY_Controller
 				}
 				$r70++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r70.':B'.$r70)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->mergeCells('A'.$r70.':B'.$r70)->setCellValue('A' . $r70 , lang('other_expense'));
 			$total_80 = 0;
@@ -12557,12 +12558,12 @@ class Reports extends MY_Controller
 				}
 				$r80++;
 			}
-			
+
 			$this->excel->getActiveSheet()->getStyle('A'.$r80.':C'.$r80)->applyFromArray($bold);
 			$this->excel->getActiveSheet()->SetCellValue('A' . $r80, lang('total'));
 			$this->excel->getActiveSheet()->SetCellValue('B' . $r80, number_format(abs($total_D),2));
 			$this->excel->getActiveSheet()->SetCellValue('C' . $r80, number_format(abs($total_C),2));
-			
+
 			$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(50);
 			$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 			$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -12577,20 +12578,20 @@ class Reports extends MY_Controller
 				return $objWriter->save('php://output');
 			}
 
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
-		
+
         $this->page_construct('reports/trial_balance', $meta, $this->data);
 	}
-	
-	function categories($biller_id = NULL)	
+
+	function categories($biller_id = NULL)
     {
-		
+
         $this->erp->checkPermissions('categories',NULL,'product_report');
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         $this->data['categories'] = $this->site->getAllCategories();
 		$datt =$this->reports_model->getLastDate("purchase_items","date");
-		
+
 		$user = $this->site->getUser();
 		if($biller_id != NULL){
 			$this->data['biller_id'] = $biller_id;
@@ -12610,15 +12611,15 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
         if ($this->input->post('start_date') && $this->input->post('end_date')) {
             $dt = "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
-			
+
         } else {
             $dt = "Till " . $this->input->post('end_date');
-			
+
         }
-		
+
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
@@ -12627,7 +12628,7 @@ class Reports extends MY_Controller
         $meta = array('page_title' => lang('categories_report'), 'bc' => $bc);
         $this->page_construct('reports/categories', $meta, $this->data);
     }
-	
+
 	function categories_value()
     {
         $this->erp->checkPermissions('categories_value',NULL,'product_report');
@@ -12645,16 +12646,16 @@ class Reports extends MY_Controller
 
     function ledger($pdf = NULL, $xls = null, $biller_id = NULL, $start_date = null, $end_date = null)
     {
-		$this->erp->checkPermissions('ledger',NULL,'account_report');		
+		$this->erp->checkPermissions('ledger',NULL,'account_report');
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-        $this->data['categories'] = $this->site->getAllCategories();				
+        $this->data['categories'] = $this->site->getAllCategories();
 		$user = $this->site->getUser();
 
         $start_date = $this->input->get('sd');
 		$end_date = $this->input->get('ed');
 
 		$biller_id = $biller_id ? $biller_id : $this->input->get('biller');
-		$this->data['v_account'] = $this->input->post('account') ? $this->input->post('account') : $this->input->get('account');		
+		$this->data['v_account'] = $this->input->post('account') ? $this->input->post('account') : $this->input->get('account');
 		$this->data['start_date'] = $this->input->post('start_date')? $this->input->post('start_date') : $this->input->get('start_date');
 		$this->data['end_date'] = $this->input->post('end_date') ? $this->input->post('end_date') : $this->input->get('end_date');
 		$this->data['v_form'] = $v_form = "0/0/".$biller_id;
@@ -12668,7 +12669,7 @@ class Reports extends MY_Controller
 			}else{
 				$this->data['biller_id'] = "";
 			}
-		}		
+		}
 		if(!$this->Owner && !$this->Admin) {
 			if($user->biller_id){
 				$this->data['billers'] = $this->site->getCompanyByArray($user->biller_id);
@@ -12678,7 +12679,7 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
         if ($this->input->get('start_date')) {
             $dt = "From " . $this->input->get('start_date') . " to " . $this->input->get('end_date');
         } else {
@@ -12745,11 +12746,11 @@ class Reports extends MY_Controller
 			$BoStyle = array(
 					  'borders' => array(
 						'allborders' => array(
-						  'style' => PHPExcel_Style_Border::BORDER_THIN 
+						  'style' => PHPExcel_Style_Border::BORDER_THIN
 						)
 					  )
 					);
-	
+
 			$row1=75;
 			$row2=76;
 			$row3=77;
@@ -12768,7 +12769,7 @@ class Reports extends MY_Controller
 				$gl_tranStart = $this->db->select('sum(amount) as startAmount')->from('gl_trans');
 				$gl_tranStart->where(array('tran_date < '=> $this->erp->fld($this->data['start_date']), 'account_code'=> $val->accountcode));
 				$startAmount = $gl_tranStart->get()->row();
-				
+
                 $endAccountBalance = 0;
                 $endAccountCreditBalance = 0;
 				$endAccountDebitBalance = 0;
@@ -12779,6 +12780,7 @@ class Reports extends MY_Controller
                     ->join('companies', 'gl_trans.biller_id = companies.id', 'left')
                     ->join('users', 'gl_trans.created_by = users.id', 'left')
 					->where('account_code =', $val->accountcode)
+
                     ->order_by('gl_trans.tran_id', 'asc');
 
                     if ($start_date) {
@@ -12787,16 +12789,16 @@ class Reports extends MY_Controller
                     if ($end_date) {
                         $getListGLTran->where('erp_gl_trans.tran_date <=', $this->erp->fld($end_date).'23:59:00');
                     }
-					
+
 				if ($this->data['start_date']) {
 					$getListGLTran->where('date(tran_date) >=', $this->data['start_date']);
 				}
 				if ($this->data['end_date']) {
 					$getListGLTran->where('date(tran_date) <=', $this->data['end_date']);
 				}
-				
+
 				if($biller_id != ""){
-					 $getListGLTran->where('biller_id' ,$biller_id);
+					 $getListGLTran->where('gl_trans.biller_id' ,$biller_id);
 				}
 				$gltran_list = $getListGLTran->get()->result();
 				if($gltran_list) {
@@ -12810,7 +12812,7 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->getStyle('F'.$row.':G'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 					foreach($gltran_list as $rw)
 					{
-						$this->excel->getActiveSheet()->getStyle('E'.$rows.':G'.$rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);		
+						$this->excel->getActiveSheet()->getStyle('E'.$rows.':G'.$rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                         $endAccountBalance += $rw->amount;
 						$endAccountCreditBalance += $rw->am2;
                         $endAccountDebitBalance += $rw->am1;
@@ -12824,7 +12826,7 @@ class Reports extends MY_Controller
 						$this->excel->getActiveSheet()->SetCellValue('H' . $rows, ($rw->am1 > 0 ? $this->erp->formatMoney($rw->am1) : '0.00'));
 						$this->excel->getActiveSheet()->SetCellValue('I' . $rows, ($rw->am2 < 1 ? $this->erp->formatMoney(abs($rw->am2)) : '0.00'));
 						$this->excel->getActiveSheet()->SetCellValue('J' . $rows,  $this->erp->formatMoney($rw->amount));
-						$this->excel->getActiveSheet()->getStyle('A'.$rows.':J'.$rows)->applyFromArray($BoStyle); 
+						$this->excel->getActiveSheet()->getStyle('A'.$rows.':J'.$rows)->applyFromArray($BoStyle);
 						if($row>70){
 							$row1++;
 							$row2++;
@@ -12845,15 +12847,15 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->getStyle('F'.$test.':G'.$test)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 					$row = $rows;
 					$rows = $rows + 2 ;
-					$this->excel->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($BoStyle); 
+					$this->excel->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($BoStyle);
 					$row++;
-				}		
-				
+				}
+
 			}
 			$BorStyle = array(
 					  'borders' => array(
 						'allborders' => array(
-						  'style' => PHPExcel_Style_Border::BORDER_THIN 
+						  'style' => PHPExcel_Style_Border::BORDER_THIN
 						)
 					  )
 					);
@@ -12918,43 +12920,43 @@ class Reports extends MY_Controller
 				$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
 				return $objWriter->save('php://output');
 			}
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('ledger')));
         $meta = array('page_title' => lang('ledger'), 'bc' => $bc);
         $this->page_construct('reports/ledger', $meta, $this->data);
     }
-	
+
 	function ledger_by_customer($pdf = NULL, $xls = null, $customer_id = NULL)
     {
-      
-		$this->erp->checkPermissions('ledger',NULL,'account_report');		
+
+		$this->erp->checkPermissions('ledger',NULL,'account_report');
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-        $this->data['categories'] = $this->site->getAllCategories();				
+        $this->data['categories'] = $this->site->getAllCategories();
 		$user = $this->site->getUser();
-		
+
 		$customer_id = $customer_id ? $customer_id : $this->input->get('customer');
-		$this->data['v_account'] = $this->input->post('account') ? $this->input->post('account') : $this->input->get('account');		
+		$this->data['v_account'] = $this->input->post('account') ? $this->input->post('account') : $this->input->get('account');
 		$this->data['start_date'] = $this->input->post('start_date')? $this->input->post('start_date') : $this->input->get('start_date');
 		$this->data['end_date'] = $this->input->post('end_date') ? $this->input->post('end_date') : $this->input->get('end_date');
 		$this->data['v_form'] = $v_form = "0/0/".$customer_id;
-		
+
 		if($customer_id != NULL){
 			$this->data['customer_id'] = $customer_id;
 		}else{
 			$this->data['customer_id'] = "";
 		}
 		$this->data['customers'] = $this->site->getAllCompanies('customer');
-		
+
         if ($this->input->get('start_date')) {
             $dt = "From " . $this->input->get('start_date') . " to " . $this->input->get('end_date');
         } else {
             $dt = "Till " . $this->input->get('end_date');
         }
-		
+
 		if ($pdf) {
-			
+
             $ac = $_GET['ac'];
 
             $styleArray = array(
@@ -12967,7 +12969,7 @@ class Reports extends MY_Controller
 
             );
 
-            
+
 
             $styleArray10 = array(
                 'font'  => array(
@@ -12986,8 +12988,8 @@ class Reports extends MY_Controller
 
 
             }
-			
-           
+
+
             $this->load->library('excel');
              $this->excel->getActiveSheet()->getDefaultStyle()->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
             $this->excel->getActiveSheet()->getDefaultStyle()->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
@@ -12996,7 +12998,7 @@ class Reports extends MY_Controller
 
             $this->excel->setActiveSheetIndex(0);
             $this->excel->getActiveSheet()->setTitle(lang('ledger'));
-           
+
             $this->excel->getActiveSheet()->SetCellValue('D1', lang('Description'));
             $this->excel->getActiveSheet()->SetCellValue('A1', lang('Project'));
             $this->excel->getActiveSheet()->SetCellValue('B1', lang('Type'));
@@ -13011,11 +13013,11 @@ class Reports extends MY_Controller
             $BoStyle = array(
                       'borders' => array(
                         'allborders' => array(
-                          'style' => PHPExcel_Style_Border::BORDER_THIN 
+                          'style' => PHPExcel_Style_Border::BORDER_THIN
                         )
                       )
                     );
-    
+
            /* $row1=75;
             $row2=76;
             $row3=77;*/
@@ -13034,7 +13036,7 @@ class Reports extends MY_Controller
                 $gl_tranStart = $this->db->select('sum(amount) as startAmount')->from('gl_trans');
                 $gl_tranStart->where(array('tran_date < '=> $this->erp->fld($this->data['start_date']), 'account_code'=> $val->accountcode));
                 $startAmount = $gl_tranStart->get()->row();
-                
+
                 $endAccountBalance = 0;
                 $endAccountCreditBalance = 0;
                 $endAccountDebitBalance = 0;
@@ -13046,19 +13048,19 @@ class Reports extends MY_Controller
                     ->join('users', 'gl_trans.created_by = users.id', 'left')
                     ->where('account_code =', $val->accountcode)
                     ->order_by('gl_trans.tran_id', 'asc');
-                    
+
                 if ($this->data['start_date']) {
                     $getListGLTran->where('date(tran_date) >=', $this->data['start_date']);
                 }
                 if ($this->data['end_date']) {
                     $getListGLTran->where('date(tran_date) <=', $this->data['end_date']);
                 }
-                
+
                 if($customer_id != ""){
                      $getListGLTran->where('customer_id' , $customer_id);
                 }
                 $gltran_list = $getListGLTran->get()->result();
-				
+
                 if($gltran_list) {
                     $this->excel->getActiveSheet()->mergeCells('A'.$row.':C'.$row)->setCellValue('A'. $row , 'Account: '.$val->accountcode . ' ' .$val->accountname);
                     $this->excel->getActiveSheet()->mergeCells('D'.$row.':G'.$row);
@@ -13070,7 +13072,7 @@ class Reports extends MY_Controller
                     $this->excel->getActiveSheet()->getStyle('F'.$row.':G'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                     foreach($gltran_list as $rw)
                     {
-                        $this->excel->getActiveSheet()->getStyle('E'.$rows.':G'.$rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);      
+                        $this->excel->getActiveSheet()->getStyle('E'.$rows.':G'.$rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                         $endAccountBalance += $rw->amount;
                         $endAccountCreditBalance += $rw->am2;
                         $endAccountDebitBalance += $rw->am1;
@@ -13084,7 +13086,7 @@ class Reports extends MY_Controller
                         $this->excel->getActiveSheet()->SetCellValue('H' . $rows, ($rw->am1 > 0 ? $this->erp->formatMoney($rw->am1) : '0.00'));
                         $this->excel->getActiveSheet()->SetCellValue('I' . $rows, ($rw->am2 < 1 ? $this->erp->formatMoney(abs($rw->am2)) : '0.00'));
                         $this->excel->getActiveSheet()->SetCellValue('J' . $rows,  $this->erp->formatMoney($rw->amount));
-                        $this->excel->getActiveSheet()->getStyle('A'.$rows.':J'.$rows)->applyFromArray($BoStyle); 
+                        $this->excel->getActiveSheet()->getStyle('A'.$rows.':J'.$rows)->applyFromArray($BoStyle);
                        /* if($row>70){
                             $row1++;
                             $row2++;
@@ -13105,16 +13107,16 @@ class Reports extends MY_Controller
                     $this->excel->getActiveSheet()->getStyle('F'.$test.':G'.$test)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                     // $row = $rows;
                     $rows = $rows + 2 ;
-                    $this->excel->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($BoStyle); 
-                    $this->excel->getActiveSheet()->getStyle('A'.$test.':J'.$test)->applyFromArray($BoStyle); 
+                    $this->excel->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($BoStyle);
+                    $this->excel->getActiveSheet()->getStyle('A'.$test.':J'.$test)->applyFromArray($BoStyle);
                     $row++;
-                }       
-                
+                }
+
             }
             $BorStyle = array(
                       'borders' => array(
                         'allborders' => array(
-                          'style' => PHPExcel_Style_Border::BORDER_THIN 
+                          'style' => PHPExcel_Style_Border::BORDER_THIN
                         )
                       )
                     );
@@ -13133,7 +13135,7 @@ class Reports extends MY_Controller
             $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             $filename = 'ledger_' . date('Y_m_d_H_i_s');
-            if ($pdf) {				
+            if ($pdf) {
                 $this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
                 require_once(APPPATH . "third_party" . DIRECTORY_SEPARATOR . "MPDF" . DIRECTORY_SEPARATOR . "mpdf.php");
                 $rendererName = PHPExcel_Settings::PDF_RENDERER_MPDF;
@@ -13151,7 +13153,7 @@ class Reports extends MY_Controller
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'PDF');
                 return $objWriter->save('php://output');
             }
-            redirect($_SERVER["HTTP_REFERER"]); 
+            redirect($_SERVER["HTTP_REFERER"]);
         }
 
         // ***********************************************
@@ -13208,11 +13210,11 @@ class Reports extends MY_Controller
 			$BoStyle = array(
 					  'borders' => array(
 						'allborders' => array(
-						  'style' => PHPExcel_Style_Border::BORDER_THIN 
+						  'style' => PHPExcel_Style_Border::BORDER_THIN
 						)
 					  )
 					);
-	
+
 			$row1=75;
 			$row2=76;
 			$row3=77;
@@ -13231,7 +13233,7 @@ class Reports extends MY_Controller
 				$gl_tranStart = $this->db->select('sum(amount) as startAmount')->from('gl_trans');
 				$gl_tranStart->where(array('tran_date < '=> $this->erp->fld($this->data['start_date']), 'account_code'=> $val->accountcode));
 				$startAmount = $gl_tranStart->get()->row();
-				
+
                 $endAccountBalance = 0;
 				$endAccountDebitBalance = 0;
 				$getListGLTran = $this->db->select("gl_trans.*, companies.company as project, companies.name as cname, users.username as created_by,
@@ -13242,14 +13244,14 @@ class Reports extends MY_Controller
                     ->join('users', 'gl_trans.created_by = users.id', 'left')
 					->where('account_code =', $val->accountcode)
                     ->order_by('gl_trans.tran_id', 'asc');
-					
+
 				if ($this->data['start_date']) {
 					$getListGLTran->where('date(tran_date) >=', $this->data['start_date']);
 				}
 				if ($this->data['end_date']) {
 					$getListGLTran->where('date(tran_date) <=', $this->data['end_date']);
 				}
-				
+
 				if($customer_id != ""){
 					 $getListGLTran->where('customer_id' ,$customer_id);
 				}
@@ -13265,7 +13267,7 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->getStyle('F'.$row.':G'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 					foreach($gltran_list as $rw)
 					{
-						$this->excel->getActiveSheet()->getStyle('E'.$rows.':G'.$rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);		
+						$this->excel->getActiveSheet()->getStyle('E'.$rows.':G'.$rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                         $endAccountBalance += $rw->amount;
 						$endAccountDebitBalance += $rw->am1;
                         $this->excel->getActiveSheet()->SetCellValue('A' . $rows, $rw->project);
@@ -13278,7 +13280,7 @@ class Reports extends MY_Controller
 						$this->excel->getActiveSheet()->SetCellValue('H' . $rows, ($rw->am1 > 0 ? $this->erp->formatMoney($rw->am1) : '0.00'));
 						$this->excel->getActiveSheet()->SetCellValue('I' . $rows, ($rw->am2 < 1 ? $this->erp->formatMoney(abs($rw->am2)) : '0.00'));
 						$this->excel->getActiveSheet()->SetCellValue('J' . $rows,  $this->erp->formatMoney($rw->amount));
-						$this->excel->getActiveSheet()->getStyle('A'.$rows.':J'.$rows)->applyFromArray($BoStyle); 
+						$this->excel->getActiveSheet()->getStyle('A'.$rows.':J'.$rows)->applyFromArray($BoStyle);
 						if($row>70){
 							$row1++;
 							$row2++;
@@ -13299,19 +13301,19 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->getStyle('F'.$test.':G'.$test)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 					$row = $rows;
 					$rows = $rows + 2 ;
-					$this->excel->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($BoStyle); 
+					$this->excel->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($BoStyle);
 					$row++;
-				}		
-				
+				}
+
 			}
 			$BorStyle = array(
 					  'borders' => array(
 						'allborders' => array(
-						  'style' => PHPExcel_Style_Border::BORDER_THIN 
+						  'style' => PHPExcel_Style_Border::BORDER_THIN
 						)
 					  )
 					);
-			$this->excel->getActiveSheet()->getStyle('A4:J71')->applyFromArray($BorStyle); 
+			$this->excel->getActiveSheet()->getStyle('A4:J71')->applyFromArray($BorStyle);
 			$this->excel->getActiveSheet()->mergeCells('F75:G75');
 			$this->excel->getActiveSheet()->mergeCells('F77:G77');
 			$this->excel->getActiveSheet()->getStyle("F".$row1)->getFont()->setSize(14);
@@ -13335,7 +13337,7 @@ class Reports extends MY_Controller
 				$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
 				return $objWriter->save('php://output');
 			}
-			redirect($_SERVER["HTTP_REFERER"]);	
+			redirect($_SERVER["HTTP_REFERER"]);
 		}
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('ledger_by_customer')));
@@ -13376,18 +13378,18 @@ class Reports extends MY_Controller
         if ($this->input->post('start_date')) {
             $dt = "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
 			$this->data['start_date2'] = $this->erp->fsd($this->input->post('start_date'));
-			
+
         } else {
             $dt = "Till " . $this->input->post('end_date');
 			$this->data['start_date2'] = date('Y-m-01');
-			
+
         }
 		if($this->input->post('end_date')){
 			$this->data['end_date2'] = $this->erp->fsd($this->input->post('end_date'));
 		}else{
 			$this->data['end_date2'] =  date('Y-m-t');
 		}
-		if($this->input->post('user')){			
+		if($this->input->post('user')){
 			$this->data['cashier'] = $this->input->post('user');
 		}else{
 			$this->data['cashier'] = '';
@@ -13412,20 +13414,20 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
+
 		if ($pdf != NULL && $biller_id == NULL) {
             $html = $this->load->view($this->theme . 'reports/cash_books', $this->data, true);
             $name = lang("cash_books") . "_" . date('Y_m_d_H_i_s') . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_cash_books_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Cash_Books_Report')));
         $meta = array('page_title' => lang('Cash_Books_Report'), 'bc' => $bc);
         $this->page_construct('reports/cash_books', $meta, $this->data);
-    
+
 		if($xls){
-			
+
 			$styleArray = array(
 				'font'  => array(
 					'bold'  => true,
@@ -13439,7 +13441,7 @@ class Reports extends MY_Controller
 					'bold' => true
 				)
 			);
-			
+
 			$this->load->library('excel');
 			$this->excel->setActiveSheetIndex(0);
 			$this->excel->getActiveSheet()->getStyle('A1:E1')->applyFromArray($styleArray);
@@ -13452,26 +13454,26 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('F1', lang('Type'));
 			$this->excel->getActiveSheet()->SetCellValue('G1', lang('Debit_Amount'));
 			$this->excel->getActiveSheet()->SetCellValue('H1', lang('Credit_Amount'));
-			
+
 			$this->excel->getActiveSheet()->getStyle('E2:F2')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->getStyle('G2:H2')->applyFromArray($bold);
-			
+
 			if ($this->input->post('start_date') || $this->input->post('end_date') || (!$this->input->post('end_date') && !$this->input->post('end_date'))) {
-					
+
 				$accounntCode = $this->db;
 				$accounntCode->select('*')->from('gl_charts')->where('bank', 1);
 				if ($this->input->post('account') ) {
 					$accounntCode->where('accountcode', $this->input->post('account'));
 				}
-				
+
 				$acc = $accounntCode->get()->result();
-				
+
 				foreach($acc as $val){
-					
+
 					$gl_tranStart = $this->db->select('sum(amount) as startAmount')->from('gl_trans');
 					$gl_tranStart->where(array('tran_date < '=> $this->erp->fld($this->input->post('start_date')), 'account_code'=> $val->accountcode));
 					$startAmount = $gl_tranStart->get()->row();
-					
+
 					$endAccountBalance = 0;
 					$getListGLTran = $this->db->select("*")->from('gl_trans')->where('account_code =', $val->accountcode);
 					if ($this->input->post('start_date')) {
@@ -13490,25 +13492,25 @@ class Reports extends MY_Controller
 						$getListGLTran->where('biller_id', $biller_id);
 					}
 					$gltran_list = $getListGLTran->get()->result();
-					
+
 					$acc_name = "";
 					$start_amount = 0;
-					
+
 					if($gltran_list) {
 						$acc_name = $val->accountcode . ' ' .$val->accountname;
 						$start_amount = $this->erp->formatMoney($startAmount->startAmount);
-						
+
 						$this->excel->getActiveSheet()->mergeCells('A2:B2:C2:D2')->setCellValue('A2' , "Account ".$acc_name);
 						$this->excel->getActiveSheet()->mergeCells('E2:F2')->setCellValue('E2' , lang('Begining Balance: '));
 						$this->excel->getActiveSheet()->mergeCells('G2:H2')->setCellValue('G2' , $start_amount);
 					}
-					
-					
+
+
 					$row = 3;
 					$endAccountBalance = 0;
 					foreach($gltran_list as $rw){
-						$endAccountBalance += $rw->amount; 
-						
+						$endAccountBalance += $rw->amount;
+
 						$this->excel->getActiveSheet()->SetCellValue('A'.$row,$rw->tran_id);
 						$this->excel->getActiveSheet()->SetCellValue('B'.$row,$rw->reference_no);
 						$this->excel->getActiveSheet()->SetCellValue('C'.$row,$rw->tran_no);
@@ -13522,9 +13524,9 @@ class Reports extends MY_Controller
 					$this->excel->getActiveSheet()->mergeCells('A'.($row+1).':B'.($row+1).':C'.($row+1).':D'.($row+1));
 					$this->excel->getActiveSheet()->mergeCells('E'.($row+1).':F'.($row+1))->setCellValue('E'.($row+1) , lang('Ending Balance: '));
 					$this->excel->getActiveSheet()->mergeCells('G'.($row+1).':H'.($row+1))->setCellValue('G'.($row+1) , $endAccountBalance);
-						
+
 				}
-				
+
 				$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 				$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
 				$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
@@ -13533,7 +13535,7 @@ class Reports extends MY_Controller
 				$this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(10);
 				$this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(10);
 				$this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(30);
-				
+
 				$this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 				$filename = 'Cash_Books_Report' . date('Y_m_d_H_i_s');
 				if ($xls) {
@@ -13546,13 +13548,13 @@ class Reports extends MY_Controller
 				}
 
 				redirect($_SERVER["HTTP_REFERER"]);
-				
+
 			}
-			
+
 		}
 	}
-    
-    function suspends($warehouse_id = NULL){ 
+
+    function suspends($warehouse_id = NULL){
         $this->load->model('reports_model');
         $this->data['warehouse_id'] = $warehouse_id;
         $this->data['users'] = $this->reports_model->getStaff();
@@ -13566,7 +13568,7 @@ class Reports extends MY_Controller
 
     function getRoom()
     {
-        
+
         $this->load->library('datatables');
         $this->datatables
             ->select("id,floor,name,ppl_number,description, CASE WHEN status = 0 THEN 'Active' ELSE 'Close' END AS status")
@@ -13657,7 +13659,7 @@ class Reports extends MY_Controller
         $this->page_construct('reports/view_room_report', $meta, $this->data);
 
     }
-    
+
 	function daily_purchases($warehouse_id = NULL, $year = NULL, $month = NULL, $pdf = NULL, $user_id = NULL)
     {
         $this->erp->checkPermissions('daily',NULL,'purchase_report');
@@ -13713,7 +13715,7 @@ class Reports extends MY_Controller
         if (!empty($purchases)) {
             foreach ($purchases as $purchase) {
 				$totals = ($purchase->total - $purchase->discount)+ $purchase->shipping + $purchase->tax2;
-				
+
                 $daily_purchase[$purchase->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'>
 					<tr>
 						<td>" . lang("amount") . "</td>
@@ -13804,10 +13806,10 @@ class Reports extends MY_Controller
         }
 			if (!$this->input->POST('start_date')) {
 				$this->data['start_date'] = $datt;
-			} 
+			}
 			if (!$this->input->POST('end_date')) {
 				$this->data['end_date'] = $datt;
-			} 
+			}
         $this->data['billers'] = $this->site->getAllCompanies('biller');
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => 'reports', 'page' => lang('reports')),array('link' => 'reports/saleman', 'page' => lang('saleman_report')));
         $meta = array('page_title' => lang('saleman_report'), 'bc' => $bc);
@@ -13816,7 +13818,7 @@ class Reports extends MY_Controller
 
     function getSalemans($warehouse_id = NULL)
     {
-        
+
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
         } else {
@@ -13870,7 +13872,7 @@ class Reports extends MY_Controller
         if ($start_date) {
             $where = ' AND ' . $this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . '" and "' . $end_date . '"';
         }
-        
+
         $this->datatables
             ->select("username, username, phone, (SELECT sum(total) FROM sales s WHERE s.saleman_by = u.id $where) as sale_amount, (SELECT sum(paid) FROM sales s WHERE s.saleman_by = u.id ) as sale_amount, ((SELECT sum(total) - sum(paid)) FROM sales s WHERE s.saleman_by = u.id $where) as balance")
             ->from('users u');
@@ -13888,7 +13890,7 @@ class Reports extends MY_Controller
             $start_date =null;
             $this->data['start_date2'] = 0;
         }
-        
+
         if($this->input->post('end_date')){
             $end_date = $this->erp->fld($this->input->post('end_date'));
             $this->data['end_date2'] = trim($end_date);
@@ -13896,7 +13898,7 @@ class Reports extends MY_Controller
             $end_date = null;
             $this->data['end_date2'] = 0;
         }
-        
+
         if($this->input->post('saleman')){
             $saleman = $this->input->post('saleman');
             $this->data['saleman2'] = $saleman;
@@ -13904,28 +13906,28 @@ class Reports extends MY_Controller
             $saleman = null;
             $this->data['saleman2'] = 0;
         }
-        // $this->erp->print_arrays($saleman);          
-        
+        // $this->erp->print_arrays($saleman);
+
         $cust_data[] = "";
         $salemans = $this->reports_model->getSaleman();
-        
+
         $this->data['salemans'] = $salemans;
         $this->data['agencies'] = $this->site->getAllUsers();
 
         $bc = array( array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')),array('link' => '#', 'page' => lang('saleman_detail_report')) );
         $meta = array('page_title' => lang('saleman_detail_report'), 'bc' => $bc);
         $this->page_construct('Reports/saleman_detail', $meta, $this->data);
-    
+
     }
 
     function saleman_detail_action($pdf=null, $excel=null,$saleman2=null)
     {
         if ($pdf || $excel) {
-            
+
                 $cust_data[] = "";
                 $customers = $this->accounts_model->ar_by_customer($start_date2, $end_date2, $customer2, $balance2, 'customer');
                 $i=0;
-                
+
                 foreach($customers as $cus){
                     $customerDatas = $this->accounts_model->ar_by_customer($cus->start_date, $cus->end_date, $cus->customer_id, $cus->balance, 'detail');
                     foreach($customerDatas as $cusData){
@@ -13939,12 +13941,12 @@ class Reports extends MY_Controller
                                         "customerDatas" => array(
                                                             "supplierId" => $cusData->id,
                                                             "custSO" => $customerDatas
-                                                            )                                       
+                                                            )
                                         );
                     }
                     $i++;
                 }
-                
+
             if (!empty($cust_data)) {
                 $this->load->library('excel');
                 $this->excel->setActiveSheetIndex(0);
@@ -13963,13 +13965,13 @@ class Reports extends MY_Controller
                             'bold'  => true
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
 
                 $row = 2;
                 foreach ($cust_data as $data_row) {
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, "Customer >> ". $data_row["customerName"]);
-                    $this->excel->getActiveSheet()->mergeCells('A'.$row.':I'.$row);                    
+                    $this->excel->getActiveSheet()->mergeCells('A'.$row.':I'.$row);
 
                     $subTotal = $subReturn = $subDeposit = $subPaid = $subDiscount = $gbalance = 0;
                     foreach ($data_row['customerDatas']['custSO'] as $value) {
@@ -14019,7 +14021,7 @@ class Reports extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatDecimal($subDeposit));
                     $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatDecimal($subDiscount));
                     $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatDecimal($gbalance));
-                    if($excel){               
+                    if($excel){
                         $this->excel->getActiveSheet()->getStyle('C' . $row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('C' . $row.'')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('D' . $row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
@@ -14036,7 +14038,7 @@ class Reports extends MY_Controller
                         $this->excel->getActiveSheet()->getStyle('I' . $row.'')->getFont()->setBold(true);
                     }
 
-                    $row++; 
+                    $row++;
                 }
 
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
@@ -14092,7 +14094,7 @@ class Reports extends MY_Controller
 
         }
     }
-	
+
 	function warehouse_reports()
 	{
 		$this->erp->checkPermissions('warehouse',NULL,'product_report');
@@ -14101,25 +14103,25 @@ class Reports extends MY_Controller
         } else {
             $product = NULL;
         }
-		
+
         if ($this->input->post('category')) {
             $category = $this->input->post('category');
         } else {
             $category = NULL;
         }
-		
+
         if ($this->input->post('start_date')) {
             $start_date = $this->input->post('start_date');
         } else {
             $start_date = NULL;
         }
-		
+
         if ($this->input->post('end_date')) {
             $end_date = $this->input->post('end_date');
         } else {
             $end_date = NULL;
         }
-		
+
 		if ($this->input->post('supplier')) {
             $supplier = $this->input->post('supplier');
         } else {
@@ -14134,24 +14136,24 @@ class Reports extends MY_Controller
             $dt = "Till " . $this->input->post('end_date');
         }
         $this->data['warehouse'] = $this->reports_model->getAllWarehouses();
-		
-		$this->data['wreport'] = $this->reports_model->getReportW($product, $category, $supplier, $start_date, $end_date); 
+
+		$this->data['wreport'] = $this->reports_model->getReportW($product, $category, $supplier, $start_date, $end_date);
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('warehouse_reports')));
         $meta = array('page_title' => lang('warehouse_reports'), 'bc' => $bc);
-		
+
         $this->page_construct('reports/warehouse_products', $meta, $this->data);
 	}
-	
+
 	function getwarehousereports($pdf = NULL, $xls = NULL)
 	{
-		
+
         $this->erp->checkPermissions('products', TRUE);
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
         } else {
             $product = NULL;
         }
-        
+
         if ($this->input->get('category')) {
             $category = $this->input->get('category');
         } else {
@@ -14191,178 +14193,178 @@ class Reports extends MY_Controller
             $start_date = $this->erp->fld($start_date);
             $end_date = $end_date ? $this->erp->fld($end_date) : date('Y-m-d');
 
-            $pp = "( SELECT pi.product_id, 
-						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM((CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * pi.quantity ) totalPurchase, 
+            $pp = "( SELECT pi.product_id,
+						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM((CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * pi.quantity ) totalPurchase,
                         SUM(pi.unit_cost) AS totalCost,
 						SUM(pi.quantity) AS Pquantity,
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
-									ppv.quantity AS vquantity 
-									FROM erp_purchase_items 
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
-									WHERE {$this->db->dbprefix('purchase_items')}.date >= '{$start_date}' AND {$this->db->dbprefix('purchase_items')}.date < '{$end_date}' 
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} 
-										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id 
+									ppv.quantity AS vquantity
+									FROM erp_purchase_items
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
+									WHERE {$this->db->dbprefix('purchase_items')}.date >= '{$start_date}' AND {$this->db->dbprefix('purchase_items')}.date < '{$end_date}'
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')}
+										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id
 						GROUP BY pi.product_id ) PCosts";
 
-			$sp = "( SELECT si.product_id, 
-						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) soldQty, 
-						SUM( si.subtotal ) totalSale, 
+			$sp = "( SELECT si.product_id,
+						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) soldQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
-						WHERE s.date >= '{$start_date}' AND s.date < '{$end_date}' 
+						WHERE s.date >= '{$start_date}' AND s.date < '{$end_date}'
 						GROUP BY si.product_id ) PSales";
 
-			$ppb = "( SELECT pi.product_id, 
-						SUM( pi.quantity ) purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * pi.quantity ) totalPurchase, 
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+			$ppb = "( SELECT pi.product_id,
+						SUM( pi.quantity ) purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * pi.quantity ) totalPurchase,
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
-									ppv.quantity AS vquantity 
-									FROM erp_purchase_items 
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
+									ppv.quantity AS vquantity
+									FROM erp_purchase_items
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
 									WHERE {$this->db->dbprefix('purchase_items')}.date < '{$start_date}'
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} 
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')}
 										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id GROUP BY pi.product_id ) PCostsBegin";
-            
-			$spb = "( SELECT si.product_id, 
-						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) saleQty, 
-						SUM( si.subtotal ) totalSale, 
+
+			$spb = "( SELECT si.product_id,
+						SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)) saleQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
 						WHERE s.date < '{$start_date}'
 						GROUP BY si.product_id ) PSalesBegin";
-        } 
+        }
 		else {
 			$current_date = date('Y-m-d');
 			$prevouse_date = date('Y').'-'.date('m').'-'.'01';
-			$pp = "( SELECT pi.product_id, 
-						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue, 
-						SUM( pi.unit_cost * pi.quantity ) totalPurchase, 
+			$pp = "( SELECT pi.product_id,
+						SUM( pi.quantity * (CASE WHEN pi.option_id <> 0 THEN pi.vqty_unit ELSE 1 END) ) purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) *  tpi.quantity_balance ) balacneValue,
+						SUM( pi.unit_cost * pi.quantity ) totalPurchase,
                         SUM(pi.unit_cost) AS totalCost,
 						SUM(pi.quantity) AS Pquantity,
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost ,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
 									ppv.quantity AS vquantity
-									FROM {$this->db->dbprefix('purchase_items')} 
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
-									".$where_purchase." 
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 			
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} GROUP BY product_id 
+									FROM {$this->db->dbprefix('purchase_items')}
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
+									".$where_purchase."
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')} GROUP BY product_id
 									) tpi on tpi.product_id = pi.product_id GROUP BY pi.product_id ) PCosts";
 
-			$sp = "( SELECT si.product_id, 
-						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) soldQty, 
-						SUM( si.subtotal ) totalSale, 
+			$sp = "( SELECT si.product_id,
+						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) soldQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
 						".$where_sale."
 						GROUP BY si.product_id ) PSales";
 
-			
-			$ppb = "( SELECT pi.product_id, 
-						SUM(pi.quantity) AS purchasedQty, 
-						SUM( tpi.quantity_balance ) balacneQty, 
-						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) * tpi.quantity_balance ) balacneValue, 
-						SUM(pi.unit_cost * pi.quantity) totalPurchase, 
-						pi.date as pdate 
-						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date, 
-									{$this->db->dbprefix('purchase_items')}.product_id, 
-									purchase_id, 
-									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity, 
+
+			$ppb = "( SELECT pi.product_id,
+						SUM(pi.quantity) AS purchasedQty,
+						SUM( tpi.quantity_balance ) balacneQty,
+						SUM( (CASE WHEN pi.option_id <> 0 THEN pi.vcost ELSE pi.unit_cost END) * tpi.quantity_balance ) balacneValue,
+						SUM(pi.unit_cost * pi.quantity) totalPurchase,
+						pi.date as pdate
+						FROM ( SELECT {$this->db->dbprefix('purchase_items')}.date as date,
+									{$this->db->dbprefix('purchase_items')}.product_id,
+									purchase_id,
+									SUM({$this->db->dbprefix('purchase_items')}.quantity) as quantity,
 									unit_cost ,
 									option_id,
 									ppv.qty_unit AS vqty_unit,
 									ppv.cost AS vcost,
 									ppv.quantity AS vquantity
-									FROM {$this->db->dbprefix('purchase_items')} 
-									JOIN {$this->db->dbprefix('products')} p 
-									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id 
-									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv 
-									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id  
-									".$where_purchase." 
-									AND {$this->db->dbprefix('purchase_items')}.date < '{$prevouse_date}' 
-									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi 			
-						LEFT JOIN ( SELECT product_id, 
-										SUM(quantity_balance) as quantity_balance 
-										FROM {$this->db->dbprefix('purchase_items')} 
+									FROM {$this->db->dbprefix('purchase_items')}
+									JOIN {$this->db->dbprefix('products')} p
+									ON p.id = {$this->db->dbprefix('purchase_items')}.product_id
+									LEFT JOIN " . $this->db->dbprefix('product_variants') . " ppv
+									ON ppv.id={$this->db->dbprefix('purchase_items')}.option_id
+									".$where_purchase."
+									AND {$this->db->dbprefix('purchase_items')}.date < '{$prevouse_date}'
+									GROUP BY {$this->db->dbprefix('purchase_items')}.product_id ) pi
+						LEFT JOIN ( SELECT product_id,
+										SUM(quantity_balance) as quantity_balance
+										FROM {$this->db->dbprefix('purchase_items')}
 										GROUP BY product_id ) tpi on tpi.product_id = pi.product_id GROUP BY pi.product_id ) PCostsBegin";
-			
-            $spb = "( SELECT si.product_id, 
-						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) saleQty, 
-						SUM( si.subtotal ) totalSale, 
+
+            $spb = "( SELECT si.product_id,
+						COALESCE(SUM( si.quantity*(CASE WHEN si.option_id <> 0 THEN spv.qty_unit ELSE 1 END)),0) saleQty,
+						SUM( si.subtotal ) totalSale,
 						SUM( si.quantity) AS Squantity,
 						s.date as sdate
-						FROM " . $this->db->dbprefix('sales') . " s 
-						JOIN " . $this->db->dbprefix('sale_items') . " si 
-						ON s.id = si.sale_id 
-						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv 
+						FROM " . $this->db->dbprefix('sales') . " s
+						JOIN " . $this->db->dbprefix('sale_items') . " si
+						ON s.id = si.sale_id
+						LEFT JOIN " . $this->db->dbprefix('product_variants') . " spv
 						ON spv.id=si.option_id
 						".$where_sale."
 						AND s.date < '{$prevouse_date}'
 						GROUP BY si.product_id ) PSalesBegin";
         }
-		
+
         if ($pdf || $xls) {
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->db
@@ -14410,19 +14412,19 @@ class Reports extends MY_Controller
             }else{
 				$this->db->where("COALESCE( PCosts.purchasedQty, 0 ) > 0 OR COALESCE( PSales.soldQty, 0 ) > 0");
 			}
-			
+
             if ($product) {
                 $this->db->where($this->db->dbprefix('products') . ".id", $product);
             }
             if ($category) {
                 $this->db->where($this->db->dbprefix('products') . ".category_id", $category);
             }
-			
+
 			if ($warehouse) {
                 $this->db->where('wp.warehouse_id', $warehouse);
                 $this->db->where('wp.quantity !=', 0);
             }
-            
+
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -14516,23 +14518,23 @@ class Reports extends MY_Controller
             $this->session->set_flashdata('error', lang('nothing_found'));
             redirect($_SERVER["HTTP_REFERER"]);
 
-        } 
+        }
 		else {
 			$detail_sale = anchor('reports/view_sale_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Sale_detail'), 'data-toggle="modal" data-target="#myModal"');
 			$detail_purchase = anchor('reports/view_purchase_detail_in_out/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Purchase_detail'), 'data-toggle="modal" data-target="#myModal"');
-					
+
 			$action = '<div class="text-center"><div class="btn-group text-left">'
 			. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 			. lang('actions') . ' <span class="caret"></span></button>
 			<ul class="dropdown-menu pull-right" role="menu">
 				<li>' . $detail_purchase . '</li>
-				<li>' . $detail_sale . '</li>					
+				<li>' . $detail_sale . '</li>
 			<ul>
 			</div></div>';
             $this->load->library('datatables');
             $this->db->query('SET SQL_BIG_SELECTS=1');
             $this->datatables
-                ->select($this->db->dbprefix('products') . ".code as product_code, 
+                ->select($this->db->dbprefix('products') . ".code as product_code,
 				" . $this->db->dbprefix('products') . ".name,
 				CONCAT(COALESCE( PCostsBegin.purchasedQty-PSalesBegin.saleQty, 0 ), '__', COALESCE( PCostsBegin.totalPurchase-PSalesBegin.totalSale, 0 )) as BeginPS,
 				CONCAT(
@@ -14568,7 +14570,7 @@ class Reports extends MY_Controller
                                 ci.item_code = ".$this->db->dbprefix('products') . ".code
                         ),
                         0
-                    ) ) AS balance", 
+                    ) ) AS balance",
 				FALSE)
                 ->from('products')
                 ->join($sp, 'products.id = PSales.product_id', 'left')
@@ -14578,13 +14580,13 @@ class Reports extends MY_Controller
 				->join('warehouses_products wp', 'products.id=wp.product_id', 'left')
 				->join('categories', 'products.category_id=categories.id', 'left')
 				->group_by("products.id");
-            
+
 			if ($supplier) {
 				$this->datatables->where("products.supplier1 = '".$supplier."' or products.supplier2 = '".$supplier."' or products.supplier3 = '".$supplier."' or products.supplier4 = '".$supplier."' or products.supplier5 = '".$supplier."'");
             }else{
 				//$this->datatables->where("COALESCE( PCosts.purchasedQty, 0 ) > 0 OR COALESCE( PSales.soldQty, 0 ) > 0");
 			}
-			
+
             if($in_out){
                 if($in_out == 'in'){
                     $this->datatables->order_by('PCosts.purchasedQty', 'DESC');
@@ -14592,14 +14594,14 @@ class Reports extends MY_Controller
                     $this->datatables->order_by('PSales.soldQty', 'DESC');
                 }
             }
-            
+
             if ($product) {
                 $this->datatables->where($this->db->dbprefix('products') . ".id", $product);
             }
             if ($category) {
                 $this->datatables->where($this->db->dbprefix('products') . ".category_id", $category);
             }
-			
+
 			if ($warehouse) {
                 $this->datatables->where('wp.warehouse_id', $warehouse);
                 $this->datatables->where('wp.quantity !=', 0);
@@ -14610,15 +14612,15 @@ class Reports extends MY_Controller
             echo $this->datatables->generate();
 
         }
-    
+
 	}
-	
+
 	function in_out_actions()
 	{
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
 
         if ($this->form_validation->run() == true) {
-			
+
             if (!empty($_POST['val'])) {
                 if ($this->input->post('form_action') == 'delete') {
                     foreach ($_POST['val'] as $id) {
@@ -14696,7 +14698,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function room_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -14778,7 +14780,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function saleman_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -14808,7 +14810,7 @@ class Reports extends MY_Controller
 
                     $row = 2;
                     foreach ($_POST['val'] as $id) {
-						
+
                         $sc = $this->reports_model->getSalemanByID($id);
 						//$this->erp->print_arrays($sc);
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->username);
@@ -14863,7 +14865,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function purchases_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -14896,7 +14898,7 @@ class Reports extends MY_Controller
 
                     $row = 2;
                     foreach ($_POST['val'] as $id) {
-						
+
                         $sc = $this->reports_model->getPurchasesByID($id);
 						//$this->erp->print_arrays($sc);
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->date);
@@ -14958,7 +14960,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function payments_actions($id)
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -14979,7 +14981,7 @@ class Reports extends MY_Controller
                     $this->load->library('excel');
                     $this->excel->setActiveSheetIndex(0);
                     $this->excel->getActiveSheet()->setTitle(lang('payments_report'));
-                    
+
                     $this->excel->getActiveSheet()->SetCellValue('A1', lang('date'));
                     $this->excel->getActiveSheet()->SetCellValue('B1', lang('payment_ref'));
 					$this->excel->getActiveSheet()->SetCellValue('C1', lang('sale_ref'));
@@ -14994,7 +14996,7 @@ class Reports extends MY_Controller
                     foreach ($_POST['val'] as $id) {
                         $sc = $this->reports_model->getPaymentsByID($id);
 						//$this->erp->print_arrays($sc);
-                  
+
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->date);
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $sc->payment_ref);
 						$this->excel->getActiveSheet()->SetCellValue('C' . $row, $sc->sale_ref);
@@ -15050,7 +15052,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function sales_discount_actions($id)
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -15138,7 +15140,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function profit_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -15176,7 +15178,7 @@ class Reports extends MY_Controller
                             'bold'  => true
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:L1')->applyFromArray($styleArray);
 
                     $row = 2;
@@ -15285,7 +15287,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function shops_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -15375,7 +15377,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function suppliers_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -15410,7 +15412,7 @@ class Reports extends MY_Controller
                             'bold'  => true
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                     $row = 2;
 					//$this->erp->print_arrays($_POST['val']);
@@ -15426,7 +15428,7 @@ class Reports extends MY_Controller
                         $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatMoney($sc->paid));
 						$this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatMoney($sc->balance));
 						$this->excel->getActiveSheet()->SetCellValue('I' . $row, $sc->create_by);
-						
+
 						$this->excel->getActiveSheet()->getStyle('E'. $row.':I'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                         $row++;
                     }
@@ -15481,7 +15483,7 @@ class Reports extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 function customers_actions($wh=null) {
     if($wh){
         $wh = explode('-', $wh);
@@ -15513,7 +15515,7 @@ function customers_actions($wh=null) {
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('total_amount'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('paid'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('balance'));
-                    
+
                     $row = 2;
                     $sum_sale = $sum_amount = $sum_paid = $sum_balance = 0;
                     foreach ($_POST['val'] as $id) {
@@ -15552,7 +15554,7 @@ function customers_actions($wh=null) {
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('total_amount'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('paid'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('balance'));
-                    
+
                     $row = 2;
                     $sum_sale = $sum_amount = $sum_paid = $sum_balance = 0;
                     foreach ($_POST['val'] as $id) {
@@ -15611,7 +15613,7 @@ function customers_actions($wh=null) {
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('E' . $new_row.'')->getFont()->setBold(true);
@@ -15630,7 +15632,7 @@ function customers_actions($wh=null) {
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('E' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
@@ -15683,7 +15685,7 @@ function salesDetail_actions(){
             $warehouses = $this->db->get("warehouses")->result();
             foreach($warehouses as $warehouse){
                 $warehouses_arr[$warehouse->id] = $warehouse->name;
-            }  
+            }
             $row = 2;
             $g_total = 0;
             $g_order_discounts = 0;
@@ -15749,9 +15751,9 @@ function salesDetail_actions(){
             erp_return_sales
             INNER JOIN erp_return_items ON erp_return_sales.id = erp_return_items.return_id
             GROUP BY
-            erp_return_sales.id,reference_no";  
+            erp_return_sales.id,reference_no";
 
-            foreach ($_POST['val'] as $id) {   
+            foreach ($_POST['val'] as $id) {
                 $sales = $this->db->query("SELECT * FROM ({$sql1} UNION {$sql2}) AS TEMP WHERE id = $id ORDER BY id DESC
                     LIMIT {$config['ob_set']},{$config['per_page']} ")->result();
 
@@ -15759,7 +15761,7 @@ function salesDetail_actions(){
 
                 foreach($sales as $key => $sale){
 
-                    $table_return_items = "erp_return_items"; 
+                    $table_return_items = "erp_return_items";
                     $table_sale_items = "erp_sale_items";
 
                     $sql = "SELECT
@@ -15822,7 +15824,7 @@ function salesDetail_actions(){
                         erp_gl_trans.account_code
                         FROM
                         erp_gl_trans
-                        INNER JOIN erp_sales ON erp_sales.id = erp_gl_trans.sale_id                                                                 
+                        INNER JOIN erp_sales ON erp_sales.id = erp_gl_trans.sale_id
                         WHERE erp_sales.id = {$sale->id}
                         AND sectionid = 50
                         GROUP BY reference_no
@@ -16063,7 +16065,7 @@ function salesDetail_actions(){
             $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
             $this->excel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
 
-            
+
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             $filename = 'sales_detail_report_' . date('Y_m_d_H_i_s');
             if ($this->input->post('form_action') == 'export_pdf') {
@@ -16104,9 +16106,9 @@ function salesDetail_actions(){
     }else {
         $this->session->set_flashdata('error', lang("No_sales_detail_report_selected. Please select at least one."));
         redirect($_SERVER["HTTP_REFERER"]);
-    } 
+    }
 }
-	
+
 	function sales_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -16169,7 +16171,7 @@ function salesDetail_actions(){
 
 						// foreach($explode_costs as $c){
 						// 	$total_cost += $c;
-						// }	
+						// }
                         $row++;
                     }
 
@@ -16195,7 +16197,7 @@ function salesDetail_actions(){
                             'color' => array('rgb' => '428BCA')
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArrays);
 					$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
 					$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -16208,8 +16210,8 @@ function salesDetail_actions(){
 					// $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(20);
-				
-				
+
+
                     $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     $filename = 'sales_report_' . date('Y_m_d_H_i_s');
                     if ($this->input->post('form_action') == 'export_pdf') {
@@ -16225,12 +16227,12 @@ function salesDetail_actions(){
 						 array(
 							 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT
 						 ));
-						
+
 						$this->excel->getActiveSheet()->getStyle('G2:G' . $row)->getAlignment()->applyFromArray(
 						 array(
 							 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT
 						 ));
-						
+
 						$this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
                         require_once(APPPATH . "third_party" . DIRECTORY_SEPARATOR . "MPDF" . DIRECTORY_SEPARATOR . "mpdf.php");
                         $rendererName = PHPExcel_Settings::PDF_RENDERER_MPDF;
@@ -16281,7 +16283,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function categories_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -16332,14 +16334,14 @@ function salesDetail_actions(){
 						$pAmt += $sc->TotalPurchase;
 						$sAmt += $sc->TotalSales;
 						$pl += $profit;
-						
+
 						$i = $row+1;
                         $this->excel->getActiveSheet()->SetCellValue('C' . $i, $pQty);
                         $this->excel->getActiveSheet()->SetCellValue('D' . $i, $sQty);
                         $this->excel->getActiveSheet()->SetCellValue('E' . $i, $pAmt);
                         $this->excel->getActiveSheet()->SetCellValue('F' . $i, $sAmt);
                         $this->excel->getActiveSheet()->SetCellValue('G' . $i, $pl);
-					
+
                         $row++;
                     }
                     //set font bold,font color,font size,font name and background color to excel  by dara
@@ -16355,9 +16357,9 @@ function salesDetail_actions(){
                             'color' => array('rgb' => '428BCA')
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray);
-                        
+
                     //set border
                     $styleArray1 = array(
                         'borders' => array(
@@ -16395,7 +16397,7 @@ function salesDetail_actions(){
                         header('Content-Type: application/pdf');
                         header('Content-Disposition: attachment;filename="' . $filename . '.pdf"');
                         header('Cache-Control: max-age=0');
-						
+
 						$this->excel->getActiveSheet()->getStyle('C'. $i. '')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('D'. $i. '')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('E'. $i. '')->getFont()->setBold(true);
@@ -16409,7 +16411,7 @@ function salesDetail_actions(){
                         header('Content-Type: application/vnd.ms-excel');
                         header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                         header('Cache-Control: max-age=0');
-						
+
 						$this->excel->getActiveSheet()->getStyle("C" . $i . ":G" . $row)->getBorders()
                         ->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_MEDIUM);
                         $this->excel->getActiveSheet()->getStyle('C'. $i. '')->getFont()->setBold(true);
@@ -16417,7 +16419,7 @@ function salesDetail_actions(){
                         $this->excel->getActiveSheet()->getStyle('E'. $i. '')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('F'. $i. '')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('G'. $i. '')->getFont()->setBold(true);
-						
+
 						$this->excel->getActiveSheet()->getStyle("C" . $row . ":G" . $row)->getBorders()
 						->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_MEDIUM);
 
@@ -16474,7 +16476,7 @@ function salesDetail_actions(){
                     $cQty += $catValue->total_cost;
                     $pAmt += $catValue->total_price;
                     $balance += $catValue->balance;
-                    
+
                     $profit = $data_row->TotalSales - $data_row->TotalPurchase;
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $catValue->code);
                     $this->excel->getActiveSheet()->SetCellValue('B' . $row, $catValue->name);
@@ -16482,7 +16484,7 @@ function salesDetail_actions(){
                     $this->excel->getActiveSheet()->SetCellValue('D' . $row, $catValue->total_cost);
                     $this->excel->getActiveSheet()->SetCellValue('E' . $row, $catValue->total_price);
                     $this->excel->getActiveSheet()->SetCellValue('F' . $row, $catValue->balance);
-                    
+
                     $i = $row+1;
                     $this->excel->getActiveSheet()->SetCellValue('C' . $i, $sQty);
                     $this->excel->getActiveSheet()->SetCellValue('D' . $i, $cQty);
@@ -16504,9 +16506,9 @@ function salesDetail_actions(){
                             'color' => array('rgb' => '428BCA')
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($styleArray);
-                        
+
                     //set border
                     $styleArray1 = array(
                         'borders' => array(
@@ -16543,7 +16545,7 @@ function salesDetail_actions(){
                         header('Content-Type: application/pdf');
                         header('Content-Disposition: attachment;filename="' . $filename . '.pdf"');
                         header('Cache-Control: max-age=0');
-                        
+
                         //Add style bold text in case PDF
                         $this->excel->getActiveSheet()->getStyle('C'. $i. '')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('D'. $i. '')->getFont()->setBold(true);
@@ -16580,7 +16582,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function item_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -16675,7 +16677,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-		
+
     function warehouse_actions() {
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
 
@@ -16703,7 +16705,7 @@ function salesDetail_actions(){
                     $a = 0;
                     foreach($ware as $warehouse){
                         $this->excel->getActiveSheet()->SetCellValue($alphabet1[$a], $warehouse->name);
-                        $a++;             
+                        $a++;
                     }
 //                    $this->erp->print_arrays($ware);
                     $this->excel->getActiveSheet()->SetCellValue($alphabet1[$a], lang('total'));
@@ -16723,19 +16725,19 @@ function salesDetail_actions(){
                             $this->db->from('purchase_items');
                             $this->db->where(array('warehouse_id' => $warehouse->id, 'product_id' => $sc->id));
                             $q = $this->db->get();
-                            
+
                             if ($q->num_rows() > 0) {
                                 foreach ($q->result() as $rows) {
                                     $this->excel->getActiveSheet()->SetCellValue($alphabet[$i] . $row, $rows->qb);
                                 }
-                                
+
                             }
                             $j = $row+1;
                             $this->excel->getActiveSheet()->SetCellValue($alphabet[$i] . $j, $total_wh_amount);
                             $i++;
                         }
-                        
-                        
+
+
                         $this->excel->getActiveSheet()->SetCellValue($alphabet[$i] . $row, $sc->quantity);
                         $row++;
                     }
@@ -16783,7 +16785,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function list_using_stock_report_actions()
 	{
         if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
@@ -16811,7 +16813,7 @@ function salesDetail_actions(){
             $g_tax=0;
             $g_subtotal=0; */
             $row = 2;
-            
+
             foreach ($_POST['val'] as $id) {
                 $using_stock = $this->reports_model->getUsingStockDetails($id);
                 foreach($using_stock as $stock){
@@ -16827,23 +16829,23 @@ function salesDetail_actions(){
                             FROM
                                 erp_enter_using_stock_items
                             LEFT JOIN erp_products ON erp_products. CODE = erp_enter_using_stock_items. CODE
-                            LEFT JOIN erp_position ON erp_enter_using_stock_items.description = erp_position.id 
+                            LEFT JOIN erp_position ON erp_enter_using_stock_items.description = erp_position.id
                             LEFT JOIN erp_reasons ON erp_enter_using_stock_items.reason = erp_reasons.id
                             LEFT JOIN erp_product_variants ON erp_enter_using_stock_items.option_id = erp_product_variants.id
-                            LEFT JOIN erp_expense_categories ON erp_enter_using_stock_items.exp_cate_id = erp_expense_categories.id where erp_enter_using_stock_items.reference_no='{$stock->refernce_no}' 
+                            LEFT JOIN erp_expense_categories ON erp_enter_using_stock_items.exp_cate_id = erp_expense_categories.id where erp_enter_using_stock_items.reference_no='{$stock->refernce_no}'
                     ")->result();
-                    
+
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $stock->refno.'>> '.$this->erp->hrld($stock->date).'>> '.lang('from').':'.$stock->warehouse_name.'>> '.lang('to').':'.$stock->username);
                     $this->excel->getActiveSheet()->getStyle('A'. $row)->getFont()->setSize(12)->setBold(true);
                     $this->excel->getActiveSheet()->mergeCells('A'.$row.':G'.$row);
-					
-							       
+
+
                 $row++;
-               
+
                 }
             }
-		
-			
+
+
             /* $this->excel->getActiveSheet()->SetCellValue('A' . $row, lang("grand_total"));
             $this->excel->getActiveSheet()->SetCellValue('B' . $row, $g_qty);
             $this->excel->getActiveSheet()->SetCellValue('D' . $row, $this->erp->formatMoney($g_cost));
@@ -16886,15 +16888,15 @@ function salesDetail_actions(){
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                 header('Cache-Control: max-age=0');
-            
+
                 ob_clean();
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                 $objWriter->save('php://output');
                 exit();
             }
-        }   
+        }
     }
-	
+
 	function products_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -16933,20 +16935,20 @@ function salesDetail_actions(){
                         $sum_profit += $sc->Profit;
                         $qsum_balance += $sc->qbalance;
                         $psum_balance += $sc->pbalance;
-						
+
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->catName);
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $sc->code."-".$sc->name);
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, '(' . number_format($sc->qpurchase, 0) . ') ' . number_format($sc->ppurchased, 2));
                         $this->excel->getActiveSheet()->SetCellValue('D' . $row, '(' . number_format($sc->qsale, 0) . ') ' . number_format($sc->psold, 2));
                         $this->excel->getActiveSheet()->SetCellValue('E' . $row, $sc->Profit);
                         $this->excel->getActiveSheet()->SetCellValue('F' . $row, '(' . number_format($sc->qbalance, 0) . ') ' . number_format($sc->pbalance, 2));
-                        
+
                         $i = $row+1;
                         $this->excel->getActiveSheet()->SetCellValue('C' . $i, '(' . number_format($qsum_purchased, 0) . ') ' . number_format($psum_purchased, 2));
                         $this->excel->getActiveSheet()->SetCellValue('D' . $i, '(' . number_format($qsum_sold, 0) . ') ' . number_format( $psum_sold, 2));
                         $this->excel->getActiveSheet()->SetCellValue('E' . $i, $sum_profit);
                         $this->excel->getActiveSheet()->SetCellValue('F' . $i, '(' . number_format($qsum_balance, 0) . ') ' . number_format($psum_balance, 2));
-                        
+
                         $row++;
                     }
 					$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
@@ -16955,7 +16957,7 @@ function salesDetail_actions(){
                     $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                    
+
                     $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     $filename = 'products_report_' . date('Y_m_d_H_i_s');
                     if ($this->input->post('form_action') == 'export_pdf') {
@@ -16974,7 +16976,7 @@ function salesDetail_actions(){
                         header('Content-Type: application/pdf');
                         header('Content-Disposition: attachment;filename="' . $filename . '.pdf"');
                         header('Cache-Control: max-age=0');
-						
+
 						//Add style bold text in case PDF
                         $this->excel->getActiveSheet()->getStyle('C'. $i. '')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('D'. $i. '')->getFont()->setBold(true);
@@ -16988,7 +16990,7 @@ function salesDetail_actions(){
                         header('Content-Type: application/vnd.ms-excel');
                         header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                         header('Cache-Control: max-age=0');
-						
+
 						//apply style border top and bold text in case excel
                         $this->excel->getActiveSheet()->getStyle('C'.$i. '')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('C'. $i. '')->getFont()->setBold(true);
@@ -17014,7 +17016,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
     function quantity_actions()
 	{
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -17048,7 +17050,7 @@ function salesDetail_actions(){
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, $sc->quantity);
                         $this->excel->getActiveSheet()->SetCellValue('D' . $row, $sc->alert_quantity);
                         $row++;
-						
+
                     }
 
                     $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
@@ -17182,7 +17184,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function income_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -17254,10 +17256,10 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
-	function getSalesReportDetail($start_date = NULL, $end_date = NULL, $biller_id = NULL) 
+
+	function getSalesReportDetail($start_date = NULL, $end_date = NULL, $biller_id = NULL)
 	{
-		
+
 		$this->erp->checkPermissions('detail',NULL,'sale_report');
 		$start = "";
 		$end = "";
@@ -17273,16 +17275,16 @@ function salesDetail_actions(){
             //$end_date = date('Y-m-d H:i');
         } else {
             $end = $this->db->escape(urldecode($end_date));
-        } 
-		
+        }
+
 		if ($this->input->post('category_name')) {
             $category_name = $this->input->post('category_name');
-			
+
         } else {
             $category_name = NULL;
         }
 		if ($this->input->post('product_name')) {
-            $product_name = $this->input->post('product_name');			
+            $product_name = $this->input->post('product_name');
         } else {
             $product_name = NULL;
         }
@@ -17294,10 +17296,10 @@ function salesDetail_actions(){
 
 		$data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 		$this->data['cate'] = $this->reports_model->getCategory();
-		$this->data['categories'] = $this->reports_model->getCategoryName($category_name,$product_name,$start,$end,$biller_id);	
+		$this->data['categories'] = $this->reports_model->getCategoryName($category_name,$product_name,$start,$end,$biller_id);
 		$this->data['start'] = urldecode($start_date);
-        $this->data['end'] = urldecode($end_date);	
-		$this->data['products'] = $this->reports_model->getProductName(); 
+        $this->data['end'] = urldecode($end_date);
+		$this->data['products'] = $this->reports_model->getProductName();
 		$this->data['warehouse'] = $this->reports_model->getAllWarehouses();
 		$this->data['saleItemsWarehouse'] = $this->reports_model->getAllSaleIemsWarehouses();
 		$this->data['billers'] = $this->site->getAllCompanies('biller');
@@ -17305,11 +17307,11 @@ function salesDetail_actions(){
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report_detail')));
         $meta = array('page_title' => lang('sales_report_detail'), 'bc' => $bc);
         $this->page_construct('reports/sales_report_detail', $meta, $this->data);
-		
+
 	}
-	
+
 	function saleReportDetail_actions()
-	{		
+	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
         if ($this->form_validation->run() == true) {
 			if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
@@ -17327,7 +17329,7 @@ function salesDetail_actions(){
 						'name'  => 'Verdana'
 					)
 				);
-				
+
 				$proback = array(
 					'fill' => array(
 						'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -17344,17 +17346,17 @@ function salesDetail_actions(){
 							$cate_ids .= '###'. $id;
 						}
 						$i++;
-					}					
+					}
 					$arr = explode('###', $cate_ids);
 					$categories = $this->reports_model->getCategoryName(null, null, null, null, $arr);
-				
+
 				}else{
 					$categories = $this->reports_model->getCategoryName();
-				}			
-				
+				}
+
 				$num = 1;
 				$g = 2;
-				
+
 				foreach($categories  as $category){
 					$result = $this->reports_model->getExportSaleDetail($category->id);
 					$this->excel->getActiveSheet()->SetCellValue('A'.($num) , strtoupper($category->name))->getStyle("A" . ($num))->applyFromArray($styleArray);
@@ -17385,8 +17387,8 @@ function salesDetail_actions(){
 					$this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
 					$this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
 					$this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
-				}			
-				
+				}
+
 				$this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 				$filename = 'sales_report_detail_' . date('Y_m_d_H_i_s');  //file name with date
 				if ($this->input->post('form_action') == 'export_pdf') {
@@ -17425,9 +17427,9 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
-	function getSaleReportByInvoice($start_date = NULL, $end_date = NULL) 
-	{		
+
+	function getSaleReportByInvoice($start_date = NULL, $end_date = NULL)
+	{
 		$this->erp->checkPermissions('by_invoice',NULL,'sale_report');
 		$this->load->library("pagination");
 		$start = "";
@@ -17436,34 +17438,34 @@ function salesDetail_actions(){
 			$start = $this->erp->fld(date('d/m/Y'));
         }
         if ($end_date){
-           $end = $this->erp->fld(date('d/m/Y h:i:s'));		
-        } 
+           $end = $this->erp->fld(date('d/m/Y h:i:s'));
+        }
 		if ($this->input->post('project')) {
-            $project = $this->input->post('project');			
+            $project = $this->input->post('project');
         } else {
             $project = NULL;
         }
-		$data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));		
+		$data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
 		$this->data['projects'] = $this->reports_model->getAllCompanies('biller');
-		$this->data['billers'] = $this->reports_model->getAllCompanies('biller');	
+		$this->data['billers'] = $this->reports_model->getAllCompanies('biller');
 		$this->data['invoices'] = $this->reports_model->getInvoice();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report_detail')));
         $meta = array('page_title' => lang('sales_report_detail'), 'bc' => $bc);
         $this->page_construct('reports/sales_report_by_invoice', $meta, $this->data);
 	}
-	
+
 	function getSaleReportByInvoice2()
 	{
 		$this->load->library('datatables');
 		$this->datatables
-			->select("sales.date, 
-			sales.reference_no, 
-			sale_items.product_name, 
-			sum(erp_sale_items.quantity) as quantity, 
-			sale_items.unit_price, 
-			sum(erp_sale_items.discount) as discount, 
+			->select("sales.date,
+			sales.reference_no,
+			sale_items.product_name,
+			sum(erp_sale_items.quantity) as quantity,
+			sale_items.unit_price,
+			sum(erp_sale_items.discount) as discount,
 			sales.grand_total")
 			->from('sales')
 			->join('sale_items', 'sale_items.sale_id = sales.id', 'inner')
@@ -17472,9 +17474,9 @@ function salesDetail_actions(){
 			->group_by('sales.reference_no');
 		echo $this->datatables->generate();
 	}
-	
+
 	function getPurchaseOrder()
-	{	
+	{
 		if ($this->input->get('supplier')) {
             $supplier = $this->input->get('supplier');
         } else {
@@ -17483,9 +17485,9 @@ function salesDetail_actions(){
 		if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-		if ($this->input->post('form_action') == 'excel' || $this->input->post('form_action') == 'pdf') {  
-		
-		$this->db->select($this->db->dbprefix('purchases_order') . ".id, purchases_order.date, 
+		if ($this->input->post('form_action') == 'excel' || $this->input->post('form_action') == 'pdf') {
+
+		$this->db->select($this->db->dbprefix('purchases_order') . ".id, purchases_order.date,
 				reference_no,supplier, grand_total " , FALSE)
                 ->from('purchases_order')
                 ->join('purchase_order_items', 'purchase_order_items.purchase_id = purchases_order.id', 'inner')
@@ -17493,13 +17495,13 @@ function salesDetail_actions(){
 				if($supplier){
 					$this->db->where('purchases_order.supplier_id',$supplier);
 				}
-						
+
 				if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
 					if ($user) {
 						$this->db->where('purchases_order.created_by', $user);
 					}
 				}
-            
+
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -17518,7 +17520,7 @@ function salesDetail_actions(){
 				$this->excel->getActiveSheet()->SetCellValue('B1', lang('reference_no'));
                 $this->excel->getActiveSheet()->SetCellValue('C1', lang('Supplier'));
                 $this->excel->getActiveSheet()->SetCellValue('D1', lang('grand_total'));
-				
+
 
                 $row = 2;
                 $total = 0;
@@ -17593,12 +17595,13 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
 
         }else{
-			
+
 			$this->load->library('datatables');
 			$this->datatables
-			->select("purchases_order.id as id, purchases_order.date, reference_no, supplier, grand_total")
+			->select("purchases_order.id as id, purchases_order.date, reference_no, companies.name as supplier, purchase_order_items.quantity_po, purchase_order_items.quantity_received, purchase_order_items.quantity_balance, grand_total")
 			->from("purchases_order")
-			->join('purchase_order_items', 'purchase_order_items.purchase_id = purchases_order.id', 'inner')
+            ->join('purchase_order_items', 'purchase_order_items.purchase_id = purchases_order.id', 'inner')
+			->join('companies', 'purchases_order.supplier_id = companies.id', 'left')
 			->group_by('reference_no');
 			if($supplier){
 				$this->db->where('purchases_order.supplier_id',$supplier);
@@ -17607,13 +17610,13 @@ function salesDetail_actions(){
 				if ($user) {
 					$this->datatables->where('purchases_order.created_by', $user);
 				}
-			}		
+			}
 			echo $this->datatables->generate();
 		}
-		
-			
+
+
 	}
-	
+
 	function getPurchaseReturn($pdf=NULL,$xls=NULL)
 	{
 		if ($this->input->get('supplier')) {
@@ -17629,8 +17632,8 @@ function salesDetail_actions(){
 		 if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-		
-		if ($pdf || $xls) {  
+
+		if ($pdf || $xls) {
 		$supplier_id = $this->input->get('supplier');
 		$this->db->select($this->db->dbprefix('return_purchases') . ".date, return_purchases.reference_no, warehouses.name as wname, return_purchases.supplier, return_purchase_items.product_name, return_purchase_items.quantity, return_purchases.grand_total" , FALSE)
                 ->from('return_purchases')
@@ -17644,7 +17647,7 @@ function salesDetail_actions(){
 					if ($user) {
 						$this->db->where('return_purchases.created_by', $user);
 					}
-				}		
+				}
             $q = $this->db->get();
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
@@ -17666,7 +17669,7 @@ function salesDetail_actions(){
 				$this->excel->getActiveSheet()->SetCellValue('E1', lang('Products'));
 				$this->excel->getActiveSheet()->SetCellValue('F1', lang('Quantity'));
                 $this->excel->getActiveSheet()->SetCellValue('G1', lang('grand_total'));
-				
+
 
                 $row = 2;
                 $quantity = 0;
@@ -17748,7 +17751,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
 
         }else{
-			
+
 			$supplier_id = $this->input->get('supplier');
 			$this->load->library('datatables');
 			$this->datatables
@@ -17764,16 +17767,16 @@ function salesDetail_actions(){
 				if ($user) {
 					$this->datatables->where('return_purchases.created_by', $user);
 				}
-			}			
+			}
 			echo $this->datatables->generate();
 		}
-		
-		
+
+
 	}
-	
+
 	function getDepositsReport2()
 	{
-		
+
 		if ($this->input->get('supplier')) {
             $supplier = $this->input->get('supplier');
         } else {
@@ -17794,11 +17797,11 @@ function salesDetail_actions(){
 				if ($user) {
 					$this->datatables->where('deposits.created_by', $user);
 				}
-			}		
+			}
 		echo $this->datatables->generate();
-		
+
 	}
-	
+
 	// income by Projects
 	function income_statement_by_project($start_date, $end_date, $pdf = NULL, $xls = NULL, $biller_id = NULL, $year=NULL)
     {
@@ -17815,13 +17818,13 @@ function salesDetail_actions(){
         } else {
             $end = $this->db->escape(urldecode($end_date));
         }
-		
+
 		$acc_setting = $this->site->get_Acc_setting();
 		$user = $this->site->getUser();
 		if($biller_id != NULL){
 			$this->data['biller_id_no_sep'] = $biller_id;
 			$biller_sep = explode('-', $biller_id);
-			
+
 			$bills = '';
 			for($i=0; $i < count($biller_sep); $i++){
 				$bills .= $biller_sep[$i] . ',';
@@ -17849,23 +17852,23 @@ function salesDetail_actions(){
 			$biller_id = $this->input->post('biller');
 		}
 		$year = date('Y');
-		
+
 		$this->data['year'] = $year;
 		$this->data['biller_id'] = $biller_id;
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
 
 		$from_date = date('Y-m-d H:m',strtotime(urldecode($start_date)));
 		$to_date = date('Y-m-d H:m',strtotime(urldecode($end_date)));
-		
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('income_by_project')));
         $meta = array('page_title' => lang('income_by_project'), 'bc' => $bc);
-		
+
 		$monthlyIncomes = $this->accounts_model->getMonthlyIncomes($acc_setting->default_sale_discount,'40',$from_date,$to_date,$biller_id, $year);
-		
+
 		//$this->erp->print_arrays($year);
 		$this->data['monthlyIncomes'] = $monthlyIncomes;
 		$this->data['acc_setting'] = $acc_setting;
@@ -17876,7 +17879,7 @@ function salesDetail_actions(){
             $html = str_replace('<p class="introtext">' . lang("reports_income_text") . '</p>', '', $html);
             $this->erp->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-		
+
 		$m_year = $year;
 		$m_start = date('Y', strtotime(urldecode($start_date)));
 		$m_end = date('Y', strtotime(urldecode($end_date)));
@@ -17885,7 +17888,7 @@ function salesDetail_actions(){
 		}else{
 			$m_year = $m_start;
 		}
-		
+
 		if($xls){
 			$this->load->library('excel');
 			$this->excel->setActiveSheetIndex(0);
@@ -17912,7 +17915,7 @@ function salesDetail_actions(){
 			$this->excel->getActiveSheet()->SetCellValue('R2', lang('Dec'));
 			$this->excel->getActiveSheet()->SetCellValue('S2', lang('Total'));
 			$this->excel->getActiveSheet()->SetCellValue('T2', lang('Balance'));
-			$this->excel->getActiveSheet()->mergeCells('G1:T1');	
+			$this->excel->getActiveSheet()->mergeCells('G1:T1');
 			$this->excel->getActiveSheet()->mergeCells('A1:F1');
 			$sum_jan = 0;
 			$sum_feb = 0;
@@ -17933,7 +17936,7 @@ function salesDetail_actions(){
 			$row=3;
 			$row1=4;
 			$income = 3;
-			
+
 			$BOStyle = array(
 			   'borders' => array(
 					'allborders' => array(
@@ -17969,7 +17972,7 @@ function salesDetail_actions(){
 			$this->excel->getActiveSheet()->SetCellValue('T' . $income, number_format($project->total_amount - abs($project->total), 2));
 			$this->excel->getActiveSheet()->getStyle('A'.$row.':T'.$row)->applyFromArray($BOStyle);
 			$this->excel->getActiveSheet()->getStyle('A1:T4')->applyFromArray($BOStyle);
-			
+
 			$income++;
 			//$this->excel->getActiveSheet()->getStyle('A'.$row1.':T'.$row1)->applyFromArray($bold);
 			//$row++;
@@ -17978,7 +17981,7 @@ function salesDetail_actions(){
 					$rows++;
 					$row++;
 					$row1++;
-					
+
 				}
 				$sum_amount += abs($project->total_amount);
 				$sum_jan += abs($project->jan);
@@ -17995,9 +17998,9 @@ function salesDetail_actions(){
 				$sum_dec += abs($project->dece);
 				$sum_total += abs($project->total);
 				$sum_balance += $project->total_amount - abs($project->total);
-				
+
 			}
-			
+
 			$this->excel->getActiveSheet()->SetCellValue('C' . $rows,number_format($sum_amount, 2));
 			$this->excel->getActiveSheet()->SetCellValue('G' . $rows,number_format($sum_jan, 2));
 			$this->excel->getActiveSheet()->SetCellValue('H' . $rows,number_format($sum_feb, 2));
@@ -18018,7 +18021,7 @@ function salesDetail_actions(){
 		    $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 			//$this->excel->getActiveSheet()->getStyle('I1:J3')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->getStyle('A1:T2')->applyFromArray($bold);
-			
+
 			$filename = 'income_statement_by_project_'. date('Y-m-d');
 			if ($xls) {
 				header('Content-Type: application/vnd.ms-excel');
@@ -18031,7 +18034,7 @@ function salesDetail_actions(){
 		}
 		$this->page_construct('reports/income_statement_by_project', $meta, $this->data);
 	}
-	
+
 	function product($biller_id = NULL)
     {
         $this->erp->checkPermissions('product',NULL,'product_report');
@@ -18079,15 +18082,15 @@ function salesDetail_actions(){
         }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('products_report')));
         $meta = array('page_title' => lang('products_report'), 'bc' => $bc);
-         
+
         $this->load->model('Products_model');
         $this->data['products'] = $this->Products_model->getProduct();
-        
+
         $this->page_construct('reports/product_test', $meta, $this->data);
     }
         function inventory($pdf, $excel,$reference,$wahouse_id,$product_id,$from_date,$to_date,$stockType,$cate_id,$biller){
 		$wid = $this->reports_model->getWareByUserID();
-        
+
         $this->erp->checkPermissions('inventory_valuation_detail', NULL, 'product_report');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         if ($pdf || $excel) {
@@ -18110,7 +18113,7 @@ function salesDetail_actions(){
 
                 $row = 2;
                 $gtt = 0;
-                $gqty = 0;  
+                $gqty = 0;
                 $warehouses = $this->reports_model->getWarehousesInventoryValuation($wid,$wahouse_id,$cate_id,$product_id,$stockType,$from_date,$to_date,$reference,$biller);
                 foreach($warehouses as $ware){
                     // $total_qoh_per_warehouse = 0;
@@ -18123,14 +18126,14 @@ function salesDetail_actions(){
                     $categories = $this->reports_model->getCategoriesInventoryValuationByWarehouse($ware->warehouse_id,$cate_id,$product_id,$stockType,$from_date,$to_date,$reference,$biller);
                     $total_qoh_per_warehouse_cat = 0;
                     $total_assetVal_per_warehouse_cat = 0;
-                    $row++;   
+                    $row++;
                     foreach($categories as $cat){
                         $this->excel->getActiveSheet()->SetCellValue('A' .$row, "   "."Category >> ".$cat->category_name);
                         $this->excel->getActiveSheet()->mergeCells('A'.$row.':K'.$row);
                         $this->excel->getActiveSheet()->getStyle('A'. $row)->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('A'. $row.':K'.$row)->getFont()->setSize(11);
                         // $products = $this->reports_model->getProducts($ware->warehouse_id, $cat->category_id);
-						
+
                         $total_qoh_per_warehouse = 0;
                         $total_assetVal_per_warehouse = 0;
                         $products = $this->reports_model->getProductsInventoryValuationByWhCat($ware->warehouse_id,($cate_id?$cate_id:$cat->category_id),$product_id,$stockType,$from_date,$to_date,$reference,$biller);
@@ -18151,16 +18154,16 @@ function salesDetail_actions(){
                            $prod = $this->reports_model->getProductsInventoryValuationByProduct($ware->warehouse_id,($cate_id?$cate_id:$cat->category_id),($product_id?$product_id:$pro->product_id),$stockType,$from_date,$to_date,$reference,$biller);
                            $row++;
                            foreach ($prod as $getpro) {
-                                
+
                                 $p_cost = 0;
                                 $p_qty = 0;
 
                                 if ($getpro->type == 'PURCHASE' ||
                                         $getpro->type == 'SALE RETURN' ||
                                         $getpro->type == 'ADJUSTMENTS' ||
-                                        $getpro->type == 'OPENING QTY') {                              
+                                        $getpro->type == 'OPENING QTY') {
                                         $p_qty = abs($getpro->quantity);
-                                }else if($getpro->type == 'TRANSFER' || $getpro->type == 'ADJUSTMENT' ){	
+                                }else if($getpro->type == 'TRANSFER' || $getpro->type == 'ADJUSTMENT' ){
 									$p_qty = $getpro->quantity;
 								}
                                 else
@@ -18169,9 +18172,9 @@ function salesDetail_actions(){
                                 }
 
                                $unit_name = $this->erp->convert_unit_2_string($getpro->product_id,$p_qty);
-                                
+
                                 $qty_on_hand += $p_qty ;// $pr->qty_on_hand;
-                                
+
                                 $p_cost = $this->erp->formatDecimal($getpro->cost);
                                 $avg_cost = $getpro->avg_cost;
                                 $this->db->select("cost")->where("erp_products.id",$getpro->product_id);
@@ -18191,8 +18194,8 @@ function salesDetail_actions(){
                                 // $a = $i+1;
                                 $total_on_hand = $qty_on_hand;
                                 $total_asset_val = $asset_value;
-                                
-                                $row++;                   
+
+                                $row++;
                             }
 
                             // $total_qoh_per_warehouse += $total_on_hand;
@@ -18207,10 +18210,10 @@ function salesDetail_actions(){
 
                             $total_qoh_per_warehouse += $total_on_hand;
                             $total_assetVal_per_warehouse += $total_asset_val;
-                            $row++;                          
+                            $row++;
                             // $this->excel->getActiveSheet()->SetCellValue('I' .$i, $total_on_hand);
                             // $this->excel->getActiveSheet()->SetCellValue('J' .$i, $total_asset_val);
-                            
+
                         }
 
                         $this->excel->getActiveSheet()->mergeCells('A'.$row.':H'.$row);
@@ -18223,7 +18226,7 @@ function salesDetail_actions(){
 
                             $total_qoh_per_warehouse_cat +=$total_qoh_per_warehouse;
                             $total_assetVal_per_warehouse_cat +=$total_assetVal_per_warehouse;
-                            $row++; 
+                            $row++;
                     }
                     $this->excel->getActiveSheet()->mergeCells('A'.$row.':H'.$row);
                     $this->excel->getActiveSheet()->SetCellValue('A' .$row, lang('total').">>".$ware->warehouse);
@@ -18245,7 +18248,7 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->SetCellValue('I' .$row, $this->erp->formatDecimal($gtt));
                 $this->excel->getActiveSheet()->SetCellValue('K' .$row, $this->erp->formatDecimal($gqty));
                 $this->excel->getActiveSheet()->getStyle('I'.$row. ':K'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-     
+
 
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
@@ -18288,8 +18291,8 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                    
-		
+
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -18297,7 +18300,7 @@ function salesDetail_actions(){
                 }
         }
     }
-	
+
 	function inventory_profit($pdf, $excel,$reference,$wahouse_id,$product_id,$from_date,$to_date,$cate_id,$biller){
 		$wid = $this->reports_model->getWareByUserID();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
@@ -18320,25 +18323,25 @@ function salesDetail_actions(){
                 $gqty = 0;
 				$gprice = 0;
 				$gcost = 0;
-				$gprofit = 0; 
+				$gprofit = 0;
                 $warehouses = $this->reports_model->getWarehousesProductProfit($wid,$wahouse_id,$cate_id,$product_id,$from_date,$to_date,$reference,$biller);
-                
+
 				foreach($warehouses as $ware){
-					
+
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, "Warehouse >> ".$ware->warehouse);
                     $this->excel->getActiveSheet()->mergeCells('A'.$row.':I'.$row);
                     $this->excel->getActiveSheet()->getStyle('A'. $row.':K'.$row)->getFont()->setBold(true);
                     $this->excel->getActiveSheet()->getStyle('A'. $row.':K'.$row)->getFont()->setSize(12);
                     $categories = $this->reports_model->getCategoriesProductProfitByWarehouse($ware->warehouse_id,$cate_id,$product_id,$from_date,$to_date,$reference,$biller);
-                    
+
 					$total_quantity_by_warehouse =0;
 					$total_cost_by_warehouse =0;
 					$total_price_by_warehouse =0;
 					$total_profit_by_warehouse =0;
-					
-                    $row++;   
+
+                    $row++;
                     foreach($categories as $cat){
-						
+
                         $this->excel->getActiveSheet()->SetCellValue('A' .$row, "   "."Category >> ".$cat->category_name);
 						$this->excel->getActiveSheet()->mergeCells('A'.$row.':I'.$row);
                         $this->excel->getActiveSheet()->getStyle('A'. $row)->getFont()->setBold(true);
@@ -18353,18 +18356,18 @@ function salesDetail_actions(){
 							   $this->excel->getActiveSheet()->mergeCells('A'.$row.':I'.$row);
 							   $this->excel->getActiveSheet()->getStyle('A'. $row)->getFont()->setBold(true);
 							}
-						
+
 							$total_quantity = 0;
 							$total_cost = 0;
 							$total_price = 0;
 							$total_profit = 0;
 							$unit_name = "";
-												
+
 							$prod = $this->reports_model->getProductsProfitByProduct($ware->warehouse_id,($cate_id?$cate_id:$cat->id),($product_id?$product_id:$pro->product_id),$from_date,$to_date,$reference,$biller);
-					    
+
 							$row++;
 							foreach ($prod as $getpro) {
-								
+
 								$p_qty = $getpro->quantity;
 								$unit_name = $this->erp->convert_unit_2_string($getpro->product_id,$p_qty);
 								$unit_cost = $this->erp->formatMoney($getpro->unit_cost);
@@ -18374,7 +18377,7 @@ function salesDetail_actions(){
 								$total_cost+=$getpro->unit_cost;
 								$total_price+=$getpro->unit_price;
 								$total_profit+=$profit;
-								
+
 								$this->excel->getActiveSheet()->SetCellValue('B' .$row, $this->erp->hrsd($getpro->date));
 								$this->excel->getActiveSheet()->SetCellValue('C' .$row, $getpro->reference_no);
 								$this->excel->getActiveSheet()->SetCellValue('D' .$row, $getpro->customer);
@@ -18383,8 +18386,8 @@ function salesDetail_actions(){
 								$this->excel->getActiveSheet()->SetCellValue('G' .$row, $unit_cost);
 								$this->excel->getActiveSheet()->SetCellValue('H' .$row, $unit_price);
 								$this->excel->getActiveSheet()->SetCellValue('I' .$row, $profit);
-								
-								$row++;                   
+
+								$row++;
 							}
 
                             $this->excel->getActiveSheet()->mergeCells('A'.$row.':E'.$row);
@@ -18396,16 +18399,16 @@ function salesDetail_actions(){
                             $this->excel->getActiveSheet()->SetCellValue('H' .$row, $total_price);
                             $this->excel->getActiveSheet()->SetCellValue('I' .$row, $total_profit);
 							$this->excel->getActiveSheet()->getStyle('F'.$row. ':I'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-							
-						   $row++;  
+
+						   $row++;
 
 							$total_quantity_by_warehouse += $total_quantity;
 							$total_cost_by_warehouse += $total_cost;
 							$total_price_by_warehouse += $total_price;
-							$total_profit_by_warehouse += $total_profit;							
-                            
+							$total_profit_by_warehouse += $total_profit;
+
                         }
-						
+
 						/*
                         $this->excel->getActiveSheet()->mergeCells('A'.$row.':H'.$row);
                         $this->excel->getActiveSheet()->SetCellValue('A' .$row, lang('total').">>".$cat->category_name);
@@ -18415,12 +18418,12 @@ function salesDetail_actions(){
                         $this->excel->getActiveSheet()->SetCellValue('K' .$row, $total_assetVal_per_warehouse);
                         //$this->excel->getActiveSheet()->getStyle('I'.$row. ':K'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 						*/
-                        
-						
-                        $row++; 
-						
+
+
+                        $row++;
+
                     }
-					
+
                     $this->excel->getActiveSheet()->mergeCells('A'.$row.':E'.$row);
                     $this->excel->getActiveSheet()->SetCellValue('A' .$row, lang('total').">>".$ware->warehouse);
                     $this->excel->getActiveSheet()->getStyle('A' .$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -18429,7 +18432,7 @@ function salesDetail_actions(){
                     $this->excel->getActiveSheet()->SetCellValue('G' .$row, $total_cost_by_warehouse);
                     $this->excel->getActiveSheet()->SetCellValue('H' .$row, $total_price_by_warehouse);
                     $this->excel->getActiveSheet()->SetCellValue('I' .$row, $total_profit_by_warehouse);
-                    
+
 					//$this->excel->getActiveSheet()->getStyle('I'.$row. ':K'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
                     $gqty +=$total_quantity_by_warehouse;
 					$gprice +=$total_cost_by_warehouse;
@@ -18448,7 +18451,7 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->SetCellValue('H' .$row, $this->erp->formatMoney($gcost));
                 $this->excel->getActiveSheet()->SetCellValue('I' .$row, $this->erp->formatMoney($gprofit));
                 //$this->excel->getActiveSheet()->getStyle('I'.$row. ':I'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-     
+
 
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
@@ -18459,7 +18462,7 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
-                
+
                 $filename = lang('Profit Product'). date('Y_m_d_H_i_s');
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($pdf) {
@@ -18490,8 +18493,8 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                    
-		
+
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -18499,7 +18502,7 @@ function salesDetail_actions(){
                 }
         }
     }
-	
+
     function inventory_valuation_detail()
     {
         $this->erp->checkPermissions('inventory_valuation_detail', NULL, 'product_report');
@@ -18508,7 +18511,7 @@ function salesDetail_actions(){
         if ($this->input->post('swarehouse')) {
             $wahouse_id =  $this->input->post('swarehouse');
         }else{
-			$wahouse_id = 0;	
+			$wahouse_id = 0;
         }
         if ($this->input->post('reference_no')) {
             $reference = $this->input->post('reference_no');
@@ -18550,7 +18553,7 @@ function salesDetail_actions(){
         }else{
             $plan_id= 0;
         }
-       
+
         $this->data['error']        = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 		$this->data['swarehouses'] 	= $this->reports_model->getWareFullByUSER($wid);
 		$this->data['warehouses'] 	= $this->reports_model->getWarehousesInventoryValuation($wid, $wahouse_id,$category_id, $product_id, $stockType, trim($from_date), trim($to_date), $reference, $biller, $plan_id);
@@ -18571,14 +18574,14 @@ function salesDetail_actions(){
          $this->data['cate_id1'] 	= $category_id;
          $this->data['stockType1'] 	= $stockType;
          $this->data['biller1'] 	= $biller;
-        
+
 		//$this->erp->print_arrays($this->reports_model->getAllCategories());
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('inventory_valuation_detail'), 'bc' => $bc);
         $this->page_construct('reports/inventory_valuation_detail', $meta, $this->data);
 
     }
-	
+
 	/* function inventory_valuation_detail()
     {
 		if ($this->input->post('swarehouse')) {
@@ -18621,17 +18624,17 @@ function salesDetail_actions(){
 		}else{
 			$to_date=NULL;
 		}
-		
-		
-		
+
+
+
         $this->erp->checkPermissions('index',NULL,'chart_report');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 
-		
+
 		if ($this->Owner || $this->Admin || !$this->session->userdata('warehouse_id')) {
             $this->data['swarehouses'] = $this->site->getAllWarehouses();
 			$this->data['warehouses'] = $this->reports_model->getWarehousesInventoryValuation($wahouse_id,$category_id,$product_id,$stockType,$stock_in_out,$from_date,$to_date,$reference);
-            
+
         } else {
             $this->data['swarehouses'] = $this->session->userdata('warehouse_id') ? $this->site->getWarehouseByID($this->session->userdata('warehouse_id')) : null;
 			$this->data['warehouses'] = $this->reports_model->getWarehousesInventoryValuation($wahouse_id,$category_id,$product_id,$stockType,$stock_in_out,$from_date,$to_date,$reference);
@@ -18646,14 +18649,14 @@ function salesDetail_actions(){
 		$this->data['cate_id']      = $category_id;
 		$this->data['categories']   = $this->reports_model->getAllCategories();
 		$this->data['products']     = $this->reports_model->getAllProducts();
-		
+
 		//$this->erp->print_arrays($this->reports_model->getAllCategories());
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('inventory_valuation_detail'), 'bc' => $bc);
         $this->page_construct('reports/inventory_valuation_detail', $meta, $this->data);
 
     } */
-	
+
 	//#chanthy
 	function customer_products($id = NULL)
     {
@@ -18662,30 +18665,30 @@ function salesDetail_actions(){
 		}else{
 			$id = null;
 		}
-		
+
         $this->erp->checkPermissions('sales', true);
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 		$this->data['areas'] =  $this->site->getArea();
 		$this->data['customers'] = $this->site->getCustomers();
 		$this->data['products'] = $this->reports_model->getCustomerProducts();
 		//$this->erp->print_arrays($this->data['products']);
-		
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('customers_report')));
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
         $this->page_construct('reports/customer_products', $meta, $this->data);
     }
-	
-	function getCustomerProducts() 
+
+	function getCustomerProducts()
     {
 		$this->load->library('datatables');
 		$this->datatables
 			->select('id, code, name, quantity, unit, cost')
 			->from('erp_products')
 			->add_column("Actions", "<div class='text-center'><a class=\"tip\" title='" . lang("view_report") . "' href='" . site_url('reports/customer_product_report/$1') . "'><span class='label label-primary'>" . lang("view_report") . "</span></a></div>", "id");
-			
+
 		echo $this->datatables->generate();
     }
-	
+
 	function getCustomersReport()
     {
 		$datt =$this->reports_model->getLastDate("erp_sales","date");
@@ -18747,7 +18750,7 @@ function salesDetail_actions(){
 			}
 			if($warehouse){
 				$this->datatables->where('erp_sales.warehouse_id',$warehouse);
-			} 
+			}
 			if($group_area){
 				$this->datatables->where('companies.group_areas_id',$group_area);
 			}
@@ -18758,14 +18761,14 @@ function salesDetail_actions(){
 				$this->datatables->where('date_format(erp_sales.date,"%Y-%m-%d") BETWEEN "'.$start_date.'" AND "'.$end_date.'"');
 			}*/
 		echo $this->datatables->generate();
-    } 
+    }
 	function customer_sale_report($user_id = NULL) {
 		$this->erp->checkPermissions('customer', false, 'sale_report');
 
         if (!$user_id && $_GET['d'] == null) {
             $this->session->set_flashdata('error', lang("no_customer_selected"));
             redirect('reports/customers');
-        }	
+        }
 		$this->data['sales'] = $this->reports_model->getSalesTotal($user_id);
         $this->data['total_sales'] = $this->reports_model->getCustomerSale($user_id);
         $this->data['total_quotes'] = $this->reports_model->getCustomerQuote($user_id);
@@ -18778,7 +18781,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
         $this->page_construct('reports/customer_sale_report', $meta, $this->data);
 	}
-	
+
 	function getCustomerSaleOrderReport()
 	{
         if ($this->input->get('customer')) {
@@ -18786,7 +18789,7 @@ function salesDetail_actions(){
         } else {
             $customer = NULL;
         }
-		
+
 		$this->load->library('datatables');
 			$this->datatables
 				->select("sale_order.id as id, sale_order.date, sale_order.reference_no, sale_order.customer, users.username, sale_order.grand_total, sale_order.paid, (erp_sale_order.grand_total - erp_sale_order.paid) as alacne")
@@ -18797,11 +18800,11 @@ function salesDetail_actions(){
 				->join('users', 'sale_order.saleman_by = users.id', 'left')
 				->where('sale_order.customer_id', $customer)
 				->group_by('sale_order.id');
-		
+
 		echo $this->datatables->generate();
 
     }
-	
+
 	function getCustomerSaleReport() {
 		$this->erp->checkPermissions('customer', NULL, 'sale_report');
         if ($this->input->get('customer')) {
@@ -18809,7 +18812,7 @@ function salesDetail_actions(){
         } else {
             $customer = NULL;
         }
-		
+
 		$this->load->library('datatables');
 			$this->datatables
 				->select("sale_items.id as id, sales.date, sales.reference_no, sale_items.product_name, sales.grand_total, sales.paid, (erp_sales.grand_total - erp_sales.paid) as balacne,erp_sales.note")
@@ -18822,10 +18825,10 @@ function salesDetail_actions(){
                 ->where('sales.pos <>', '1')
 				// ->where('sales.sale_status <> "returned"')
 				->group_by('sales.reference_no');
-		
+
 		echo $this->datatables->generate();
 	}
-	
+
 	function customer_product_report($user_id = NULL) {
 		$this->erp->checkPermissions('customers', TRUE);
         if (!$user_id && $_GET['d'] == null) {
@@ -18841,18 +18844,18 @@ function salesDetail_actions(){
         $this->data['users'] = $this->reports_model->getStaff();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
         $this->data['billers'] = $this->site->getAllCompanies('biller');
-			
+
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
-		
+
 		$this->data['date'] = $date;
-		
+
         $this->data['user_id'] = $user_id;
 		//$this->erp->print_arrays($user_id);
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('customers_report')));
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
         $this->page_construct('reports/customer_product_report', $meta, $this->data);
 	}
-	
+
 	function getCustomerProductReport()
 	{
 		$this->erp->checkPermissions('sales', TRUE);
@@ -18861,7 +18864,7 @@ function salesDetail_actions(){
         } else {
             $customer = NULL;
         }
-		
+
 		$this->load->library('datatables');
 			$this->datatables
 				->select("sales.id as id, sales.date, sales.reference_no, sales.customer, users.username, sales.grand_total, sales.paid, (erp_sales.grand_total - erp_sales.paid) as alacne")
@@ -18871,38 +18874,38 @@ function salesDetail_actions(){
 				->join('companies', 'companies.id=sales.customer_id','left')
 				->join('users', 'sales.saleman_by = users.id', 'left')
 				->where('sale_items.product_id', $customer);
-		
+
 		echo $this->datatables->generate();
 
     }
-	
+
 	function product_price_history() {
-		
-		$this->erp->checkPermissions('history', NULL, 'product'); 
-		
+
+		$this->erp->checkPermissions('history', NULL, 'product');
+
 		if ($this->input->post('category_id')) {
             $category_id = $this->input->post('category_id');
-			
+
         } else {
             $category_id = NULL;
         }
 		if ($this->input->post('product_id')) {
-            $product_id = $this->input->post('product_id');			
+            $product_id = $this->input->post('product_id');
         } else {
             $product_id = NULL;
         }
 		if ($this->input->post('start_date')) {
-            $start_date = $this->input->post('start_date');			
+            $start_date = $this->input->post('start_date');
         } else {
             $start_date = NULL;
         }
 		if ($this->input->post('end_date')) {
-            $end_date = $this->input->post('end_date');			
+            $end_date = $this->input->post('end_date');
         } else {
             $end_date = NULL;
         }
-		
-		$products = $this->reports_model->getProductName($category_id, $product_id); 
+
+		$products = $this->reports_model->getProductName($category_id, $product_id);
 		$history = array();
 		foreach($products as $product) {
 			$history = $this->reports_model->getProductHistoriesByID($product->id, $start_date, $end_date);
@@ -18918,11 +18921,11 @@ function salesDetail_actions(){
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('product_price_history')));
         $meta = array('page_title' => lang('product_price_history'), 'bc' => $bc);
         $this->page_construct('reports/product_price_history', $meta, $this->data);
-		
+
 	}
-	
-	function productHistory_actions(){		
-		
+
+	function productHistory_actions(){
+
 	$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
 
         if ($this->form_validation->run() == true) {
@@ -18930,8 +18933,8 @@ function salesDetail_actions(){
 				$this->load->library('excel');
 				$this->excel->setActiveSheetIndex(0);
 				$this->excel->getActiveSheet()->setTitle(lang('product_price_history')); //Sheet Name
-				
-				
+
+
 				$styleArray = array(
 					'fill' => array(
 						'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -18943,31 +18946,31 @@ function salesDetail_actions(){
 						'name'  => 'Verdana'
 					)
 				);
-				
+
 				$proback = array(
 					'fill' => array(
 						'type' => PHPExcel_Style_Fill::FILL_SOLID,
 						'color' => array('rgb' => 'CCCCCC'),
 					)
 				);
-				
+
                 if(isset($_POST['check'])){
 					$ids = $_POST['check'];
-					
+
 					$products = $this->reports_model->getProductName(null, null, $ids);
-				
+
 				}else{
 					$all_ids = $_POST['all_check'];
 					$products = $this->reports_model->getProductName(NULL, NULL, $all_ids);
-				}			
-				
+				}
+
 				$num = 1;
 				$g = 2;
-				
+
 				foreach($products  as $product){
 					$start_date = NULL;
 					$end_date = NULL;
-					
+
 					if(isset($_POST['hstart_date'])) {
 						$start_date = $_POST['hstart_date'];
 					}
@@ -18975,34 +18978,34 @@ function salesDetail_actions(){
 						$end_date = $_POST['hend_date'];
 					}
 					$result = $this->reports_model->getProductHistoriesByID($product->id, $start_date, $end_date);
-					
+
 					$this->excel->getActiveSheet()->SetCellValue('A'.($num) , strtoupper($product->name))->getStyle("A" . ($num))->applyFromArray($styleArray);
 					$this->excel->getActiveSheet()->mergeCells('A'.($num).':B'.($num));
-					
+
 					$this->excel->getActiveSheet()->getStyle("A" . ($num+1). ':'. "B" . ($num+1) )->applyFromArray($proback);
-					
+
 					$this->excel->getActiveSheet()->SetCellValue('A'.($num+1), lang('date'));
-					$this->excel->getActiveSheet()->SetCellValue('B'.($num+1), lang('price'));									
-					
+					$this->excel->getActiveSheet()->SetCellValue('B'.($num+1), lang('price'));
+
 					$this->excel->getActiveSheet()->SetCellValue('A' .($g+$num), 'Now');
 					$this->excel->getActiveSheet()->SetCellValue('B' .($g+$num), $this->erp->formatMoney($product->price));
 					$g++;
-					
+
 					foreach($result as $data_row){
-						
+
 						$this->excel->getActiveSheet()->SetCellValue('A' .($g+$num), $this->erp->hrsd($data_row->date));
 						$this->excel->getActiveSheet()->SetCellValue('B' .($g+$num), $this->erp->formatMoney($data_row->price));
 						$g++;
 					}
-					
-					
+
+
 					$num = $num + $g;
 					$g = 2;
-					
+
 					$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(50);
 					$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(50);
-				}			
-				
+				}
+
 				$this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 				$filename = 'sales_report_detail_' . date('Y_m_d_H_i_s');  //file name with date
 				if ($this->input->post('form_action') == 'export_pdf') {
@@ -19041,7 +19044,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function edit_history($id = NULL)
     {
         $this->erp->checkPermissions(false, true);
@@ -19057,13 +19060,13 @@ function salesDetail_actions(){
                 $date = date('Y-m-d H:i:s');
             }
 			$price = str_replace(',', '', $this->input->post('price'));
-			
+
 			$data = array(
 							'date' => $date,
 							'price' => $price
 						 );
         }
-		
+
         if ($this->form_validation->run() == true && $this->reports_model->updateProductHistoryByID($id, $data)) {
             $this->session->set_flashdata('message', lang("product_price_history_updated"));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -19075,7 +19078,7 @@ function salesDetail_actions(){
             $this->load->view($this->theme . 'reports/edit_history', $this->data);
         }
     }
-	
+
 	function delete_history($id = NULL)
     {
         $this->erp->checkPermissions(NULL, TRUE);
@@ -19091,7 +19094,7 @@ function salesDetail_actions(){
             die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 0);</script>");
         }
     }
-	
+
 	function customer_transfers()
     {
         $this->erp->checkPermissions('customer',NULL,'sale_report');
@@ -19102,10 +19105,10 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
         $this->page_construct('reports/customer_transfers', $meta, $this->data);
     }
-	
+
 	function getCustomerTransfers($pdf = NULL, $xls = NULL)
     {
-        
+
         if ($pdf || $xls) {
             $this->db
                 ->select($this->db->dbprefix('companies') . ".id as idd, company, name, phone, email, group_areas.areas_group, count(" . $this->db->dbprefix('sales') . ".id) as total, COALESCE(sum(grand_total), 0) as total_amount, COALESCE(sum(paid), 0) as paid, (CASE WHEN (COALESCE(sum(grand_total), 0) - COALESCE(sum(paid), 0)) < 0 THEN 0 ELSE (COALESCE(sum(grand_total), 0) - COALESCE(sum(paid), 0)) END) as balance", FALSE)
@@ -19206,13 +19209,13 @@ function salesDetail_actions(){
         } else {
 			if ($this->input->get('group_area')) {
             $group_area = $this->input->get('group_area');
-				
+
 			} else {
 				$group_area = NULL;
 			}
 			if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
-				
+
 			} else {
 				$customer = NULL;
 			}
@@ -19234,23 +19237,23 @@ function salesDetail_actions(){
         }
 
     }
-	
+
 	function customer_transfers_report($tran_id = NULL)
     {
         $this->erp->checkPermissions('customers', TRUE);
-		
+
         if (!$tran_id && $_GET['d'] == null) {
             $this->session->set_flashdata('error', lang("no_customer_selected"));
             redirect('reports/customers');
         }
-		
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-		
+
 		$transfer = $this->sales_model->getTransferByID($tran_id);
 		$list_items = $this->sales_model->getItemsByID($transfer->sale_id);
 		$sale_info = $this->sales_model->getSaleInfoByID($transfer->sale_id);
 		//$customer_transfers = $this->sales_model->getCustomerTransfersBySaleCustomerID($transfer->sale_id, $transfer->old_customer);
-		
+
 		$month_ = $this->sales_model->getMonths($tran_id);
 		$balance = $loan_view1->balance + $loan_view1->principle;
 		$curr_interest = $this->sales_model->getCurrentInterestByMonth($tran_id);
@@ -19261,23 +19264,23 @@ function salesDetail_actions(){
 		$this->data['sale_id'] = $transfer->sale_id;
 		$this->data['customer_id'] = $transfer->old_customer;
 		//$this->data['customer_transfers'] = $customer_transfers;
-		
+
         $this->data['user_id'] = $tran_id;
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('customers_report')));
         $meta = array('page_title' => lang('customers_report'), 'bc' => $bc);
         $this->page_construct('reports/customer_transfers_report', $meta, $this->data);
 
     }
-	
+
 	function listCustomerTransfersData($id = NULL, $customer_transfers = NULL)
 	{
 		$this->erp->checkPermissions('index');
-		
+
 		if ($customer_transfers) {
 			$this->load->library('datatables');
 			$this->datatables
-				->select("loans.id, loans.period, 
-						 loans.interest, loans.principle, loans.payment, 
+				->select("loans.id, loans.period,
+						 loans.interest, loans.principle, loans.payment,
 						 loans.balance, loans.dateline, IF(erp_loans.old_date, erp_loans.old_date, NULL) AS old_date, loans.note,users.username,paid_date
 						 ")
 				->from('loans')
@@ -19287,24 +19290,24 @@ function salesDetail_actions(){
 		} else {
 			$this->load->library('datatables');
 			$this->datatables
-				->select("loans.id, loans.period, 
-						 loans.interest, loans.principle, loans.payment, 
+				->select("loans.id, loans.period,
+						 loans.interest, loans.principle, loans.payment,
 						 loans.balance, loans.dateline, IF(erp_loans.old_date, erp_loans.old_date, NULL) AS old_date, loans.note,users.username,paid_date
 						 ")
 				->from('loans')
 				->join('users','users.id=loans.created_by','LEFT')
 				->where('sale_id', $id);
 		}
-		
-        
+
+
         echo $this->datatables->generate();
 	}
-	
+
 	//////////////////////////rothana addition//////////////////////
-	
+
 	public function sales_detail($biller_id = NULL)
 	{
-		$this->erp->checkPermissions('report_sale',NULL,'sale_report');		
+		$this->erp->checkPermissions('report_sale',NULL,'sale_report');
 		$user = $this->site->getUser();
 		$this->load->library("pagination");
 		$post = $this->input->post();
@@ -19319,8 +19322,8 @@ function salesDetail_actions(){
 		$customer_group   = $this->data['customer_group'] = $post['customer_group'];
 		$user             = $this->data['user'] = $post['user'];
 		$type             = $this->data['type'] = $post['type'];
-		$types            = $this->data['types'] = $post['types'];		
-		
+		$types            = $this->data['types'] = $post['types'];
+
 		if($biller_id != NULL){
 			$this->data['biller_id'] = $biller_id;
 		}else{
@@ -19339,8 +19342,8 @@ function salesDetail_actions(){
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
-		
+
+
 		if(isset($this->data['reference_no']) && $this->data['reference_no'] !=''){
 			$this->db->where("reference_no", $this->data['reference_no']);
 		}
@@ -19374,7 +19377,7 @@ function salesDetail_actions(){
 		} else {
             $type = NULL;
         }
-		  
+
 		if($types){
 			$this->db->where("pos", $types);
 		} else {
@@ -19388,9 +19391,9 @@ function salesDetail_actions(){
             $start_date = NULL;
             $end_date = NULL;
         }
-		
+
 		$sales_nums = $this->db->group_by('reference_no')->get('sales')->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".isset($uri);
         $config["base_url"] = base_url() . "reports/sales_detail/";
@@ -19412,7 +19415,7 @@ function salesDetail_actions(){
 		$config['last_tag_close'] = '<li>';
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
-		
+
 		$sql1 = "SELECT
 					erp_sales.id,
 					1 as type,
@@ -19440,7 +19443,7 @@ function salesDetail_actions(){
 				WHERE erp_sales.opening_ar = 0
 				GROUP BY
 					erp_sales.id,reference_no";
-					
+
 		$sql2 = "SELECT
 					erp_return_sales.id,
 					2 as type,
@@ -19466,11 +19469,11 @@ function salesDetail_actions(){
 					erp_return_sales
 				INNER JOIN erp_return_items ON erp_return_sales.id = erp_return_items.return_id
 				GROUP BY
-					erp_return_sales.id,reference_no";	
-			
+					erp_return_sales.id,reference_no";
+
         $sql3 = "";
 		$sqls = "";
-		
+
 		if($reference_no){
             $sql3 .= " AND reference_no = '{$this->data['reference_no']}'";
 			$sqls .= " AND reference_no = '{$this->data['reference_no']}'";
@@ -19494,12 +19497,12 @@ function salesDetail_actions(){
 		if($type){
             $sql3 .= " AND type = {$this->data['type']}";
 			$sqls .= " AND type = {$this->data['type']}";
-		} 
+		}
 		if($types){
             $sql3 .= " AND pos = {$this->data['types']}";
 			$sqls .= " AND pos = {$this->data['types']}";
 		}
-		
+
         $sdate = $this->erp->fld($start_date).'00:00:00';
         $edate = $this->erp->fld($end_date).'23:59:00';
 
@@ -19521,7 +19524,7 @@ function salesDetail_actions(){
         } else {
             $sales = $this->db->query("SELECT * FROM ({$sql1} UNION {$sql2}) AS TEMP WHERE 1=1 {$sql3} {$sql4} ORDER BY id DESC LIMIT {$config['ob_set']},{$config['per_page']} ")->result();
         }
-									
+
 		$this->pagination->initialize($config);
 		$this->data["pagination"] = $this->pagination->create_links();
 		$this->data['sales'] = $sales;
@@ -19531,15 +19534,15 @@ function salesDetail_actions(){
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             $this->data['warehouse_id'] = $warehouse_id;
             $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-			
+
         } else {
-			
+
             $this->data['warehouses'] = $this->products_model->getUserWarehouses();
 			if($warehouse_id){
 				$this->data['warehouse_id'] = $warehouse_id;
 				$this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
 			}else{
-				
+
 				$this->data['warehouse_id'] = str_replace(',', '-',$this->session->userdata('warehouse_id'));
 				$this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->products_model->getUserWarehouses() : NULL;
 			}
@@ -19550,34 +19553,34 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('sales_detail_report'), 'bc' => $bc);
         $this->page_construct('reports/sales_detail_report', $meta, $this->data);
 	}
-	
+
 	public function purchase_report_by_invoice($biller_id = NULL)
 	{
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('purchase_report_by_invoice')));
         $meta = array('page_title' => lang('purchase_report_by_invoice'), 'bc' => $bc);
         $this->page_construct('reports/purchase_report_by_invoice', $meta, $this->data);
 	}
-	
+
 	function getPurchaseByInvoice()
     {
-       
+
         $detail_link = anchor('purchases/modal_view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('purchase_details'), 'data-toggle="modal" data-target="#myModal"');
         $pdf_link = anchor('transfers/pdf/$1', '<i class="fa fa-file-pdf-o"></i> ' . lang('download_pdf'));
-        
+
         $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
             . lang('actions') . ' <span class="caret"></span></button>
-		
+
         <ul class="dropdown-menu pull-right" role="menu">
             <li>' . $detail_link . '</li>
 			<li>' . $view_document . '</li>'
-			
+
 			.(($this->Owner || $this->Admin) ? '<li>'.$edit_link.'</li>' : ($this->GP['transfers-edit'] ? '<li>'.$edit_link.'</li>' : '')).
 
             '<li>' . $pdf_link . '</li>
             <li>' . $email_link . '</li>
             <li>' . $print_barcode . '</li>'
-			
+
 			.(($this->Owner || $this->Admin) ? '<li>'.$delete_link.'</li>' : ($this->GP['transfers-delete'] ? '<li>'.$delete_link.'</li>' : '')).
 
         '</ul>
@@ -19592,15 +19595,15 @@ function salesDetail_actions(){
             ->from('erp_sales')
             ->join('erp_quotes','erp_sales.type_id = erp_quotes.id')
             ->join('erp_purchases','erp_quotes.id = erp_purchases.quote_id');
-            
-        
+
+
         $this->datatables->add_column("Actions", $action, "erp_purchases.id");
         echo $this->datatables->generate();
     }
-	
+
     function project_manager_report($id = null,$xls=NULL ,$pdf=NULL)
     {
-		  
+
 		$datt =$this->reports_model->getLastDate("sales","date");
 		$user = $this->site->getUser();
 		if($biller_id != NULL){
@@ -19632,13 +19635,13 @@ function salesDetail_actions(){
 		$this->data['users'] = $this->reports_model->getStaff();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
 		$this->data['customers'] = $this->site->getCustomers();
-		$this->data['projects'] = $this->reports_model->get_manager_project($id); 	
+		$this->data['projects'] = $this->reports_model->get_manager_project($id);
 		$bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('project_manager_report')));
         $meta = array('page_title' => lang('project_manager_report'), 'bc' => $bc);
         $this->page_construct('reports/project_manager_report', $meta, $this->data);
-	
-} 
-	
+
+}
+
 	function user_actions()
     {
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -19646,10 +19649,10 @@ function salesDetail_actions(){
         if ($this->form_validation->run() == true) {
 
             if (!empty($_POST['val'])) {
-                
+
                 if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
 
-					
+
                     $this->load->library('excel');
                     $this->excel->setActiveSheetIndex(0);
                     $this->excel->getActiveSheet()->setTitle(lang('sales'));
@@ -19671,25 +19674,25 @@ function salesDetail_actions(){
 					$num = 1;
 					$the = 0;
 					$rr  = 1;
-					
+
 					foreach ($_POST['val'] as $id){
                         $user = $this->site->getUsers($id);
-						
+
                         $this->excel->getActiveSheet()->SetCellValue('A' . ($row + $the + ($rr - 1)), $user->first_name);
                         $this->excel->getActiveSheet()->SetCellValue('B' . ($row + $the + ($rr - 1)), $user->last_name);
                         $this->excel->getActiveSheet()->SetCellValue('C' . ($row + $the + ($rr - 1)), $user->email);
                         $this->excel->getActiveSheet()->SetCellValue('D' . ($row + $the + ($rr - 1)), $user->company);
                         $this->excel->getActiveSheet()->SetCellValue('E' . ($row + $the + ($rr - 1)), $user->name);
-						
+
 						$this->excel->getActiveSheet()->SetCellValue('A'.($row + $the + $num + ($rr - 1)), lang('date'));
 						$this->excel->getActiveSheet()->SetCellValue('B'.($row + $the + $num + ($rr - 1)), lang('reference_no'));
 						$this->excel->getActiveSheet()->SetCellValue('C'.($row + $the + $num + ($rr - 1)), lang('project'));
 						$this->excel->getActiveSheet()->SetCellValue('D'.($row + $the + $num + ($rr - 1)), lang('customer'));
 						$this->excel->getActiveSheet()->SetCellValue('E'.($row + $the + $num + ($rr - 1)), lang('quantity'));
-						$this->excel->getActiveSheet()->SetCellValue('F'.($row + $the + $num + ($rr - 1)), lang('grand_total'));	
-						$this->excel->getActiveSheet()->SetCellValue('G'.($row + $the + $num + ($rr - 1)), lang('paid'));								
+						$this->excel->getActiveSheet()->SetCellValue('F'.($row + $the + $num + ($rr - 1)), lang('grand_total'));
+						$this->excel->getActiveSheet()->SetCellValue('G'.($row + $the + $num + ($rr - 1)), lang('paid'));
 						$this->excel->getActiveSheet()->SetCellValue('H'.($row + $the + $num + ($rr - 1)), lang('balacne'));
-						
+
 						$sales = $this->db->query("SELECT date, erp_sales.id,reference_no,biller,
 														customer,
 														quantity,
@@ -19700,20 +19703,20 @@ function salesDetail_actions(){
 														FROM erp_sales
 														INNER JOIN erp_sale_items on erp_sales.id = erp_sale_items.sale_id
 														INNER JOIN erp_users on erp_sales.assign_to_id = erp_users.id
-														WHERE assign_to_id={$user->id}")->result();	
-														
+														WHERE assign_to_id={$user->id}")->result();
+
 						foreach($sales as $data){
 							$this->excel->getActiveSheet()->SetCellValue('A'.($row + $the + $num + $rr), $data->date);
 							$this->excel->getActiveSheet()->SetCellValue('B'.($row + $the + $num + $rr), $data->reference_no);
 							$this->excel->getActiveSheet()->SetCellValue('C'.($row + $the + $num + $rr), $data->biller);
 							$this->excel->getActiveSheet()->SetCellValue('D'.($row + $the + $num + $rr), $data->customer);
 							$this->excel->getActiveSheet()->SetCellValue('E'.($row + $the + $num + $rr), $data->quantity);
-							$this->excel->getActiveSheet()->SetCellValue('F'.($row + $the + $num + $rr), $data->grand_total);	
-							$this->excel->getActiveSheet()->SetCellValue('G'.($row + $the + $num + $rr), $data->paid);								
+							$this->excel->getActiveSheet()->SetCellValue('F'.($row + $the + $num + $rr), $data->grand_total);
+							$this->excel->getActiveSheet()->SetCellValue('G'.($row + $the + $num + $rr), $data->paid);
 							$this->excel->getActiveSheet()->SetCellValue('H'.($row + $the + $num + $rr), ($data->grand_total - $data->paid));
 							$rr++;
 						}
-						
+
                         $row++;
 						$the++;
                     }
@@ -19944,8 +19947,8 @@ function salesDetail_actions(){
            $customer_group = $this->input->get("customer_group");
         }else {
            $customer_group = NULL;
-        }        
-    
+        }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
         } else {
@@ -19981,7 +19984,7 @@ function salesDetail_actions(){
                 ->join('users', 'sales.assign_to_id = users.id', 'left')
                 ->where('users.id', $user)
                 ->group_by('sales.id');
-        
+
         if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
             if ($user) {
                 $this->datatables->where('sales.created_by', $user);
@@ -20000,7 +20003,7 @@ function salesDetail_actions(){
             $this->datatables->where('sales.customer_id', $customer);
         }
         if($customer_group){
-           $this->datatables->where('companies.customer_group_id', $customer_group);                
+           $this->datatables->where('companies.customer_group_id', $customer_group);
         }
         if ($warehouse) {
             $this->datatables->where('sales.warehouse_id', $warehouse);
@@ -20051,8 +20054,8 @@ function salesDetail_actions(){
            $customer_group = $this->input->get("customer_group");
         }else {
            $customer_group = NULL;
-        }        
-    
+        }
+
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
         } else {
@@ -20088,7 +20091,7 @@ function salesDetail_actions(){
                 ->join('users', 'sale_order.assign_to_id = users.id', 'left')
                 ->where('users.id', $user)
                 ->group_by('sale_order.id');
-        
+
         if(!$this->Owner && !$this->Admin && $this->session->userdata('view_right') == 0){
             if ($user) {
                 $this->datatables->where('sales.created_by', $user);
@@ -20107,7 +20110,7 @@ function salesDetail_actions(){
             $this->datatables->where('sales.customer_id', $customer);
         }
         if($customer_group){
-           $this->datatables->where('companies.customer_group_id', $customer_group);                
+           $this->datatables->where('companies.customer_group_id', $customer_group);
         }
         if ($warehouse) {
             $this->datatables->where('sales.warehouse_id', $warehouse);
@@ -20121,12 +20124,12 @@ function salesDetail_actions(){
         echo $this->datatables->generate();
 
     }
-	
+
 	// ============== //
-	
+
 	function sales_customer_detail()
-    { 
-		$this->data['users'] = $this->site->getAllUsers();		
+    {
+		$this->data['users'] = $this->site->getAllUsers();
 		$this->data['billers'] = $this->site->getAllCompanies('biller');
 		$this->data['modal_js'] = $this->site->modal_js();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales_customer_detail'), 'page' => lang('sales_customer_detail')), array('link' => '#', 'page' => lang('sales_customer_detail')));
@@ -20146,7 +20149,7 @@ function salesDetail_actions(){
 
             if (!empty($_POST['val'])) {
                 if ($this->input->post('form_action') == 'delete') {
-                    
+
                     $error = false;
                     foreach ($_POST['val'] as $id) {
                         if (!$this->accounts_model->deleteChartAccount($id)) {
@@ -20178,7 +20181,7 @@ function salesDetail_actions(){
                             'bold'  => true
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray);
 
                     $row = 2;
@@ -20194,7 +20197,7 @@ function salesDetail_actions(){
                         $this->excel->getActiveSheet()->SetCellValue('G' . $row, $account->payment_status);
                         $new_row = $row+1;
                         $this->excel->getActiveSheet()->SetCellValue('F' . $new_row, $sum_amount);
-                        
+
                         $row++;
                     }
 
@@ -20221,7 +20224,7 @@ function salesDetail_actions(){
                         header('Cache-Control: max-age=0');
 
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getFont()->setBold(true);
-                        
+
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'PDF');
                         return $objWriter->save('php://output');
                     }
@@ -20232,7 +20235,7 @@ function salesDetail_actions(){
 
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getFont()->setBold(true);
-                        
+
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
                     }
@@ -20268,10 +20271,11 @@ function salesDetail_actions(){
         if($to_date == 0){
             $to_date = null;
         }
+
 		$wid = $this->reports_model->getWareByUserID();
-        $this->erp->checkPermissions('inventory_valuation_detail', NULL, 'product_report');
-        // $this->erp->checkPermissions('index', NULL, 'chart_report');
+        $this->erp->checkPermissions('suppliers', NULL, 'product_report');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+
         if ($pdf || $excel) {
 			$this->load->library('excel');
 			$this->excel->setActiveSheetIndex(0);
@@ -20289,8 +20293,9 @@ function salesDetail_actions(){
 			$row = 2;
 			$grand = 0 ;
 			$gqty = 0;
-			$this->db->select("erp_purchases.supplier_id,supplier,SUM(erp_purchase_items.quantity) as qty");
-			$this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
+			$this->db->select("erp_purchases.supplier_id,erp_companies.name as supplier,SUM(erp_purchase_items.quantity) as qty");
+            $this->db->join("erp_purchase_items","erp_purchase_items.purchase_id=erp_purchases.id","LEFT");
+			$this->db->join("erp_companies","erp_purchases.supplier_id = erp_companies.id","LEFT");
 			if($supplier){
 				$this->db->where("erp_purchases.supplier_id",$supplier);
 			}
@@ -20318,7 +20323,7 @@ function salesDetail_actions(){
 				$this->excel->getActiveSheet()->SetCellValue('A' . $row, $sup->supplier);
 				$this->excel->getActiveSheet()->mergeCells('A'.$row.':H'.$row);
 				$this->excel->getActiveSheet()->getStyle('A'. $row.':H'.$row)->getFont()->setBold(true);
-				
+
 				$this->db->select("product_id,product_name,erp_purchase_items.quantity,net_unit_cost,erp_purchases.supplier_id,reference_no,erp_purchase_items.date,transaction_type,option_id,unit,net_shipping")->join("erp_purchases","erp_purchases.id = erp_purchase_items.purchase_id","LEFT")->join("erp_products","erp_products.id = erp_purchase_items.product_id","LEFT")->where("erp_purchase_items.transaction_type = 'PURCHASE'");
 
 					if($reference){
@@ -20340,9 +20345,9 @@ function salesDetail_actions(){
 					if($from_date && $to_date){
 						$this->db->where('erp_purchase_items.date >="'.$from_date.'" AND erp_purchase_items.date<="'.$to_date.'"');
 					}
-					
+
 					$pur_items = $this->db->get("erp_purchase_items")->result();
-					$tqty = 0 ; 
+					$tqty = 0 ;
 					$amount = 0 ;
                     $totalshipping = 0 ;
 					$row++;
@@ -20371,7 +20376,7 @@ function salesDetail_actions(){
 						$this->excel->getActiveSheet()->SetCellValue('H' . $row, abs($row1->quantity)*$totalshipping);
 						$tqty+=$vqty;
 						$amount+=(abs($row1->quantity)*$totalshipping);
-						
+
 						$row++;
 					}
 				}
@@ -20435,8 +20440,8 @@ function salesDetail_actions(){
 				header('Content-Type: application/vnd.ms-excel');
 				header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
 				header('Cache-Control: max-age=0');
-				
-	
+
+
 				ob_clean();
 				$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
 				$objWriter->save('php://output');
@@ -20444,8 +20449,8 @@ function salesDetail_actions(){
 			}
         }
     }
-	
-	
+
+
 	function supplier_details()
     {
        //$this->erp->checkPermissions('inventory_valuation_detail', NULL, 'product_report');
@@ -20465,14 +20470,14 @@ function salesDetail_actions(){
         }else{
             $warehouse = null;
         }
-		
+
         if ($this->input->post('product')) {
             $product_id = $this->input->post('product');
         }else{
             $product_id = null;
         }
-        
-       
+
+
         if ($this->input->post('from_date')) {
             $from_date =  $this->erp->fld($this->input->post('from_date'));
         }else{
@@ -20490,7 +20495,7 @@ function salesDetail_actions(){
 		$this->data['from_date']    = $from_date;
 		$this->data['to_date'] 	  	= $to_date;
 		$this->data['products']     = $this->reports_model->getAllProducts();
-		
+
 		if($supplier == null){
             $this->data['supplier1'] = 0;
         }else{
@@ -20524,23 +20529,24 @@ function salesDetail_actions(){
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
+        $this->data['suppliers'] = $this->site->getAllSuppliers();
 		//$this->erp->print_arrays($this->reports_model->getAllCategories());
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('supplier_products'), 'bc' => $bc);
         $this->page_construct('reports/supplier_details', $meta, $this->data);
 
     }
-	
+
 	function product_profit()
     {
-		
+
         $wid = $this->reports_model->getWareByUserID();
 		$datt =$this->reports_model->getLastDate("sales","date");
-        
+
 		if ($this->input->post('swarehouse')) {
             $wahouse_id =  $this->input->post('swarehouse');
         }else{
-			$wahouse_id = 0;	
+			$wahouse_id = 0;
         }
         if ($this->input->post('reference_no')) {
             $reference = $this->input->post('reference_no');
@@ -20557,7 +20563,7 @@ function salesDetail_actions(){
         }else{
             $product_id = 0;
         }
-       
+
        if ($this->input->post('biller')) {
             $biller = $this->input->post('biller');
         }else{
@@ -20573,15 +20579,15 @@ function salesDetail_actions(){
         }else{
             $to_date= $datt;
         }
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-		
+
 		$this->data['swarehouses'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['warehouses'] = $this->reports_model->getWarehousesProductProfit($wid,$wahouse_id,$category_id,$product_id,trim($from_date),trim($to_date),$reference,$biller);
 		$this->data['categories']   = $this->reports_model->getAllCategories();
 		$this->data['products']     = $this->reports_model->getAllProducts();
 		$this->data['billers']     = $this->reports_model->getAllBillers();
-		
+
         $this->data['reference1'] = $reference;
 		$this->data['wahouse_id1'] = $wahouse_id;
         $this->data['product_id1'] = $product_id;
@@ -20593,17 +20599,17 @@ function salesDetail_actions(){
         }
          $this->data['cate_id1'] = $category_id;
          $this->data['biller1'] = $biller;
-        
+
 		//$this->erp->print_arrays($this->reports_model->getAllCategories());
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('product_profit'), 'bc' => $bc);
         $this->page_construct('reports/product_profit', $meta, $this->data);
 
     }
-	
-	
-	
-	
+
+
+
+
 	function transferReport(){
         if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
             if (!empty($_POST['val'])) {
@@ -20632,18 +20638,18 @@ function salesDetail_actions(){
                 foreach ($_POST['val'] as $id) {
                     $transfers = $this->reports_model->getTransfersReportDetail($id,$config["ob_set"],$config["per_page"]);
                     foreach($transfers as $transfer){
-                        // $this->erp->print_arrays($transfer);    
+                        // $this->erp->print_arrays($transfer);
                         $query=$this->db->query("
                         SELECT product_name,
                         product_code,
                         unit_cost,
-                        item_tax, 
+                        item_tax,
                         subtotal,
                         erp_transfer_items.quantity,
                         erp_product_variants.name as var_name,
                         erp_units.name as unit_name
-                        From erp_transfer_items 
-                        LEFT JOIN erp_products ON erp_products.id=erp_transfer_items.product_id 
+                        From erp_transfer_items
+                        LEFT JOIN erp_products ON erp_products.id=erp_transfer_items.product_id
                         LEFT JOIN erp_units ON erp_units.id =erp_products.unit
                         LEFT JOIN erp_product_variants ON option_id = erp_product_variants.id
                         where erp_transfer_items.transfer_id = {$transfer->id}")->result();
@@ -20658,7 +20664,7 @@ function salesDetail_actions(){
                        $t_cost +=$q->unit_cost;
                        $t_tax +=$q->item_tax;
                        $t_subtotal +=$q->subtotal;
-    					
+
                        $this->excel->getActiveSheet()->SetCellValue('A' . $row, $q->product_name.'('.$q->product_code.')');
                        $this->excel->getActiveSheet()->SetCellValue('B' . $row, $this->erp->formatQuantity($q->quantity));
                        $this->excel->getActiveSheet()->SetCellValue('C' . $row, !empty($q->var_name)?$q->var_name:$q->unit_name);
@@ -20701,9 +20707,9 @@ function salesDetail_actions(){
     					'color' => array('rgb' => '428BCA')
     				)
     			);
-    			
+
     			$this->excel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($styleArray);
-    				
+
     			//set border
     			$styleArray1 = array(
     				'borders' => array(
@@ -20713,7 +20719,7 @@ function salesDetail_actions(){
     				)
     			);
     			$this->excel->getActiveSheet()->getStyle('A1:F'.$row)->applyFromArray($styleArray1);
-    			
+
                 $this->excel->getActiveSheet()->SetCellValue('A' . $row, lang("grand_total"));
                 $this->excel->getActiveSheet()->SetCellValue('B' . $row, $g_qty);
                 $this->excel->getActiveSheet()->SetCellValue('D' . $row, $this->erp->formatMoney($g_cost));
@@ -20725,7 +20731,7 @@ function salesDetail_actions(){
                 // $this->excel->getActiveSheet()->getStyle('B'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
                 $this->excel->getActiveSheet()->getStyle('B'. $row.':C'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $this->excel->getActiveSheet()->getStyle('B'.$row.':F'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-                
+
             $filename = lang('Transfers Report'). date('Y_m_d_H_i_s');
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($this->input->post('form_action') == 'export_pdf') {
@@ -20756,7 +20762,7 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -20766,7 +20772,7 @@ function salesDetail_actions(){
             $this->session->set_flashdata('error', $this->lang->line("no_transfer_selected. Please select at least one"));
             redirect($_SERVER["HTTP_REFERER"]);
             }
-        }   
+        }
     }
 	function adjustment_report_action(){
         if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
@@ -20778,7 +20784,7 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->SetCellValue('B1', lang('QOH'));
                 $this->excel->getActiveSheet()->SetCellValue('C1', lang('variant'));
                 $this->excel->getActiveSheet()->SetCellValue('D1', lang('type'));
-                $this->excel->getActiveSheet()->SetCellValue('E1', lang('quantity_adjustment')); 
+                $this->excel->getActiveSheet()->SetCellValue('E1', lang('quantity_adjustment'));
                 $this->excel->getActiveSheet()->getStyle('A1'. $row.':E1'.$row)->getFont()->setBold(true);
 				$this->excel->getActiveSheet()->getStyle('A1'. $row.':E1'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
@@ -20786,12 +20792,12 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
-                $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(23); 
+                $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(23);
                 $grand_total=0;
                 $row = 2;
                 foreach ($_POST['val'] as $id) {
                     $adjusts = $this->reports_model->getAlladjustmentByID($id);
-                    foreach($adjusts as $adjust){     
+                    foreach($adjusts as $adjust){
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $adjust->date.'>> '.$adjust->reference_no.'>>' .$adjust->warehouse .'>>'.$adjust->username);
                         $this->excel->getActiveSheet()->getStyle('A'. $row)->getFont()->setSize(12)->setBold(true);
                         $this->excel->getActiveSheet()->mergeCells('A'.$row.':F'.$row);
@@ -20799,14 +20805,14 @@ function salesDetail_actions(){
                     $Tqty=0;$t_cost=0;$t_tax=0;$t_subtotal=0;
 					$query=$this->db->query("
                        SELECT erp_adjustment_items.quantity as qty_adjust,erp_adjustment_items.type,erp_products.code as codes,erp_products.name as product_names,erp_products.quantity as QOH,erp_product_variants.name as variant,erp_units.name as unit
-                       From erp_adjustment_items left JOIN erp_products ON erp_products.id=erp_adjustment_items.product_id LEFT JOIN erp_product_variants ON erp_product_variants.id = erp_adjustment_items.option_id LEFT JOIN erp_units ON erp_units.id=erp_products.unit  
+                       From erp_adjustment_items left JOIN erp_products ON erp_products.id=erp_adjustment_items.product_id LEFT JOIN erp_product_variants ON erp_product_variants.id = erp_adjustment_items.option_id LEFT JOIN erp_units ON erp_units.id=erp_products.unit
                        where erp_adjustment_items.adjust_id = {$adjust->id}
-                       
+
                      ")->result();
                     $quantity=0;
                     foreach($query as $q){
                         $quantity +=$q->t_qty;
-    					
+
                        $this->excel->getActiveSheet()->SetCellValue('A' . $row, $q->codes ? "   "."(".$q->codes .")".$q->product_names :'');
                        $this->excel->getActiveSheet()->SetCellValue('B' . $row, $q->QOH);
                        $this->excel->getActiveSheet()->SetCellValue('C' . $row, !empty($q->variant)?$q->variant :$q->unit);
@@ -20822,14 +20828,14 @@ function salesDetail_actions(){
 					$this->excel->getActiveSheet()->getStyle('D'. $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 					$this->excel->getActiveSheet()->getStyle('E'. $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 					$this->excel->getActiveSheet()->getStyle('D'. $row.':E'.$row)->getFont()->setBold(true);
-					
-              
+
+
                 }
-				
+
 
             }
 
-    		$this->excel->getActiveSheet()->getStyle('E'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);	              
+    		$this->excel->getActiveSheet()->getStyle('E'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
             $filename = lang('adjustment_report'). date('Y_m_d_H_i_s');
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($this->input->post('form_action') == 'export_pdf') {
@@ -20860,7 +20866,7 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -20870,11 +20876,11 @@ function salesDetail_actions(){
             $this->session->set_flashdata('error', $this->lang->line("no_adjustment_selected. Please select at least one"));
             redirect($_SERVER["HTTP_REFERER"]);
             }
-        }   
+        }
     }
 	function customersReportDetails($pdf = NULL, $excel = NULL,$warehouse,$customer,$reference,$product_id,$from_date,$to_date){
-		
-        if ($pdf || $excel) {			
+
+        if ($pdf || $excel) {
             $this->load->library('excel');
             $this->excel->setActiveSheetIndex(0);
             $this->excel->getActiveSheet()->setTitle(lang('inventory'));
@@ -20919,7 +20925,7 @@ function salesDetail_actions(){
             foreach($customers as $cus){
 				if($cus->customer_id){
 					if($cus->qty){
-               
+
                 $this->excel->getActiveSheet()->SetCellValue('A' . $row, $cus->customer);
                 $this->excel->getActiveSheet()->mergeCells('A'.$row.':I'.$row);
                 $this->excel->getActiveSheet()->getStyle('A'. $row.':I'.$row)->getFont()->setBold(true);
@@ -20947,18 +20953,18 @@ function salesDetail_actions(){
 				$this->db->select('erp_sale_items.*, erp_categories.name as cate_name');
 				$this->db->join('erp_categories', 'erp_categories.id = erp_products.category_id', 'left');
                 $sale_items = $this->db->get("erp_sale_items")->result();
-                $tqty = 0 ; 
+                $tqty = 0 ;
                 $amount = 0 ;
                 $row++;
 				$vqty = 0;
                 foreach($sale_items as $row1){
-                   
+
                     if($cus->customer_id == $row1->customer_id){
                         if($row1->option_id){
                             $unit_n = $this->db->get_where('erp_product_variants',array('id'=> $row1->option_id),1)->row();
                             $unit_q = $unit_n->qty_unit;
                             $unit_name = ' ( '.$this->erp->formatQuantity(( abs($row1->quantity)*$unit_q)/$unit_q).' '.$unit_n->name.' )';
-							$vqty = abs($row1->quantity)*$unit_q;		
+							$vqty = abs($row1->quantity)*$unit_q;
                         }else{
                             $unit = $this->db->get_where("erp_units",array('id'=>$row1->unit),1)->row();
                             $unit_name = $unit->name;
@@ -20988,7 +20994,7 @@ function salesDetail_actions(){
                     $grand +=$amount;
                     $gqty+=$tqty;
                     $row++;
-                    
+
                 }
 			}
 			}
@@ -20999,9 +21005,9 @@ function salesDetail_actions(){
                 // $this->excel->getActiveSheet()->mergeCells('A'.$row.':D'.$row);
                 $this->excel->getActiveSheet()->getStyle('A'. $row.':I'.$row)->getFont()->setBold(true);
                 $this->excel->getActiveSheet()->getStyle('F'.$row. ':I'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-                
+
             }
-         
+
 
             $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
             $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
@@ -21044,7 +21050,7 @@ function salesDetail_actions(){
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                 header('Cache-Control: max-age=0');
-            
+
                 ob_clean();
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                 $objWriter->save('php://output');
@@ -21075,14 +21081,14 @@ function salesDetail_actions(){
         }else{
             $reference = null;
         }
-       
+
         if ($this->input->post('product')) {
             $product_id = $this->input->post('product');
         }else{
             $product_id = null;
         }
-        
-       
+
+
         if ($this->input->post('from_date')) {
             $from_date =  $this->erp->fld($this->input->post('from_date'));
         }else{
@@ -21093,8 +21099,8 @@ function salesDetail_actions(){
         }else{
             $to_date= $datt;
         }
-		
-		
+
+
 		$this->data['customer']    	= $customer;
 		$this->data['warehouse']    = $warehouse;
 		$this->data['reference']    = $reference;
@@ -21103,7 +21109,7 @@ function salesDetail_actions(){
 		$this->data['from_date']    = $from_date;
 		$this->data['to_date'] 	  	= $to_date;
 		$this->data['products']     = $this->reports_model->getAllProducts();
-		
+
 		if($customer == null){
             $this->data['customer1'] = 0;
         }else{
@@ -21133,7 +21139,7 @@ function salesDetail_actions(){
              $this->data['to_date1'] = 0;
         }else{
             $this->data['to_date1'] = trim($to_date);
-        }		
+        }
 		$wid = $this->reports_model->getWareByUserID();
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
@@ -21142,7 +21148,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('product_customers'), 'bc' => $bc);
         $this->page_construct('reports/customer_details', $meta, $this->data);
     }
-	
+
 	function productionReports(){
         if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
             if (!empty($_POST['val'])) {
@@ -21176,13 +21182,13 @@ function salesDetail_actions(){
                                 convert_items.*,
                                 product_variants.name as uname,
                                 product_variants.qty_unit")
-                        ->join("product_variants","product_variants.id=convert_items.option_id","LEFT")                                     
+                        ->join("product_variants","product_variants.id=convert_items.option_id","LEFT")
                         ->where("convert_items.status","deduct")
                         ->where("convert_id",$convert->id)
                         ->get("convert_items")->result();
                         $total_input = 0;
-                        $row++;          
-                        foreach($convert_items as $convert_item){ 
+                        $row++;
+                        foreach($convert_items as $convert_item){
                             $total_input_cost = $convert_item->cost*$convert_item->quantity;
                             $total_input += $total_input_cost;
 
@@ -21207,13 +21213,13 @@ function salesDetail_actions(){
                                 convert_items.*,
                                 product_variants.name as uname,
                                 product_variants.qty_unit")
-                        ->join("product_variants","product_variants.id=convert_items.option_id","LEFT")                                     
+                        ->join("product_variants","product_variants.id=convert_items.option_id","LEFT")
                         ->where("convert_items.status","add")
                         ->where("convert_id",$convert->id)
                         ->get("convert_items")->result();
                         $total_output = 0;
-                        $row++;          
-                        foreach($convert_items1 as $convert_item1){ 
+                        $row++;
+                        foreach($convert_items1 as $convert_item1){
                             $total_output_cost = $convert_item1->cost*$convert_item1->quantity;
                             $total_output += $total_output_cost;
                             $this->excel->getActiveSheet()->SetCellValue('A' . $row, lang("OUTPUT"));
@@ -21232,8 +21238,8 @@ function salesDetail_actions(){
                         $this->excel->getActiveSheet()->getStyle('A'. $row.':G'.$row)->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->mergeCells('A'.$row.':F'.$row);
                         $this->excel->getActiveSheet()->getStyle('A'. $row.':G'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                        $this->excel->getActiveSheet()->getStyle('G'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN); 
-    					
+                        $this->excel->getActiveSheet()->getStyle('G'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
     					//set font bold,font color,font size,font name and background color to excel  by dara
     					$styleArray = array(
     						'font'  => array(
@@ -21247,9 +21253,9 @@ function salesDetail_actions(){
     							'color' => array('rgb' => '428BCA')
     						)
     					);
-    					
+
     					$this->excel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray);
-    						
+
     					// set border
     					// $styleArray1 = array(
     						// 'borders' => array(
@@ -21259,14 +21265,14 @@ function salesDetail_actions(){
     						// )
     					// );
     					// $this->excel->getActiveSheet()->getStyle('A1:G'.$row)->applyFromArray($styleArray1);
-    				
+
                     }
                     $row++;
 
                 }
 
-    			
-    			
+
+
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -21304,7 +21310,7 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -21341,7 +21347,7 @@ function salesDetail_actions(){
 				$sum_balance = 0;
                 foreach ($_POST['val'] as $id) {
                         $supplier = $this->db
-						->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, reference_no, " . 
+						->select($this->db->dbprefix('purchases') . ".id, ".$this->db->dbprefix('purchases') . ".date, reference_no, " .
 									 $this->db->dbprefix('warehouses') . ".name as wname, com.name as supplier ,
 									 grand_total, paid, (grand_total-paid) as balance, " . $this->db->dbprefix('purchases') . ".payment_status", FALSE)
 						->join('purchase_items', 'purchase_items.purchase_id=purchases.id', 'left')
@@ -21350,8 +21356,8 @@ function salesDetail_actions(){
 						->join('companies as com', 'com.id = purchases.supplier_id', 'left')
 						->where(array('purchases.status' => 'received', 'purchases.payment_status <>' => 'paid','purchases.id' => $id))
 						->group_by('purchases.id')
-						->get("purchases")->result(); 
-                        foreach($supplier as $sup){ 
+						->get("purchases")->result();
+                        foreach($supplier as $sup){
 							//$this->erp->print_arrays($sup);
 							$sum_grandtotal += $sup->grand_total;
 							$sum_paid += $sup->paid;
@@ -21371,11 +21377,11 @@ function salesDetail_actions(){
 							$this->excel->getActiveSheet()->SetCellValue('F' . $i, $this->erp->formatMoney($sum_paid));
 							$this->excel->getActiveSheet()->SetCellValue('G' . $i, $this->erp->formatMoney($sum_balance));
 							$row++;
-                        }	
+                        }
                 }
 				$this->excel->getActiveSheet()->getStyle('E'.$i. ':G'.$i)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-				$this->excel->getActiveSheet()->getStyle('E'. $i.':G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);				
-    			
+				$this->excel->getActiveSheet()->getStyle('E'. $i.':G'.$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -21384,7 +21390,7 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 				$this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
-				
+
                 $filename = lang('supplier_banlance'). date('Y_m_d_H_i_s');
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($this->input->post('form_action') == 'export_pdf') {
@@ -21415,7 +21421,7 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -21466,7 +21472,7 @@ function salesDetail_actions(){
                         'color' => array('rgb' => '428BCA')
                     )
                 );
-            
+
                 $this->excel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray);
                 $row = 2;
                 foreach ($_POST['val'] as $id) {
@@ -21487,10 +21493,10 @@ function salesDetail_actions(){
                         FROM
                         erp_enter_using_stock_items
                         LEFT JOIN erp_products ON erp_products. CODE = erp_enter_using_stock_items. CODE
-                        LEFT JOIN erp_position ON erp_enter_using_stock_items.description = erp_position.id 
+                        LEFT JOIN erp_position ON erp_enter_using_stock_items.description = erp_position.id
                         LEFT JOIN erp_reasons ON erp_enter_using_stock_items.reason = erp_reasons.id
                         LEFT JOIN erp_product_variants ON erp_enter_using_stock_items.option_id = erp_product_variants.id
-                        LEFT JOIN erp_expense_categories ON erp_enter_using_stock_items.exp_cate_id = erp_expense_categories.id where erp_enter_using_stock_items.reference_no='{$stock->refno}' 
+                        LEFT JOIN erp_expense_categories ON erp_enter_using_stock_items.exp_cate_id = erp_expense_categories.id where erp_enter_using_stock_items.reference_no='{$stock->refno}'
                         ")->result();
 
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $stock->refno.'>> '.$this->erp->hrld($stock->date).'>> '.$stock->company.'>> '.$stock->warehouse_name." >> ".$stock->username);
@@ -21509,7 +21515,7 @@ function salesDetail_actions(){
                             $this->excel->getActiveSheet()->getStyle('F'. $row.':G'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             $this->excel->getActiveSheet()->getStyle('E'. $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                             $row++;
-                        } 
+                        }
                         // set border
                         $styleArray1 = array(
                             'borders' => array(
@@ -21521,7 +21527,7 @@ function salesDetail_actions(){
                         $this->excel->getActiveSheet()->getStyle('A1:G'.$row)->applyFromArray($styleArray1);
                     }
                 }
-                
+
 
                 $filename = lang('Report List Using Stock'). date('Y_m_d_H_i_s');
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -21553,7 +21559,7 @@ function salesDetail_actions(){
                     header('Content-Type: application/vnd.ms-excel');
                     header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                     header('Cache-Control: max-age=0');
-                
+
                     ob_clean();
                     $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                     $objWriter->save('php://output');
@@ -21565,7 +21571,7 @@ function salesDetail_actions(){
         }
       }
     }
-	
+
 	function convertReport_action()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -21588,25 +21594,25 @@ function salesDetail_actions(){
                     $this->excel->getActiveSheet()->SetCellValue('B1', lang('product_name'));
                     $this->excel->getActiveSheet()->SetCellValue('C1', lang('quantity'));
 					$this->excel->getActiveSheet()->SetCellValue('D1', lang('unit'));
-			
+
 
                     $row = 2;
-					
+
                     foreach ($_POST['val'] as $id) {
                         $sc = $this->reports_model->getConvertExportByID($id);
-						
+
 						//$qty += $sc->quantity;
 						$this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->product_code);
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $sc->product_name);
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, $sc->con_qty);
 						$this->excel->getActiveSheet()->SetCellValue('D' . $row, $sc->unit);
-    
+
 						$row++;
                     }
 
                   /*   $this->excel->getActiveSheet()->getStyle("C" . $row . ":D" . $row)->getBorders()
 						->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_MEDIUM);
-				
+
 					$this->excel->getActiveSheet()->getStyle('C'. $row.':D'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
  */
                 //set font bold,font color,font size,font name and background color to excel  by dara
@@ -21622,7 +21628,7 @@ function salesDetail_actions(){
                             'color' => array('rgb' => '428BCA')
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:D1')->applyFromArray($styleArrays);
 					$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
 					$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -21631,8 +21637,8 @@ function salesDetail_actions(){
 					// $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(20);
-				
-				
+
+
                     $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     $filename = 'sales_report_' . date('Y_m_d_H_i_s');
                     if ($this->input->post('form_action') == 'export_pdf') {
@@ -21648,12 +21654,12 @@ function salesDetail_actions(){
 						 array(
 							 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT
 						 ));
-						
+
 						$this->excel->getActiveSheet()->getStyle('G2:G' . $row)->getAlignment()->applyFromArray(
 						 array(
 							 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT
 						 ));
-						
+
 						$this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
                         require_once(APPPATH . "third_party" . DIRECTORY_SEPARATOR . "MPDF" . DIRECTORY_SEPARATOR . "mpdf.php");
                         $rendererName = PHPExcel_Settings::PDF_RENDERER_MPDF;
@@ -21706,8 +21712,8 @@ function salesDetail_actions(){
 	function convertReportDetails_action()
 	{
 		if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf'){
-			
-			if (!empty($_POST['val'])) 
+
+			if (!empty($_POST['val']))
 			{
 				$this->load->library('excel');
 				$this->excel->setActiveSheetIndex(0);
@@ -21742,7 +21748,7 @@ function salesDetail_actions(){
 						'color' => array('rgb' => '428BCA')
 					)
 				);
-			
+
 				$this->excel->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray);
 				$row = 2;
 				foreach ($_POST['val'] as $id) {
@@ -21752,15 +21758,15 @@ function salesDetail_actions(){
 					foreach($convert_detail as $convert){
 						// $this->erp->print_arrays($stock);
 						$query = $this->db->query("
-							SELECT   	erp_convert_items.status,erp_convert_items.product_code,erp_convert_items.product_name,erp_convert_items.quantity,erp_units.name as unit,erp_convert_items.cost 
-							From 
-								erp_convert_items LEFT JOIN erp_products ON erp_products.id=erp_convert_items.product_id LEFT JOIN erp_units ON erp_units.id =erp_products.unit 
-							where 
-								erp_convert_items.convert_id ='{$convert->id}' 
+							SELECT   	erp_convert_items.status,erp_convert_items.product_code,erp_convert_items.product_name,erp_convert_items.quantity,erp_units.name as unit,erp_convert_items.cost
+							From
+								erp_convert_items LEFT JOIN erp_products ON erp_products.id=erp_convert_items.product_id LEFT JOIN erp_units ON erp_units.id =erp_products.unit
+							where
+								erp_convert_items.convert_id ='{$convert->id}'
 								")->result();
 
 						$this->excel->getActiveSheet()->SetCellValue('A' . $row, $convert->date .' >> '.$convert->reference_no .' >> '.$convert->warehouse .' >> '.$convert->username);
-						
+
 						$this->excel->getActiveSheet()->getStyle('A'. $row)->getFont()->setSize(12)->setBold(true);
 						$this->excel->getActiveSheet()->mergeCells('A'.$row.':G'.$row);
 						$row++;
@@ -21773,12 +21779,12 @@ function salesDetail_actions(){
 							$this->excel->getActiveSheet()->SetCellValue('E' . $row, $q->unit);
 							$this->excel->getActiveSheet()->SetCellValue('F' . $row, $q->cost);
 							$this->excel->getActiveSheet()->SetCellValue('G' . $row, $q->cost*$q->quantity);
-							
+
 							$this->excel->getActiveSheet()->getStyle('F'. $row.':G'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 							$this->excel->getActiveSheet()->getStyle('E'. $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 							$row++;
-						} 
-					
+						}
+
 						$styleArray1 = array(
 							'borders' => array(
 							  'allborders' => array(
@@ -21789,11 +21795,11 @@ function salesDetail_actions(){
 						$this->excel->getActiveSheet()->getStyle('A1:G'.$row)->applyFromArray($styleArray1);
 					}
 				}
-				
+
 
 				$filename = lang('Report List Using Stock'). date('Y_m_d_H_i_s');
 				$this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-				if ($this->input->post('form_action') == 'export_pdf') 
+				if ($this->input->post('form_action') == 'export_pdf')
 				{
 					$styleArray = array(
 						'borders' => array('allborders' => array('style' => PHPExcel_Style_Border::BORDER_THIN))
@@ -21817,13 +21823,13 @@ function salesDetail_actions(){
 					$objWriter->save('php://output');
 					exit();
 				}
-				if ($this->input->post('form_action') == 'export_excel') 
+				if ($this->input->post('form_action') == 'export_excel')
 				{
 					ob_clean();
 					header('Content-Type: application/vnd.ms-excel');
 					header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
 					header('Cache-Control: max-age=0');
-				
+
 					ob_clean();
 					$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
 					$objWriter->save('php://output');
@@ -21845,7 +21851,7 @@ function salesDetail_actions(){
 			$str .="&reference=".$reference;
         }else{
             $reference = null;
-        } 
+        }
         if ($this->input->get('from_date')) {
             $from_date =  $this->erp->fld($this->input->get('from_date'));
 			$str .="&from_date=".trim($from_date);
@@ -21868,13 +21874,13 @@ function salesDetail_actions(){
 			 $this->db->where("reference_no",$reference);
 		}
 		$row_nums = $this->db->group_by('reference_no')->get('erp_convert')->num_rows();
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
         $config["base_url"] = base_url() . "reports/production_report/";
 		$config["total_rows"] = $row_nums;
 		$config["ob_set"] = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-        $config["per_page"] =3; 
+        $config["per_page"] =3;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -21892,7 +21898,7 @@ function salesDetail_actions(){
 		$config['num_tag_close'] = '</li>';
 
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
 		$this->data['converts']    = $this->reports_model->getConverts($reference,trim($from_date),trim($to_date),$config['per_page'],$config["ob_set"]);
 		$this->data['reference']    = $reference;
 		$this->data['from_date']    = trim($from_date);
@@ -21902,14 +21908,14 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('production_report'), 'bc' => $bc);
         $this->page_construct('reports/production_report', $meta, $this->data);
     }
-	
+
 	function tranfer_report()
     {
         if ($this->input->post('reference_no')) {
             $reference = $this->input->post('reference_no');
         }else{
             $reference = null;
-        } 
+        }
         if ($this->input->post('from_date')) {
             $from_date =  $this->erp->fld($this->input->post('from_date'));
         }else{
@@ -21920,7 +21926,7 @@ function salesDetail_actions(){
         }else{
             $to_date=null;
         }
-		
+
 		$this->data['reference']    = $reference;
 		$this->data['from_date']    = $from_date;
 		$this->data['to_date'] 	  	= $to_date;
@@ -21929,7 +21935,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('tranfer_report'), 'bc' => $bc);
         $this->page_construct('reports/tranfer_report', $meta, $this->data);
     }
-	
+
 	function inventory_inout()
     {
 		$datt =$this->reports_model->getLastDate("purchase_items","date");
@@ -21937,34 +21943,34 @@ function salesDetail_actions(){
             $product = $this->input->post('product');
         }else{
 			$product = 0;
-        }    
+        }
 		if ($this->input->post('category')) {
             $category = $this->input->post('category');
         }else{
 			$category = 0;
-        } 
+        }
 		if ($this->input->post('biller')) {
             $biller = $this->input->post('biller');
         }else{
 			$biller = 0;
-        } 
+        }
 		if ($this->input->post('from_date')) {
             $from_date = $this->erp->fsd($this->input->post('from_date'));
         }else{
 			$from_date = $datt;
-        } 
+        }
 		if($this->input->post('to_date')) {
             $to_date = $this->erp->fsd($this->input->post('to_date'));
         }else{
 			$to_date = $datt;
-        } 
+        }
 		$wid = $this->reports_model->getWareByUserID();
 		if ($this->input->post('warehouse')) {
             $warehouse = $this->input->post('warehouse');
         }else{
 				$warehouse = 0;
-        } 
-		
+        }
+
 		//$this->erp->print_arrays($wid);
 		$this->data['ware'] = $this->reports_model->getWarePur($wid,$warehouse,$product,$category,$biller);
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
@@ -21979,16 +21985,16 @@ function salesDetail_actions(){
 		$this->data['billers']     = $this->reports_model->getAllBillers();
         //Store value in filter pass to export excel & pdf
         $this->data['product1'] = $product;
-		$this->data['category1'] = $category;	
+		$this->data['category1'] = $category;
         $this->data['biller1'] = $biller;
         $this->data['warehouse1'] = $warehouse;
 		$this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
-		 
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('inventory_inout'), 'bc' => $bc);
         $this->page_construct('reports/inventory_inout', $meta, $this->data);
     }
-    
+
 	function product_grossmargin()
     {
         $datt =$this->reports_model->getLastDate("purchase_items","date");
@@ -21996,34 +22002,34 @@ function salesDetail_actions(){
             $product = $this->input->post('product');
         }else{
             $product = 0;
-        }    
+        }
         if ($this->input->post('category')) {
             $category = $this->input->post('category');
         }else{
             $category = 0;
-        } 
+        }
         if ($this->input->post('biller')) {
             $biller = $this->input->post('biller');
         }else{
             $biller = 0;
-        } 
+        }
         if ($this->input->post('from_date')) {
             $from_date = $this->erp->fsd($this->input->post('from_date'));
         }else{
             $from_date = $datt;
-        } 
+        }
         if($this->input->post('to_date')) {
             $to_date = $this->erp->fsd($this->input->post('to_date'));
         }else{
             $to_date = $datt;
-        } 
+        }
         $wid = $this->reports_model->getWareByUserID();
         if ($this->input->post('warehouse')) {
             $warehouse = $this->input->post('warehouse');
         }else{
                 $warehouse = 0;
-        } 
-        
+        }
+
         //$this->erp->print_arrays($wid);
         $this->data['ware'] = $this->reports_model->getWarePur($wid,$warehouse,$product,$category,$biller);
         $this->data['warehouses'] = $this->reports_model->getWarehousesInventoryValuation($wid,$wahouse_id,$category_id,$product_id,$stockType,$reference,$biller);
@@ -22039,11 +22045,11 @@ function salesDetail_actions(){
         $this->data['billers']     = $this->reports_model->getAllBillers();
         //Store value in filter pass to export excel & pdf
          $this->data['product1'] = $product;
-          $this->data['category1'] = $category; 
+          $this->data['category1'] = $category;
          $this->data['biller1'] = $biller;
          $this->data['warehouse1'] = $warehouse;
         $this->data['biller_idd'] = $this->reports_model->getBiilerByUserID();
-         
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports')));
         $meta = array('page_title' => lang('product_grossmargin'), 'bc' => $bc);
         $this->page_construct('reports/product_grossmargin', $meta, $this->data);
@@ -22109,12 +22115,12 @@ function salesDetail_actions(){
                 // $this->excel->getActiveSheet()->mergeCells('C1'.':'.$alphabet[$K]);
             }
             $ttype1 = 0;
-            //Get In tanstion type    
+            //Get In tanstion type
             foreach($num as $tr){
                 if($tr->transaction_type){
                     $this->excel->getActiveSheet()->SetCellValue($alphabet2[$ttype1], strtolower($tr->transaction_type));
                 }
-                $ttype1++;   
+                $ttype1++;
             }
             $tin = $ttype1 + 2;
             $out = $tin+1;
@@ -22244,20 +22250,20 @@ function salesDetail_actions(){
                                         $qty_unit = $this->reports_model->getQtyUnitINALL($rp->product_id,$rw->id,$tr->transaction_type,$from_date,$to_date);
                                         // $this->excel->getActiveSheet()->setCellValue($alphabet0[$i].$row,$this->erp->formatDecimal($allqty->bqty));
                                         $a = "";
-                                        
+
                                         if(1){
                                             //show the all quantity of each transaction In
                                             $this->excel->getActiveSheet()->setCellValue($alphabet0[$i].$row, $allqty->bqty?$this->erp->formatDecimal($allqty->bqty).' '.strip_tags($this->erp->convert_unit_2_string($rp->product_id, $this->erp->formatDecimal($allqty->bqty))):'');
                                             $this->excel->getActiveSheet()->getStyle($alphabet0[$i].$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                                         }
-                                            
+
                                         $total_in +=$allqty->bqty;
                                         $total_in_cate[$tr->transaction_type] +=$allqty->bqty;
                                     }
 
                                     $i++;
                                 }
-                                
+
                             }
                             //Show total in
                             $new = $tin - $k2;
@@ -22273,7 +22279,7 @@ function salesDetail_actions(){
                                         $qty_unit2 = $this->reports_model->getQtyUnitOUTALL($rp->product_id,$rw->id,$tr->transaction_type,$from_date,$to_date);
                                         $a = "";
                                         if($allqty2->bqty){
-                            
+
                                             //show the all quantity of each transaction Out
                                             $this->excel->getActiveSheet()->setCellValue($alphabet0[$j].$row, $allqty2->bqty?$this->erp->formatDecimal($allqty2->bqty).' '.strip_tags($this->erp->convert_unit_2_string($rp->product_id, $this->erp->formatDecimal($allqty2->bqty))):'');
                                             $this->excel->getActiveSheet()->getStyle($alphabet0[$j].$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -22297,7 +22303,7 @@ function salesDetail_actions(){
                             $this->excel->getActiveSheet()->getStyle($alphabet[$b].$row)->getFont()->setBold(true);
                             $this->excel->getActiveSheet()->getStyle($alphabet[$b].$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             //End balance
-                            
+
                             $balance+=$am;
                             $begin_balance+=$btotal_qty;
                             $total_inn +=$total_in;
@@ -22374,13 +22380,13 @@ function salesDetail_actions(){
                     if(is_array($num2)){
                         foreach($num2 as $tr2){
                             if($tr2->transaction_type){
-                                
+
                                 //Show grand total of each transaction out and each warehouse
                                 $this->excel->getActiveSheet()->setCellValue($alphabet0[$j].$row, $this->erp->formatDecimal($total_out_cate_w[$tr2->transaction_type])." ");
                                 $this->excel->getActiveSheet()->getStyle($alphabet0[$j].$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             }
                             $j++;
-    
+
                         }
                     }
                     //Show grand Total of total out
@@ -22442,7 +22448,7 @@ function salesDetail_actions(){
             }
         }
     }
-	
+
 	function warehouse_products()
     {
 		$this->load->library("pagination");
@@ -22453,41 +22459,41 @@ function salesDetail_actions(){
 			$str .="&product=".$product;
         }else{
 			$product = null;
-        }    
+        }
 		if ($this->input->get('category')) {
             $category = $this->input->get('category');
 			$str .="&category=".$category;
         }else{
 			$category = null;
-        } 
-		
+        }
+
 		if ($this->input->get('from_date')) {
             $from_date =$this->erp->fsd($this->input->get('from_date'));
 			$str .="&from_date=".$from_date;
         }else{
 			$from_date = $datt;
-        } 
+        }
 		if ($this->input->get('to_date')) {
             $to_date = $this->erp->fsd($this->input->get('to_date'));
 			$str .="&to_date=".$to_date;
         }else{
 			$to_date = $datt;
-        } 
+        }
 		if ($this->input->get('biller')) {
             $biller = $this->input->get('biller');
 			$str .= "&biller=".$biller ;
         }else{
 				$biller = null;
-        } 
+        }
 		$row_nums = $this->reports_model->getAllProductsDetailsNUM($product,$category);
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
 		$uri = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
         $config["base_url"] = site_url("reports/warehouse_products/") ;
 		$config["total_rows"] = $row_nums;
 		$config["ob_set"] = $uri;
-        $config["per_page"] =20; 
+        $config["per_page"] =20;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -22504,7 +22510,7 @@ function salesDetail_actions(){
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
 		$this->data['products_details']   = $this->reports_model->getAllProductsDetails($product,$category,$config['per_page'],$config["ob_set"]);
 		$wid = $this->reports_model->getWareByUserID();
         // $this->erp->print_arrays($wid);
@@ -22514,7 +22520,7 @@ function salesDetail_actions(){
 		$this->data['biller2']    = $biller;
 		$this->data['from_date2']    = $from_date;
 		$this->data['to_date2'] 	  	= $to_date;
-		
+
 		$this->data['categories'] = $this->site->getAllCategories();
 		$this->data['products']     = $this->reports_model->getAllProducts();
 		if($product == null){
@@ -22613,13 +22619,13 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->SetCellValue($alphabet1[$j].$row, $this->erp->formatDecimal($tt));
                 $tt_qty +=$tt;
                 $row++;
-                
+
             }
             $this->excel->getActiveSheet()->SetCellValue('A'.$row, lang("total"));
             $this->excel->getActiveSheet()->getStyle('A'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
             $i = 0;
             if(is_array($warefull)){
-                foreach($warefull as $w){   
+                foreach($warefull as $w){
                      $this->excel->getActiveSheet()->SetCellValue($alphabet1[$i].$row, " ");
                     $i++;
                 }
@@ -22639,7 +22645,7 @@ function salesDetail_actions(){
             $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
 
             $this->excel->getActiveSheet()->getStyle('A1'.':'.$alphabet[$j].$this->excel->getActiveSheet()->getHighestRow())
-    ->getAlignment()->setWrapText(true); 
+    ->getAlignment()->setWrapText(true);
 
             $filename = lang('warehouse_products'). date('Y_m_d_H_i_s');
             $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -22671,8 +22677,8 @@ function salesDetail_actions(){
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                 header('Cache-Control: max-age=0');
-                
-    
+
+
                 ob_clean();
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                 $objWriter->save('php://output');
@@ -22680,20 +22686,20 @@ function salesDetail_actions(){
             }
         }
     }
-	
+
 	function product_dailyinout()
     {
 		$this->load->library("pagination");
-		
+
 		$suffix_uri = "";
 		$month = "";
 		$year = "";
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
-			$suffix_uri .= "&product=".$product ;	
+			$suffix_uri .= "&product=".$product ;
         }else{
 			 $product = 0;
-        } 
+        }
         if ($this->input->get('month')) {
             $month =  $this->input->get('month');
 				$suffix_uri .= "&month=".$month ;
@@ -22707,40 +22713,40 @@ function salesDetail_actions(){
 				$year = date('Y');
         }
 		$wid = $this->reports_model->getWareByUserID();
-		
+
 		if ($this->input->get('warehouse')) {
             $warehouse = $this->input->get('warehouse');
 			$suffix_uri .= "&warehouse=".$warehouse ;
         }else{
 			$warehouse = 0;
-        } 
+        }
 		if ($this->input->get('category')) {
             $category = $this->input->get('category');
 			$suffix_uri .= "&category=".$category ;
         }else{
 				$category = 0;
-        } 
+        }
 		if ($this->input->get('in_out')) {
             $in_out = $this->input->get('in_out');
 			$suffix_uri .= "&in_out=".$in_out ;
         }else{
 				$in_out = 'all';
-        } 
+        }
 		if ($this->input->get('biller')) {
             $biller = $this->input->get('biller');
 			$suffix_uri .= "&biller=".$biller ;
         }else{
 				$biller = null;
-        } 
+        }
 		$row_nums = $this->reports_model->getStockINOUTNUM($product,$category,$in_out,$year,$month,$warehouse,$wid,$biller);
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$suffix_uri;
 		$uri = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
         $config["base_url"] = site_url("reports/product_dailyinout/") ;
 		$config["total_rows"] = $row_nums;
 		$config["ob_set"] = $uri;
-        $config["per_page"] =20; 
+        $config["per_page"] =20;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -22759,11 +22765,11 @@ function salesDetail_actions(){
 		 $this->data['categories'] = $this->site->getAllCategories();
 
 		$d=cal_days_in_month(CAL_GREGORIAN,$month,$year);
-		
+
 		$this->data['days'] = $d;
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
-		
+		$this->data["pagination"] = $this->pagination->create_links();
+
 		$this->data['stocks']    = $this->reports_model->getStockINOUT($product,$category,$warehouse,$wid,$in_out,$year,$month,$config['per_page'],$config["ob_set"],$biller);
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['category2']    = $category;
@@ -22807,7 +22813,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('daily_products'), 'bc' => $bc);
         $this->page_construct('reports/product_dailyinout', $meta, $this->data);
     }
-	
+
 	function productDailyInOutReport($pdf,$excel,$product,$month,$year,$wid,$warehouse,$category,$in_out,$biller){
         if($pdf || $excel){
             // $wid = $this->reports_model->getWareByUserID();
@@ -22836,8 +22842,8 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->getStyle($alphabet1[$i])->getFont()->setBold(true);
                 $this->excel->getActiveSheet()->getStyle($alphabet1[$i])->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             }
-           
-           
+
+
             //End head
             //Content
             $total = array();
@@ -22849,8 +22855,8 @@ function salesDetail_actions(){
 
 
                 $am = 0;
-                $st = 0;             
-                for($i=1;$i<=$days;$i++){   
+                $st = 0;
+                for($i=1;$i<=$days;$i++){
                     $this->db->select("SUM(COALESCE((-1)*quantity_balance,0)) AS outt")
                     ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
@@ -22859,7 +22865,7 @@ function salesDetail_actions(){
                     ->where("quantity_balance<",0);
                     if($warehouse){
                          $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid){
                              $this->db->where("erp_purchase_items.warehouse_id IN ($wid)");
                         }
@@ -22878,7 +22884,7 @@ function salesDetail_actions(){
                     ->where("DATE_FORMAT(erp_purchase_items.date, '%d')=",$i);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid)");
                         }
@@ -22896,7 +22902,7 @@ function salesDetail_actions(){
                     ->where("quantity_balance<",0);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid)");
                         }
@@ -22916,7 +22922,7 @@ function salesDetail_actions(){
                     ->where("quantity_balance>",0);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid)");
                         }
@@ -22926,7 +22932,7 @@ function salesDetail_actions(){
 					}
                     $this->db->group_by("option_id");
                     $this->db->where("DATE_FORMAT(erp_purchase_items.date, '%d')=",$i);
-                    $q_unit2 = $this->db->get("purchase_items")->result();     
+                    $q_unit2 = $this->db->get("purchase_items")->result();
                     $this->db->select("SUM(COALESCE(quantity_balance,0)) AS inou,erp_product_variants.name as uname,erp_product_variants.qty_unit,option_id")
                     ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
@@ -22935,7 +22941,7 @@ function salesDetail_actions(){
                     ->where("purchase_items.product_id",$row->product_id);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid)");
                         }
@@ -22947,13 +22953,13 @@ function salesDetail_actions(){
                     $this->db->where("DATE_FORMAT(erp_purchase_items.date, '%d')=",$i);
                     $q_unit3 = $this->db->get("purchase_items")->result();
                     $am = $q2->inn - $q->outt;
-                    if($in_out == "all"){  
+                    if($in_out == "all"){
                         if($q2->inn || $q->outt){
                             if($am){
                                 $this->excel->getActiveSheet()->SetCellValue($alphabet2[$i].$r, $this->erp->formatDecimal($am));
                             }
-                            //$total[$i] +=$am;   
-                        }                     
+                            //$total[$i] +=$am;
+                        }
                     }else if($in_out == "in"){
                         if($q2->inn){
                             if($q2->inn){
@@ -22986,7 +22992,7 @@ function salesDetail_actions(){
                 // }
                 // $this->excel->getActiveSheet()->getStyle($alphabet2[1].$r.':'.$alphabet2[$i].$r)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
             // }
-           
+
             //$r++;
             //set colspan
             $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
@@ -23022,8 +23028,8 @@ function salesDetail_actions(){
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                 header('Cache-Control: max-age=0');
-                
-    
+
+
                 ob_clean();
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                 $objWriter->save('php://output');
@@ -23031,20 +23037,20 @@ function salesDetail_actions(){
             }
         }
     }
-	
+
 	function product_monthlyinout()
     {
 		$this->load->library("pagination");
-		
+
 		$suffix_uri = "";
-		
+
         if ($this->input->get('product')) {
             $product = $this->input->get('product');
-			$suffix_uri .= "&product=".$product ;	
+			$suffix_uri .= "&product=".$product ;
         }else{
 			 $product = null;
-        } 
-       
+        }
+
         if ($this->input->get('year')) {
             $year = $this->input->get('year');
 			$suffix_uri .= "&year=".$year ;
@@ -23056,7 +23062,7 @@ function salesDetail_actions(){
 			$suffix_uri .= "&category=".$category ;
         }else{
 				$category = null;
-        } 
+        }
 		$wid = $this->reports_model->getWareByUserID();
 
 		if ($this->input->get('warehouse')) {
@@ -23064,28 +23070,28 @@ function salesDetail_actions(){
 			$suffix_uri .= "&warehouse=".$warehouse ;
         }else{
 			$warehouse = null;
-        } 
+        }
 		if ($this->input->get('in_out')) {
             $in_out = $this->input->get('in_out');
 			$suffix_uri .= "&in_out=".$in_out ;
         }else{
 				$in_out = 'all';
-        } 
+        }
 		if ($this->input->get('biller')) {
             $biller = $this->input->get('biller');
 			$suffix_uri .= "&biller=".$biller ;
         }else{
 				$biller = null;
-        } 
+        }
 		$row_nums = $this->reports_model->getStockINOUTNUMM($product,$category,$in_out,$year,$warehouse,$wid,$biller);
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$suffix_uri;
 		$uri = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
         $config["base_url"] = site_url("reports/product_monthlyinout/") ;
 		$config["total_rows"] = $row_nums;
 		$config["ob_set"] = $uri;
-        $config["per_page"] =20; 
+        $config["per_page"] =20;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -23104,8 +23110,8 @@ function salesDetail_actions(){
 		$this->data['categories'] = $this->site->getAllCategories();
 
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
-		
+		$this->data["pagination"] = $this->pagination->create_links();
+
 		$this->data['stocks']    = $this->reports_model->getStockINOUTM($product,$category,$warehouse,$wid,$in_out,$year,$config['per_page'],$config["ob_set"],$biller);
 		$this->data['warefull'] = $this->reports_model->getWareFullByUSER($wid);
 		$this->data['category2']    = $category;
@@ -23117,15 +23123,15 @@ function salesDetail_actions(){
 		$this->data['wid2'] 	  	= $wid;
 		$this->data['products']     = $this->reports_model->getAllProducts();
 		if ($product == null) {
-            $this->data['product1'] = 0; 
+            $this->data['product1'] = 0;
         }else{
              $this->data['product1'] = $product;
-        } 
+        }
        if ($biller == null) {
-            $this->data['biller1'] = 0; 
+            $this->data['biller1'] = 0;
         }else{
              $this->data['biller1'] = $biller;
-        } 
+        }
         if ($year == null) {
             $this->data['year1'] = 0;
         }else{
@@ -23135,7 +23141,7 @@ function salesDetail_actions(){
             $this->data['category1'] = 0;
         }else{
             $this->data['category1'] = $category;
-        } 
+        }
         if ($warehouse == null) {
             $this->data['warehouse1'] = 0;
         }else{
@@ -23152,7 +23158,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('monthly_products'), 'bc' => $bc);
         $this->page_construct('reports/product_monthlyinout', $meta, $this->data);
     }
-	
+
 	function productMonthlyInOutReport($pdf,$excel,$product,$year,$category,$warehouse,$in_out,$wid2,$biller){
         if($excel || $pdf){
             if($product == 0){
@@ -23194,7 +23200,7 @@ function salesDetail_actions(){
             $this->excel->getActiveSheet()->setTitle(lang('monthly_products'));
             $this->excel->getActiveSheet()->SetCellValue('A1', lang('product_code'));
             $this->excel->getActiveSheet()->SetCellValue('B1', lang('product_name'));
-            
+
             $i = 0;
             foreach ($months as $k => $v) {
                 $this->excel->getActiveSheet()->SetCellValue($alphabet[$i], $v);
@@ -23208,7 +23214,7 @@ function salesDetail_actions(){
             $r = 2;
             $wid = $this->reports_model->getWareByUserID();
             $stocks = $this->reports_model->getStockINOUTMS($product,$category,$warehouse,$wid,$in_out,$year,$biller);
-            
+
             foreach($stocks as $row){
                 $this->excel->getActiveSheet()->SetCellValue('A'.$r, $row->code?$row->code." ":'ID:'.$row->product_id." ");
                 $this->excel->getActiveSheet()->SetCellValue('B'.$r, $row->name);
@@ -23216,14 +23222,14 @@ function salesDetail_actions(){
                 $st = 0;
                 foreach ($months as $k => $v) {
                     $this->db->select("SUM(COALESCE((-1)*quantity_balance,0)) AS outt")
-                    ->join("products","products.id=purchase_items.product_id","LEFT")   
+                    ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
                     ->where("purchase_items.product_id",$row->product_id)
                     ->where("quantity_balance<",0)
                     ->where("DATE_FORMAT(erp_purchase_items.date, '%m')=",$k);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid2){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid2)");
                         }
@@ -23232,7 +23238,7 @@ function salesDetail_actions(){
 						$this->db->where("erp_purchases.biller_id",$biller);
 					}
                     $q = $this->db->get("purchase_items")->row();
-                    
+
                     $this->db->select("SUM(COALESCE(quantity_balance,0)) AS inn")
                     ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
@@ -23241,7 +23247,7 @@ function salesDetail_actions(){
                     ->where("DATE_FORMAT(erp_purchase_items.date, '%m')=",$k);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid2){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid2)");
                         }
@@ -23250,7 +23256,7 @@ function salesDetail_actions(){
 						$this->db->where("erp_purchases.biller_id",$biller);
 					}
                     $q2 = $this->db->get("purchase_items")->row();
-                    
+
                     $this->db->select("SUM(COALESCE(quantity_balance,0)) AS inn,erp_product_variants.name as uname,erp_product_variants.qty_unit,option_id")
                     ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
@@ -23260,7 +23266,7 @@ function salesDetail_actions(){
                     ->where("DATE_FORMAT(erp_purchase_items.date, '%m')=",$k);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid2){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid2)");
                         }
@@ -23270,7 +23276,7 @@ function salesDetail_actions(){
 					}
                     $this->db->group_by("option_id");
                     $q_unit_in = $this->db->get("purchase_items")->result();
-                    
+
                     $this->db->select("SUM(COALESCE((-1)*quantity_balance,0)) AS outt,erp_product_variants.name as uname,erp_product_variants.qty_unit,option_id")
                     ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
@@ -23280,7 +23286,7 @@ function salesDetail_actions(){
                     ->where("DATE_FORMAT(erp_purchase_items.date, '%m')=",$k);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid2){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid2)");
                         }
@@ -23290,7 +23296,7 @@ function salesDetail_actions(){
 					}
                     $this->db->group_by("option_id");
                     $q_unit_out = $this->db->get("purchase_items")->result();
-                    
+
                     $this->db->select("SUM(COALESCE(quantity_balance,0)) AS inou,erp_product_variants.name as uname,erp_product_variants.qty_unit,option_id")
                     ->join("products","products.id=purchase_items.product_id","LEFT")
 					->join("erp_purchases","erp_purchases.id=purchase_items.purchase_id","LEFT")
@@ -23299,7 +23305,7 @@ function salesDetail_actions(){
                     ->where("DATE_FORMAT(erp_purchase_items.date, '%m')=",$k);
                     if($warehouse){
                         $this->db->where("erp_purchase_items.warehouse_id",$warehouse);
-                    }else{      
+                    }else{
                         if($wid2){
                             $this->db->where("erp_purchase_items.warehouse_id IN ($wid2)");
                         }
@@ -23308,7 +23314,7 @@ function salesDetail_actions(){
 						$this->db->where("erp_purchases.biller_id",$biller);
 					}
                     $this->db->group_by("option_id");
-                    $q_unit = $this->db->get("purchase_items")->result(); 
+                    $q_unit = $this->db->get("purchase_items")->result();
                     $am = $q2->inn - $q->outt;
                     if($in_out == "all"){
 
@@ -23338,7 +23344,7 @@ function salesDetail_actions(){
                     }
                     $st++;
 					$b = $st;
-					
+
                 }
                 $r++;
 
@@ -23393,7 +23399,7 @@ function salesDetail_actions(){
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
                 header('Cache-Control: max-age=0');
-                
+
                 ob_clean();
                 $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                 $objWriter->save('php://output');
@@ -23401,7 +23407,7 @@ function salesDetail_actions(){
             }
         }
     }
-	
+
 	function expense_report()
     {
 		$this->load->library("pagination");
@@ -23412,20 +23418,20 @@ function salesDetail_actions(){
 			$str .="&reference_no=".$reference_no;
         }else{
 			$reference_no = null;
-        }    
-		
+        }
+
 		if ($this->input->get('from_date')) {
             $from_date =$this->erp->fsd($this->input->get('from_date'));
 			$str .="&from_date=".$from_date;
         }else{
 			$from_date = $datt;
-        } 
+        }
 		if ($this->input->get('to_date')) {
             $to_date = $this->erp->fsd($this->input->get('to_date'));
 			$str .="&to_date=".$to_date;
         }else{
 			$to_date = $datt;
-        } 
+        }
 		$row_nums = $this->reports_model->getCatExpenseReportNUM($reference_no,$from_date,$to_date);
 		$n = "";
 		$num = $this->input->get("str");
@@ -23435,14 +23441,14 @@ function salesDetail_actions(){
 		}else{
 			$n = 5;
 		}
-		
+
 		$config = array();
 		$config['suffix'] = "?v=1".$str;
 		$uri = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
         $config["base_url"] = site_url("reports/expense_report/") ;
 		$config["total_rows"] = $row_nums;
 		$config["ob_set"] = $uri;
-        $config["per_page"] =$n; 
+        $config["per_page"] =$n;
 		$config["uri_segment"] = 3;
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
 		$config['full_tag_close'] = '</ul>';
@@ -23459,7 +23465,7 @@ function salesDetail_actions(){
 		$config['num_tag_open'] = '<li>';
 		$config['num_tag_close'] = '</li>';
 		$this->pagination->initialize($config);
-		$this->data["pagination"] = $this->pagination->create_links();  
+		$this->data["pagination"] = $this->pagination->create_links();
 		//$wid = $this->reports_model->getWareByUserID();
 		$this->data['expense_cat'] = $this->reports_model->getCatExpenseReport($reference_no,$from_date,$to_date,$config['per_page'],$config["ob_set"]);
         // $this->erp->print_arrays($wid);
@@ -23487,7 +23493,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('expense_report'), 'bc' => $bc);
         $this->page_construct('reports/expense_report', $meta, $this->data);
     }
-	
+
 	public function expenseReport_action(){
 		if ($this->input->post('form_action') == 'export_excel' || $this->input->post('form_action') == 'export_pdf') {
             if ($_POST['val']) {
@@ -23509,15 +23515,15 @@ function salesDetail_actions(){
 						->from('expenses')
 						->join('users', 'users.id=expenses.created_by', 'left');
 						$q = $this->db->get();
-					
+
 						if($q->num_rows()>0){
 							$this->excel->getActiveSheet()->SetCellValue('A' . $i, lang('category_expense')." >> ".$cat->account_code." / ".$cat->narrative);
 							$this->excel->getActiveSheet()->getStyle('A' . $i)->getFont()->setBold(true);
 							$this->excel->getActiveSheet()->mergeCells('A' . $i.':E'.$i);
-							
+
 							$total = 0;
 							$i++;
-							foreach($q->result() as $row){ 
+							foreach($q->result() as $row){
 								if($row->account_code == $cat->account_code){
 									$this->excel->getActiveSheet()->SetCellValue('A' . $i, $this->erp->hrld($row->date));
 									$this->excel->getActiveSheet()->SetCellValue('B' . $i, $row->reference);
@@ -23529,29 +23535,29 @@ function salesDetail_actions(){
 									$total  +=$row->amount;
 									// $a = $i+1;
 									$i++;
-									
-									
+
+
 								}
-								
+
 							}
 							$this->excel->getActiveSheet()->SetCellValue('B' . $i, lang('total').":");
 							$this->excel->getActiveSheet()->SetCellValue('C' . $i, $this->erp->formatDecimal($total));
 							$this->excel->getActiveSheet()->getStyle('B' . $i.':C'. $i)->getFont()->setBold(true);
 							$this->excel->getActiveSheet()->getStyle('B' . $i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 							$i++;
-							
+
 						}
-						
+
 					}
-					
+
 				}
-				
+
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
                 $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
-				
+
                 $filename = lang('expense_report'). date('Y_m_d_H_i_s');
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 if ($this->input->post('form_action') == 'export_pdf') {
@@ -23593,11 +23599,11 @@ function salesDetail_actions(){
             }
         }
 	}
-	
+
 	function report_sale_top($biller_id = NULL)
     {
         $this->erp->checkPermissions('report_sale',NULL,'sale_report');
-		
+
 		$user = $this->site->getUser();
 		if($biller_id != NULL){
 			$this->data['biller_id'] = $biller_id;
@@ -23628,9 +23634,9 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('sales_report'), 'bc' => $bc);
         $this->page_construct('reports/report_sale_top', $meta, $this->data);
     }
-	
+
 	function getSaleTop(){
-		
+
 		if($this->input->get('product')){
 			$product = $this->input->get('product');
 		}else{
@@ -23645,46 +23651,46 @@ function salesDetail_actions(){
 			$start_date = $this->erp->fld($this->input->get('start_date'));
 		}else{
 			$start_date = null;
-		}   
+		}
 		if($this->input->get('end_date')){
 			$end_date = $this->erp->fld($this->input->get('end_date'));
 		}else{
 			$end_date = null;
-		}  
-		
+		}
+
 		$this->load->library('datatables');
 		$this->datatables
 			->select("
-			erp_sale_items.product_id, 
+			erp_sale_items.product_id,
 			erp_sales.date,
-			sale_items.product_code, 
-			sale_items.product_name, 
-			erp_categories.name as category,  
+			sale_items.product_code,
+			sale_items.product_name,
+			erp_categories.name as category,
 			if(erp_sale_items.option_id, erp_product_variants.name,erp_units.name) AS NAME,
             SUM(COALESCE(erp_sale_items.quantity,0)) as quantity,
             erp_sale_items.unit_cost * SUM(COALESCE(erp_sale_items.quantity,0)) as cost_amount,
             erp_sale_items.unit_price * SUM(COALESCE(erp_sale_items.quantity,0)) as price_amount,
             (erp_sale_items.unit_price * SUM(COALESCE(erp_sale_items.quantity,0))) - (erp_sale_items.unit_cost * SUM(COALESCE(erp_sale_items.quantity,0)))", FALSE )
-			->from('erp_sale_items') 
+			->from('erp_sale_items')
 			->join('erp_sales','erp_sales.id=erp_sale_items.sale_id','left')
 			->join('erp_products','erp_products.id=erp_sale_items.product_id','left')
 			->join('erp_categories','erp_categories.id=erp_products.category_id','left')
             ->join('erp_units','erp_units.id=erp_products.unit','left')
 			->join('erp_product_variants','erp_sale_items.option_id = erp_product_variants.id','left')
 			->group_by('erp_sale_items.product_id')
-			->order_by('quantity','DESC'); 
+			->order_by('quantity','DESC');
         if($product){
-	       $this->datatables->where('erp_sale_items.product_id', $product);                
-        }			
+	       $this->datatables->where('erp_sale_items.product_id', $product);
+        }
 		if($category){
-		   $this->datatables->where('erp_products.category_id', $category); 
+		   $this->datatables->where('erp_products.category_id', $category);
 		}
 		if ($start_date) {
            $this->datatables->where("DATE_FORMAT(erp_sales.date,'%Y-%m-%d') >='{$start_date}' AND DATE_FORMAT(erp_sales.date,'%Y-%m-%d') <= '{$end_date}'");
         }
-		echo $this->datatables->generate(); 		
+		echo $this->datatables->generate();
 	}
-	
+
 	function sale_top_action()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -23706,7 +23712,7 @@ function salesDetail_actions(){
                     $this->excel->getActiveSheet()->SetCellValue('A1', lang('product_code'));
                     $this->excel->getActiveSheet()->SetCellValue('B1', lang('product_name'));
                     $this->excel->getActiveSheet()->SetCellValue('C1', lang('category'));
-					$this->excel->getActiveSheet()->SetCellValue('D1', lang('quantity')); 
+					$this->excel->getActiveSheet()->SetCellValue('D1', lang('quantity'));
 					$this->excel->getActiveSheet()->SetCellValue('E1', lang('unit'));
 
                     $row = 2;
@@ -23716,12 +23722,12 @@ function salesDetail_actions(){
 					$balance = 0;
 					$total_cost = 0;
                     foreach ($_POST['val'] as $id) {
-                        $sc = $this->reports_model->getsale_top_export($id); 
+                        $sc = $this->reports_model->getsale_top_export($id);
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->product_code);
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $sc->product_name);
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, $sc->category);
-						$this->excel->getActiveSheet()->SetCellValue('D' . $row, $sc->quantity); 
-                        $this->excel->getActiveSheet()->SetCellValue('E' . $row, $sc->name); 
+						$this->excel->getActiveSheet()->SetCellValue('D' . $row, $sc->quantity);
+                        $this->excel->getActiveSheet()->SetCellValue('E' . $row, $sc->name);
                         $row++;
 						$total_qty+=$sc->quantity;
                     }
@@ -23729,9 +23735,9 @@ function salesDetail_actions(){
 						array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,)
 					);
 					$this->excel->getActiveSheet()->SetCellValue('A' . $row, lang('grand_total'));
-                    $this->excel->getActiveSheet()->mergeCells("A".($row).":C".($row)); 
+                    $this->excel->getActiveSheet()->mergeCells("A".($row).":C".($row));
 					$this->excel->getActiveSheet()->SetCellValue('D' . $row,$total_qty);
-					 
+
                     //$this->excel->getActiveSheet()->getStyle("E" . $row . ":G" . $row)->getBorders()
 						//->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_MEDIUM);
 					// $this->excel->getActiveSheet()->SetCellValue('F' . $row, $total_qty);
@@ -23754,18 +23760,18 @@ function salesDetail_actions(){
                             'color' => array('rgb' => '428BCA')
                         )
                     );
-                    
+
                     $this->excel->getActiveSheet()->getStyle('A1:E1')->applyFromArray($styleArrays);
 					$this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
 					$this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 					$this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
 					$this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
-					$this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15); 
+					$this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 					// $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(20);
-				
-				
+
+
                     $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     $filename = 'sales_report_' . date('Y_m_d_H_i_s');
                     if ($this->input->post('form_action') == 'export_pdf') {
@@ -23777,7 +23783,7 @@ function salesDetail_actions(){
 							)
 						);
 						$this->excel->getDefaultStyle()->applyFromArray($styleArray);
-						   
+
 						$this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
                         require_once(APPPATH . "third_party" . DIRECTORY_SEPARATOR . "MPDF" . DIRECTORY_SEPARATOR . "mpdf.php");
                         $rendererName = PHPExcel_Settings::PDF_RENDERER_MPDF;
@@ -23827,7 +23833,7 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	public function track_costs()
 	{
 		$this->data['products'] = $this->site->getProducts();
@@ -23835,7 +23841,7 @@ function salesDetail_actions(){
         $meta = array('page_title' => lang('track_costs'), 'bc' => $bc);
         $this->page_construct('reports/track_costs', $meta, $this->data);
 	}
-	
+
 	function getTrackCost()
     {
         $this->erp->checkPermissions();
@@ -23854,19 +23860,19 @@ function salesDetail_actions(){
                 ->select("sale_items.id, date, reference_no, product_code, product_name, unit_cost, quantity")
                 ->from('sale_items')
                 ->join('sales', 'sales.id = sale_items.sale_id', 'left');
-				
+
 		if ($reference_no) {
 			$this->datatables->where('sales.reference_no', $reference_no);
 		}
 		if ($product_id) {
 			$this->datatables->where('product_id', $product_id);
 		}
-		
+
         echo $this->datatables->generate();
     }
-	
+
 	function getPurchasedReport5()
-	{	
+	{
 		//$datt =$this->reports_model->getLastDate("erp_purchases","date");
 		if ($this->input->get('supplier')) {
             $supplier_id = $this->input->get('supplier');
@@ -23888,13 +23894,13 @@ function salesDetail_actions(){
         } else {
             $start_date = NULL;
         }
-      
+
 		if ($this->input->get('end_date2')) {
             $end_date = $this->erp->fsd($this->input->get('end_date2'));
         } else {
             $end_date=NULL;
         }
-		
+
 		$this->load->library('datatables');
 			$this->datatables
 			->select("erp_purchases.id as idd, date,
@@ -23904,7 +23910,7 @@ function salesDetail_actions(){
 			", false)
 			->from("erp_purchases")
 			->where('type_of_po = "exp"');
-		
+
 			if($supplier_id){
 				$this->datatables->where('erp_purchases.supplier_id',$supplier_id);
 			}
@@ -23912,7 +23918,7 @@ function salesDetail_actions(){
 				if ($user) {
 					$this->datatables->where('purchases.created_by', $user);
 				}
-			}		
+			}
 			if($reference_no){
 				$this->datatables->where('erp_purchases.reference_no',$reference_no);
 			}
@@ -23924,6 +23930,5 @@ function salesDetail_actions(){
 			}
 			echo $this->datatables->generate();
 	}
-	
+
 }
-     
