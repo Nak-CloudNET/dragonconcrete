@@ -5508,10 +5508,7 @@ class Sales_model extends CI_Model
                                 `erp_delivery_items`.`product_id`,
                                 `erp_deliveries`.`location`,
                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
-                           
-                                
-                          
-                            
+                         
                             UNION
                             SELECT
                                 `erp_sale_items`.`unit_price`,
