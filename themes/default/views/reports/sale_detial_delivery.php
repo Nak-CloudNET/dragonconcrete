@@ -79,9 +79,8 @@
         });
     });
 </script>
-
 <?php
-    echo form_open('reports/deliveries_actions', 'id="action-form"');
+echo form_open('reports/delivery_actions', 'id="action-form"');
 ?>
 <div class="box">
     <div class="box-header">
@@ -328,16 +327,16 @@
 		$('.reset').click(function(){
 			window.location.reload(true);
 		});
-        $('#pdf').click(function (event) {
-            event.preventDefault();
-            window.location.href = "<?=site_url('reports/getSalesReport/pdf/?v=1'.$v)?>";
-            return false;
-        });
-        $('#xls').click(function (event) {
-            event.preventDefault();
-            window.location.href = "<?=site_url('reports/getSalesReport/0/xls/?v=1'.$v)?>";
-            return false;
-        });
+        //$('#pdf').click(function (event) {
+        //    event.preventDefault();
+        //    window.location.href = "<?//=site_url('reports/getSalesReport/pdf/?v=1'.$v)?>//";
+        //    return false;
+        //});
+        //$('#xls').click(function (event) {
+        //    event.preventDefault();
+        //    window.location.href = "<?//=site_url('reports/getSalesReport/0/xls/?v=1'.$v)?>//";
+        //    return false;
+        //});
 		
         $('#image').click(function (event) {
             event.preventDefault();
