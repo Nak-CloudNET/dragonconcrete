@@ -140,7 +140,7 @@ function row_status($x){
                         ->where('payment_status !=', 'paid')
                         ->where('(grand_total-paid) <> ', 0)
                         ->where('customer_id', $cust_id);
-                        
+
                         if($type_view == 'ar_0_30'){
                             $this->db->where('date(date) > CURDATE() AND date(date) <= DATE_ADD(now(), INTERVAL + 30 DAY)');
 
@@ -156,7 +156,7 @@ function row_status($x){
                         } else {
                             $this->db->where('DATE_SUB(date, INTERVAL 1 DAY) <= CURDATE()');
                         }
-                        
+
                         $ar_aping = $this->db->get()->result();
 
                         $grandTotal = 0;
@@ -189,7 +189,7 @@ function row_status($x){
                     <tfoot class="dtFilter">
                     <tr class="active">
                             <th><?php echo $this->lang->line("date"); ?></th>
-                            <th><?php echo $this->lang->line("reference_no"); ?></th>                            
+                            <th><?php echo $this->lang->line("reference_no"); ?></th>
                             <th><?php echo $this->lang->line("customer"); ?></th>
                             <th><?php echo $this->lang->line("sale_status"); ?></th>
                             <th><?php echo $grandTotal; ?></th>

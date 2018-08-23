@@ -139,11 +139,11 @@
 								if ($inv->status == 'partial') {
 									echo '<th>'.lang("received").'</th>';
 								}
-							?> 
+							?>
 							<?php if($Owner || $Admin || $GP['purchases-cost']) {?>
 								<th><?= lang("unit_cost"); ?></th>
 							<?php } ?>
-							
+
 							<?php
 							if ($Settings->product_discount) {
 								echo '<th>' . lang("discount") . '</th>';
@@ -235,7 +235,7 @@
                             <td></td>
                             <td colspan="6"
                                 style="text-align:right; padding-right:10px;"><?= lang("total"); ?>
-                                
+
                             <?php
                             // if ($Settings->tax1) {
                             //     echo '<td style="text-align:right;">' . $this->erp->formatMoney($inv->product_tax) . '</td>';
@@ -257,14 +257,18 @@
                     }
                     ?>
                     <?php if ($Settings->tax2 && $inv->order_tax != 0) {
-                        echo '<tr><td></td><td colspan="' . $col . '" style="text-align:right; padding-right:10px;">' . $inv->tax_name .'</td><td style="text-align:right; padding-right:10px;">' . $this->erp->formatMoney($inv->order_tax) . '</td></tr>';
+                        if($inv->order_discount_id){
+                            $perc='('.$inv->order_discount_id.'%)';
+                        }
+                        echo '<tr><td></td><td colspan="' . $col . '" style="text-align:right; padding-right:10px;">' . lang("order_tax") . '</td><td style="text-align:right; padding-right:10px;">' . $this->erp->formatMoney($inv->order_tax) . '</td></tr>';
                     }
+//                    $this->erp->print_arrays($inv);
                     ?>
                     <tr>
                         <td></td>
                         <td colspan="<?= $col; ?>"
                             style="text-align:right; font-weight:bold;"><?= lang("total_amount"); ?>
-                        
+
                         </td>
                         <td style="text-align:right; padding-right:10px; font-weight:bold;"><?= $this->erp->formatMoney($inv->grand_total); ?></td>
                     </tr>
@@ -273,7 +277,6 @@
                         <td></td>
                         <td colspan="<?= $col; ?>"
                             style="text-align:right; font-weight:bold;"><?= lang("paid"); ?>
-                    
                         </td>
                         <td style="text-align:right; font-weight:bold;"><?= $this->erp->formatMoney($inv->paid); ?></td>
                     </tr>
@@ -281,26 +284,25 @@
                         <td></td>
                         <td colspan="<?= $col; ?>"
                             style="text-align:right; font-weight:bold;"><?= lang("balance"); ?>
-                            
                         </td>
                         <td style="text-align:right; font-weight:bold;"><?= $this->erp->formatMoney($inv->grand_total - $inv->paid); ?></td>
                     </tr>
                     <?php }?>
                     </tbody>
                     <tfoot>
-                    
+
 
                     </tfoot>
                 </table>
             </div>
 			<br/>
-				
+
 			<br/>
-			
+
 			<div class="row">
 				<div class="clearfix"></div>
 				<div class="col-xs-2  pull-left" style="text-align:center">
-					
+
 				</div>
 				<div class="col-xs-3  pull-left" style="text-align:center">
 					<hr/>
@@ -309,9 +311,9 @@
 					<!--<p><?= lang("stamp_sign"); ?></p>-->
 				</div>
 				<div class="col-xs-2  pull-left" style="text-align:center">
-					
+
 				</div>
-				
+
 				<div class="col-xs-3  pull-left" style="text-align:center">
 					<hr/>
 					<p><?= lang("Ware House"); ?>
@@ -319,12 +321,13 @@
 					<!--<p><?= lang("stamp_sign"); ?></p>-->
 				</div>
 				<div class="col-xs-2  pull-left" style="text-align:center">
-					
+
 				</div>
 			</div>
-			
+
 
             <div class="row">
+
                 <div class="col-xs-12">
                     <?php
                         if ($inv->note || $inv->note != "") { ?>
@@ -352,8 +355,8 @@
                     </div>
                 </div>
             </div>
-			
-			
+
+
             <?php if (!$Supplier || !$Customer) { ?>
                 <div class="buttons">
                     <?php if ($inv->attachment) { ?>
