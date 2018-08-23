@@ -1417,6 +1417,7 @@ class Purchases_model extends CI_Model
                 ->join('warehouses', 'purchases.warehouse_id = warehouses.id', 'left')
     			->where('purchases.id',$id);
     	if($wh){
+
     		$this->db->where_in('erp_purchases.warehouse_id',$wh);
     	}
         $q = $this->db->get();

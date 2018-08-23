@@ -246,6 +246,7 @@
                             ?>
                             <td style="text-align:right; padding-right:10px;"><?= $this->erp->formatMoney($inv->total); ?></td>
                         </tr>
+
                     <?php } ?>
 
                     <?php if ($inv->order_discount != 0) {
