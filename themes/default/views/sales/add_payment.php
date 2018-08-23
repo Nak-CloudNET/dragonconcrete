@@ -175,6 +175,7 @@
 						<div class="form-group dp" style="display: none;">
 							<?= lang("customer", "customer1"); ?>
 									<?php
+
 									$customers1[] = array();
 									foreach($customers as $customer){
 										$customers1[$customer->id] = $customer->text;
@@ -357,9 +358,6 @@
                         if (data === false) {
                             $('#deposit_no_1').parent('.form-group').addClass('has-error');
                             alert('<?=lang('invalid_customer')?>');
-                        } else if (data.id !== null && data.id !== customer_id) {
-                            $('#deposit_no_1').parent('.form-group').addClass('has-error');
-                            alert('<?=lang('this_customer_has_no_deposit')?>');
                         } else {
 							//var amount = $("#amount_1").val();
 							var deposit_amount =  ((data.dep_amount==null)? 0:data.dep_amount);
