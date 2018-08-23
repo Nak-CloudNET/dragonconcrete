@@ -13,7 +13,7 @@
 			<button type="button" class="btn btn-xs btn-default no-print pull-right" style="margin-right:15px;" onclick="window.print();">
                 <i class="fa fa-print"></i> <?= lang('print'); ?>
             </button>
-          
+
                 <div class="text-center" style="margin-bottom:20px; font-weight:bold;">
 					បញ្ជីនៃការរាប់ទំនិញ<br/>
 					List Adjustments​ Item<!--(<?= $biller->company != '-' ? $biller->company : $biller->name; ?>)-->
@@ -76,6 +76,7 @@
 					foreach ($items as $item){ 
 					
 						?>
+
 							<tr>
 								<td><?php echo $item->code ." ( ". $item->name .")";?></td>
 								<td><?php echo $item->variants;?></td>
@@ -84,6 +85,7 @@
 							</tr>
 					<?php    
                     }
+//                    $this->erp->print_arrays($header);
                     ?>
                     </tbody>
                 </table>
@@ -92,7 +94,7 @@
                 <div class="col-xs-12">
                     <div class="well well-sm">
 						  <p class="bold"><?= lang("note"); ?>:</p>
-                           <div><?= $item->note; ?></div>
+                           <div><?= $this->erp->decode_html($header->note); ?></div>
 					</div>
 				</div>
               

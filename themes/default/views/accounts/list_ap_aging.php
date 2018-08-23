@@ -283,7 +283,7 @@ if(isset($date)){
 								</thead>
 								<tbody>
 									<tr>
-										<td colspan="10" class="dataTables_empty"><?=lang('loading_data_from_server');?></td>
+										<td colspan="10" class="dataTables_empty"><?php echo $this->lang->line("loading_data");?></td>
 									</tr>
 								</tbody>
 								<tfoot class="dtFilter">

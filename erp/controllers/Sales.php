@@ -3,7 +3,7 @@
 class Sales extends MY_Controller
 {
     /**========Please kindly all of us clean and beautiful code after and before coding updated=======****/
-	
+
 	function __construct()
     {
         parent::__construct();
@@ -16,7 +16,7 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('warning', lang('access_denied'));
             redirect($_SERVER["HTTP_REFERER"]);
         }
-		
+
         $this->load->model('auth_model');
         $this->load->library('ion_auth');
         $this->lang->load('sales', $this->Settings->language);
@@ -36,12 +36,12 @@ class Sales extends MY_Controller
         $this->digital_file_types = 'zip|psd|ai|rar|pdf|doc|docx|xls|xlsx|ppt|pptx|gif|jpg|jpeg|png|tif|txt';
         $this->allowed_file_size = '10240';
         $this->data['logo'] = true;
-		
+
 		$this->load->helper('text');
         $this->pos_settings = $this->pos_model->getSetting();
         $this->pos_settings->pin_code = $this->pos_settings->pin_code ? md5($this->pos_settings->pin_code) : NULL;
         $this->data['pos_settings'] = $this->pos_settings;
-        
+
         if(!$this->Owner && !$this->Admin) {
             $gp = $this->site->checkPermissions();
             $this->permission = $gp[0];
@@ -51,7 +51,7 @@ class Sales extends MY_Controller
         }
         $this->default_biller_id = $this->site->default_biller_id();
     }
-    
+
 	function modal_views($id = NULL)
     {
         $this->erp->checkPermissions('index', null, 'sales');
@@ -78,35 +78,35 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme.'sales/modal_views', $this->data);
     }
-    
+
 	function index($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('index',null, 'sales');
         $this->load->model('reports_model');
-         
+
 		$alert_id = $this->input->get('alert_id');
         $this->data['alert_id'] = $alert_id;
-        
+
 		if(isset($_GET['d']) != ""){
 			$date = $_GET['d'];
 			$this->data['date'] = $date;
 		}
-		 
+
         $biller_id = $this->session->userdata('biller_id');
         $this->data['users'] = $this->reports_model->getStaff();
         $this->data['products'] = $this->site->getProducts();
         $this->data['warehouses'] = $this->site->getAllWarehouses();
         $this->data['billers'] = $this->site->getAllCompanies('biller');
         $this->data['user_billers'] = $this->sales_model->getAllCompaniesByID($biller_id);
-		
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         if ($this->Owner || $this->Admin || !$this->session->userdata('warehouse_id')) {
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             $this->data['warehouse_id'] = $warehouse_id;
             $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-			
+
         } else {
-			
+
             $this->data['warehouses'] = $this->products_model->getUserWarehouses();
 			if($warehouse_id){
 				$this->data['warehouse_id'] = $warehouse_id;
@@ -122,7 +122,7 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('sales'), 'bc' => $bc);
         $this->page_construct('sales/index', $meta, $this->data);
     }
-	function print_invoice_charles($id = null){		
+	function print_invoice_charles($id = null){
         $deposit = $this->sales_model->getDepositByPaymentID($id);
 		$sale    = $this->sales_model->getSalesById($id);
 		$sale_order = $this->sales_model->getSale_Order($sale->so_id);
@@ -143,7 +143,7 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('list_loans'), 'bc' => $bc);
         $this->page_construct('sales/loans', $meta, $this->data);
 	}
-	
+
 	function loan_actions()
 	{
 		if (!$this->Owner) {
@@ -161,7 +161,7 @@ class Sales extends MY_Controller
                         $this->sales_model->deleteSale($id);
                     }
                 }
-                
+
                 if ($this->input->post('form_action') == 'combine_pay') {
                     //$html = $this->combine_pdf($_POST['val']);
                 }
@@ -240,16 +240,16 @@ class Sales extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
 	}
-	
+
 	function update_loan($id)
 	{
 		 $payids=explode(':', $id);
 		 foreach($payids as $payid){
 			 echo $payid;
 		 }
-		
+
 	}
-	
+
 	function getCustomerInfo()
 	{
 		$cus_id = $this->input->get('customer_id');
@@ -257,21 +257,21 @@ class Sales extends MY_Controller
 		echo json_encode($customer_info);
         exit();
 	}
-	
+
 	function assign_to_user($sale_id=NULL)
 	{
-		
+
 		$this->form_validation->set_rules('user_id', lang("user_id"), 'required');
 		$this->form_validation->set_rules('so_num', lang("so_num"), 'required');
-		
+
         if ($this->form_validation->run() == true) {
-			
+
               $user_id = $this->input->post('user_id');
 			  $so_id   = $this->input->post('so_num');
 			  $this->sales_model->assign_to_user($user_id,$so_id);
 			  redirect("sales");
 		}else{
-			
+
 		  	$this->erp->checkPermissions('index', TRUE);
 			$this->data['AllUser']    = $this->Site->getAllUsers();
 			$this->data['SO_NUM']     = $this->sales_model->getSalesById($sale_id);
@@ -279,7 +279,7 @@ class Sales extends MY_Controller
 			$this->load->view($this->theme . 'sales/assign_to_user', $this->data);
 		}
 	}
-	
+
 	function getSales($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('index', null, 'sales');
@@ -287,7 +287,7 @@ class Sales extends MY_Controller
 		if($warehouse_id){
 			$warehouse_ids = explode('-', $warehouse_id);
 		}
-		
+
 		if ($this->input->get('user')) {
             $user_query = $this->input->get('user');
         } else {
@@ -343,7 +343,7 @@ class Sales extends MY_Controller
         } else {
             $end_date = NULL;
         }
-		
+
         if ($start_date) {
             $start_date = $this->erp->fld($start_date);
             $end_date = $this->erp->fld($end_date);
@@ -353,8 +353,8 @@ class Sales extends MY_Controller
             //$user = $this->site->getUser();
             //$warehouse_id = $user->warehouse_id;
         }
-		
-		
+
+
 		$down_payment = anchor('sales/down_payment/$1', '<i class="fa fa-money"></i> ' . lang('down_payment'), '');
 		$sale_edit_down_payment = anchor('sales/edit_down_payment/$1', '<i class="fa fa-money"></i> ' . lang('sale_edit_down_payment'), '');
         $detail_link = anchor('sales/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('sale_details'));
@@ -381,25 +381,25 @@ class Sales extends MY_Controller
             (($this->Owner || $this->Admin) ? '<li>'.$add_payment_link.'</li>' : ($this->GP['sales-payments'] ? '<li>'.$add_payment_link.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li class="down_payment">'.$down_payment.'</li>' : ($this->GP['sales-payments'] ? '<li class="down_payment">'.$down_payment.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li class="edit_down_payment">'.$sale_edit_down_payment.'</li>' : ($this->GP['sales-payments'] ? '<li class="edit_down_payment">'.$sale_edit_down_payment.'</li>' : ''))
-            
+
             .(($this->Owner || $this->Admin) ? '<li class="edit">'.$edit_link.'</li>' : ($this->GP['sales-edit'] ? '<li class="edit">'.$edit_link.'</li>' : '')).
             (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export'] ? '<li>'.$pdf_link.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li>'.$return_link.'</li>' : ($this->GP['sales-return_sales'] ? '<li>'.$return_link.'</li>' : '')).
 
         '</ul></div></div>';
-        
+
         $biller_id = $this->session->userdata('biller_id');
         $this->load->library('datatables');
         if ($warehouse_id) {
             $this->datatables
-				->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no, 
-							sales.reference_no as sale_no, sales.biller, group_areas.areas_group, sales.customer, 
+				->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no,
+							sales.reference_no as sale_no, sales.biller, group_areas.areas_group, sales.customer,
 							users.username AS saleman, sales.sale_status, COALESCE(erp_sales.grand_total,0) as amount,
 							COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
 							(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
-							SUM(COALESCE(erp_payments.discount,0)) as discount, 
-							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance, 
+							SUM(COALESCE(erp_payments.discount,0)) as discount,
+							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance,
 							sales.payment_status,sales.join_lease_id")
 				->from('sales')
 				->join('companies', 'companies.id = sales.customer_id', 'left')
@@ -431,17 +431,17 @@ class Sales extends MY_Controller
                         $this->datatables->where('sales.id', $alert_id);
                     }
                 }
-            
+
         } else {
 			$this->datatables
-				->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no, 
-							sales.reference_no as sale_no, sales.biller, group_areas.areas_group, sales.customer, 
+				->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no,
+							sales.reference_no as sale_no, sales.biller, group_areas.areas_group, sales.customer,
 							users.username AS saleman, sales.sale_status, COALESCE(erp_sales.grand_total,0) as amount,
 							COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
 							(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
-							SUM(COALESCE(erp_payments.discount,0)) as discount, 
-							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance, 
+							SUM(COALESCE(erp_payments.discount,0)) as discount,
+							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance,
 							sales.payment_status,sales.join_lease_id")
 				->from('sales')
 				->join('users', 'users.id = sales.saleman_by', 'left')
@@ -450,7 +450,7 @@ class Sales extends MY_Controller
 				->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
 				->join('quotes', 'quotes.id = sales.quote_id', 'left')
 				->join('companies', 'companies.id = sales.customer_id', 'left');
-			
+
             if (isset($_REQUEST['a'])) {
                 $alert_ids = explode('-', $_GET['a']);
                 $alert_id  = $_GET['a'];
@@ -465,21 +465,21 @@ class Sales extends MY_Controller
                     $this->datatables->where('sales.id', $alert_id);
                 }
             }
-			
+
         }
 		if ($product_id) {
 			$this->datatables->join('sale_items', 'sale_items.sale_id = sales.id', 'left');
 			$this->datatables->where('sale_items.product_id', $product_id);
 		}
-		
+
         $this->datatables->where('sales.pos !=', 1);
-		
+
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('sales.created_by', $this->session->userdata('user_id'));
         } elseif ($this->Customer) {
             $this->datatables->where('customer_id', $this->session->userdata('user_id'));
         }
-		
+
 		if ($user_query) {
 			$this->datatables->where('sales.created_by', $user_query);
 		}
@@ -496,11 +496,11 @@ class Sales extends MY_Controller
 		if ($customer) {
 			$this->datatables->where('sales.customer_id', $customer);
 		}
-		
+
 		if($saleman){
 			$this->datatables->where('sales.saleman_by', $saleman);
 		}
-		
+
 		if ($warehouse) {
             $this->datatables->where('sales.warehouse_id', $warehouse);
         }
@@ -511,17 +511,16 @@ class Sales extends MY_Controller
 		if ($start_date) {
 			$this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
 		}
-		
+
 		$this->datatables->group_by('sales.id');
-		
+
         $this->datatables->add_column("Actions", $action, "sales.id");
         echo $this->datatables->generate();
     }
-	
+
 	function getSales_pending($warehouse_id = NULL, $dt = NULL)
     {
-        $this->erp->checkPermissions('index');
-		
+
 		if ($this->input->get('user')) {
             $user_query = $this->input->get('user');
         } else {
@@ -597,37 +596,37 @@ class Sales extends MY_Controller
              (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['accounts-export'] ? '<li>'.$pdf_link.'</li>' : '')).
              (($this->Owner || $this->Admin) ? '<li>'.$email_link.'</li>' : ($this->GP['sales-email'] ? '<li>'.$email_link.'</li>' : '')).
              (($this->Owner || $this->Admin) ? '<li>'.$return_link.'</li>' : ($this->GP['sales-return_sales'] ? '<li>'.$return_link.'</li>' : '')).
-            
+
         '</ul>
     </div></div>';
         //$action = '<div class="text-center">' . $detail_link . ' ' . $edit_link . ' ' . $email_link . ' ' . $delete_link . '</div>';
-		
-		
-		
+
+
+
         $this->load->library('datatables');
         if ($warehouse_id) {
 			$wh_ids = explode('-', $warehouse_id);
             $this->datatables
-                ->select("sales.id, sales.date as date, sales.reference_no as sale_no, sales.biller, sales.customer, 
+                ->select("sales.id, sales.date as date, sales.reference_no as sale_no, sales.biller, sales.customer,
 							sales.sale_status, COALESCE(erp_sales.grand_total,0) as amount,
 							COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-							COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+							COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
 							COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
-							COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
-							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) ) as balance, 
+							COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount,
+							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) ) as balance,
 							sales.payment_status")
 				->from('sales')
 				->where('payment_status !=', 'paid')
                 ->where_in('warehouse_id', $wh_ids);
         } else {
 			$this->datatables
-				->select("sales.id, sales.date as date, sales.reference_no as sale_no, sales.biller, sales.customer, 
+				->select("sales.id, sales.date as date, sales.reference_no as sale_no, sales.biller, sales.customer,
 							sales.sale_status, COALESCE(erp_sales.grand_total,0) as amount,
 							COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-							COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+							COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
 							COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
-							COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
-							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) ) as balance, 
+							COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount,
+							(COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) ) as balance,
 							sales.payment_status")
 				->from('sales')
 			->where('payment_status !=', 'paid')
@@ -636,7 +635,7 @@ class Sales extends MY_Controller
 				$date = $_GET['d'];
 				$date1 = str_replace("/", "-", $date);
 				$date =  date('Y-m-d', strtotime($date1));
-				
+
 				$this->datatables
 				->where("sales.date >=", $date)
 				->where('DATE_SUB(erp_sales.date, INTERVAL 1 DAY) <= CURDATE()')
@@ -649,7 +648,7 @@ class Sales extends MY_Controller
         } elseif ($this->Customer) {
             $this->datatables->where('customer_id', $this->session->userdata('user_id'));
         }
-		
+
         if ($search_id) {
             $this->datatables->where('sales.id', $search_id);
         }
@@ -676,7 +675,7 @@ class Sales extends MY_Controller
 		if ($start_date) {
 			$this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
 		}
-		
+
 		if($dt == 30){
 			$this->datatables->where('date('. $this->db->dbprefix('sales') .'.date) > CURDATE() AND date('. $this->db->dbprefix('sales') .'.date) <= DATE_ADD(now(), INTERVAL + 30 DAY)');
 		}elseif($dt == 60){
@@ -686,11 +685,11 @@ class Sales extends MY_Controller
 		}elseif($dt == 91){
 			$this->datatables->where('date('. $this->db->dbprefix('sales') .'.date) >= DATE_ADD(now(), INTERVAL + 90 DAY)');
 		}
-		
+
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
     }
-	
+
 	function customer_balance()
 	{
 		//$this->erp->checkPermissions('customer',NULL,'sale_report');
@@ -710,10 +709,10 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('customer_balance'), 'bc' => $bc);
         $this->page_construct('sales/customer_balance', $meta, $this->data);
 	}
-	
+
 	function combine_payment_receivable()
     {
-		
+
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
         $arr = array();
@@ -721,19 +720,19 @@ class Sales extends MY_Controller
         {
             $arr = explode(',', $this->input->get('data'));
         }
-		
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
         if ($this->form_validation->run() == true) {
-			
+
             if ($this->Owner || $this->Admin) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -750,17 +749,17 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 //$payment['attachment'] = $photo;
             }
-			
+
 			$sale_id_arr = $this->input->post('sale_id');
-			
-			
+
+
 			$biller_id = $this->input->post('biller');
 			$amount_paid_arr = $this->input->post('amount_paid_line');
 			$i = 0;
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getSaleById($sale_id);
-				
+
 				$payment = array(
 					'date' => $date,
 					'sale_id' => $sale_id,
@@ -781,32 +780,32 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'add_payment' => '1'
 				);
-				
+
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addSalePaymentMulti($payment);
 				}
-				
+
 				$i++;
 			}
-			
+
 			$this->session->set_flashdata('message', lang("payment_added"));
             redirect('sales/customer_balance');
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
             $combine_payment = $this->sales_model->getCombinePaymentBySaleId($arr);
             $this->data['combine_sales'] = $combine_payment;
-			
+
             $this->data['payment_ref'] = ''; //$this->site->getReference('sp');
 			if ($Owner || $Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -817,36 +816,36 @@ class Sales extends MY_Controller
 			}
 			$this->data['setting'] = $setting;
             $this->data['modal_js'] = $this->site->modal_js();
-			$this->data['receivable'] = "receivable"; 
+			$this->data['receivable'] = "receivable";
 
             $this->load->view($this->theme . 'sales/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_customer_old()
     {
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
-		
+
         $arr = array();
-        
+
         if ($this->input->get('data'))
         {
             $arr = explode(',', $this->input->get('data'));
         }
-       
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
-		
+
         if ($this->form_validation->run() == true) {
             if ($this->Owner || $this->Admin) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -868,7 +867,7 @@ class Sales extends MY_Controller
 			$i = 0;
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp');
 			foreach($sale_id_arr as $sale_id){
-			
+
 				$payment = array(
 					'date' => $date,
 					'sale_id' => $sale_id,
@@ -911,7 +910,7 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'sales/combine_payment_customer', $this->data);
 		}
     }
-	
+
 	function getCustomerBalance()
     {
 		if ($this->input->get('customer')) {
@@ -959,11 +958,11 @@ class Sales extends MY_Controller
 				GROUP BY
 					erp_return_sales.sale_id
 				) AS erp_total_return_sale";
-		
+
 		$this->load->library('datatables');
-		$this->datatables->select($this->db->dbprefix('companies') . ".id as idd, companies.company, companies.name, 
-					companies.phone, companies.email, count(" . $this->db->dbprefix('sales') . ".id) as total, 
-					COALESCE(SUM(erp_sales.grand_total), 0) as total_amount, 
+		$this->datatables->select($this->db->dbprefix('companies') . ".id as idd, companies.company, companies.name,
+					companies.phone, companies.email, count(" . $this->db->dbprefix('sales') . ".id) as total,
+					COALESCE(SUM(erp_sales.grand_total), 0) as total_amount,
 					SUM(COALESCE(erp_total_return_sale.return_sale, 0)) AS return_sale,
 					COALESCE(erp_pmt.payment, 0) AS total_payment,
 					COALESCE(erp_pmt.deposit, 0) AS total_deposit,
@@ -989,13 +988,13 @@ class Sales extends MY_Controller
         $this->datatables->add_column("Actions", "<div class='text-center'><a class=\"tip\" title='" . lang("view_balance") . "' href='" . site_url('sales/view_customer_balance/$1') . "'><span class='label label-primary'>" . lang("view_balance") . "</span></a></div>", "idd");
 		echo $this->datatables->generate();
     }
-	
-	function view_customer_balance($user_id = NULL) 
+
+	function view_customer_balance($user_id = NULL)
 	{
-		
-        if (!$user_id && $_GET['d'] == null) {           
+
+        if (!$user_id && $_GET['d'] == null) {
             redirect($_SERVER["HTTP_REFERER"]);
-        }	
+        }
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
 		$this->data['date'] = date('Y-m-d');
         $this->data['user_id'] = $user_id;
@@ -1004,7 +1003,7 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('customer_balance'), 'bc' => $bc);
         $this->page_construct('sales/view_customer_balance', $meta, $this->data);
 	}
-	
+
 	function customer_balance_actions($user_id)
     {
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
@@ -1013,7 +1012,7 @@ class Sales extends MY_Controller
 
             if (!empty($_POST['val'])) {
                 if ($this->input->post('form_action') == 'delete') {
-                    
+
                     $error = false;
                     foreach ($_POST['val'] as $id) {
                         if (!$this->accounts_model->deleteChartAccount($id)) {
@@ -1049,7 +1048,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('G2', lang('paid'));
                     $this->excel->getActiveSheet()->SetCellValue('H2', lang('balance'));
                     $this->excel->getActiveSheet()->SetCellValue('I2', lang('payment_status'));
-                    
+
                     $row = 3;
                     foreach ($_POST['val'] as $id) {
                         $account = $this->site->getReceivableByID($id);
@@ -1166,9 +1165,9 @@ class Sales extends MY_Controller
 
                     redirect($_SERVER["HTTP_REFERER"]);
                 }
-                
+
                 if ($this->input->post('form_action') == 'statement_without_logo'){
-                    
+
                     $this->load->library('excel');
                     $this->excel->setActiveSheetIndex(0);
                     $this->excel->getActiveSheet()->setTitle(lang('statement_without_logo'));
@@ -1179,19 +1178,19 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('E1', lang('grand_total'));
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('paid'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('balance'));
-                    
+
                     $row = 2;
                     foreach ($_POST['val'] as $id) {
                         $account = $this->site->getReceivableByID($id);
                         $account_items = $this->site->getReceivable_DescriptionByID($id);
-                        
+
                         $description = "";
                         $i = 0;
                         foreach($account_items as $account_item){
-                            $i+=1; 
+                            $i+=1;
                             $description = $description . $account_item->product_name . "\n". "(" . $account_item->product_noted .")". "\n";
                         }
-                        
+
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $account->date);
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $account->reference_no);
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, $account->biller);
@@ -1220,7 +1219,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                    
+
                     $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     $filename = 'statement_without_logo' . date('Y_m_d_H_i_s');
 
@@ -1268,7 +1267,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
@@ -1276,11 +1275,11 @@ class Sales extends MY_Controller
                     }
 
                     redirect($_SERVER["HTTP_REFERER"]);
-                
+
                 }
-                
+
                 if ($this->input->post('form_action') == 'statement_with_logo'){
-                    
+
                     $this->load->library('excel');
                     $this->excel->setActiveSheetIndex(0);
                     $this->excel->getActiveSheet()->setTitle(lang('statement_with_logo'));
@@ -1291,20 +1290,20 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('E1', lang('grand_total'));
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('paid'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('balance'));
-                    
+
                     $row = 2;
-                    
+
                     foreach ($_POST['val'] as $id) {
                         $account = $this->site->getReceivableByID($id);
                         $account_items = $this->site->getReceivable_DescriptionByID($id);
-                        
+
                         $description = "";
                         $i = 0;
                         foreach($account_items as $account_item){
-                            $i+=1; 
+                            $i+=1;
                             $description = $description . $account_item->product_name . "\n". "(" . $account_item->product_noted .")". "\n";
                         }
-                        
+
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $account->date);
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $account->reference_no);
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, $account->biller);
@@ -1333,7 +1332,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                    
+
                     $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                     $filename = 'statement_with_logo' . date('Y_m_d_H_i_s');
                     if ($this->input->post('form_action') == 'export_pdf') {
@@ -1378,7 +1377,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
@@ -1386,9 +1385,9 @@ class Sales extends MY_Controller
                     }
 
                     redirect($_SERVER["HTTP_REFERER"]);
-                
+
                 }
-                
+
             } else {
                 $this->session->set_flashdata('error', $this->lang->line("no_supplier_selected"));
                 redirect($_SERVER["HTTP_REFERER"]);
@@ -1398,11 +1397,11 @@ class Sales extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function getSales_DuePayment($warehouse_id = NULL, $dt = NULL)
     {
         $this->erp->checkPermissions('index');
-		
+
 		if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
         } else {
@@ -1464,22 +1463,22 @@ class Sales extends MY_Controller
             (($this->Owner || $this->Admin) ? '<li>'.$add_payment_link.'</li>' : ($this->GP['sales-payments'] ? '<li>'.$add_payment_link.'</li>' : '')).
             (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export'] ? '<li>'.$pdf_link.'</li>' : '')).
             (($this->Owner || $this->Admin) ? '<li>'.$email_link.'</li>' : ($this->GP['sales-email'] ? '<li>'.$email_link.'</li>' : '')).
-         
+
         '</ul>
     </div></div>';
-        
+
 		$warehouses = explode(',', $warehouse_id);
 
         $this->load->library('datatables');
         if ($warehouse_id) {
             $this->datatables
-                ->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.company as customer, 
-							sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
-							COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
-							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
-							COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit, 
-							COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
-							(COALESCE(erp_sales.grand_total, 0) - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, 
+                ->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.company as customer,
+							sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,
+							COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
+							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
+							COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
+							COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount,
+							(COALESCE(erp_sales.grand_total, 0) - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance,
 							payment_status")
                 ->from('sales')
 				->join('companies', 'sales.customer_id = companies.id', 'left')
@@ -1492,16 +1491,16 @@ class Sales extends MY_Controller
                 } else {
                     $this->db->where('sales.warehouse_id', $warehouse_id);
                 }
-                
+
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, 
-						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
-						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
-						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
-						COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit, 
-						COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
-						(COALESCE(erp_sales.grand_total, 0) - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer,
+						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,
+						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
+						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
+						COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
+						COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount,
+						(COALESCE(erp_sales.grand_total, 0) - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance,
 						payment_status")
 			->from('sales')
             ->join('companies', 'sales.customer_id = companies.id', 'left')
@@ -1513,13 +1512,13 @@ class Sales extends MY_Controller
 				$date = $_GET['d'];
 				$date1 = str_replace("/", "-", $date);
 				$date =  date('Y-m-d', strtotime($date1));
-				
+
 				$this->datatables
 				->where("date >=", $date)
 				->where('DATE_SUB(date, INTERVAL 1 DAY) <= CURDATE()')
 				->where('sales.payment_term <>', 0);
 			}
-        }        
+        }
         if ($this->permission['sales-index'] = ''){
             if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin) {
                 $this->datatables->where('created_by', $this->session->userdata('user_id'));
@@ -1527,27 +1526,27 @@ class Sales extends MY_Controller
                 $this->datatables->where('customer_id', $this->session->userdata('user_id'));
             }
         }
-		
+
 		if ($customer) {
 			$this->datatables->where('sales.customer_id', $customer);
 		}
-		
+
 		if ($reference_no) {
 			$this->datatables->where('sales.reference_no', $reference_no);
 		}
-		
+
 		if($this->session->userdata('biller_id') ) {
 			$this->datatables->where('sales.biller_id', $this->session->userdata('biller_id') );
 		}
-		
+
 		if ($biller) {
-			
+
 			$this->datatables->where('sales.biller_id', $biller);
 		}
 		if ($start_date) {
 			$this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
 		}
-		
+
 		if($dt == 30){
 			$this->datatables->where('date('. $this->db->dbprefix('sales') .'.date) > CURDATE() AND date('. $this->db->dbprefix('sales') .'.date) <= DATE_ADD(now(), INTERVAL + 30 DAY)');
 		}elseif($dt == 60){
@@ -1557,18 +1556,18 @@ class Sales extends MY_Controller
 		}elseif($dt == 91){
 			$this->datatables->where('date('. $this->db->dbprefix('sales') .'.date) >= DATE_ADD(now(), INTERVAL + 90 DAY)');
 		}
-		
+
         $this->datatables->add_column("Actions", $action, "sales.id");
         echo $this->datatables->generate();
     }
-    
+
 	function getCusDetails()
 	{
 		$customer_id = $this->input->get('customer_id');
 		$row= $this->sales_model->getCusDetail($customer_id);
 		echo json_encode($row);
-	} 
-	
+	}
+
 	function return_sales($warehouse_id = NULL)
     {
         $this->erp->checkPermissions();
@@ -1578,9 +1577,9 @@ class Sales extends MY_Controller
             $this->data['warehouses'] = $this->site->getAllWarehouses();
             $this->data['warehouse_id'] = $warehouse_id;
             $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-			
+
         } else {
-			
+
             $this->data['warehouses'] = $this->products_model->getUserWarehouses();
 			if($warehouse_id){
 				$this->data['warehouse_id'] = $warehouse_id;
@@ -1602,7 +1601,7 @@ class Sales extends MY_Controller
 		if($warehouse_id){
 			$warehouse_id = explode('-', $warehouse_id);
 		}
-		
+
         if (!$this->Owner && !$warehouse_id) {
             //$user = $this->site->getUser();
             //$warehouse_id = $user->warehouse_id;
@@ -1651,7 +1650,7 @@ class Sales extends MY_Controller
                 ->group_by('return_sales.id');
 			*/
 			$this->datatables
-                ->select($this->db->dbprefix('return_sales') . ".id as id," . $this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref, 
+                ->select($this->db->dbprefix('return_sales') . ".id as id," . $this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref,
 							(
 								CASE
 								WHEN erp_return_sales.sale_id > 0 THEN
@@ -1676,7 +1675,7 @@ class Sales extends MY_Controller
                 ->from('return_sales')
                 ->group_by('return_sales.id');
         }
-		
+
 		if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('return_sales.created_by', $this->session->userdata('user_id'));
         } elseif ($this->Customer) {
@@ -1685,7 +1684,7 @@ class Sales extends MY_Controller
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
     }
-    
+
 	function modal_return($id = NULL)
     {
         $this->erp->checkPermissions('return_sales', NULL, 'sales');
@@ -1713,7 +1712,7 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme.'sales/modal_return', $this->data);
     }
-	
+
 	function edit_return($id = NULL)
     {
         $this->erp->checkPermissions('return_sales', NULL, 'sales');
@@ -1726,14 +1725,14 @@ class Sales extends MY_Controller
         $this->form_validation->set_rules('cust_id', lang("cust_id"), 'required');
 
         if ($this->form_validation->run() == true)
-        {	
+        {
             $sale = $this->sales_model->getInvoiceByID($id);
             $quantity = "quantity";
             $product = "product";
             $unit_cost = "unit_cost";
             $tax_rate = "tax_rate";
             $reference = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('re',$sale->biller_id);
-          
+
 			if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
@@ -1780,7 +1779,7 @@ class Sales extends MY_Controller
                             $pr_discount = $this->erp->formatDecimal($discount);
                         }
                     }
-					
+
                     $unit_price = $this->erp->formatDecimal($unit_price, 4);
                     $item_net_price = $unit_price;
                     $pr_item_discount = $this->erp->formatDecimal($pr_discount);
@@ -1848,7 +1847,7 @@ class Sales extends MY_Controller
             } else {
                 krsort($products);
             }
-			
+
 			$paid_amount = $this->input->post('amount-paid');
 
             if ($this->input->post('discount')) {
@@ -1907,7 +1906,7 @@ class Sales extends MY_Controller
 				'paid' 				=> $this->erp->formatDecimal($this->input->post('amount-paid')),
                 'created_by' 		=> $this->session->userdata('user_id')
             );
-			
+
             if ($this->input->post('amount-paid') && $this->input->post('amount-paid') > 0) {
                 $payment = array(
                     'date' => $date,
@@ -1946,7 +1945,7 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 $data['attachment'] = $photo;
             }
-            
+
         }
 
         if ($this->form_validation->run() == true && $this->sales_model->returnSale($data, $products, $payment)) {
@@ -2002,7 +2001,7 @@ class Sales extends MY_Controller
                 }
                 $c++;
             }
-			
+
             $this->data['inv_items'] = json_encode($pr);
             $this->data['id'] = $id;
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
@@ -2020,7 +2019,7 @@ class Sales extends MY_Controller
             $this->page_construct('sales/edit_return', $meta, $this->data);
         }
     }
-    
+
 	function checkReturn($id)
 	{
         if($id){
@@ -2035,7 +2034,7 @@ class Sales extends MY_Controller
 
     function modal_view_ar($id = NULL, $type = NULL)
     {
-        $this->erp->checkPermissions('index', TRUE);
+        $this->erp->checkPermissions('list_ar_aging', NULL, 'account');
 
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
@@ -2043,8 +2042,7 @@ class Sales extends MY_Controller
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        $inv = $this->sales_model->getInvoiceByID($id);
-        $this->erp->view_rights($inv->created_by, TRUE);
+        $inv = $this->sales_model->getInvoiceARAgingByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
@@ -2059,7 +2057,7 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme.'sales/modal_view_ar_aping', $this->data);
     }
-	
+
 	function modal_view($id = NULL)
     {
         $this->erp->checkPermissions('index', null, 'sales');
@@ -2067,6 +2065,7 @@ class Sales extends MY_Controller
         if($this->input->get('id')){
             $id = $this->input->get('id');
         }
+
 		$this->load->model('pos_model');
 		$this->data['pos'] 			= $this->pos_model->getSetting();
 		$this->data['setting'] 		= $this->site->get_setting();
@@ -2075,20 +2074,21 @@ class Sales extends MY_Controller
 		if (!$this->session->userdata('view_right')) {
             $this->erp->view_rights($inv->created_by, true);
         }
+
         $this->data['customer'] 	= $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] 		= $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] 	= $this->site->getUser($inv->created_by);
         $this->data['updated_by'] 	= $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] 	= $this->site->getWarehouseByID($inv->warehouse_id);
-        $this->data['inv'] 			= $inv;
-        $return 					= $this->sales_model->getReturnBySID($id);
+        $this->data['inv']= $inv;
+        $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] 	= $return;
         $this->data['rows'] 		= $this->sales_model->getAllInvoiceItems($id);
 
         $this->load->view($this->theme.'sales/modal_view', $this->data);
     }
-	
-	function charles_PaymentDeposit($id = null){		
+
+	function charles_PaymentDeposit($id = null){
         $deposit = $this->sales_model->getDepositByPaymentID($id);
 		$sale = $this->sales_model->getSalesById($deposit->sale_id);
         $this->data['sale_order'] = $this->sales_model->getSale_Order($sale->so_id);
@@ -2097,7 +2097,7 @@ class Sales extends MY_Controller
         $this->data['inv'] = $sale;
         $this->load->view($this->theme . 'sales/print_invoice_charles', $this->data);
     }
-	
+
     function modal_view_old($id = NULL)
     {
         $this->erp->checkPermissions('index', TRUE);
@@ -2123,7 +2123,7 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme.'sales/modal_view', $this->data);
     }
-	
+
 	function loan_view($id = NULL)
     {
         $this->erp->checkPermissions('index', TRUE);
@@ -2152,15 +2152,15 @@ class Sales extends MY_Controller
 		$this->data['cust_info'] = $this->sales_model->getCustomerByID($sale_info->customer_id);
         $this->load->view($this->theme.'sales/loan_view', $this->data);
     }
-	
+
 	function list_loan_data($id = NULL)
 	{
 		$this->erp->checkPermissions('index');
-		
+
 		if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$view_payment = anchor('sales/loan_payments/$1', '<i class="fa fa-file-text-o"></i> ' . lang('payments'), 'data-toggle="modal" data-target="#myModal2"');
         $add_m_payment = anchor('sales/add_m_payment_loan/$1', '<i class="fa fa-money add_m_payment"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal2"');
     	$action .= '<div class="text-center action"><div class="btn-group text-left">'
@@ -2170,11 +2170,11 @@ class Sales extends MY_Controller
 							<li>' . $view_payment . '</li>
 							<li class="add_m_payment">'.$add_m_payment.'</li>';
 		$action .= '</ul></div></div>';
-		
+
         $this->load->library('datatables');
 		$this->datatables
-			->select("	loans.id, loans.period, 
-						loans.interest, loans.principle, loans.payment, 
+			->select("	loans.id, loans.period,
+						loans.interest, loans.principle, loans.payment,
 						loans.balance, loans.dateline, COALESCE(erp_loans.paid_amount, 0) as paid_amount, COALESCE(erp_loans.discount, 0) as discount,
 						(COALESCE(erp_loans.payment, 0) - (COALESCE(erp_loans.paid_amount, 0) + COALESCE(erp_loans.discount, 0))) as pbalance,
 						owed, payment_status
@@ -2183,18 +2183,18 @@ class Sales extends MY_Controller
 			->join('users','users.id=loans.created_by','LEFT')
 			->where('sale_id=', $id);
 		$this->datatables->add_column("Actions", $action, "loans.id");
-        
+
         echo $this->datatables->generate();
 	}
-	
+
 	function list_house_data($id = NULL)
 	{
 		$this->erp->checkPermissions('index');
-		
+
 		if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$view_payment = anchor('sales/payments/$1', '<i class="fa fa-file-text-o"></i> ' . lang('payments'), 'data-toggle="modal" data-target="#myModal2"');
         $add_m_payment = anchor('sales/add_payment/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal2"');
     	$action .= '<div class="text-center action"><div class="btn-group text-left">'
@@ -2205,11 +2205,11 @@ class Sales extends MY_Controller
 							<li class="add_m_payment">' . $add_m_payment . '</li>';
 		$action .= '	</ul>
 					</div></div>';
-		
+
         $this->load->library('datatables');
 		$this->datatables
-			->select("loans.id, loans.period, 
-					 loans.interest, loans.principle, loans.payment, 
+			->select("loans.id, loans.period,
+					 loans.interest, loans.principle, loans.payment,
 					 loans.balance, loans.dateline,loans.note,users.username,paid_date,owed,paid_interest_status
 					")
 			->from('loans')
@@ -2217,10 +2217,10 @@ class Sales extends MY_Controller
 			->where('sale_id=', $id);
 		$this->datatables
 			->add_column("Actions", $action, "loans.id");
-        
+
         echo $this->datatables->generate();
 	}
-	
+
 	function customer_statement($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         if ($this->input->get('id')) {
@@ -2243,7 +2243,7 @@ class Sales extends MY_Controller
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getCustomerStatementByID($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -2263,7 +2263,7 @@ class Sales extends MY_Controller
         // $this->erp->print_arrays($this->data['loan']);
         $this->load->view($this->theme .'sales/customer_statement',$this->data);
     }
-    
+
 	function p_invoice($id = NULL)
     {
 		$this->erp->checkPermissions('index');
@@ -2271,12 +2271,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2292,7 +2292,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/p_invoice', $this->data);
     }
-    
+
 	function invoice_landscap_a5($id = null)
 	{
 		$this->erp->checkPermissions('index');
@@ -2300,13 +2300,13 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
-        $inv = $this->sales_model->getInvoiceByID($id);  
+
+        $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
@@ -2329,13 +2329,13 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
-        $inv = $this->sales_model->getInvoiceByID($id);  
+
+        $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
@@ -2358,13 +2358,13 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
-        $inv = $this->sales_model->getInvoiceByID($id);  
+
+        $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
@@ -2378,7 +2378,7 @@ class Sales extends MY_Controller
         $this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/invoice_chea_kheng', $this->data);
     }
-	
+
 	function invoice_chea_kheng_head($id=null)
 	{
         // echo 'Chea Kheng';exit();
@@ -2387,13 +2387,13 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
-        $inv = $this->sales_model->getInvoiceByID($id);  
+
+        $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
 		//$this->erp->print_arrays($this->site->getCompanyByID($inv->biller_id));
@@ -2408,7 +2408,7 @@ class Sales extends MY_Controller
         $this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/invoice_chea_kheng_head', $this->data);
     }
-	
+
 	function tax_invoice($id = NULL)
     {
         $this->erp->checkPermissions('index');
@@ -2416,12 +2416,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
         $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
@@ -2442,12 +2442,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         // $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2463,18 +2463,18 @@ class Sales extends MY_Controller
 		$this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/tax_invoice2', $this->data);
     }
-	
+
 	function tax_invoice3($id = NULL)
     {
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         // $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2498,12 +2498,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2520,7 +2520,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/invoice', $this->data);
     }
-	
+
 	function print_receipt($id = NULL)
     {
 		$this->erp->checkPermissions('index');
@@ -2528,12 +2528,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2551,7 +2551,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/print_receipt', $this->data);
     }
-	
+
 	function cash_receipt($id = NULL)
     {
 		$this->erp->checkPermissions('index');
@@ -2559,13 +2559,13 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
-		$payment = $this->sales_model->getPaymentByID($id);		
+
+		$payment = $this->sales_model->getPaymentByID($id);
         $inv = $this->sales_model->getInvoiceByID($payment->sale_id);
 		$payments = $this->sales_model->getCurrentBalance($inv->id);
 		$current_balance = $inv->grand_total;
@@ -2574,7 +2574,7 @@ class Sales extends MY_Controller
 				$current_balance -= $curr_pay->amount;
 			}
 		}
-		
+
 		$this->data['curr_balance'] = $current_balance;
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2583,10 +2583,10 @@ class Sales extends MY_Controller
         $this->data['page_title'] = $this->lang->line("payment_note");
 
 		//$this->erp->print_arrays($payment);
-		
+
         $this->load->view($this->theme . 'sales/cash_receipt', $this->data);
     }
-	
+
 	function invoice_a5($id = NULL)
     {
 		// $this->erp->checkPermissions('index');
@@ -2594,14 +2594,14 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] 			= $this->pos_model->getSetting();
-		
+
 		$this->data['error'] 		= (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv 						= $this->sales_model->getInvoiceByID($id);
-		
+
         // $this->erp->view_rights($inv->created_by, TRUE);
 		$this->data['Settings'] = $this->site->get_setting();
         $this->data['customer'] 	= $this->site->getCompanyByID($inv->customer_id);
@@ -2611,7 +2611,7 @@ class Sales extends MY_Controller
         $this->data['updated_by'] 	= $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] 	= $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] 			= $inv;
-		
+
 		$this->data['vattin'] 		= $this->site->getTaxRateByID($inv->order_tax_id);
         $return 					= $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] 	= $return;
@@ -2621,7 +2621,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] 		= true;
         $this->load->view($this->theme . 'sales/invoice_a5', $this->data);
     }
-	
+
 	function invoice_teatry($id = NULL)
     {
 		// $this->erp->checkPermissions('index');
@@ -2629,14 +2629,14 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] 			= $this->pos_model->getSetting();
-		
+
 		$this->data['error'] 		= (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv 						= $this->sales_model->getInvoiceByID($id);
-		
+
         // $this->erp->view_rights($inv->created_by, TRUE);
 		$this->data['Settings'] = $this->site->get_setting();
         $this->data['customer'] 	= $this->site->getCompanyByID($inv->customer_id);
@@ -2646,7 +2646,7 @@ class Sales extends MY_Controller
         $this->data['updated_by'] 	= $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] 	= $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] 			= $inv;
-		
+
 		$this->data['vattin'] 		= $this->site->getTaxRateByID($inv->order_tax_id);
         $return 					= $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] 	= $return;
@@ -2656,7 +2656,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] 		= true;
         $this->load->view($this->theme . 'sales/invoice_teatry', $this->data);
     }
-	
+
 	function invoice_landscap_a5s($id = NULL)
     {
 		// $this->erp->checkPermissions('index');
@@ -2664,14 +2664,14 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
-		
+
         // $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
@@ -2680,7 +2680,7 @@ class Sales extends MY_Controller
         $this->data['updated_by'] = $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] = $inv;
-		
+
 		$this->data['vattin'] = $this->site->getTaxRateByID($inv->order_tax_id);
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
@@ -2690,7 +2690,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/invoice_landscap_a5', $this->data);
     }
-	
+
 	function invoice_landscap_a5_old($id = NULL)
     {
 		$this->erp->checkPermissions('index');
@@ -2698,12 +2698,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2722,7 +2722,7 @@ class Sales extends MY_Controller
 		$this->data['logo'] = true;
         $this->load->view($this->theme . 'sales/invoice_landscap_a5', $this->data);
     }
-	
+
 	function invoice_poto($id = NULL)
     {
 		$this->erp->checkPermissions('index');
@@ -2730,12 +2730,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
 		$this->load->model('pos_model');
 		$this->data['pos'] = $this->pos_model->getSetting();
-		
+
 		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
 		$inv = $this->sales_model->getInvoiceByID($id);
         $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -2957,12 +2957,12 @@ class Sales extends MY_Controller
 		if($sale_order_id){
 			$sale_o = $this->sale_order_model->getSaleOrder($sale_order_id);
 			$qid = $sale_o->quote_id;
-			$sale_q = $this->quotes_model->getQuotesData($sale_o->quote_id); 
+			$sale_q = $this->quotes_model->getQuotesData($sale_o->quote_id);
 			if(isset($quote_id)){
 				$qid = $sale_q->quote_id;
 			}
-			
-			
+
+
 			if(($this->sale_order_model->getSaleOrder($sale_order_id)->order_status) == 'pending'){
 				$this->session->set_flashdata('error', lang("sale_order_n_approved"));
 				redirect($_SERVER["HTTP_REFERER"]);
@@ -2971,30 +2971,30 @@ class Sales extends MY_Controller
 				$this->session->set_flashdata('error', lang("sale_order_has_been_rejected"));
 				redirect($_SERVER["HTTP_REFERER"]);
 			}
-			
+
 			if(($this->sale_order_model->getSaleOrder($sale_order_id)->sale_status) == 'sale'){
 				$this->session->set_flashdata('error', lang("sale_order_has_been_created"));
 				redirect($_SERVER["HTTP_REFERER"]);
 			}
 		}
-		
+
 		if($quote_ID){
 			$sale_q = $this->quotes_model->getQuotesData($quote_ID);
 			$qid = $sale_q->id;
 			 if (($this->quotes_model->getQuotesData($quote_ID)->status) == 'pending' ) {
 				$this->session->set_flashdata('error', lang('quote_has_not_been_approved_s'));
 				redirect($_SERVER['HTTP_REFERER']);
-			} 
+			}
 			 if ( ($this->quotes_model->getQuotesData($quote_ID)->status) == 'rejected') {
 				$this->session->set_flashdata('error', lang('quote_has_been_rejected'));
 				redirect($_SERVER['HTTP_REFERER']);
 			}
-			
+
 			if (($this->quotes_model->getQuotesData($quote_ID)->quote_status) == 'completed' ) {
 				$this->session->set_flashdata('error', lang('quote_has_been_created'));
 				redirect($_SERVER['HTTP_REFERER']);
 			}
-			
+
 		}
         $this->form_validation->set_message('is_natural_no_zero', lang("no_zero_required"));
         $this->form_validation->set_rules('customer_1', lang("customer"), 'required');
@@ -3005,7 +3005,7 @@ class Sales extends MY_Controller
         if ($this->session->userdata('group_id') == 11) {
             $this->form_validation->set_rules('note', lang("sale_note"), 'trim|required');
         }
-        
+
         if ($this->form_validation->run() == true) {
 
             $quantity 	= "quantity";
@@ -3020,7 +3020,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-			
+
             $warehouse_id 		= $this->input->post('warehouse');
             $customer_id 		= $this->input->post('customer_1');
 			$group_area 		= $this->input->post('area');
@@ -3028,7 +3028,7 @@ class Sales extends MY_Controller
 			$saleman_by 		= $this->input->post('saleman');
             $total_items 		= $this->input->post('total_items');
             $sale_status 		= $this->input->post('sale_status');
-			
+
             $payment_status 	= 'due';
             $delivery_by        = $this->input->post('delivery_by');
 
@@ -3047,7 +3047,7 @@ class Sales extends MY_Controller
             $quote_id 			= $this->input->post('quote_id') ? $this->input->post('quote_id') : NULL;
 			$paid_by 			= $this->input->post('paid_by');
 			$delivery_update 	= $this->input->post('delivery_id_update');
-			
+
             $total 				= 0;
             $product_tax 		= 0;
             $order_tax 			= 0;
@@ -3074,19 +3074,19 @@ class Sales extends MY_Controller
 				$expdate = $this->sales_model->getPurchaseItemExDateByID($expire_date_id)->expiry;
 				$item_quantity 	= (isset($_POST['received'][$r])? $_POST['received'][$r]:$_POST['quantity'][$r]);
 				$real_item_quantity = $item_quantity;
-				
+
                 $real_unit_price = $this->erp->formatDecimal($_POST['real_unit_price'][$r]);
                 $unit_price = $this->erp->formatDecimal($_POST['unit_price'][$r]);
 				$net_price = $this->erp->formatDecimal($_POST['net_price'][$r]);
-                
-				
+
+
 				$item_unit_quantity = $_POST['quantity'][$r];
                 $item_serial 		= isset($_POST['serial'][$r]) ? $_POST['serial'][$r] : '';
                 $item_tax_rate 		= isset($_POST['product_tax'][$r]) ? $_POST['product_tax'][$r] : NULL;
                 $item_discount 		= isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : NULL;
-                
+
                 //$g_total_txt = $_POST['grand_total'][$r];
-				 
+
 
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details = $item_type != 'manual' ? $this->sales_model->getProductByCode($item_code) : NULL;
@@ -3109,7 +3109,7 @@ class Sales extends MY_Controller
                     $pr_item_discount = $this->erp->formatDecimal($pr_discount * $item_quantity);
                     $product_discount += $pr_item_discount;
                     $pr_tax = 0; $pr_item_tax = 0; $item_tax = 0; $tax = "";
-					
+
                     if (isset($item_tax_rate) && $item_tax_rate != 0) {
                         $pr_tax = $item_tax_rate;
                         $tax_details = $this->site->getTaxRateByID($pr_tax);
@@ -3141,13 +3141,13 @@ class Sales extends MY_Controller
                     }
 
                     $product_tax += $pr_item_tax;
-					
+
 					if( $product_details->tax_method == 0){
 						$subtotal = (($unit_price * $item_unit_quantity));
 					}else{
 						$subtotal = (($unit_price * $item_unit_quantity) + $pr_item_tax);
 					}
-				
+
 					$quantity_balance = 0;
 					if($item_option != 0) {
 						$row = $this->purchases_model->getVariantQtyById($item_option);
@@ -3156,7 +3156,7 @@ class Sales extends MY_Controller
 					}else{
 						$quantity_balance = $item_quantity;
 					}
-				
+
                     $products[] = array(
                         'product_id' 		=> $item_id,
                         'digital_id' 		=> $digital_id,
@@ -3184,13 +3184,13 @@ class Sales extends MY_Controller
 						'expiry' 			=> $expdate,
 						'expiry_id' 		=> $expire_date_id
                     );
-					
+
 					//$total += $this->erp->formatDecimal(($item_net_price* $item_unit_quantity), 4);
 					$totalcost	+= $item_cost;
 					$total 		+= $subtotal;
                 }
             }
-				
+
             if (empty($products)) {
                 $this->form_validation->set_rules('product', lang("order_items"), 'required');
             } else {
@@ -3223,19 +3223,19 @@ class Sales extends MY_Controller
             } else {
                 $order_tax_id = null;
             }
-			
-            $total_tax = $this->erp->formatDecimal(($product_tax + $order_tax), 4); 
+
+            $total_tax = $this->erp->formatDecimal(($product_tax + $order_tax), 4);
             $grand_total = $this->erp->formatDecimal(($total + $order_tax + $this->erp->formatDecimal($shipping) - $order_discount), 4);
-	
+
 			$amount_limit = $this->sales_model->getAmountPaidByCustomer($customer_id);
 			$credit = (int)($amount_limit->amount) + (int)($total);
 			$setting_credit = $this->Settings->credit_limit;
-			
-			if($setting_credit == 1 && $credit > $amount_limit->credit_limited && $amount_limit->credit_limit > 0){				
+
+			if($setting_credit == 1 && $credit > $amount_limit->credit_limited && $amount_limit->credit_limit > 0){
 				$this->session->set_flashdata('error', lang("credit_limit_required"));
 				redirect($_SERVER["HTTP_REFERER"]);
 			}
-			
+
 			$deposit = $this->input->post('amount-paid')-0;
 			if($deposit>=$grand_total)
 			{
@@ -3243,7 +3243,7 @@ class Sales extends MY_Controller
 			}elseif(!empty($deposit) && $deposit<$grand_total){
 				$payment_status = 'partial';
 			}
-			
+
 			$data = array(
 				'date' 					=> $date,
                 'reference_no' 			=> $reference,
@@ -3285,19 +3285,19 @@ class Sales extends MY_Controller
 				'quote_id' 				=> (isset($sale_q->id)?$sale_q->id:''),
 				'deposit_so_id'			=> (isset($so_deposit_no)? $so_deposit_no:'')
             );
-			
+
             if ($payment_status == 'partial' || $payment_status == 'paid') {
 				if ($this->input->post('payment_date')) {
                    $payment_date = $this->erp->fld($this->input->post('payment_date'));
 				} else {
                   $payment_date = date('Y-m-d H:i:s');
 				}
-				
+
                 if ($this->input->post('paid_by') == 'gift_card') {
                     $gc = $this->site->getGiftCardByNO($this->input->post('gift_card_no'));
                     $amount_paying = $grand_total >= $gc->balance ? $gc->balance : $grand_total;
                     $gc_balance = $gc->balance - $amount_paying;
-					
+
 					$payment = array(
 						'date' 			=> $date,
 						'reference_no' 	=> $reference,
@@ -3318,7 +3318,7 @@ class Sales extends MY_Controller
 						'bank_account' 	=> $this->input->post('bank_account')
 					);
                 } else {
-					
+
 					$payment = array(
 						'date' 			=> $date,
 						'reference_no' 	=> $reference,
@@ -3362,11 +3362,11 @@ class Sales extends MY_Controller
 				}else{
 					$loans = array();
 				}
-				
+
             } else {
                 $payment = array();
             }
-            
+
 			if ($_FILES['document']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -3386,7 +3386,7 @@ class Sales extends MY_Controller
 				$photo = $this->input->post('attachment');
 				$data['attachment'] = $photo;
 			}
-			
+
 			if ($_FILES['document1']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -3406,7 +3406,7 @@ class Sales extends MY_Controller
 				$photo = $this->input->post('attachment1');
 				$data['attachment1'] = $photo;
 			}
-			
+
 			if ($_FILES['document2']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -3426,14 +3426,14 @@ class Sales extends MY_Controller
 				$photo = $this->input->post('attachment2');
 				$data['attachment2'] = $photo;
 			}
-			
+
 			if($data['grand_total'] < $data['paid']) {
 				$this->session->set_flashdata('error', lang("grand_total_less_than_paid"));
 				redirect($_SERVER["HTTP_REFERER"]);
 			}
 			//$this->erp->print_arrays($data, $products);
         }
-		
+
         if ($this->form_validation->run() == true) {
 			$sale_id = $this->sales_model->addSale($data, $products, $payment, $loans, $delivery_update);
 			if($sale_id > 0){
@@ -3454,31 +3454,31 @@ class Sales extends MY_Controller
 						'bank_code' 	=> $this->input->post('bank_account'),
 						'status' 		=> 'paid'
 					);
-					
+
 					$this->sales_model->add_deposit($deposits);
 				}
-				// update sale_order_status 				
+				// update sale_order_status
 				//$this->sales_model->updateOrderStatus($data['type_id']);
 			}
-			
+
             $this->session->set_userdata('remove_s2', '1');
-			
+
             if ($quote_ID) {
                 $this->db->update('quotes', array('issue_invoice' => 'sale'), array('id' => $quote_ID));
             }
-			
+
 			if($quote_ID){
-				$this->quotes_model->updateQuoteStatus($quote_ID); 
+				$this->quotes_model->updateQuoteStatus($quote_ID);
 			}
-			
+
 			if ($sale_order_id) {
                 $this->db->update('sale_order', array('sale_status' => 'sale'), array('id' => $sale_order_id));
             }
             $this->session->set_flashdata('message', lang("sale_added"));
             $this->db->select_max('id');
             $s = $this->db->get_where('erp_sales', array('created_by' => $this->session->userdata('user_id')), 1);
-           
-			
+
+
 			$sale = $this->sales_model->getInvoiceByID($sale_id);
 			$address = $customer_details->address . " " . $customer_details->city . " " . $customer_details->state . " " . $customer_details->postal_code . " " . $customer_details->country . "<br>Tel: " . $customer_details->phone . " Email: " . $customer_details->email;
 			$dlDetails = array(
@@ -3493,7 +3493,7 @@ class Sales extends MY_Controller
 				'delivery_status' => 'pending',
                 'delivery_by' => $delivery_by
 			);
-			
+
 			$pos = $this->sales_model->getSetting();
 			if($pos->auto_delivery == 1){
 				$this->sales_model->addDelivery($dlDetails);
@@ -3520,21 +3520,21 @@ class Sales extends MY_Controller
 				redirect("sales/invoice_landscap_a5/".$s->row()->id);
 			}
             //redirect("sales/print_/".$s->row()->id);
-			
+
         } else {
-			
+
             if ($sale_order_id){
-				
+
                 $sale_order = $this->sales_model->getSaleOrder($sale_order_id);
 				$this->data['sale_order'] = $sale_order;
 				$items = $this->sales_model->getSaleOrdItems($sale_order_id);
 				$this->data['sale_order_id'] = $sale_order_id;
 				$this->data['type'] = "sale_order";
 				$this->data['type_id'] = $sale_order_id;
-				
+
 				$customer = $this->site->getCompanyByID($sale_order->customer_id);
 				$this->data['so_deposit'] = $this->sales_model->getDepositBySo($sale_order_id,$sale_order->customer_id);
-				
+
 				$customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
                 $c = rand(100000, 9999999);
 				$expiry_status = 0;
@@ -3552,19 +3552,19 @@ class Sales extends MY_Controller
                     }
                     $row->quantity = 0;
                     $pis = $this->sales_model->getPurchasedItems($item->product_id, $item->warehouse_id, $item->option_id);
-					
+
 					if($expiry_status == 1) {
-						$expdates = $this->sales_model->getProductExpireDate($row->id, $item->warehouse_id);						
+						$expdates = $this->sales_model->getProductExpireDate($row->id, $item->warehouse_id);
 					}else{
 						$expdates = NULL;
 					}
-					
+
                     if($pis){
                         foreach ($pis as $pi) {
                             $row->quantity += $pi->quantity_balance;
                         }
                     }
-					
+
 					if($item->option_id) {
 						$opt_ = $this->site->getProductVariantByOptionID($item->option_id);
 						$row->oqty = $item->quantity * $opt_->qty_unit;
@@ -3573,11 +3573,11 @@ class Sales extends MY_Controller
 					}
 					$pending_so_qty = $this->sales_model->getPendingSOQTYByProductID($row->id);
 					$psoqty = 0;
-			
+
 					if($pending_so_qty) {
 						$psoqty = $pending_so_qty->psoqty;
 					}
-					
+
 					$row->psoqty = $psoqty;
 					$row->group_price_id = $item->group_price_id;
                     $row->id = $item->product_id;
@@ -3603,13 +3603,13 @@ class Sales extends MY_Controller
 					//$row->rate_item_cur   = $curr_by_item->rate;
 
                     $w_piece = $this->sales_model->getProductByID();
-				
+
 					$group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
 					$all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
 					$row->price_id = 0;
-			
+
                     $options = $this->sales_model->getProductOptions($row->id, $item->warehouse_id);
-					
+
 					if ($options) {
                         $option_quantity = 0;
                         foreach ($options as $option) {
@@ -3624,7 +3624,7 @@ class Sales extends MY_Controller
                             }
                         }
                     }
-					
+
 					if($group_prices)
 					{
 					   $curr_by_item = $this->site->getCurrencyByCode($group_prices[0]->currency_code);
@@ -3654,12 +3654,12 @@ class Sales extends MY_Controller
                     }
                     $c++;
                 }
-				
+
 				$this->data['sale_order_id'] =$sale_order_id;
                 $this->data['sale_order_items'] = json_encode($pr);
 				$this->data['payment_deposit'] = (isset($payment_deposit)?$payment_deposit:0);
             }
-			
+
 			if ($delivery_id){
                 $sale_order = $this->sales_model->getDeliveryByID($delivery_id);
 				if($sale_order)
@@ -3668,7 +3668,7 @@ class Sales extends MY_Controller
 				}else{
 					$sale_order = $this->sales_model->getOrderDeliveryByID($delivery_id);
 				}
-								
+
 				$this->data['sale_order_id'] = $sale_order->sale_id;
 				$this->data['sale_order'] = $sale_order;
 				$items = $this->sales_model->getDeliveryItemsByItemId($delivery_id);
@@ -3693,7 +3693,7 @@ class Sales extends MY_Controller
                             $row->quantity += $pi->quantity_balance;
                         }
                     }
-					
+
 					if($item->option_id) {
 						$opt_ = $this->site->getProductVariantByOptionID($item->option_id);
 						$row->oqty = $item->quantity * $opt_->qty_unit;
@@ -3702,12 +3702,12 @@ class Sales extends MY_Controller
 					}
 					$pending_so_qty = $this->sales_model->getPendingSOQTYByProductID($row->id);
 					$psoqty = 0;
-			
+
 					if($pending_so_qty) {
 						$psoqty = $pending_so_qty->psoqty;
 					}
-					
-					$row->psoqty = $psoqty;					
+
+					$row->psoqty = $psoqty;
                     $row->id = $item->product_id;
                     $row->code = $item->product_code;
                     $row->type = $item->product_type;
@@ -3731,11 +3731,11 @@ class Sales extends MY_Controller
 						$row->digital_name 	= $dig->name .' ['. $row->name .']';
 						$row->digital_id   	= $dig->id;
 					}
-					
+
 					$group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
 					$all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
 					$row->price_id = 0;
-					
+
                     $options = $this->sales_model->getProductOptions($row->id, $item->warehouse_id);
                     if ($options) {
                         $option_quantity = 0;
@@ -3766,13 +3766,13 @@ class Sales extends MY_Controller
                     }
                     $c++;
                 }
-				
+
                 $this->data['sale_order_items'] = json_encode($pr);
 				 $this->data['delivery_id'] = $delivery_id;
             }
-			
+
 			if($quote_ID){
-				
+
                 $quote = $this->sales_model->getQuoteByID($quote_ID);
 				$this->data['quotes'] = $quote;
 				$items = $this->sales_model->getAllQuoteItems($quote_ID);
@@ -3794,27 +3794,27 @@ class Sales extends MY_Controller
                     } else {
                         unset($row->details, $row->product_details, $row->supplier1price, $row->supplier2price, $row->supplier3price, $row->supplier4price, $row->supplier5price);
                     }
-					
+
                     $row->quantity = 0;
                     $pis = $this->sales_model->getPurchasedItems($item->product_id, $item->warehouse_id, $item->option_id);
 					if($expiry_status == 1) {
 						$expdates = $this->sales_model->getProductExpireDate($row->id, $item->warehouse_id);
 					}else{
 						$expdates = NULL;
-					}				
-					
+					}
+
                     if($pis){
                         foreach ($pis as $pi) {
                             $row->quantity += $pi->quantity_balance;
                         }
                     }
-					
+
 					if($expiry_status == 1 && $expdates != NULL){
 						$row->expdate = $expdates[0]->id;
 					}else{
 						$row->expdate = NULL;
 					}
-					
+
 					if($item->option_id) {
 						$opt_ = $this->site->getProductVariantByOptionID($item->option_id);
 						$row->oqty = $item->quantity * $opt_->qty_unit;
@@ -3823,20 +3823,20 @@ class Sales extends MY_Controller
 					}
 					$pending_so_qty = $this->sales_model->getPendingSOQTYByProductID($row->id);
 					$psoqty = 0;
-			
+
 					if($pending_so_qty) {
 						$psoqty = $pending_so_qty->psoqty;
 					}
-					
+
 					$row->psoqty = $psoqty;
                     $row->id = $item->product_id;
                     $row->code = $item->product_code;
                     $row->type = $item->product_type;
                     $row->qty = $item->quantity;
-					
+
 					$row->received = ((($item->quantity - $item->quantity_received) > 0)? ($item->quantity - $item->quantity_received) : 0);
 					$row->quantity_balance = isset($item->quantity_balance) + ($item->quantity-$row->received);
-						
+
                     $row->discount = $item->discount ? $item->discount : '0';
                     $row->price = $this->erp->formatDecimal($item->net_unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity));
                     $row->unit_price = $row->tax_method ? $item->unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity)+$this->erp->formatDecimal($item->item_tax/$item->quantity) : $item->unit_price+($item->item_discount/$item->quantity);
@@ -3856,7 +3856,7 @@ class Sales extends MY_Controller
 						$row->digital_name 	= $dig->name .' ['. $row->name .']';
 						$row->digital_id   	= $dig->id;
 					}
-					
+
 					$group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
 					$all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
 					$row->price_id = 0;
@@ -3881,7 +3881,7 @@ class Sales extends MY_Controller
                         $combo_items = $this->sales_model->getProductComboItems($row->id, $item->warehouse_id);
                     }
                     $ri = $this->Settings->item_addition ? $row->id : $c;
-					
+
                     if ($row->tax_rate) {
                         $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                         $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates'=>$expdates, 'makeup_cost' => 0,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices);
@@ -3890,12 +3890,12 @@ class Sales extends MY_Controller
                     }
                     $c++;
                 }
-				
+
                 $this->data['quote_id'] = $quote_ID;
 				$this->data['sale_order_items'] = json_encode($pr);
 				$this->data['payment_deposit'] = (isset($payment_deposit) ? $payment_deposit : 0);
 			}
-			
+
 			$this->load->model('purchases_model');
 			$this->data['exchange_rate'] 	= $this->site->getCurrencyByCode('KHM_o');
             $this->data['error'] 			= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
@@ -3912,7 +3912,7 @@ class Sales extends MY_Controller
             $this->data['slnumber'] 		= '';
 			$this->data['categories'] 		= $this->site->getAllCategories();
 			$this->data['unit'] 			= $this->purchases_model->getUnits();
-			
+
 			$this->data['setting'] = $this->site->get_setting();
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -3929,13 +3929,13 @@ class Sales extends MY_Controller
             $this->page_construct('sales/add', $meta, $this->data);
         }
     }
-	
+
 	function getReferenceByProject($field,$biller_id)
 	{
 		$reference_no = $this->site->getReference($field,$biller_id);
 		echo json_encode($reference_no);
 	}
-	
+
 	function getCustomersByArea($area = NULL)
     {
         if ($rows = $this->sales_model->getCustomersByArea($area)) {
@@ -3945,7 +3945,7 @@ class Sales extends MY_Controller
         }
         echo $data;
     }
-	
+
 	function save_edit_deliveries($id=null)
 	{
 		if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
@@ -3953,7 +3953,7 @@ class Sales extends MY_Controller
 		} else {
 			$date = date('Y-m-d H:i:s');
 		}
-		
+
 		$delivery_by = $this->input->post('delivery_by');
 		$note = $this->input->post('note');
 		$getdelivery = $this->sales_model->getDelivery($id);
@@ -3976,7 +3976,7 @@ class Sales extends MY_Controller
 		);
 
 
-		
+
 		$productID = $this->input->post('product_id');
 		$item_id = $this->input->post('item_id');
 		$productName = $this->input->post('product_name');
@@ -4001,7 +4001,7 @@ class Sales extends MY_Controller
 			$unit_cost = $this->sales_model->getCurCost($productID[$i]);
 			$unit_qty = $this->site->getProductVariantByOptionID($option_id[$i]);
 			$delivery_item = $this->sales_model->getDeliveryItemByID($ditem_id[$i]);
-			//$this->erp->print_arrays($unit_cost);		
+			//$this->erp->print_arrays($unit_cost);
 			if($unit_qty)
 			{
 				$cost = ($unit_cost->cost*$unit_qty->qty_unit);
@@ -4012,7 +4012,7 @@ class Sales extends MY_Controller
 									'item_id' => $item_id[$i],
 									'product_id' => $productID[$i],
 									'sale_id' => $getdelivery->sale_id,
-									'product_name' => $productName[$i],
+									//'product_name' => $productName[$i],
 									'product_type' => $getproduct->type,
 									'option_id' => $option_id[$i],
 									'warehouse_id' => $warehouse_id[$i],
@@ -4030,7 +4030,7 @@ class Sales extends MY_Controller
 				$products[] = array(
 							'product_id' 		=> $productID[$i],
 							'product_code' 		=> $getproduct->code,
-							'product_name' 		=> $productName[$i],
+
 							'product_type' 		=> $getproduct->type,
 							'option_id' 		=> $option_id[$i],
 							'quantity' 			=> $qty_received[$i],
@@ -4045,11 +4045,11 @@ class Sales extends MY_Controller
 		}
 
 		if($this->sales_model->save_edit_delivery($id, $deliveryrec, $delivery_items)){
-			
+
 			if($pos == 1){
 				$getdelivery->type = "invoice";
 			}
-			
+
 			if($id > 0){
 				$invoice_status = false;
 				$sale_order_status = false;
@@ -4063,7 +4063,7 @@ class Sales extends MY_Controller
 						}
 					}
 				}
-				
+
 				if($getdelivery->type=="sale_order") {
 					for($i=0; $i<$rows; $i++) {
 						$lastQtyReceived = $total_qty_rec[$i] + $qty_received[$i];
@@ -4074,19 +4074,19 @@ class Sales extends MY_Controller
 						}
 					}
 				}
-				
+
 				if($invoice_status == true) {
 				// update delivery status
 					$getAllQty = $this->sales_model->getAllSaleItemQty($getdelivery->sale_id);
 					$updateStatus = false;
 					foreach($getAllQty as $qty){
-						
+
 						if($qty->qty - $qty->qty_received > 0){
 							$status = array('delivery_status' => 'partial');
 						}else if($qty->qty - $qty->qty_received == 0){
 							$status = array('delivery_status' => 'completed');
 						}else {
-							$status = array('delivery_status' => 'due');	
+							$status = array('delivery_status' => 'due');
 						}
 						$condition = array('id'=>$getdelivery->sale_id);
 						$this->db->where($condition);
@@ -4094,19 +4094,19 @@ class Sales extends MY_Controller
 						$updateStatus = true;
 
 					}
-					
+
 					if($updateStatus == true) {
 						// update stock here....
 						foreach($delivery_items as $delivery_item){
-							
+
 							$delivery_quantity = $delivery_item['quantity_received'];
 							$getproduct = $this->site->getProductByID($delivery_item['product_id']);
 							$getsaleitem = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
-							
+
 							$stock_info[] = array(
 								'product_id' => $delivery_item['product_id'],
 								'product_code' => $getproduct->code,
-								'product_name' => $delivery_item['product_name'],
+								//'product_name' => $delivery_item['product_name'],
 								'product_type' => $getproduct->type,
 								'option_id' => $delivery_item['option_id'],
 								'net_unit_price' => $getsaleitem->net_unit_price,
@@ -4124,9 +4124,9 @@ class Sales extends MY_Controller
 								'product_noted' => $getsaleitem->product_noted,
 								'old_sqty' => $delivery_item['old_sqty']
 							);
-							
+
 						}
-						
+
 						if(sizeof($stock_info) >0){
 							if($delivery_status == "completed") {
 								$cost = $this->site->costing($stock_info);
@@ -4134,11 +4134,11 @@ class Sales extends MY_Controller
 							}
 							$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);
 						}
-						
+
 					}
-					
+
 				}
-				
+
 				if($sale_order_status == true){
 				//$this->erp->print_arrays($id);
 				//	$this->sales_model->deleteDelivery_($id);
@@ -4149,9 +4149,9 @@ class Sales extends MY_Controller
 						if($qty->qty - $qty->qty_received > 0){
 							$status = array('delivery_status' => 'partial', 'sale_status' => 'delivery');
 						}else if($qty->qty - $qty->qty_received == 0){
-							$status = array('delivery_status' => 'completed', 'sale_status' => 'delivery');	
+							$status = array('delivery_status' => 'completed', 'sale_status' => 'delivery');
 						}else {
-							$status = array('delivery_status' => 'due', 'sale_status' => 'order');	
+							$status = array('delivery_status' => 'due', 'sale_status' => 'order');
 						}
 						$condition = array('id'=>$getdelivery->sale_id);
 						$this->db->where($condition);
@@ -4159,15 +4159,15 @@ class Sales extends MY_Controller
 						$updateStatus = true;
 
 					}
-					
+
 					if($updateStatus == true) {
 						// update stock here....
 						foreach($delivery_items as $delivery_item){
-							
+
 							$delivery_quantity = $delivery_item['quantity_received'];
 							$getproduct = $this->site->getProductByID($delivery_item['product_id']);
 							$getsaleitem = $this->sales_model->getSaleOrderItemByID($delivery_item['item_id']);
-							
+
 							$stock_info[] = array(
 								'product_id' => $delivery_item['product_id'],
 								'product_code' => $getproduct->code,
@@ -4189,26 +4189,26 @@ class Sales extends MY_Controller
 								'product_noted' => $getsaleitem->product_noted,
 								'old_sqty' => $delivery_item['old_sqty']
 							);
-							
+
 						}
-						
+
 						if(sizeof($stock_info) > 0){
 							if($delivery_status == "completed") {
-								
+
 								$cost = $this->site->costing($stock_info);
 								$this->site->syncPurchaseItems_delivery($cost,$id);
 							}
-							$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);	
+							$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);
 						}
-						
+
 					}
-					
+
 				}
-			
+
 			}
 			$this->session->set_flashdata('message', lang("update successfully"));
 			redirect('sales/deliveries');
-			
+
 		}else{
 			$this->session->set_flashdata('error', lang("no_delivery_selected"));
 			redirect($_SERVER["HTTP_REFERER"]);
@@ -4216,8 +4216,8 @@ class Sales extends MY_Controller
 
 
 	}
-	
-	function save_edit_deliveries_old($id=null) 
+
+	function save_edit_deliveries_old($id=null)
 	{
 		$date = $this->erp->fld($this->input->post('date'));
 		$delivery_by = $this->input->post('delivery_by');
@@ -4227,7 +4227,7 @@ class Sales extends MY_Controller
 		$delivery_reference = $this->input->post('delivery_reference');
 		$delivery_status = $this->input->post('delivery_status');
 		$get_delivery = $this->sales_model->getDeliveriesByID($id);
-		
+
 		$deliveryrec = array(
 			'date' => $date,
 			'do_reference_no' => $delivery_reference,
@@ -4238,7 +4238,7 @@ class Sales extends MY_Controller
 			'note' => $note,
 			'delivery_status' => $delivery_status
 		);
-		
+
 		$productID = $this->input->post('product_id');
 		$item_id = $this->input->post('item_id');
 		$productName = $this->input->post('product_name');
@@ -4249,7 +4249,7 @@ class Sales extends MY_Controller
 		$balance = $this->input->post('h_balance');
 		$b_balance = $this->input->post('b_balance');
 		$total_qty_rec = $this->input->post('totalQtyRec');
-		
+
 		$rows = sizeof($productID);
 		for($i=0; $i<$rows; $i++) {
 			$b_quantity = $b_balance[$i];
@@ -4257,7 +4257,7 @@ class Sales extends MY_Controller
 			$getproduct = $this->site->getProductByID($productID[$i]);
 			$unit_cost = $this->sales_model->getCurCost($productID[$i]);
 			$unit_qty = $this->site->getProductVariantByOptionID($option_id[$i]);
-			//$this->erp->print_arrays($unit_cost);		
+			//$this->erp->print_arrays($unit_cost);
 			if($unit_qty)
 			{
 				$cost = ($unit_cost->cost*$unit_qty->qty_unit);
@@ -4280,9 +4280,9 @@ class Sales extends MY_Controller
 									'updated_count' => $updated_count,
 			);
 		}
-		
+
 		if($this->sales_model->save_edit_delivery($id, $deliveryrec, $delivery_items)){
-			
+
 			if($id > 0){
 				$invoice_status = false;
 				$sale_order_status = false;
@@ -4296,7 +4296,7 @@ class Sales extends MY_Controller
 						}
 					}
 				}
-				
+
 				if($getdelivery->type=="sale_order") {
 					for($i=0; $i<$rows; $i++) {
 						$lastQtyReceived = $total_qty_rec[$i] + $qty_received[$i];
@@ -4307,19 +4307,19 @@ class Sales extends MY_Controller
 						}
 					}
 				}
-				
+
 				if($invoice_status == true) {
 				// update delivery status
 					$getAllQty = $this->sales_model->getAllSaleItemQty($getdelivery->sale_id);
 					$updateStatus = false;
 					foreach($getAllQty as $qty){
-						
+
 						if($qty->qty - $qty->qty_received > 0){
 							$status = array('delivery_status' => 'partial');
 						}else if($qty->qty - $qty->qty_received == 0){
 							$status = array('delivery_status' => 'completed');
 						}else {
-							$status = array('delivery_status' => 'due');	
+							$status = array('delivery_status' => 'due');
 						}
 						$condition = array('id'=>$getdelivery->sale_id);
 						$this->db->where($condition);
@@ -4327,15 +4327,15 @@ class Sales extends MY_Controller
 						$updateStatus = true;
 
 					}
-					
+
 					if($updateStatus == true) {
 						// update stock here....
 						foreach($delivery_items as $delivery_item){
-							
+
 							$delivery_quantity = $delivery_item['quantity_received'];
 							$getproduct = $this->site->getProductByID($delivery_item['product_id']);
 							$getsaleitem = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
-							
+
 							$stock_info[] = array(
 								'product_id' => $delivery_item['product_id'],
 								'product_code' => $getproduct->code,
@@ -4356,9 +4356,9 @@ class Sales extends MY_Controller
 								'real_unit_price' => $getsaleitem->real_unit_price,
 								'product_noted' => $getsaleitem->product_noted
 							);
-							
+
 						}
-						
+
 						if(sizeof($stock_info) >0){
 							if($delivery_status == "completed") {
 								$cost = $this->site->costing($stock_info);
@@ -4366,11 +4366,11 @@ class Sales extends MY_Controller
 							}
 							$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);
 						}
-						
+
 					}
-					
+
 				}
-				
+
 				if($sale_order_status == true){
 				//$this->erp->print_arrays($id);
 				//	$this->sales_model->deleteDelivery_($id);
@@ -4381,9 +4381,9 @@ class Sales extends MY_Controller
 						if($qty->qty - $qty->qty_received > 0){
 							$status = array('delivery_status' => 'partial', 'sale_status' => 'delivery');
 						}else if($qty->qty - $qty->qty_received == 0){
-							$status = array('delivery_status' => 'completed', 'sale_status' => 'delivery');	
+							$status = array('delivery_status' => 'completed', 'sale_status' => 'delivery');
 						}else {
-							$status = array('delivery_status' => 'due', 'sale_status' => 'order');	
+							$status = array('delivery_status' => 'due', 'sale_status' => 'order');
 						}
 						$condition = array('id'=>$getdelivery->sale_id);
 						$this->db->where($condition);
@@ -4391,15 +4391,15 @@ class Sales extends MY_Controller
 						$updateStatus = true;
 
 					}
-					
+
 					if($updateStatus == true) {
 						// update stock here....
 						foreach($delivery_items as $delivery_item){
-							
+
 							$delivery_quantity = $delivery_item['quantity_received'];
 							$getproduct = $this->site->getProductByID($delivery_item['product_id']);
 							$getsaleitem = $this->sales_model->getSaleOrderItemByID($delivery_item['item_id']);
-							
+
 							$stock_info[] = array(
 								'product_id' => $delivery_item['product_id'],
 								'product_code' => $getproduct->code,
@@ -4420,26 +4420,26 @@ class Sales extends MY_Controller
 								'real_unit_price' => $getsaleitem->real_unit_price,
 								'product_noted' => $getsaleitem->product_noted
 							);
-							
+
 						}
-						
+
 						if(sizeof($stock_info) > 0){
 							if($delivery_status == "completed") {
-								
+
 								$cost = $this->site->costing($stock_info);
 								$this->site->syncPurchaseItems_delivery($cost,$id);
 							}
-							$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);	
+							$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);
 						}
-						
+
 					}
-					
+
 				}
-			
+
 			}
 			$this->session->set_flashdata('message', lang("update successfully"));
 			redirect('sales/deliveries');
-			
+
 		}else{
 			$this->session->set_flashdata('error', lang("no_delivery_selected"));
 			redirect($_SERVER["HTTP_REFERER"]);
@@ -4458,10 +4458,10 @@ class Sales extends MY_Controller
 
         } else {
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-			
+
 			$deliv = $this->sales_model->getDelivery($delivery_id);
 			$deliv_items = $this->sales_model->getDeliveryItemsByID($delivery_id, $deliv->type);
-			
+
 			$this->data['drivers'] = $this->site->getDrivers();
 			if($deliv->type == 'sale_order') {
                 $this->data['user_name']       = $this->site->getUser($deliv->created_by);
@@ -4472,12 +4472,12 @@ class Sales extends MY_Controller
 			}
 			$this->data['delivery'] = $deliv;
 			$this->data['delivery_items'] = $deliv_items;
-			
+
 			//$this->erp->print_arrays($deliv_items);
 			if (is_array($deliv_items)) {
     			foreach($deliv_items as $deliv_item) {
     				$ditem =  $deliv_item->id;
-    				
+
     				$productId = $deliv_item->product_id;
     				$productName = $deliv_item->product_name;
     				$productCode = $deliv_item->code;
@@ -4537,11 +4537,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] = $inv;
 		$this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-		
+
 		$return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-		
+
 		foreach($records as $record){
 			$product_option = $record->option_id;
 			if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -4558,7 +4558,7 @@ class Sales extends MY_Controller
 		$this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/print',$this->data);
     }
-	
+
 	function sbps_invoice($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         $this->erp->checkPermissions('add', true, 'sales');
@@ -4581,11 +4581,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] = $inv;
 		$this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-		
+
 		$return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-		
+
 		foreach($records as $record){
 			$product_option = $record->option_id;
 			if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -4602,7 +4602,7 @@ class Sales extends MY_Controller
 		$this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/sbps_invoice',$this->data);
     }
-	
+
 	function payment_schedule_flora($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         $this->erp->checkPermissions('add', true, 'sales');
@@ -4634,7 +4634,7 @@ class Sales extends MY_Controller
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItemsByID($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -4654,7 +4654,7 @@ class Sales extends MY_Controller
         // $this->erp->print_arrays($this->data['loan']);
         $this->load->view($this->theme .'sales/payment_schedule_flora',$this->data);
     }
-    
+
 	function print_rks($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
        $this->erp->checkPermissions('add', true, 'sales');
@@ -4677,11 +4677,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -4697,7 +4697,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme.'sales/print_rks',$this->data);
     }
-	
+
 	function print_1($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         $this->erp->checkPermissions('add', true, 'sales');
@@ -4708,9 +4708,9 @@ class Sales extends MY_Controller
 		$this->load->model('pos_model');
 		$settings = $this->site->get_setting();
 		$default_project_id=$settings->default_biller;
-		
+
 		$this->data['project_code'] = $this->site->getCompanyByID($default_project_id);
-		
+
 		$this->data['setting'] = $this->site->get_setting();
 		$this->data['pos'] = $this->pos_model->getSetting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
@@ -4731,7 +4731,7 @@ class Sales extends MY_Controller
 		$this->data['sid'] = $id;
         $this->load->view($this->theme.'sales/print1',$this->data);
     }
-	
+
 	function print_jewwel($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         $this->erp->checkPermissions('add', true, 'sales');
@@ -4759,7 +4759,7 @@ class Sales extends MY_Controller
 		$this->data['sid'] = $id;
         $this->load->view($this->theme.'sales/print_jewwel',$this->data);
     }
-	
+
 	function print_hch($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         $this->erp->checkPermissions('add', true, 'sales');
@@ -4786,7 +4786,7 @@ class Sales extends MY_Controller
 		$this->data['sid'] = $id;
         $this->load->view($this->theme.'sales/print_hch',$this->data);
     }
-	
+
 	function cabon_print($sale_id = NULL, $modal = NULL)
     {
         $this->erp->checkPermissions('index');
@@ -4841,7 +4841,7 @@ class Sales extends MY_Controller
             $unit_cost = "unit_cost";
             $tax_rate = "tax_rate";
             $reference = $this->input->post('reference_no');
-			
+
 			if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
@@ -4863,7 +4863,7 @@ class Sales extends MY_Controller
             $payment_term           = $this->input->post('payment_term');
             $payment_term_details   = $this->site->getAllPaymentTermByID($payment_term);
             $due_date               = (isset($payment_term_details[0]->id) ? date('Y-m-d', strtotime($date . '+' . $payment_term_details[0]->due_day . ' days')) : NULL);
-			
+
             $shipping               = $this->input->post('shipping') ? $this->input->post('shipping') : 0;
             $customer_details       = $this->site->getCompanyByID($customer_id);
             $customer               = $customer_details->company ? $customer_details->company : $customer_details->name;
@@ -4962,8 +4962,8 @@ class Sales extends MY_Controller
 
                     }
                     $product_tax += $pr_item_tax;
-					
-					
+
+
 					if( $product_details->tax_method == 0){
 						$subtotal = ((($unit_price * $item_unit_quantity)));
 					}else{
@@ -4972,13 +4972,13 @@ class Sales extends MY_Controller
 					$sale_data[] = array(
 							'slaeid' => $slaeid
 						);
-						
+
 					$old_sqty = 0;
 					if($slaeid > 0 || $slaeid) {
 						$sale_item = $this->sales_model->getSaleItemByID($slaeid);
 						$old_sqty = $sale_item->quantity;
 					}
-					
+
                     $products[] = array(
                         'product_id' => $item_id,
                         'digital_id' => $digital_id,
@@ -5008,7 +5008,7 @@ class Sales extends MY_Controller
                     $total += $this->erp->formatDecimal($subtotal, 4);
                 }
             }
-			
+
 			//$this->erp->print_arrays($products);
             if (empty($products)) {
                 $this->form_validation->set_rules('product', lang("order_items"), 'required');
@@ -5042,7 +5042,7 @@ class Sales extends MY_Controller
                 $order_tax_id = null;
             }
 
-            $total_tax = $this->erp->formatDecimal(($product_tax + $order_tax), 4); 
+            $total_tax = $this->erp->formatDecimal(($product_tax + $order_tax), 4);
             $grand_total = $this->erp->formatDecimal(($total + $order_tax + $this->erp->formatDecimal($shipping) - $order_discount), 4);
             $sales = $this->sales_model->getInvoiceByID($id);
 			$updated_count = $sales->updated_count + 1;
@@ -5084,7 +5084,7 @@ class Sales extends MY_Controller
 				'po' => $this->input->post('po'),
 				'so_id' => $this->input->post('sale_order_id')
             );
-			
+
             if ($_FILES['document']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -5101,7 +5101,7 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 $data['attachment'] = $photo;
             }
-			
+
 			if ($_FILES['document1']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -5118,7 +5118,7 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 $data['attachment1'] = $photo;
             }
-			
+
 			if ($_FILES['document2']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -5135,7 +5135,7 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 $data['attachment2'] = $photo;
             }
-			
+
 			$sale = $this->sales_model->getInvoiceByID($id);
 			$address = $customer_details->address . " " . $customer_details->city . " " . $customer_details->state . " " . $customer_details->postal_code . " " . $customer_details->country . "<br>Tel: " . $customer_details->phone . " Email: " . $customer_details->email;
 			$dlDetails = array(
@@ -5154,14 +5154,14 @@ class Sales extends MY_Controller
 			if($pos->auto_delivery == 1){
 				$this->sales_model->updateDelivery($delivery_id, $dlDetails);
 			}
-			
-			
+
+
 			if ($payment_status == 'partial' || $payment_status == 'paid') {
                 if ($this->input->post('paid_by') == 'gift_card') {
                     $gc = $this->site->getGiftCardByNO($this->input->post('gift_card_no'));
                     $amount_paying = $grand_total >= $gc->balance ? $gc->balance : $grand_total;
                     $gc_balance = $gc->balance - $amount_paying;
-					
+
 					$payment = array(
 						'id' => $this->input->post('payment_id'),
 						'date' => $date,
@@ -5181,7 +5181,7 @@ class Sales extends MY_Controller
 						'biller_id' => $biller_id,
 						'add_payment' => '0',
 						'bank_account' => $this->input->post('bank_account')
-					); 
+					);
                 } else {
 					$payment = array(
 						'id' => $this->input->post('payment_id'),
@@ -5226,11 +5226,11 @@ class Sales extends MY_Controller
 				}else{
 					$loans = array();
 				}
-				
+
             } else {
                 $payment = array();
             }
-			
+
 			if($id) {
 				$o_sale = $this->sales_model->getSaleById($id);
 				if($data['grand_total'] < $o_sale->paid) {
@@ -5238,9 +5238,9 @@ class Sales extends MY_Controller
 					redirect($_SERVER["HTTP_REFERER"]);
 				}
 			}
-			
+
             //$this->erp->print_arrays($data, $products, $payment);
-			
+
         }
 
         if ($this->form_validation->run() == true && $this->sales_model->updateSale($id, $data, $products,$sale_data, $payment, (isset($loans)?$loans:""))) {
@@ -5263,9 +5263,9 @@ class Sales extends MY_Controller
 						'status' => 'paid'
 					);
 					$this->sales_model->updateDeposit($deposit->id, $deposits);
-				}				
+				}
 			}
-			
+
             $this->session->set_userdata('remove_slls', 1);
             $this->session->set_flashdata('message', lang("sale_updated"));
             redirect("sales");
@@ -5278,11 +5278,11 @@ class Sales extends MY_Controller
 			if($sale->so_id > 0) {
 				$sale_order = $this->sales_model->getSaleOrder($sale->so_id);
 			}
-			
+
 			$this->data['sale_order'] = $sale_order;
             $this->data['inv'] = $sale;
 			$this->data['edit_sale'] = "1";
-			
+
             if ($this->data['inv']->date <= date('Y-m-d', strtotime('-3 months'))) {
                 $this->session->set_flashdata('error', lang("sale_x_edited_older_than_3_months"));
                 redirect($_SERVER["HTTP_REFERER"]);
@@ -5296,7 +5296,7 @@ class Sales extends MY_Controller
             foreach ($inv_items as $item) {
                 $row = $this->sales_model->getProductByID($item->product_id, $item->warehouse_id);
                 $dig = $this->site->getProductByID($item->digital_id);
-				
+
                 if (!$row) {
                     $row = json_decode('{}');
                     $row->tax_method = 0;
@@ -5308,7 +5308,7 @@ class Sales extends MY_Controller
 				$group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
 				$all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
 				$row->price_id = 0;
-				
+
                 if($pis){
                     foreach ($pis as $pi) {
                         //$row->quantity += $pi->quantity_balance;
@@ -5316,8 +5316,8 @@ class Sales extends MY_Controller
                 }
 				$test2 = $this->sales_model->getWP2($row->id, $item->warehouse_id);
 				//$this->erp->print_arrays($row);
-				
-				
+
+
                 $row->id 			= $item->product_id;
                 $row->code 			= $item->product_code;
                 $row->name 			= $item->product_name;
@@ -5337,12 +5337,12 @@ class Sales extends MY_Controller
 				}
 				$pending_so_qty = $this->sales_model->getPendingSOQTYByProductID($row->id);
 				$psoqty = 0;
-		
+
 				if($pending_so_qty) {
 					$psoqty = $pending_so_qty->psoqty;
 				}
-				
-				$row->psoqty = $psoqty;                
+
+				$row->psoqty = $psoqty;
 				$row->cost += (isset($item->cost)?$item->cost:0);
 				unset($row->cost);
                 $row->discount = $item->discount ? $item->discount : '0';
@@ -5361,15 +5361,15 @@ class Sales extends MY_Controller
 				$row->start_date = $item->start_date;
 				$row->end_date = $item->end_date;
 				$row->product_noted = $item->product_noted;
-				
+
 				$group_prices = $this->sales_model->getProductPriceGroup($row->id, $customer->price_group_id);
 				$all_group_prices = $this->sales_model->getProductPriceGroup($row->id);
-				
+
 				//$this->erp->print_arrays($all_group_prices);
-				
+
 				$row->quantity = $test2->quantity;
 				$row->price_id = 0;
-				
+
                 if ($options) {
                     $option_quantity = 0;
                     foreach ($options as $option) {
@@ -5387,13 +5387,13 @@ class Sales extends MY_Controller
                     }
                 }
 				$old_qty_rec = $item->quantity;
-				
+
 				if($item->option_id) {
 					$option = $this->site->getProductVariantByOptionID($item->option_id);
 					$old_qty_rec = $item->quantity * $option->qty_unit;
 				}
 				$row->old_qty_rec = $old_qty_rec;
-				
+
                 $combo_items = FALSE;
                 if ($row->type == 'combo') {
                     $combo_items = $this->sales_model->getProductComboItems($row->id, $item->warehouse_id);
@@ -5402,16 +5402,16 @@ class Sales extends MY_Controller
                         $combo_item->quantity =  $combo_item->qty*$item->quantity;
                     }
                 }
-				
+
 				if($group_prices)
 				{
 				   $curr_by_item = $this->site->getCurrencyByCode($group_prices[0]->currency_code);
 				}
-				
+
 				$row->item_load   	  = 1;
-				
+
 				$row->rate_item_cur   = (isset($curr_by_item->rate)?$curr_by_item->rate:0);
-				
+
                 $ri = $this->Settings->item_addition ? $row->id : $c;
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
@@ -5472,7 +5472,7 @@ class Sales extends MY_Controller
             $unit_cost = "unit_cost";
             $tax_rate = "tax_rate";
             $reference = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('re',$sale->biller_id);
-            
+
 			if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
@@ -5519,7 +5519,7 @@ class Sales extends MY_Controller
                             $pr_discount = $this->erp->formatDecimal($discount);
                         }
                     }
-					
+
                     $unit_price = $this->erp->formatDecimal($unit_price, 4);
                     $item_net_price = $unit_price;
                     $pr_item_discount = $this->erp->formatDecimal($pr_discount);
@@ -5587,7 +5587,7 @@ class Sales extends MY_Controller
             } else {
                 krsort($products);
             }
-			
+
 			$paid_amount = $this->input->post('amount-paid');
 
             if ($this->input->post('discount')) {
@@ -5646,7 +5646,7 @@ class Sales extends MY_Controller
 				'paid' 				=> $this->erp->formatDecimal($this->input->post('amount-paid')),
                 'created_by' 		=> $this->session->userdata('user_id')
             );
-			
+
             if ($this->input->post('amount-paid') && $this->input->post('amount-paid') > 0) {
                 $payment = array(
                     'date' => $date,
@@ -5706,7 +5706,7 @@ class Sales extends MY_Controller
                 $this->session->set_flashdata('error', lang("sale_status_x_competed"));
                 redirect($_SERVER["HTTP_REFERER"]);
             }
-			
+
             $c = rand(100000, 9999999);
             foreach ($inv_items as $item) {
                 $row = $this->site->getProductByID($item->product_id);
@@ -5749,7 +5749,7 @@ class Sales extends MY_Controller
                 }
                 $c++;
             }
-			
+
             $this->data['inv_items'] = json_encode($pr);
             $this->data['id'] = $id;
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
@@ -5779,13 +5779,13 @@ class Sales extends MY_Controller
         $this->form_validation->set_rules('biller', lang("biller"), 'required');
         //$this->form_validation->set_rules('sale_status', lang("sale_status"), 'required');
         //$this->form_validation->set_rules('payment_status', lang("payment_status"), 'required');
-		
+
 		if($this->input->post('payment_status') == 'paid'){
 			$this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
 		}
 
         if ($this->form_validation->run() == true) {
-			
+
             $sale = $this->sales_model->getInvoiceByRef($quote_id);
 			$warehouse_id = $this->input->post('warehouse');
             $customer_id = $this->input->post('customer');
@@ -5794,7 +5794,7 @@ class Sales extends MY_Controller
 			$customer = $customer_details->company ? $customer_details->company : $customer_details->name;
 			$biller_details = $this->site->getCompanyByID($biller_id);
             $biller = $biller_details->company != '-' ? $biller_details->company : $biller_details->name;
-			
+
             $quantity = "quantity";
             $product = "product";
             $unit_cost = "unit_cost";
@@ -5826,7 +5826,7 @@ class Sales extends MY_Controller
 					$sample_sale_ref = $this->sales_model->getSampleSaleRefByProductID($item_id);
 					$sale_ref = $sample_sale_ref;
 				}
-				
+
                 $item_option = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' ? $_POST['product_option'][$r] : NULL;
                 //$option_details = $this->sales_model->getProductOptionByID($item_option);
                 $real_unit_price = $this->erp->formatDecimal($_POST['real_unit_price'][$r]);
@@ -5835,7 +5835,7 @@ class Sales extends MY_Controller
                 $item_serial = isset($_POST['serial'][$r]) ? $_POST['serial'][$r] : '';
                 $item_tax_rate = isset($_POST['product_tax'][$r]) ? $_POST['product_tax'][$r] : NULL;
                 $item_discount = isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : NULL;
-				
+
 				$sale_r = $this->sales_model->getSaleItemByRefPID($sale_ref, $item_id);
 				if(!$sale_r) {
 					$sale_r = $this->sales_model->getSaleItemByProductID($item_id);
@@ -5882,7 +5882,7 @@ class Sales extends MY_Controller
                         $pr_item_tax = 0;
                         $tax = "";
                     }
-                    
+
                     $item_net_price = $product_details->tax_method ? $this->erp->formatDecimal($unit_price-$pr_discount) : $this->erp->formatDecimal($unit_price-$item_tax-$pr_discount);
                     $product_tax += $pr_item_tax;
                     $subtotal = (($item_net_price * $item_quantity) + $pr_item_tax);
@@ -5915,7 +5915,7 @@ class Sales extends MY_Controller
             } else {
                 krsort($products);
             }
-			
+
 			$paid_amount = $this->input->post('amount-paid');
 
             if ($this->input->post('discount')) {
@@ -5945,7 +5945,7 @@ class Sales extends MY_Controller
             } else {
                 $order_tax_id = NULL;
             }
-			
+
 			$references = sizeof($_POST['sale_reference']);
 
             $total_tax = $this->erp->formatDecimal($product_tax + $order_tax);
@@ -6085,7 +6085,7 @@ class Sales extends MY_Controller
             $this->data['quote_id'] = $quote_id;
             $this->data['billers'] = $this->site->getAllCompanies('biller');
             $this->data['warehouses'] = $this->site->getAllWarehouses();
-			
+
 			$this->data['agencies'] = $this->site->getAllUsers();
             $this->data['tax_rates'] = $this->site->getAllTaxRates();
             //$this->data['currencies'] = $this->sales_model->getAllCurrencies();
@@ -6096,12 +6096,12 @@ class Sales extends MY_Controller
             $meta = array('page_title' => lang('add_sale_return'), 'bc' => $bc);
             $this->page_construct('sales/add_return', $meta, $this->data);
         }
-    
+
 	}
 
 	function getReferences($term = NULL, $limit = NULL)
     {
-       
+
         if ($this->input->get('term')) {
             $term = $this->input->get('term', TRUE);
         }
@@ -6109,11 +6109,11 @@ class Sales extends MY_Controller
             return FALSE;
         }
         $limit = $this->input->get('limit', TRUE);
-		
+
         $rows['results'] = $this->sales_model->getSalesReferences($term, $limit);
         echo json_encode($rows);
     }
-	
+
     function delete($id = NULL)
     {
         $this->erp->checkPermissions('delete',null,'sales');
@@ -6164,7 +6164,7 @@ class Sales extends MY_Controller
 					$this->session->set_flashdata('message', lang('sale_deleted'));
 					redirect($_SERVER["HTTP_REFERER"]);
                 }
-                
+
                 if ($this->input->post('form_action') == 'combine') {
                     $html = $this->combine_pdf($_POST['val']);
                 }
@@ -6200,7 +6200,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('N2', lang('discount'));
                     $this->excel->getActiveSheet()->SetCellValue('O2', lang('balance'));
                     $this->excel->getActiveSheet()->SetCellValue('P2', lang('payment_status'));
-                    
+
 
                     $row = 3;
                     $sum_grand = $balance = $sum_banlance = $sum_deposit = $sum_paid = 0;
@@ -6273,7 +6273,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('N2', lang('discount'));
                     $this->excel->getActiveSheet()->SetCellValue('O2', lang('balance'));
                     $this->excel->getActiveSheet()->SetCellValue('P2', lang('payment_status'));
-                    
+
 
                     $row = 3;
                     $sum_grand = $balance = $sum_banlance = $sum_deposit = $sum_paid = 0;
@@ -6356,7 +6356,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:M1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:M1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('J' . $new_row.'')->getFont()->setBold(true);
@@ -6377,7 +6377,7 @@ class Sales extends MY_Controller
                                 'bold'  => true,
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:M1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:M1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('J' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
@@ -6392,7 +6392,7 @@ class Sales extends MY_Controller
                         $this->excel->getActiveSheet()->getStyle('N' . $new_row.'')->getFont()->setBold(true);
 						$this->excel->getActiveSheet()->getStyle('O' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('O' . $new_row.'')->getFont()->setBold(true);
-						
+
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
                     }
@@ -6448,13 +6448,13 @@ class Sales extends MY_Controller
 
     function pos_sale_actions($wh=null)
     {
-       
+
         if($wh){
             $wh = explode('-', $wh);
         }
-        
+
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
-        if ($this->form_validation->run() == true) {            
+        if ($this->form_validation->run() == true) {
             if (!empty($_POST['val'])) {
                 if ($this->input->post('form_action') == 'delete') {
                     foreach ($_POST['val'] as $id) {
@@ -6483,7 +6483,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('K2', lang('discount'));
                     $this->excel->getActiveSheet()->SetCellValue('L2', lang('balance'));
                     $this->excel->getActiveSheet()->SetCellValue('M2', lang('payment_status'));
-                    
+
                     $row = 3;
                     $sum_grand = $balance = $sum_banlance = $sum_paid = 0;
                     foreach ($_POST['val'] as $id) {
@@ -6535,7 +6535,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('K2', lang('discount'));
                     $this->excel->getActiveSheet()->SetCellValue('L2', lang('balance'));
                     $this->excel->getActiveSheet()->SetCellValue('M2', lang('payment_status'));
-                    
+
                     $row = 3;
                     $sum_grand = $balance = $sum_banlance = $sum_paid = 0;
                     foreach ($_POST['val'] as $id) {
@@ -6606,7 +6606,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A2:M2')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A2:M2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
@@ -6640,7 +6640,7 @@ class Sales extends MY_Controller
                         $this->excel->getActiveSheet()->getStyle('K' . $new_row.'')->getFont()->setBold(true);
 						$this->excel->getActiveSheet()->getStyle('L' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('L' . $new_row.'')->getFont()->setBold(true);
-						
+
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
                     }
@@ -6656,10 +6656,10 @@ class Sales extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function suspend_actions()
     {
-		
+
         if (!$this->Owner) {
             $this->session->set_flashdata('warning', lang('access_denied'));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -6753,12 +6753,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
+
         $inv = $this->sales_model->getSaleOrderInvoice($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
@@ -6775,16 +6775,16 @@ class Sales extends MY_Controller
         $this->data['modal_js'] = $this->site->modal_js();
         $this->load->view($this->theme . 'sale_order/modal_order_view', $this->data);
     }
-    
+
 	function deliveries($start_date = NULL, $end_date = NULL)
     {
 		if (!$start_date) {
-            
+
         } else {
             $start = $this->db->escape(urldecode($start_date));
         }
         if (!$end_date) {
-            
+
         } else {
             $end = $this->db->escape(urldecode($end_date));
         }
@@ -6808,13 +6808,13 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
         $this->page_construct('sales/deliveries', $meta, $this->data);
     }
-	
+
 	function deliveries_alerts($date = NULL, $start_date = NULL, $end_date = NULL)
     {
         $this->erp->checkPermissions();
 
 		$date = $date;
-		
+
 		if (!$start_date) {
             //$start = $this->db->escape(date('Y-m') . '-1');
             //$start_date = date('Y-m') . '-1';
@@ -6828,19 +6828,19 @@ class Sales extends MY_Controller
             $end = $this->db->escape(urldecode($end_date));
         }
 
-		
+
 		$this->data['date'] = $date;
         $data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries_alerts')));
         $meta = array('page_title' => lang('deliveries_alerts'), 'bc' => $bc);
         $this->page_construct('sales/deliveries_alerts', $meta, $this->data);
 
     }
-	
+
     function getDeliveries($start = NULL, $end = NULL)
     {
         $this->erp->checkPermissions('deliveries');
@@ -6859,7 +6859,7 @@ class Sales extends MY_Controller
             . lang('actions') . ' <span class="caret"></span></button>
     <ul class="dropdown-menu pull-right" role="menu">
 		<li>' . $detail_link . '</li>'
-		
+
         .(($this->Owner || $this->Admin) ? '<li>'.$edit_link.'</li>' : ($this->GP['sales-edit_delivery'] ? '<li>'.$edit_link.'</li>' : '')).
 		(($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export_delivery'] ? '<li>'.$pdf_link.'</li>' : '')).
 
@@ -6906,16 +6906,16 @@ class Sales extends MY_Controller
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('deliveries.created_by', $this->session->userdata('user_id'));
         }
-		
+
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
-		
+
         $this->datatables->add_column("Actions", $action, "id");
 
         echo $this->datatables->generate();
     }
-	
+
 	function getSaleOrderDeliveries($wh=null, $start = NULL, $end = NULL)
     {
         $this->erp->checkPermissions('deliveries');
@@ -6938,7 +6938,7 @@ class Sales extends MY_Controller
                             .(($this->Owner || $this->Admin) ? '<li class="edit_deli">'.$edit_link.'</li>' : ($this->GP['sales-edit_delivery'] ? '<li class="edit_deli">'.$edit_link.'</li>' : '')).
                              (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export_delivery'] ? '<li>'.$pdf_link.'</li>' : '')).
 							 (($this->Owner || $this->Admin) ? '<li class="add_sale">'.$add_link.'</li>' : ($this->GP['sales-add'] ? '<li class="add_sale">'.$add_link.'</li>' : '')).
-							
+
 						'</ul>
 					</div></div>';
 
@@ -6948,7 +6948,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
         if($biller_id){
             $this->datatables
-            ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+            ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,erp_deliveries.location,companies.country,qty_order.qty AS qty_order, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
             ->from('deliveries')
             ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
             ->where('type','sale_order')
@@ -6959,7 +6959,16 @@ class Sales extends MY_Controller
             ->order_by('deliveries.id', 'desc');
         }else{
     		$this->datatables
-                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+                ->select("  deliveries.id as id, 
+                            deliveries.date, 
+                            deliveries.do_reference_no, 
+                            deliveries.sale_reference_no, 
+                            companies.name as customer_name, 
+                            deliveries.address,
+                            deliveries.location,
+                            qty_order.qty AS qty_order,
+                            COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, 
+                            deliveries.sale_status")
                 ->from('deliveries')
                 ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
     			->where('type','sale_order')
@@ -6976,11 +6985,11 @@ class Sales extends MY_Controller
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
-		
+
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
     }
-	
+
 	function getDeliveriesAlert($date = NULL,$start = NULL, $end = NULL)
     {
         $this->erp->checkPermissions('deliveries_alerts');
@@ -7006,22 +7015,22 @@ class Sales extends MY_Controller
 
         $this->load->library('datatables');
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
-		
+
 		$this->datatables
             ->select("deliveries.id as id, date, do_reference_no, sale_reference_no, customer, address, COALESCE(SUM(erp_sale_items.quantity),0) as qty, delivery_status")
             ->from('deliveries')
             ->join('sale_items', 'sale_items.sale_id=deliveries.sale_id', 'left')
             ->group_by('deliveries.id');
-		
+
 		if($date){
 			$this->datatables->where('date >=', $date)
 				->where('delivery_status =', 'pending');
 		}
-		
+
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
-		
+
         $this->datatables->add_column("Actions", $action, "id");
 
         echo $this->datatables->generate();
@@ -7043,7 +7052,7 @@ class Sales extends MY_Controller
         $this->data['delivery'] = $deli;
         $sale = $this->sales_model->getInvoiceByID($deli->sale_id);
         $this->data['biller'] = $this->site->getCompanyByID($sale->biller_id);
-       
+
         $data = array();
         for( $i = 0 ; $i < count($arr); $i ++){
             $deliv = $this->sales_model->getDeliveryByID($arr[$i]);
@@ -7057,7 +7066,7 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme . 'sales/view_delivery_combine', $this->data);
     }
-    
+
 	function pdf_delivery($id = NULL, $view = NULL, $save_bufffer = NULL)
     {
         $this->erp->checkPermissions('by_delivery_person', null, 'sale_report');
@@ -7087,7 +7096,7 @@ class Sales extends MY_Controller
             $this->erp->generate_pdf($html, $name);
         }
     }
-	
+
 	function view_delivery_cabon($id = NULL)
     {
         $this->erp->checkPermissions('deliveries', NULL, 'sales');
@@ -7107,14 +7116,14 @@ class Sales extends MY_Controller
         $this->data['page_title'] = lang("delivery_order");
         $this->load->view($this->theme . 'sales/view_delivery_cabon', $this->data);
     }
-    
+
 	function view_delivery_old($id = NULL)
     {
         $this->erp->checkPermissions('deliveries');
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         $deli = $this->sales_model->getSaleDeliveryByID($id);
         $this->data['delivery'] = $deli;
@@ -7128,14 +7137,14 @@ class Sales extends MY_Controller
         $this->load->view($this->theme . 'sales/view_delivery', $this->data);
     }
 
-	
+
 	function view_inv_delivery($id = NULL)
     {
         $this->erp->checkPermissions('deliveries');
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         $deli = $this->sales_model->getSaleDeliveryByID($id);
         $this->data['delivery'] = $deli;
@@ -7153,7 +7162,7 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-		
+
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         $deli = $this->sales_model->getSaleOrderDeliveryByID($id);
         $this->data['delivery'] = $deli;
@@ -7191,7 +7200,7 @@ class Sales extends MY_Controller
 			$customer = $this->input->post('customer');
 			$address = $this->input->post('address');
 			$note = $this->erp->clear_tags($this->input->post('note'));
-			
+
             $dlDetails = array(
                 'date' => $date,
                 'sale_id' => $this->input->post('sale_id'),
@@ -7226,7 +7235,7 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'sales/add_delivery', $this->data);
         }
     }
-	
+
     function edit_delivery($id = NULL)
     {
         $this->erp->checkPermissions();
@@ -7288,7 +7297,7 @@ class Sales extends MY_Controller
         }
 
         if ($this->sales_model->deleteDelivery($id)) {
-			
+
             echo lang("delivery_deleted");
         }
 
@@ -7331,15 +7340,15 @@ class Sales extends MY_Controller
                 if ($this->input->post('form_action') == 'add_sale_combine_deliveries') {
                     $delivery_id = $_POST['val'];
                     if ($delivery_id){
-                        
+
                         $sale_order = $this->sales_model->getDeliveriesByIDs($delivery_id);
-                        
-                        
+
+
                         //$this->erp->print_arrays($sale_order);
                         $this->data['sale_order'] = $sale_order;
                         $this->data['refer'] = $sale_order->sale_reference_no;
                         $items = $this->sales_model->getDeliveryItemsByItemIds($delivery_id);
-                        
+
                         $deli_gp_id = "";
                         for($i=0;$i<count($delivery_id);$i++)
                         {
@@ -7349,7 +7358,7 @@ class Sales extends MY_Controller
                                 $deli_gp_id.=",".$delivery_id[$i];
                             }
                         }
-                        
+
                         $this->data['delivery_id'] = $deli_gp_id;
                         $this->data['type'] = "delivery";
                         $this->data['type_id'] = $deli_gp_id;
@@ -7387,7 +7396,7 @@ class Sales extends MY_Controller
                             $row->option = $item->option_id;
 							$row->piece = $item->piece;
 							$row->wpiece = $item->wpiece;
-							
+
 							$row->digital_code 	= "";
 							$row->digital_name 	= "";
 							$row->digital_id   	= 0;
@@ -7396,11 +7405,11 @@ class Sales extends MY_Controller
 								$row->digital_name 	= $dig->name .' ['. $row->name .']';
 								$row->digital_id   	= $dig->id;
 							}
-                            
+
                             $group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
                             $all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
                             $row->price_id = 0;
-                            
+
                             $options = $this->sales_model->getProductOptions($row->id, $item->warehouse_id);
                             if ($options) {
                                 $option_quantity = 0;
@@ -7431,13 +7440,13 @@ class Sales extends MY_Controller
                         }
 						$this->erp->print_arrays($pr);
                         $this->data['sale_order_items'] = json_encode($pr);
-                        
+
                         if ($this->session->userdata('biller_id')) {
                             $biller_id = $this->session->userdata('biller_id');
                         } else {
                             $biller_id = $this->Settings->default_biller;
                         }
-						
+
                         $this->data['exchange_rate'] = $this->site->getCurrencyByCode('KHM');
                         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
                         $this->data['billers'] = $this->site->getAllCompanies('biller');
@@ -7458,7 +7467,7 @@ class Sales extends MY_Controller
                         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('add_sale')));
                         $meta = array('page_title' => lang('add_sale'), 'bc' => $bc);
                         $this->page_construct('sales/add', $meta, $this->data);
-                        
+
                     }
                 }
 
@@ -7475,7 +7484,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('quantity_order'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('quantity'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('status'));
-                    
+
                     $row = 2;
                     $sum_qty = 0;
                     $sum_qty_order = 0;
@@ -7509,7 +7518,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('quantity_order'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('quantity'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('status'));
-                    
+
                     $row = 2;
                     $sum_qty = 0;
                     $sum_qty_order = 0;
@@ -7563,7 +7572,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                    
+
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getFont()->setBold(true);
@@ -7582,13 +7591,13 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
-                        $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getFont()->setBold(true); 
+                        $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
-                        $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true); 
+                        $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
                     }
@@ -7608,7 +7617,7 @@ class Sales extends MY_Controller
                     $this->session->set_flashdata('message', lang("deliveries_deleted"));
                     redirect($_SERVER["HTTP_REFERER"]);
                 }
-                
+
                 if ($this->input->post('form_action') == 'completed_delivery') {
                     foreach ($_POST['val'] as $id) {
                         $this->sales_model->completedDeliveries($id);
@@ -7616,17 +7625,17 @@ class Sales extends MY_Controller
                     $this->session->set_flashdata('message', lang("deliveries_completed"));
                     redirect($_SERVER["HTTP_REFERER"]);
                 }
-                
+
                 if ($this->input->post('form_action') == 'add_sale_combine_deliveries') {
                     $delivery_id = $_POST['val'];
 
                     if ($delivery_id){
-                        
+
                         $sale_order = $this->sales_model->getDeliveriesByIDs($delivery_id);
                         $this->data['sale_order'] = $sale_order;
                         $this->data['refer'] = $sale_order->sale_reference_no;
                         $items = $this->sales_model->getDeliveryItemsByItemIds($delivery_id);
-                        
+
                         $deli_gp_id = "";
                         for($i=0;$i<count($delivery_id);$i++)
                         {
@@ -7636,7 +7645,7 @@ class Sales extends MY_Controller
                                 $deli_gp_id.=",".$delivery_id[$i];
                             }
                         }
-                        
+
                         $this->data['delivery_id'] = $deli_gp_id;
                         $this->data['type'] = "delivery";
                         $this->data['type_id'] = $deli_gp_id;
@@ -7672,7 +7681,7 @@ class Sales extends MY_Controller
                             $row->option = $item->option_id;
 							$row->piece = $item->piece;
 							$row->wpiece = $item->wpiece;
-							
+
 							$row->digital_code 	= "";
 							$row->digital_name 	= "";
 							$row->digital_id   	= 0;
@@ -7681,12 +7690,12 @@ class Sales extends MY_Controller
 								$row->digital_name 	= $dig->name .' ['. $row->name .']';
 								$row->digital_id   	= $dig->id;
 							}
-                            
-                            
+
+
                             $group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
                             $all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
                             $row->price_id = 0;
-                            
+
                             $options = $this->sales_model->getProductOptions($row->id, $item->warehouse_id);
                             if ($options) {
                                 $option_quantity = 0;
@@ -7717,13 +7726,13 @@ class Sales extends MY_Controller
                         }
                         //$this->erp->print_arrays($pr);
                         $this->data['sale_order_items'] = json_encode($pr);
-                        
+
                         if ($this->session->userdata('biller_id')) {
                             $biller_id = $this->session->userdata('biller_id');
                         } else {
                             $biller_id = $this->Settings->default_biller;
                         }
-                        
+
                         $this->data['exchange_rate'] = $this->site->getCurrencyByCode('KHM');
                         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
                         $this->data['billers'] = $this->site->getAllCompanies('biller');
@@ -7744,7 +7753,7 @@ class Sales extends MY_Controller
                         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('add_sale')));
                         $meta = array('page_title' => lang('add_sale'), 'bc' => $bc);
                         $this->page_construct('sales/add', $meta, $this->data);
-                        
+
                     }
                 }
 
@@ -7761,7 +7770,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('quantity_order'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('quantity'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('status'));
-                    
+
                     $row = 2;
                     $sum_qty = 0;
                     $sum_qty_order = 0;
@@ -7796,7 +7805,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('quantity_order'));
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('quantity'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('status'));
-                    
+
                     $row = 2;
                     $sum_qty = 0;
                     $sum_qty_order = 0;
@@ -7850,7 +7859,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getFont()->setBold(true);
@@ -7868,7 +7877,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('F' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
@@ -7902,9 +7911,9 @@ class Sales extends MY_Controller
 		$this->form_validation->set_rules('status2', lang("status"), 'required');
 		$this->form_validation->set_rules('start_date2', lang("start_date"), 'required');
 		$this->form_validation->set_rules('end_date2', lang("end_date"), 'required');
-		
+
 		if ($this->form_validation->run() == true) {
-			
+
 			if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
 				$start_date = $this->erp->fld(trim($this->input->post('start_date2')));
 				$end_date = $this->erp->fld(trim($this->input->post('end_date2')));
@@ -7912,7 +7921,7 @@ class Sales extends MY_Controller
 				$start_date = date('Y-m-d H:i:s');
 				$end_date = date('Y-m-d H:i:s');
 			}
-			
+
 			$data = array(
 				'customer_id' 	=> $_POST['customer_invoice2'],
 				'title' 		=> $_POST['subject2'],
@@ -7923,18 +7932,18 @@ class Sales extends MY_Controller
 				'color' 		=> $_POST['color2'],
 				'type' 			=> 'to_do'
 			);
-			
+
 			$this->sales_model->addEventToDo($data);
             $this->session->set_flashdata('message', lang("event_added"));
             redirect($_SERVER["HTTP_REFERER"]);
-			
+
 		}
-		
+
 	}
-	
+
     function add_event_to_dos()
     {
-		
+
 		$this->form_validation->set_rules('customer_invoice', lang("customer"), 'required');
 		$this->form_validation->set_rules('subject', lang("subject"), 'trim|required');
 		$this->form_validation->set_rules('user_id', lang("user"), 'required');
@@ -7942,9 +7951,9 @@ class Sales extends MY_Controller
 		$this->form_validation->set_rules('activity_type', lang("activity_type"), 'required');
 		$this->form_validation->set_rules('start_date', lang("start_date"), 'required');
 		$this->form_validation->set_rules('end_date', lang("end_date"), 'required');
-		
+
         if ($this->form_validation->run() == true) {
-			
+
 			if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
                 $start_date = $this->erp->fld(trim($this->input->post('start_date')))?$this->erp->fld(trim($this->input->post('start_date'))):$this->erp->fld(trim($this->input->post('start_date2')));
                 $end_date = $this->erp->fld(trim($this->input->post('end_date')))?$this->erp->fld(trim($this->input->post('end_date'))):$this->erp->fld(trim($this->input->post('end_date2')));
@@ -7964,8 +7973,8 @@ class Sales extends MY_Controller
 				'color' 		=> $_POST['color'],
 				'type' 			=> 'event'
 			);
-			
-			
+
+
         }
 
         if ($this->form_validation->run() == true) {
@@ -7973,12 +7982,12 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('message', lang("event_added"));
             redirect($_SERVER["HTTP_REFERER"]);
         } else {
-			
+
             $this->data['billers'] = $this->site->getAllCompanies('biller');
             $this->data['users'] = $this->site->getAllUsers();
             $this->data['customers'] = $this->site->getCustomers();
             $this->data['modal_js'] = $this->site->modal_js();
-			
+
             $this->load->view($this->theme . 'sales/add_event_to_dos', $this->data);
         }
     }
@@ -8000,30 +8009,30 @@ class Sales extends MY_Controller
         $this->data['payments'] = $this->sales_model->getInvoicePayments($id);
         $this->load->view($this->theme . 'sales/payments', $this->data);
     }
-	
+
 	function loan_payments($id = NULL)
     {
         $this->erp->checkPermissions('payments', null, 'sales');
 		$inv 			 = $this->sales_model->getInvoiceByID($id);
 		$payments 		 = $this->sales_model->getCurrentBalance($inv->id);
 		$current_balance = $inv->grand_total;
-		
+
 		if($payments){
 			foreach($payments as $curr_pay) {
 				$current_balance -= $curr_pay->amount;
 			}
 		}
-		
+
 		$this->data['curr_balance'] = $current_balance;
         $this->data['payments']     = $this->sales_model->getInvoicePaymentsLoan($id);
         $this->load->view($this->theme . 'sales/loan_payments', $this->data);
     }
-	
+
 	function bill_reciept_form($id = NULL)
 	{
 		$this->load->model('sales_model');
     	$payment = $this->sales_model->getLoansByPaymentID($id);
-		
+
     	$inv = $this->sales_model->getInvoiceByID($payment->id);
     	$this->data['biller'] = $this->site->getCompanyByID($payment->biller_id);
     	$this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
@@ -8042,7 +8051,7 @@ class Sales extends MY_Controller
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['inv'] = $inv;
-		
+
 		$payments = $this->sales_model->getCurrentBalance($inv->id);
 		$current_balance = $inv->grand_total;
 		foreach($payments as $curr_pay) {
@@ -8051,7 +8060,7 @@ class Sales extends MY_Controller
 			}
 		}
 		$this->data['curr_balance'] = $current_balance;
-		
+
 		/* Apartment */
 		$this->data['rows'] = $this->sales_model->getAllInvoiceItems($inv->id);
 		$this->data['rowpay'] = $this->sales_model->getPayments($payment->reference_no);
@@ -8060,10 +8069,10 @@ class Sales extends MY_Controller
 		$this->data['id'] = $id;
         $this->data['payment'] = $payment;
         $this->data['page_title'] = $this->lang->line("payment_note");
-		
+
         $this->load->view($this->theme . 'sales/payment_note', $this->data);
     }
-	
+
 	function official_invoice($id = NULL)
     {
         $payment = $this->sales_model->getPaymentByID($id);
@@ -8071,7 +8080,7 @@ class Sales extends MY_Controller
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['inv'] = $inv;
-		
+
 		$payments = $this->sales_model->getCurrentBalance($inv->id);
 		$current_balance = $inv->grand_total;
 		foreach($payments as $curr_pay) {
@@ -8080,15 +8089,15 @@ class Sales extends MY_Controller
 			}
 		}
 		$this->data['curr_balance'] = $current_balance;
-		
+
 		/* Apartment */
 		$this->data['rows'] = $this->sales_model->getAllInvoiceItems($inv->id);
 		$this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
 		/* / */
-		
+
         $this->data['payment'] = $payment;
         $this->data['page_title'] = $this->lang->line("payment_note");
-		
+
         $this->load->view($this->theme . 'sales/official_invoice', $this->data);
     }
 
@@ -8104,25 +8113,25 @@ class Sales extends MY_Controller
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
         if ($this->form_validation->run() == true) {
-            
+
             if ($this->Owner || $this->Admin) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
                 $date = date('Y-m-d H:i:s');
             }
 			$sale_id = $this->input->post('sale_id');
-			$sale_ref = $this->sales_model->getSaleById($sale_id)->reference_no; 
+			$sale_ref = $this->sales_model->getSaleById($sale_id)->reference_no;
 			$paid_by = $this->input->post('paid_by');
 			$biller_id = $this->input->post('biller');
 			$reference_no = $this->input->post("sale_id");
 			$discount = $this->input->post("discount");
-			
+
 			if($paid_by == "deposit"){
 				$payment_reference = $sale_ref;
 			}else{
 				$payment_reference = (($paid_by == 'deposit')? $this->site->getReference('pay',$biller_id):($this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp',$biller_id)));
 			}
-			
+
 			$paid_amount = $this->input->post('amount-paid');
 			$customer_id = $this->input->post('customer');
 			$customer = '';
@@ -8131,7 +8140,7 @@ class Sales extends MY_Controller
 				$customer = $customer_details->company ? $customer_details->company : $customer_details->name;
 			}
 			$note = ($this->input->post('note')? $this->input->post('note'):($customer? $customer:$this->input->post('customer_name')));
-			
+
 			$other_amount = $this->input->post('other_amount');
 			$payment = array(
                 'date' => $date,
@@ -8155,7 +8164,7 @@ class Sales extends MY_Controller
 				'add_payment' => '1',
 				'bank_account' => $this->input->post('bank_account')
             );
-			
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8172,12 +8181,12 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 $payment['attachment'] = $photo;
             }
-			
+
 			/**========Add Expense=========**/
 			if($this->input->post('other_paid') > 0) {
 				$data = array(
 					'date' => $date,
-					'reference' => $payment_reference,			
+					'reference' => $payment_reference,
 					'amount' 	=> $this->input->post('other_paid'),
 					'created_by'	=> $this->session->userdata('user_id'),
 					'note' 		=> $note,
@@ -8192,7 +8201,7 @@ class Sales extends MY_Controller
 				$payment['expense_id'] = $expenses_id;
 			}
 			/**========End Expense=========**/
-			
+
         } elseif ($this->input->post('add_payment')) {
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
@@ -8217,7 +8226,7 @@ class Sales extends MY_Controller
 					$this->sales_model->add_deposit($deposits);
 				}
 			}
-				
+
             $this->session->set_flashdata('message', lang("payment_added"));
             redirect($_SERVER["HTTP_REFERER"]);
         } else {
@@ -8226,7 +8235,7 @@ class Sales extends MY_Controller
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
             $sale = $this->sales_model->getInvoiceByID($id);
             $this->data['inv'] = $sale;
-            
+
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['biller_id'] = $biller_id;
@@ -8246,19 +8255,19 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'sales/add_payment', $this->data);
         }
     }
-	
+
 	function combine_payment()
     {
         $this->erp->checkPermissions('payments', null, 'sales');
 
         $this->load->helper('security');
         $arr = array();
-        
+
         if ($this->input->get('data'))
         {
             $arr = explode(',', $this->input->get('data'));
         }
-        
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
@@ -8269,7 +8278,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8291,7 +8300,7 @@ class Sales extends MY_Controller
 			$amount_paid_arr 	= $this->input->post('amount_paid_line');
 			$i = 0;
 			$reference_no 		= $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
-			
+
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getSaleById($sale_id);
 				$payment = array(
@@ -8318,7 +8327,7 @@ class Sales extends MY_Controller
 				$this->sales_model->addPaymentMulti($payment);
 				$i++;
 			}
-			
+
             if ($this->site->getReference('sp', $biller_id) == $reference_no) {
 				$this->site->updateReference('sp', $biller_id);
 			}
@@ -8326,14 +8335,14 @@ class Sales extends MY_Controller
             redirect('account/list_ac_recevable');
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] 			= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] 			= $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] 	=  $this->site->getAllBankAccounts();
@@ -8349,7 +8358,7 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'sales/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_pur()
     {
         // $this->erp->checkPermissions('payments', true);
@@ -8359,7 +8368,7 @@ class Sales extends MY_Controller
         {
             $arr = explode(',', $this->input->get('data'));
         }
-		
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
@@ -8370,7 +8379,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8387,7 +8396,7 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 //$payment['attachment'] = $photo;
             }
-			
+
 			$sale_id_arr = $this->input->post('sale_id');
 			$supplier_balance = $this->input->post("supplier_balance");
 			$payable = $this->input->post("payable");
@@ -8400,7 +8409,7 @@ class Sales extends MY_Controller
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getPurchaseById($sale_id);
-				
+
 				if (isset($item_discount)) {
 					$dpos = strpos($discount, $percentage);
 					if ($dpos !== false) {
@@ -8411,7 +8420,7 @@ class Sales extends MY_Controller
 						$discount_id = $item_discount[$i];
 					}
 				}
-				
+
 				$payment = array(
 					'date' => $date,
 					'purchase_id' => $sale_id,
@@ -8434,41 +8443,41 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'add_payment' => '1'
 				);
-				
+
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addPurchasePaymentMulti($payment);
 				}
-				
+
 				$i++;
 			}
-			
+
 			$this->session->set_flashdata('message', lang("payment_added"));
-			
+
 			if($supplier_balance == "supplier_balance"){
 				redirect('purchases/supplier_balance');
 			}elseif($payable == "payable"){
 				redirect('account/list_ac_payable');
 			}else{
 				redirect('purchases');
-				
+
 			}
-            
+
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
             $combine_payment = $this->sales_model->getCombinePaymentPurById($arr);
             $this->data['combine_sales'] = $combine_payment;
-			
+
             $this->data['payment_ref'] = ''; //$this->site->getReference('sp');
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -8483,7 +8492,7 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'purchases/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_supplier()
     {
         $this->erp->checkPermissions('payments', true);
@@ -8493,7 +8502,7 @@ class Sales extends MY_Controller
         {
             $arr = explode(',', $this->input->get('data'));
         }
-		
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
@@ -8504,7 +8513,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8521,16 +8530,16 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 //$payment['attachment'] = $photo;
             }
-			
+
 			$sale_id_arr = $this->input->post('sale_id');
-			
+
 			$biller_id = $this->input->post('biller');
 			$amount_paid_arr = $this->input->post('amount_paid_line');
 			$i = 0;
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getPurchaseById($sale_id);
-				
+
 				$payment = array(
 					'date' => $date,
 					'purchase_id' => $sale_id,
@@ -8551,33 +8560,33 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'add_payment' => '1'
 				);
-				
+
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addPurchasePaymentMulti($payment);
 				}
-				
+
 				$i++;
 			}
-			
+
 			$this->session->set_flashdata('message', lang("payment_added"));
             redirect('purchases');
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
             $this->data['userBankAccounts'] =  $this->site->getAllBankAccountsByUserID();
             $combine_payment = $this->sales_model->getCombinePaymentPurById($arr);
             $this->data['combine_sales'] = $combine_payment;
-			
+
             $this->data['payment_ref'] = ''; //$this->site->getReference('sp');
 			if ($Owner || $Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -8593,7 +8602,7 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'purchases/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_supplier_dup()
     {
         $this->erp->checkPermissions('payments', true);
@@ -8603,7 +8612,7 @@ class Sales extends MY_Controller
         {
             $arr = explode(',', $this->input->get('data'));
         }
-		
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
@@ -8614,7 +8623,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8631,16 +8640,16 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 //$payment['attachment'] = $photo;
             }
-			
+
 			$sale_id_arr = $this->input->post('sale_id');
-			
+
 			$biller_id = $this->input->post('biller');
 			$amount_paid_arr = $this->input->post('amount_paid_line');
 			$i = 0;
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getPurchaseById($sale_id);
-				
+
 				$payment = array(
 					'date' => $date,
 					'purchase_id' => $sale_id,
@@ -8661,32 +8670,32 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'add_payment' => '1'
 				);
-				
+
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addPurchasePaymentMulti($payment);
 				}
-				
+
 				$i++;
 			}
-			
+
 			$this->session->set_flashdata('message', lang("payment_added"));
             redirect('purchases');
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
             $combine_payment = $this->sales_model->getCombinePaymentPurById($arr);
             $this->data['combine_sales'] = $combine_payment;
-			
+
             $this->data['payment_ref'] = ''; //$this->site->getReference('sp');
 			if ($Owner || $Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -8702,7 +8711,7 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'purchases/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_payable()
     {
         $this->erp->checkPermissions('payments', true);
@@ -8712,7 +8721,7 @@ class Sales extends MY_Controller
         {
             $arr = explode(',', $this->input->get('data'));
         }
-		
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
@@ -8723,7 +8732,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8740,16 +8749,16 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 //$payment['attachment'] = $photo;
             }
-			
+
 			$sale_id_arr = $this->input->post('sale_id');
-			
+
 			$biller_id = $this->input->post('biller');
 			$amount_paid_arr = $this->input->post('amount_paid_line');
 			$i = 0;
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getPurchaseById($sale_id);
-				
+
 				$payment = array(
 					'date' => $date,
 					'purchase_id' => $sale_id,
@@ -8770,32 +8779,32 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'add_payment' => '1'
 				);
-				
+
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addPurchasePaymentMulti($payment);
 				}
-				
+
 				$i++;
 			}
-			
+
 			$this->session->set_flashdata('message', lang("payment_added"));
             redirect('purchases');
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
             $combine_payment = $this->sales_model->getCombinePaymentPurById($arr);
             $this->data['combine_sales'] = $combine_payment;
-			
+
             $this->data['payment_ref'] = ''; //$this->site->getReference('sp');
 			if ($Owner || $Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -8807,11 +8816,11 @@ class Sales extends MY_Controller
 			$this->data['setting'] = $setting;
             $this->data['modal_js'] = $this->site->modal_js();
 			$this->data['payable'] = "payable";
-				
+
             $this->load->view($this->theme . 'purchases/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_sale($idd)
     {
         $this->erp->checkPermissions('payments', true);
@@ -8821,7 +8830,7 @@ class Sales extends MY_Controller
         {
             $arr = explode(',', $this->input->get('data'));
         }
-		
+
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
@@ -8832,7 +8841,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -8849,7 +8858,7 @@ class Sales extends MY_Controller
                 $photo = $this->upload->file_name;
                 //$payment['attachment'] = $photo;
             }
-			
+
 			$sale_id_arr 		= $this->input->post('sale_id');
 			$biller_id 			= $this->input->post('biller');
 			$amount_paid_arr 	= $this->input->post('amount_paid_line');
@@ -8858,7 +8867,7 @@ class Sales extends MY_Controller
 			$item_discount 		= $this->input->post('discount_paid');
 			$discount			= $this->input->post('discount');
 			$percentage 		= '%';
-			
+
 			$i = 0;
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
@@ -8873,7 +8882,7 @@ class Sales extends MY_Controller
 						$discount_id = $item_discount[$i];
 					}
 				}
-				
+
 				$payment = array(
 					'date' 			=> $date,
 					'sale_id' 		=> $sale_id,
@@ -8895,19 +8904,19 @@ class Sales extends MY_Controller
 					'attachment' 	=>$photo,
 					'bank_account' 	=> $this->input->post('bank_account'),
 					'add_payment' 	=> '1'
-				);	
+				);
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addSalePaymentMulti($payment);
 				}
-				
+
 				$i++;
-				
+
 			}
 			/**========Add Expense=========**/
 			if($this->input->post('other_paid') > 0) {
 				$data = array(
 					'date' => $date,
-					'reference' => $payment_reference,			
+					'reference' => $payment_reference,
 					'amount' 	=> $this->input->post('other_paid'),
 					'created_by'	=> $this->session->userdata('user_id'),
 					'note' 		=> $note,
@@ -8934,20 +8943,20 @@ class Sales extends MY_Controller
 			}
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
             $combine_payment = $this->sales_model->getCombinePaymentBySaleId($arr);
             $this->data['combine_sales'] = $combine_payment;
-			
+
             $this->data['payment_ref'] = ''; //$this->site->getReference('sp');
 			if ($Owner || $Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
@@ -8962,23 +8971,23 @@ class Sales extends MY_Controller
             $this->load->view($this->theme . 'sales/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_customer()
     {
-        
+
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
         $arr = array();
         if ($this->input->get('data'))
         {
-            $arr = explode(',', $this->input->get('data'));           
+            $arr = explode(',', $this->input->get('data'));
         }
         $idd = null;
 		if ($this->input->get('idd'))
         {
             $idd = $this->input->get('idd');
-        }        
-       
+        }
+
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
@@ -8988,7 +8997,7 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-            
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
@@ -9004,7 +9013,7 @@ class Sales extends MY_Controller
                 }
                 $photo = $this->upload->file_name;
             }
-			
+
 			$sale_id_arr = $this->input->post('sale_id');
 			$biller_id = $this->input->post('biller');
 			$amount_paid_arr = $this->input->post('amount_paid_line');
@@ -9012,7 +9021,7 @@ class Sales extends MY_Controller
 			$reference_no = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
 			foreach($sale_id_arr as $sale_id){
 				$get_sale = $this->sales_model->getSaleById($sale_id);
-				
+
 				$payment = array(
 					'date' => $date,
 					'sale_id' => $sale_id,
@@ -9033,26 +9042,26 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'add_payment' => '1'
 				);
-				
+
 				if($payment['amount'] > 0 ){
 					$this->sales_model->addSalePaymentMulti($payment);
 				}
-				
+
 				$i++;
 			}
-			
+
 			$this->session->set_flashdata('message', lang("payment_added"));
             redirect('sales/customer_balance');
 
         } else{
-			
+
 			$setting = $this->site->get_setting();
 			if($this->session->userdata('biller_id')) {
 				$biller_id = $this->session->userdata('biller_id');
 			}else {
 				$biller_id = $setting->default_biller;
 			}
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['bankAccounts'] =  $this->site->getAllBankAccounts();
@@ -9066,18 +9075,18 @@ class Sales extends MY_Controller
 			}else{
 				$biller_id = $this->session->userdata('biller_id');
 				$this->data['reference'] = $this->site->getReference('pp',$biller_id);
-				
+
 			}
 
 			$this->data['idd'] = $idd;
 			$this->data['setting'] = $setting;
             $this->data['modal_js'] = $this->site->modal_js();
-			$this->data['customer_balance'] = "customer_balance"; 
+			$this->data['customer_balance'] = "customer_balance";
 
             $this->load->view($this->theme . 'sales/combine_payment', $this->data);
 		}
     }
-	
+
 	function combine_payment_old()
     {
         $this->erp->checkPermissions('payments', true);
@@ -9087,7 +9096,7 @@ class Sales extends MY_Controller
         }
         //$this->form_validation->set_rules('reference_no', lang("reference_no"), 'required');
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');
-		
+
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
@@ -9116,7 +9125,7 @@ class Sales extends MY_Controller
         }
         $this->load->view($this->theme . 'sales/combine_payment', $this->data);
     }
-    
+
 	function edit_payment($id = NULL)
 	{
 		$this->erp->checkPermissions('payments', true);
@@ -9145,15 +9154,15 @@ class Sales extends MY_Controller
 			$deposit_id = $this->input->post('deposit_id');
 			$discount = $this->input->post('discount');
 			$other_amount = $this->input->post('other_amount');
-			
+
 			if($customer_id) {
 				$customer_details = $this->site->getCompanyByID($customer_id);
 				$customer = $customer_details->company ? $customer_details->company : $customer_details->name;
 			}
 			$note = ($this->input->post('note')? $this->input->post('note'):($customer? $customer:$this->input->post('customer_name')));
-			
+
 			if($getpayment->paid_by != 'deposit' && $paid_by == 'deposit') {
-				
+
 				$update_payment = array(
 					'date' => $date,
 					'sale_id' => $sale_id,
@@ -9179,9 +9188,9 @@ class Sales extends MY_Controller
 					'bank_account' => $this->input->post('bank_account'),
 					'to_deposit' => '1'
 				);
-				
+
 			}else {
-				
+
 				$update_payment = array(
 					'date' => $date,
 					'sale_id' => $sale_id,
@@ -9256,7 +9265,7 @@ class Sales extends MY_Controller
 
 		if ($this->form_validation->run() == true && $payment_id = $this->sales_model->updatePayment($id, $update_payment, $add_payment,$new_payment)) {
 			if($payment_id) {
-			
+
 				if($paid_by == "deposit"){
 					$deposits = array(
 						'date' => $date,
@@ -9272,12 +9281,12 @@ class Sales extends MY_Controller
 						'status' => 'paid'
 					);
 				}
-				
+
 				/**========Update Expense=========**/
 				if($this->input->post('other_paid') > 0) {
 					$data1 = array(
 						'date' => $date,
-						'reference' => $payment_reference,			
+						'reference' => $payment_reference,
 						'amount' 	=> $this->input->post('other_paid'),
 						'updated_by'	=> $this->session->userdata('user_id'),
 						'note' 		=> $note,
@@ -9285,12 +9294,12 @@ class Sales extends MY_Controller
 						'biller_id'	=> $biller_id,
 						'bank_code' => ($this->input->post('bank_account'))?$this->input->post('bank_account'):$this->settings_model->getAccountSettings()->default_cash,
 						'sale_id' => $sale_id,
-						'customer_id' => $customer_id,						
+						'customer_id' => $customer_id,
 					);
 					$this->db->update('expenses', $data1, array('id' => $getpayment->expense_id));
 				}
 				/**========End Expense=========**/
-				
+
 				if($deposit_id && $getpayment->paid_by == 'deposit') {
 					if($deposits) {
 						$this->sales_model->updateDeposit($deposit_id, $deposits);
@@ -9299,7 +9308,7 @@ class Sales extends MY_Controller
 					}
 				}else {
 					$this->sales_model->add_deposit($deposits);
-				}				
+				}
 			}
 			$this->session->set_flashdata('message', lang("payment_updated"));
 			redirect($_SERVER["HTTP_REFERER"]);
@@ -9344,10 +9353,10 @@ class Sales extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function add_payment_loan($data = NULL, $id = NULL, $paid_amount = NULL, $principle = NULL, $sale_id = NULL)
     {
-		
+
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
         $this->form_validation->set_rules('paid', lang("paid"), 'required');
@@ -9359,8 +9368,8 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-			
-		
+
+
 			$loan_id 		 = $this->input->post('period');
 			$biller_id 		 = $this->input->post('biller_id');
 			$sale_id_arr	 = $this->input->post('sale_id');
@@ -9373,7 +9382,7 @@ class Sales extends MY_Controller
 			$principle  	 = $this->input->post('principle_amt');
 			$item_discount 	 = $this->input->post('discount_paid');
 			$discount		 = $this->input->post('discount');
-			
+
 			$curr_paid 		 = 0;
 			$help 			 = false;
 			$reference_no    = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
@@ -9385,11 +9394,11 @@ class Sales extends MY_Controller
 				$interest       = $amount;
 				$principle_paid = 0;
 			}
-			
+
 			$i=0;
-			
+
 			foreach($loan_id as $loan_ids){
-			
+
 				if (isset($item_discount)) {
 					$dpos = strpos($discount, $percentage);
 					if ($dpos !== false) {
@@ -9400,7 +9409,7 @@ class Sales extends MY_Controller
 						$discount_id = $item_discount[$i];
 					}
 				}
-				
+
 				$loans = array(
 					'paid_date' => $date,
 					'id' => $loan_ids,
@@ -9411,14 +9420,14 @@ class Sales extends MY_Controller
 					'note' => $this->input->post('note'),
 					'created_by' => $this->session->userdata('user_id')
 				);
-				
-				if($this->sales_model->addPaymentLoan($loans,$loan_ids,$sale_id_arr)) 
+
+				if($this->sales_model->addPaymentLoan($loans,$loan_ids,$sale_id_arr))
 				{
 					$help = true;
 				}
-				
+
 				if($help) {
-					
+
 					$payment = array(
 						'date' 			=> $date,
 						'sale_id' 		=> $sale_id_arr,
@@ -9441,178 +9450,19 @@ class Sales extends MY_Controller
 						'attachment' 	=> $photo,
 						'bank_account' 	=> $this->input->post('bank_account'),
 						'add_payment' 	=> '1'
-					);	
-					if($payment['amount'] > 0 ){
-						$this->sales_model->addSalePaymentMulti($payment);
-					}
-				}
-				$i++;
-			}
-			
-        } elseif ($this->input->post('add_payment')) {
-            $this->session->set_flashdata('error', validation_errors());
-            redirect($_SERVER["HTTP_REFERER"]);
-        }
-		
-        if ($this->form_validation->run() == true) {
-            $this->session->set_flashdata('message', lang("payment_loan_added"));
-            redirect($_SERVER["HTTP_REFERER"]);
-        } else {
-			$val = array();
-			if(isset($_GET['ids']) || isset($_GET['values'])){
-				$ids = $_GET['ids'];
-				$values = $_GET['values'];
-				foreach (array_combine($ids, $values) as $id => $value){
-					$val =  array(
-						'id' => $id,
-						'value' => $value
 					);
-				}
-			}
-			
-			$principles      = explode("_",$principle);
-			$paid_amt        = explode("_",$paid_amount); 
-			$ids			 = explode("_",$id);
-			$arr_principle1  = 0;
-			$arr_paid_amount = 0;
-			
-			for($i=0; $i<sizeof($principles)-1; $i++){
-				$arr_principle1  +=$principles[$i];
-				$arr_paid_amount +=$paid_amt[$i];
-				$arrid[]          =$ids[$i];
-			}
-			
-			$this->data['sale_id']		 = $sale_id;
-            $this->data['error']         = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-			$this->data['values']        = $val;	
-            $this->data['loan_data']     = $this->sales_model->getSingleLoanById($id);
-			
-		
-			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
-				$biller_id = $this->site->get_setting()->default_biller;
-				$this->data['biller_id']   = $biller_id;
-				$this->data['payment_ref'] = $this->site->getReference('sp',$biller_id);
-			} else {
-				$biller_id = $this->session->userdata('biller_id');
-				$this->data['biller_id']   = $biller_id;
-				$this->data['payment_ref'] = $this->site->getReference('sp',$biller_id);
-			}
-			
-			$this->data['combine_loan']	   = $this->sales_model->getMultiPayment($arrid);
-            $this->data['modal_js'] 	   = $this->site->modal_js();
-			$this->data['total_payment']   = ($data-($arr_paid_amount-$arr_principle1));
-			$this->data['bankAccounts']    = $this->site->getAllBankAccounts();
-			$this->data['id'] 			   = $id;
-			$this->data['interest']		   = ($arr_paid_amount-$arr_principle1);
-			$this->data['paid_amount'] 	   = $paid_amount;
-			$this->data['principle'] 	   = $principle;
-            $this->load->view($this->theme . 'sales/add_payment_loan', $this->data);
-        }
-		
-    }
-	
-	
-	function add_m_payment_loan($id = NULL,$sale_id = NULL)
-    {
-		
-        $this->erp->checkPermissions('payments', true);
-        $this->load->helper('security');
-        $this->form_validation->set_rules('paid', lang("paid"), 'required');
-        $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
-		$this->form_validation->set_rules('date', lang("date"), 'required');
-        if ($this->form_validation->run() == true) {
-            if ($this->Owner || $this->Admin) {
-                $date = $this->erp->fld(trim($this->input->post('date')));
-            } else {
-                $date = date('Y-m-d H:i:s');
-            }
-			
-			$loan_id 		 = $this->input->post('period');
-			$biller_id 		 = $this->input->post('biller_id');
-			$sale_id_arr	 = $this->input->post('sale_id');
-			$amount_paid_arr = $this->input->post('amount_paid_line');
-			$amount 		 = $this->input->post('paid');
-			$interest		 = $this->input->post('interest');
-			$extra_rate 	 = $this->input->post('extra_amt');
-			$bank_account    = $this->input->post('bank_account');
-			$balance		 = $this->input->post('balance');
-			$principle  	 = $this->input->post('principle_amt');
-			$item_discount 	 = $this->input->post('discount_paid');
-			$discount		 = $this->input->post('discount');
-			
-			$curr_paid 		 = 0;
-			$help 			 = false;
-			$reference_no    = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
-			$loan_data       = $this->sales_model->getPaidAmount($sale_id,$arr_id);
-			
-			$i=0;
-			
-			foreach($loan_id as $loan_ids){
-			
-				if (isset($item_discount)) {
-					$dpos = strpos($discount, $percentage);
-					if ($dpos !== false) {
-						$pr_discount = $this->erp->formatDecimal($item_discount[$i]);
-						$discount_id = $discount;
-					} else {
-						$pr_discount = $this->erp->formatDecimal($item_discount[$i]);
-						$discount_id = $item_discount[$i];
-					}
-				}
-				
-				$loans = array(
-					'paid_date' => $date,
-					'id' => $loan_ids,
-					'reference_no' => $reference_no,
-					'paid_amount' => ($amount_paid_arr[$i]),
-					'discount' => ($pr_discount),
-					'paid_by' => $this->input->post('paid_by'),
-					'note' => $this->input->post('note'),
-					'created_by' => $this->session->userdata('user_id')
-				);
-				
-				if($this->sales_model->addPaymentLoan($loans,$loan_ids,$sale_id_arr)) 
-				{
-					$help = true;
-				}
-				
-				if($help) {
-					
-					$payment = array(
-						'date' 			=> $date,
-						'sale_id' 		=> $sale_id_arr,
-						'loan_id'		=> $loan_ids,
-						'reference_no' 	=> $reference_no,
-						'amount' 		=> $amount_paid_arr[$i],
-						'discount_id'	=> $discount_id,
-						'discount' 		=> $pr_discount,
-						'paid_by' 		=> $this->input->post('paid_by'),
-						'cheque_no' 	=> $this->input->post('cheque_no'),
-						'cc_no' 		=> $this->input->post('paid_by') == 'gift_card' ? $this->input->post('gift_card_no') : $this->input->post('pcc_no'),
-						'cc_holder' 	=> $this->input->post('pcc_holder'),
-						'cc_month' 		=> $this->input->post('pcc_month'),
-						'cc_year' 		=> $this->input->post('pcc_year'),
-						'cc_type' 		=> $this->input->post('pcc_type'),
-						'note' 			=> $this->input->post('note'),
-						'created_by' 	=> $this->session->userdata('user_id'),
-						'type' 			=> 'received',
-						'biller_id'		=> $biller_id,
-						'attachment' 	=> $photo,
-						'bank_account' 	=> $this->input->post('bank_account'),
-						'add_payment' 	=> '1'
-					);	
 					if($payment['amount'] > 0 ){
 						$this->sales_model->addSalePaymentMulti($payment);
 					}
 				}
 				$i++;
 			}
-			
+
         } elseif ($this->input->post('add_payment')) {
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-		
+
         if ($this->form_validation->run() == true) {
             $this->session->set_flashdata('message', lang("payment_loan_added"));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -9629,13 +9479,24 @@ class Sales extends MY_Controller
 				}
 			}
 
-			
+			$principles      = explode("_",$principle);
+			$paid_amt        = explode("_",$paid_amount);
+			$ids			 = explode("_",$id);
+			$arr_principle1  = 0;
+			$arr_paid_amount = 0;
+
+			for($i=0; $i<sizeof($principles)-1; $i++){
+				$arr_principle1  +=$principles[$i];
+				$arr_paid_amount +=$paid_amt[$i];
+				$arrid[]          =$ids[$i];
+			}
+
 			$this->data['sale_id']		 = $sale_id;
             $this->data['error']         = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-			$this->data['values']        = $val;	
+			$this->data['values']        = $val;
             $this->data['loan_data']     = $this->sales_model->getSingleLoanById($id);
-			
-		
+
+
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['biller_id']   = $biller_id;
@@ -9645,7 +9506,155 @@ class Sales extends MY_Controller
 				$this->data['biller_id']   = $biller_id;
 				$this->data['payment_ref'] = $this->site->getReference('sp',$biller_id);
 			}
-			
+
+			$this->data['combine_loan']	   = $this->sales_model->getMultiPayment($arrid);
+            $this->data['modal_js'] 	   = $this->site->modal_js();
+			$this->data['total_payment']   = ($data-($arr_paid_amount-$arr_principle1));
+			$this->data['bankAccounts']    = $this->site->getAllBankAccounts();
+			$this->data['id'] 			   = $id;
+			$this->data['interest']		   = ($arr_paid_amount-$arr_principle1);
+			$this->data['paid_amount'] 	   = $paid_amount;
+			$this->data['principle'] 	   = $principle;
+            $this->load->view($this->theme . 'sales/add_payment_loan', $this->data);
+        }
+
+    }
+
+
+	function add_m_payment_loan($id = NULL,$sale_id = NULL)
+    {
+
+        $this->erp->checkPermissions('payments', true);
+        $this->load->helper('security');
+        $this->form_validation->set_rules('paid', lang("paid"), 'required');
+        $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
+		$this->form_validation->set_rules('date', lang("date"), 'required');
+        if ($this->form_validation->run() == true) {
+            if ($this->Owner || $this->Admin) {
+                $date = $this->erp->fld(trim($this->input->post('date')));
+            } else {
+                $date = date('Y-m-d H:i:s');
+            }
+
+			$loan_id 		 = $this->input->post('period');
+			$biller_id 		 = $this->input->post('biller_id');
+			$sale_id_arr	 = $this->input->post('sale_id');
+			$amount_paid_arr = $this->input->post('amount_paid_line');
+			$amount 		 = $this->input->post('paid');
+			$interest		 = $this->input->post('interest');
+			$extra_rate 	 = $this->input->post('extra_amt');
+			$bank_account    = $this->input->post('bank_account');
+			$balance		 = $this->input->post('balance');
+			$principle  	 = $this->input->post('principle_amt');
+			$item_discount 	 = $this->input->post('discount_paid');
+			$discount		 = $this->input->post('discount');
+
+			$curr_paid 		 = 0;
+			$help 			 = false;
+			$reference_no    = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp', $biller_id);
+			$loan_data       = $this->sales_model->getPaidAmount($sale_id,$arr_id);
+
+			$i=0;
+
+			foreach($loan_id as $loan_ids){
+
+				if (isset($item_discount)) {
+					$dpos = strpos($discount, $percentage);
+					if ($dpos !== false) {
+						$pr_discount = $this->erp->formatDecimal($item_discount[$i]);
+						$discount_id = $discount;
+					} else {
+						$pr_discount = $this->erp->formatDecimal($item_discount[$i]);
+						$discount_id = $item_discount[$i];
+					}
+				}
+
+				$loans = array(
+					'paid_date' => $date,
+					'id' => $loan_ids,
+					'reference_no' => $reference_no,
+					'paid_amount' => ($amount_paid_arr[$i]),
+					'discount' => ($pr_discount),
+					'paid_by' => $this->input->post('paid_by'),
+					'note' => $this->input->post('note'),
+					'created_by' => $this->session->userdata('user_id')
+				);
+
+				if($this->sales_model->addPaymentLoan($loans,$loan_ids,$sale_id_arr))
+				{
+					$help = true;
+				}
+
+				if($help) {
+
+					$payment = array(
+						'date' 			=> $date,
+						'sale_id' 		=> $sale_id_arr,
+						'loan_id'		=> $loan_ids,
+						'reference_no' 	=> $reference_no,
+						'amount' 		=> $amount_paid_arr[$i],
+						'discount_id'	=> $discount_id,
+						'discount' 		=> $pr_discount,
+						'paid_by' 		=> $this->input->post('paid_by'),
+						'cheque_no' 	=> $this->input->post('cheque_no'),
+						'cc_no' 		=> $this->input->post('paid_by') == 'gift_card' ? $this->input->post('gift_card_no') : $this->input->post('pcc_no'),
+						'cc_holder' 	=> $this->input->post('pcc_holder'),
+						'cc_month' 		=> $this->input->post('pcc_month'),
+						'cc_year' 		=> $this->input->post('pcc_year'),
+						'cc_type' 		=> $this->input->post('pcc_type'),
+						'note' 			=> $this->input->post('note'),
+						'created_by' 	=> $this->session->userdata('user_id'),
+						'type' 			=> 'received',
+						'biller_id'		=> $biller_id,
+						'attachment' 	=> $photo,
+						'bank_account' 	=> $this->input->post('bank_account'),
+						'add_payment' 	=> '1'
+					);
+					if($payment['amount'] > 0 ){
+						$this->sales_model->addSalePaymentMulti($payment);
+					}
+				}
+				$i++;
+			}
+
+        } elseif ($this->input->post('add_payment')) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect($_SERVER["HTTP_REFERER"]);
+        }
+
+        if ($this->form_validation->run() == true) {
+            $this->session->set_flashdata('message', lang("payment_loan_added"));
+            redirect($_SERVER["HTTP_REFERER"]);
+        } else {
+			$val = array();
+			if(isset($_GET['ids']) || isset($_GET['values'])){
+				$ids = $_GET['ids'];
+				$values = $_GET['values'];
+				foreach (array_combine($ids, $values) as $id => $value){
+					$val =  array(
+						'id' => $id,
+						'value' => $value
+					);
+				}
+			}
+
+
+			$this->data['sale_id']		 = $sale_id;
+            $this->data['error']         = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+			$this->data['values']        = $val;
+            $this->data['loan_data']     = $this->sales_model->getSingleLoanById($id);
+
+
+			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
+				$biller_id = $this->site->get_setting()->default_biller;
+				$this->data['biller_id']   = $biller_id;
+				$this->data['payment_ref'] = $this->site->getReference('sp',$biller_id);
+			} else {
+				$biller_id = $this->session->userdata('biller_id');
+				$this->data['biller_id']   = $biller_id;
+				$this->data['payment_ref'] = $this->site->getReference('sp',$biller_id);
+			}
+
 			$loan						   = $this->sales_model->getMMultiPayment($id,$sale_id);
 			$this->data['combine_loan']	   = $this->sales_model->getMMMultiPayment($id);
             $this->data['modal_js'] 	   = $this->site->modal_js();
@@ -9657,9 +9666,9 @@ class Sales extends MY_Controller
 			$this->data['principle'] 	   = $loan->principle;
             $this->load->view($this->theme . 'sales/add_m_payment_loan', $this->data);
         }
-		
+
     }
-	
+
 	function add_installment($id = NULL)
     {
         $this->erp->checkPermissions('payments', true);
@@ -9712,7 +9721,7 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-		
+
         if ($this->form_validation->run() == true && $this->sales_model->addPaymentLoan($loans) && $this->sales_model->addLoanPayment($payments)) {
             $this->session->set_flashdata('message', lang("payment_loan_added"));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -9728,7 +9737,7 @@ class Sales extends MY_Controller
 			$this->data['principle']      = $loan->principle;
             $this->load->view($this->theme . 'sales/add_installment', $this->data);
         }
-		
+
     }
 
     function suggestions()
@@ -9742,7 +9751,7 @@ class Sales extends MY_Controller
         }
 
         $spos = strpos($term, '%');
-		
+
         if ($spos !== false) {
             $st = explode("%", $term);
             $sr = trim($st[0]);
@@ -9764,7 +9773,7 @@ class Sales extends MY_Controller
 		}
         if ($rows) {
             foreach ($rows as $row) {
-				
+
                 $option = FALSE;
                 $row->quantity = 0;
                 $row->item_tax_method = $row->tax_method;
@@ -9772,7 +9781,7 @@ class Sales extends MY_Controller
                 $row->discount = '0';
                 $row->serial = '';
                 $options = $this->sales_model->getProductOptions($row->id, $warehouse_id);
-				$orderqty = $this->sales_model->getQtyOrder($row->product_id); 
+				$orderqty = $this->sales_model->getQtyOrder($row->product_id);
 				if($orderqty){
 					$orderqty = $orderqty->quantity;
 				}else{
@@ -9786,7 +9795,7 @@ class Sales extends MY_Controller
 					$expdates = NULL;
 				}
 				$row->price_id = 0;
-				
+
                 if ($options) {
                     $opt = $options[count($options)-1];
                     if (!$option) {
@@ -9796,18 +9805,18 @@ class Sales extends MY_Controller
                     $opt = json_decode('{}');
                     $opt->price = 0;
                 }
-				
+
                 $row->option = $option;
-				
+
                 $pis = $this->sales_model->getPurchasedItems($row->id, $warehouse_id, $row->option);
-				
+
                 if($pis){
                     foreach ($pis as $pi) {
                         $row->quantity += $pi->quantity_balance;
 						$row->qoh +=$pi->quantity_balance;
                     }
                 }
-				
+
                 if ($options) {
                     $option_quantity = 0;
                     foreach ($options as $option) {
@@ -9817,10 +9826,10 @@ class Sales extends MY_Controller
                                 $option_quantity += $pi->quantity_balance;
                             }
                         }
-						
+
                         if($option->quantity > $option_quantity) {
                             $option->quantity = $option_quantity;
-							
+
                         }
                     }
                 }
@@ -9830,16 +9839,16 @@ class Sales extends MY_Controller
 					$row->expdate = NULL;
 				}
 				$setting = $this->sales_model->getSettings();
-				
+
 				if($row->subcategory_id)
 				{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,1);
 				}else{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,0);
 				}
-				
+
 				if ($opt->price != 0) {
-					
+
 					if($customer_group->makeup_cost == 1){
 						if($setting->attributes==1)
 						{
@@ -9851,9 +9860,9 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-					
+
                 } else {
-					
+
 					if($customer_group->makeup_cost == 1){
 						if($setting->attributes==1)
 						{
@@ -9875,13 +9884,13 @@ class Sales extends MY_Controller
 				$row->digital_id	  = 0;
 				$row->digital_code	  = '';
 				$row->digital_name	  = '';
-				
+
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                     if ($row->type == 'combo') {
                         $combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
                     }
-                    
+
                     $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options,'expdates'=>$expdates,'cost' => $row->cost, 'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'orderqty'=>$orderqty, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent,'currency'=>$currency,'us_currency'=>$us_currency,'makeup_cost_percent'=>$percent->percent);
                 } else {
                     $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")" , 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,'expdates'=>$expdates,'cost' => $row->cost,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'orderqty'=>$orderqty, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent,'currency'=>$currency,'us_currency'=>$us_currency,'makeup_cost_percent'=>$percent->percent);
@@ -9892,10 +9901,10 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-    
+
     function suggestionsSale()
     {
-        
+
 		$term = $this->input->get('term', TRUE);
         $warehouse_id = $this->input->get('warehouse_id', TRUE);
         $customer_id = $this->input->get('customer_id', TRUE);
@@ -9939,11 +9948,11 @@ class Sales extends MY_Controller
 				}else{
 					$expdates = NULL;
 				}
-				
+
 				$w_piece = $this->sales_model->getProductVariantByOptionID($row->id);
 				$row->price_id = 0;
 				$psoqty = 0;
-			
+
 				if($pending_so_qty) {
 					$psoqty = $pending_so_qty->psoqty;
 				}
@@ -9960,13 +9969,13 @@ class Sales extends MY_Controller
 				$row->psoqty = $psoqty;
 				$row->option = $option;
 				$row->qty_unit = $optqty;
-				
+
 				if($expiry_status == 1 && $expdates != NULL){
 					$row->expdate = $expdates[0]->id;
 				}else{
 					$row->expdate = NULL;
 				}
-				
+
 				$pis = $this->sales_model->getPurchasedItems($row->id, $warehouse_id, $row->option);
 				if($pis){
 					foreach ($pis as $pi) {
@@ -9983,32 +9992,32 @@ class Sales extends MY_Controller
 							foreach ($pis as $pi) {
 								//$option_quantity += $pi->quantity_balance;
 							}
-							
+
 						}
 						if($option->quantity > $option_quantity) {
-						 //$option->quantity = $option_quantity; 
+						 //$option->quantity = $option_quantity;
 						}
 						//$option->quantity = $test->quantity;
-						
+
 						if($customer_group->makeup_cost == 1){
 							$option->price = $option->price  + (($option->price * $customer_group->percent) / 100);
 						}
-						
+
 					}
-					
+
 				}
-				
-				
+
+
 				$setting = $this->sales_model->getSettings();
-				
+
 				if($row->subcategory_id)
 				{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,1);
-					
+
 				}else{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,0);
 				}
-				
+
 				if ($opt->price != 0) {
 					if($customer_group->makeup_cost == 1 && $percent!=""){
 						if($setting->attributes==1)
@@ -10021,7 +10030,7 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-				} else { 
+				} else {
 					if($customer_group->makeup_cost == 1 && $percent!=""){
 						if($setting->attributes==1)
 						{
@@ -10034,12 +10043,12 @@ class Sales extends MY_Controller
 						}
 					}
 				}
-				
+
 				if($group_prices)
 				{
 				   $curr_by_item = $this->site->getCurrencyByCode($group_prices[0]->currency_code);
 				}
-				
+
 				$row->old_qty_rec	  = 0;
 				$row->piece			  = 0;
 				$row->digital_code	  = "";
@@ -10060,13 +10069,13 @@ class Sales extends MY_Controller
 						$combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
 					}
 					$pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options,'expdates'=>$expdates,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent, 'makeup_cost_percent'=>$percent->percent);
-					
+
 				} else {
 					$pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,$options,'expdates'=>$expdates,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent, 'makeup_cost_percent'=>$percent->percent);
 				}
-		
+
 			}
-           
+
 			echo json_encode($pr);
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
@@ -10109,7 +10118,7 @@ class Sales extends MY_Controller
                 $row->discount = '0';
                 $row->serial = '';
                 $options = $this->sales_model->getProductOptions($row->id, $warehouse_id);
-				
+
 				$group_prices = $this->sales_model->getProductPriceGroup($row->id, $customer->price_group_id);
 				$all_group_prices = $this->sales_model->getProductPriceGroup($row->id);
 				if($expiry_status == 1) {
@@ -10118,7 +10127,7 @@ class Sales extends MY_Controller
 					$expdates = NULL;
 				}
 				$row->price_id = 0;
-				
+
                 if ($options) {
                     $opt = $options[count($options)-1];
                     if (!$option) {
@@ -10160,7 +10169,7 @@ class Sales extends MY_Controller
 				}else{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,0);
 				}
-				
+
                 if ($opt->price != 0) {
 					if($customer_group->makeup_cost == 1){
 						//$row->price = $row->cost + (($row->cost * $customer_group->percent) / 100);
@@ -10199,12 +10208,12 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-	
+
 	function getDigitalPro()
 	{
 		$id = $_REQUEST['id'];
 		$rows = $this->sales_model->getDigitalProducts($id);
-		
+
 		if ($rows) {
             foreach ($rows as $row) {
 				$item 					= $this->site->getProductByID($id);
@@ -10225,10 +10234,10 @@ class Sales extends MY_Controller
 				}else{
 					$expdates = NULL;
 				}
-				
+
 				$w_piece = $this->sales_model->getProductVariantByOptionID($row->id);
 				$row->price_id = 0;
-				
+
 				if ($options) {
 					$opt = $options[count($options)-1];
 					if (!$option) {
@@ -10241,13 +10250,13 @@ class Sales extends MY_Controller
 				}
 				$row->option = $option;
 				$row->qty_unit = $optqty;
-				
+
 				if($expiry_status == 1 && $expdates != NULL){
 					$row->expdate = $expdates[0]->id;
 				}else{
 					$row->expdate = NULL;
 				}
-				
+
 				$pis = $this->sales_model->getPurchasedItems($row->id, $warehouse_id, $row->option);
 				if($pis){
 					foreach ($pis as $pi) {
@@ -10264,32 +10273,32 @@ class Sales extends MY_Controller
 							foreach ($pis as $pi) {
 								//$option_quantity += $pi->quantity_balance;
 							}
-							
+
 						}
 						if($option->quantity > $option_quantity) {
-						 //$option->quantity = $option_quantity; 
+						 //$option->quantity = $option_quantity;
 						}
 						//$option->quantity = $test->quantity;
-						
+
 						if($customer_group->makeup_cost == 1){
 							$option->price = $option->price  + (($option->price * $customer_group->percent) / 100);
 						}
-						
+
 					}
-					
+
 				}
-				
-				
+
+
 				$setting = $this->sales_model->getSettings();
-				
+
 				if($row->subcategory_id)
 				{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,1);
-					
+
 				}else{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,0);
 				}
-				
+
 				if ($opt->price != 0) {
 					if($customer_group->makeup_cost == 1 && $percent!=""){
 						if($setting->attributes==1)
@@ -10302,7 +10311,7 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-				} else { 
+				} else {
 					if($customer_group->makeup_cost == 1 && $percent!=""){
 						if($setting->attributes==1)
 						{
@@ -10315,12 +10324,12 @@ class Sales extends MY_Controller
 						}
 					}
 				}
-				
+
 				if($group_prices)
 				{
 				   $curr_by_item = $this->site->getCurrencyByCode($group_prices[0]->currency_code);
 				}
-				
+
 				$row->piece			  = 0;
 				$row->wpiece		  = $row->cf1;
 				$row->is_sale_order   = 0;
@@ -10335,18 +10344,18 @@ class Sales extends MY_Controller
 						$combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
 					}
 					$pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options,'expdates'=>$expdates,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent, 'makeup_cost_percent'=>$percent->percent);
-					
+
 				} else {
 					$pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,$options,'expdates'=>$expdates,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_group->percent, 'makeup_cost_percent'=>$percent->percent);
 				}
-		
+
 			}
 			echo json_encode($pr);
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
 	}
-	
+
     function Pcode()
     {
         $term = $this->input->get('term', TRUE);
@@ -10517,7 +10526,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term, 'no_pro'=>0)));
         }
     }
-	
+
 	function Pdescription()
     {
 		$code = $this->input->get('code', TRUE);
@@ -10605,7 +10614,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term, 'no_pro'=>0)));
         }
     }
-	
+
 	function Pcategory()
     {
 		$code = $this->input->get('code', TRUE);
@@ -10692,7 +10701,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term, 'no_pro'=>0)));
         }
     }
-	
+
 	function Pprice()
     {
 		$code = $this->input->get('code', TRUE);
@@ -10779,7 +10788,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term, 'no_pro'=>0)));
         }
     }
-	
+
 	function Pstrap()
     {
         $term = $this->input->get('term', TRUE);
@@ -10863,7 +10872,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-	
+
 	function fcode()
     {
         $term = $this->input->get('term', TRUE);
@@ -10891,7 +10900,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-	
+
 	function fdescription()
     {
         $term = $this->input->get('term', TRUE);
@@ -10919,7 +10928,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-	
+
 	function ffloor()
     {
         $term = $this->input->get('term', TRUE);
@@ -10946,7 +10955,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-    
+
     function floor_de()
     {
         $term = $this->input->get('term', TRUE);
@@ -10973,7 +10982,7 @@ class Sales extends MY_Controller
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
     }
-	
+
 	function getfloor()
     {
         $term = $this->input->get('term', TRUE);
@@ -10999,8 +11008,8 @@ class Sales extends MY_Controller
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
         }
-    }    
-	
+    }
+
     function gift_cards()
     {
         $this->erp->checkPermissions();
@@ -11025,18 +11034,18 @@ class Sales extends MY_Controller
 
         echo $this->datatables->generate();
     }
-	
+
 	function getLoans()
 	{
-		
+
         $this->erp->checkPermissions('loan', null, 'sales');
-		
+
         $detail_link = anchor('sales/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('sale_details'));
         $payments_link = anchor('sales/payments/$1', '<i class="fa fa-money"></i> ' . lang('view_payments'), 'data-toggle="modal" data-target="#myModal"');
         $add_payment_link = anchor('sales/add_payment/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal"');
         $email_link = anchor('sales/email/$1', '<i class="fa fa-envelope"></i> ' . lang('email_sale'), 'data-toggle="modal" data-target="#myModal"');
         $edit_link = anchor('sales/edit/$1', '<i class="fa fa-edit"></i> ' . lang('edit_sale'), 'class="sledit"');
-        
+
         $pdf_link = anchor('sales/pdf/$1', '<i class="fa fa-file-pdf-o"></i> ' . lang('download_pdf'));
         $delete_link = "<a href='#' class='loan' title='<b>" . lang("delete_sale") . "</b>' data-content=\"<p>"
 					. lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_loan/$1') . "'>"
@@ -11058,7 +11067,7 @@ class Sales extends MY_Controller
 
         $this->load->library('datatables');
 		$this->datatables
-			->select("erp_loans.id, 
+			->select("erp_loans.id,
 					erp_loans.period,
 					erp_loans.dateline,
 					erp_sales.reference_no,
@@ -11086,10 +11095,10 @@ class Sales extends MY_Controller
             $this->datatables->where('customer_id', $this->session->userdata('user_id'));
         }
 			}
-        
+
         $this->datatables->add_column("Actions", '<div class="text-center"><div class="btn-group text-left">'  . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'. lang('actions') . ' <span class="caret"></span></button><ul class="dropdown-menu pull-right" role="menu"><li>' . $detail_link . '</li><li>' . $payments_link . '</li><li>' . $add_payment_link . '</li><li>' . $edit_link . '</li><li>' . $pdf_link . '</li><li>' . $email_link . '</li><li>' . $delete_link . '</li></ul></div></div>', $this->db->dbprefix('loans').".sale_id");
         echo $this->datatables->generate();
-    
+
 	}
 
     function view_gift_card($id = NULL)
@@ -11100,7 +11109,7 @@ class Sales extends MY_Controller
         $this->data['customer'] = $this->site->getCompanyByID($gift_card->customer_id);
         $this->load->view($this->theme . 'sales/view_gift_card', $this->data);
     }
-	
+
 	function view_gift_card_history($no = NULL, $start = NULL, $end = NULL)
     {
         if(isset($_POST['start'])){
@@ -11109,7 +11118,7 @@ class Sales extends MY_Controller
 		if(isset($_POST['end'])){
             $end = $_POST['end'];
         }
-		
+
 		if (!$start) {
             $start = $this->db->escape(date('Y-m') . '-1');
             $start_date = date('Y-m') . '-1';
@@ -11122,17 +11131,17 @@ class Sales extends MY_Controller
         } else {
             $end = $this->db->escape(urldecode($end_date));
         }
-		
+
 		if(isset($_GET['d']) != ""){
 			$date = $_GET['d'];
             $this->data['date'] = $date;
 		}
 
         $data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-		
+
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
+
 		$this->data['card_no'] = $no;
 		$this->data['page_title'] =lang('gift_card');
         //$gift_card = $this->site->getGiftCardByID($no);
@@ -11140,7 +11149,7 @@ class Sales extends MY_Controller
         //$this->data['customer'] = $this->site->getCompanyByID($gift_card->customer_id);
         $this->load->view($this->theme . 'sales/view_gift_card_history', $this->data);
     }
-	
+
 	function getGiftCardsHistory()
     {
         if(isset($_GET['start'])){
@@ -11165,9 +11174,9 @@ class Sales extends MY_Controller
 			}
 
         echo $this->datatables->generate();
-			
+
     }
-	
+
 	function getMakeupCost($customer_id)
     {
         if ($dp = $this->site->getMakeupCostByCompanyID($customer_id)) {
@@ -11176,7 +11185,7 @@ class Sales extends MY_Controller
             echo json_encode(false);
         }
     }
-	
+
 	function validate_deposit($customer_id)
     {
         //$this->erp->checkPermissions();
@@ -11262,14 +11271,14 @@ class Sales extends MY_Controller
     {
         $this->erp->checkPermissions(false, true);
         $this->form_validation->set_rules('card_no', lang("card_no"), 'trim|required');
-		
+
         $gc_details = $this->site->getGiftCardByID($id);
-		
+
         if ($this->input->post('card_no') != $gc_details->card_no) {
             $this->form_validation->set_rules('card_no', lang("card_no"), 'is_unique[gift_cards.card_no]');
         }
         $this->form_validation->set_rules('value', lang("value"), 'required');
-		
+
         if ($this->form_validation->run() == true) {
             $gift_card 			= $this->site->getGiftCardByID($id);
             $customer_details 	= $this->input->post('customer') ? $this->site->getCompanyByID($this->input->post('customer')) : NULL;
@@ -11293,7 +11302,7 @@ class Sales extends MY_Controller
         } else {
             $this->data['error'] 		= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['gift_card'] 	= $this->site->getGiftCardByID($id);
-			
+
             $this->data['id'] 			= $id;
             $this->data['modal_js'] 	= $this->site->modal_js();
             $this->load->view($this->theme . 'sales/edit_gift_card', $this->data);
@@ -11374,7 +11383,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('D1', lang('created_by'));
                     $this->excel->getActiveSheet()->SetCellValue('E1', lang('customer'));
                     $this->excel->getActiveSheet()->SetCellValue('F1', lang('expiry'));
-                    
+
                     $row = 2;
                     foreach ($_POST['val'] as $id) {
                         $sc = $this->site->getGiftCardByID($id);
@@ -11417,7 +11426,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($styleArray);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'PDF');
                         return $objWriter->save('php://output');
@@ -11431,7 +11440,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:F1')->applyFromArray($styleArray);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
@@ -11512,7 +11521,7 @@ class Sales extends MY_Controller
 						 $biller = $this->db->get_where('companies', array('id' => $value['shop_id']))->row();
                          $customer = $this->db->where('company_id',$value['customer_no'])->get('deposits');
                          $customer_num = $customer->num_rows();
-					
+
 
                          // if biller id not found error.
                          if(count($biller) <= 0)
@@ -11555,9 +11564,9 @@ class Sales extends MY_Controller
                                 );
 							 }
                          //}
-						 
+
 						 $tranNo = $this->db->query("SELECT COALESCE (MAX(tran_no), 0) + 1 as tranNo FROM erp_gl_trans")->row()->tranNo;
-						 
+
 						 // account deposit
 						 $deposit = $this->db->select('*')
 															->from('account_settings')
@@ -11570,7 +11579,7 @@ class Sales extends MY_Controller
 															->join('gl_charts','gl_charts.accountcode = default_open_balance','inner')
 															->join('gl_sections','gl_sections.sectionid = gl_charts.sectionid','inner')
 															->get()->row();
-						
+
 						if($value['deposit'] > 0)
 						{
 							// data deposit
@@ -11639,7 +11648,7 @@ class Sales extends MY_Controller
                     /*if($customer_num > 0)
                     {
                         $this->db->update_batch('deposits',$data_deposit,'company_id');
-	
+
                     }
                     else
                     {*/
@@ -11665,7 +11674,7 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('customer_opening_balance'), 'bc' => $bc);
         $this->page_construct('sales/customer_opening_balance', $meta, $this->data);
     }
- 
+
     function sale_by_csv()
     {
         $this->erp->checkPermissions('import', NULL, 'sales');
@@ -11725,11 +11734,11 @@ class Sales extends MY_Controller
 				$temp_reference = '';
 				$products = array();
 				$data = array();
-	//$this->erp->print_arrays($final);			
+	//$this->erp->print_arrays($final);
 				foreach ($final as $csv_pr) {
 					$old_reference = $csv_pr['reference_no'];
 					if($old_reference != $temp_reference) {
-						
+
 						$help = true;
 						if(isset($temp_data)) {
 							foreach($temp_data as $tmp_data) {
@@ -11738,11 +11747,11 @@ class Sales extends MY_Controller
 								}
 							}
 						}
-						
+
 						$temp_data[] = array(
 										'reference_no' => $csv_pr['reference_no']
 									   );
-					
+
 						if($help) {
 							$total_items = 0;
 							foreach($final as $product) {
@@ -11758,7 +11767,7 @@ class Sales extends MY_Controller
 											$item_tax 		= $product['item_tax'];
 											$item_discount 	= $product['item_discount'];
 											$expiry 		= $product['expiry'];
-											
+
 											if($csv_pr['warehouse_code']) {
 												if($warehouse = $this->site->getWarehouseByCode(trim($csv_pr['warehouse_code']))) {
 													$warehouse_id = $warehouse->id;
@@ -11778,7 +11787,7 @@ class Sales extends MY_Controller
 												$item_unit_quantity = 1;
 												$item_option = '';
 											}
-											if (isset($item_code) && isset($unit_price) && isset($item_quantity)) { 
+											if (isset($item_code) && isset($unit_price) && isset($item_quantity)) {
 												$product_details = $this->sales_model->getProductByCode($item_code);
 												if (isset($item_discount)) {
 													$discount = $item_discount;
@@ -11792,13 +11801,13 @@ class Sales extends MY_Controller
 												} else {
 													$pr_discount = 0;
 												}
-												
+
 												$unit_price = $this->erp->formatDecimal($unit_price - $pr_discount);
 												$item_net_price = $unit_price;
-												
+
 												$pr_item_discount = $this->erp->formatDecimal($pr_discount * $item_quantity);
 												$product_discount += $pr_item_discount;
-												
+
 												if (isset($item_tax)) {
 													if($tax_details = $this->sales_model->getTaxRateByCode($item_tax)) {
 														$pr_tax = $tax_details->id;
@@ -11839,13 +11848,13 @@ class Sales extends MY_Controller
 												}
 
 												$product_tax += $pr_item_tax;
-												
+
 												if( $product_details->tax_method == 0){
 													$subtotal = (($unit_price * $item_quantity));
 												}else{
 													$subtotal = (($unit_price * $item_quantity) + $pr_item_tax);
 												}
-												
+
 												$products[] = array(
 													'product_id' 		=> $item_id,
 													'product_code' 		=> $item_code,
@@ -11876,7 +11885,7 @@ class Sales extends MY_Controller
 									}
 								}
 							}
-							//$this->erp->print_arrays($products);		
+							//$this->erp->print_arrays($products);
 							$date 				= strtr($csv_pr['date'], '/', '-');
 							$date 				= date('Y-m-d h:m:i', strtotime($date));
 							$reference 			= $csv_pr['reference_no'];
@@ -11898,7 +11907,7 @@ class Sales extends MY_Controller
 							$biller_details 	= $this->site->getCompanyByCode($biller_code, 'biller');
 							$biller_id 			= $biller_details->id;
 							$biller 			= $biller_details->company != '-' ? $biller_details->company : $biller_details->name;
-							
+
 							if ($order_discount) {
 								$order_discount_id = $order_discount;
 								$opos = strpos($order_discount_id, $percentage);
@@ -11925,11 +11934,11 @@ class Sales extends MY_Controller
 							} else {
 								$order_tax_id = null;
 							}
-							
-							$total_tax = $this->erp->formatDecimal(($product_tax + $order_tax), 4); 
+
+							$total_tax = $this->erp->formatDecimal(($product_tax + $order_tax), 4);
 							$grand_total = $this->erp->formatDecimal(($total + $order_tax + $this->erp->formatDecimal($shipping) - $order_discount), 4);
-					
-							
+
+
 							$data = array(
 								'date' 					=> $date,
 								'reference_no' 			=> $reference,
@@ -11967,7 +11976,7 @@ class Sales extends MY_Controller
 								'quote_id' 				=> (isset($sale_q->id)?$sale_q->id:''),
 								'deposit_so_id'			=> (isset($so_deposit_no)? $so_deposit_no:'')
 							);
-	
+
 							if ($_FILES['document']['size'] > 0) {
 								$this->load->library('upload');
 								$config['upload_path'] = $this->digital_upload_path;
@@ -11995,7 +12004,7 @@ class Sales extends MY_Controller
 				}
             }
         }
-        
+
         if ($this->form_validation->run() == true) {
             $this->session->set_userdata('remove_slls', 1);
             $this->session->set_flashdata('message', $this->lang->line("sale_added"));
@@ -12017,7 +12026,7 @@ class Sales extends MY_Controller
             $this->page_construct('sales/sale_by_csv', $meta, $this->data);
         }
     }
-	
+
 	function payment_by_csv()
     {
         $this->erp->checkPermissions('import', NULL, 'sales');
@@ -12084,7 +12093,7 @@ class Sales extends MY_Controller
 						'biller_id'	=> $sale->biller_id,
 						'bank_account' => $row['bank_account']
 					);
-					
+
 					if ($_FILES['document']['size'] > 0) {
 						$this->load->library('upload');
 						$config['upload_path'] = $this->digital_upload_path;
@@ -12127,7 +12136,7 @@ class Sales extends MY_Controller
 				}
             }
         }
-        
+
         if ($this->form_validation->run() == true) {
             $this->session->set_flashdata('message', $this->lang->line("payment_added"));
             redirect("sales");
@@ -12148,10 +12157,10 @@ class Sales extends MY_Controller
             $this->page_construct('sales/payment_by_csv', $meta, $this->data);
         }
     }
-	
+
     /**********suspend**********/
     function suspends_calendar($warehouse_id = NULL)
-	{ 
+	{
         $this->load->model('reports_model');
         $this->data['warehouse_id'] = $warehouse_id;
         $this->data['users'] = $this->reports_model->getStaff();
@@ -12172,13 +12181,13 @@ class Sales extends MY_Controller
         //$detail_link = anchor('sales/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('Room_details'));
         $payments_link = anchor('customers/view/$1', '<i class="fa fa-money"></i> ' . lang('customer_details'), 'data-toggle="modal" data-target="#myModal"');
         //$add_payment_link = anchor('sales/add_payment/$1', '<i class="fa fa-money"></i> ' . lang('Document'), 'data-toggle="modal" data-target="#myModal"');
-        
+
         /*
         $this->datatables
             ->select("(SELECT id FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as id,floor,name,description, (SELECT date FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as start_date, (SELECT end_date FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as end_date, CASE WHEN status = 0 THEN 'Free' WHEN status = 1 THEN 'Booking' ELSE 'Busy' END AS status, (SELECT attachment FROM erp_suspended_bills sb LEFT JOIN erp_companies c ON c.id = sb.customer_id WHERE sb.suspend_id = erp_suspended.id ) as attachment")
             ->from("erp_suspended")
             */
-        
+
         /*$this->datatables
             ->select("(SELECT MAX(id) FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as id,floor,name,description, (SELECT MAX(customer) FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as customer_name, (SELECT MAX(date) FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as start_date, (SELECT MAX(end_date) FROM erp_suspended_bills sb WHERE sb.suspend_id = erp_suspended.id ) as end_date, CASE WHEN status = 0 THEN 'free' WHEN status = 1 THEN 'busy' ELSE 'busy' END AS status, (SELECT MAX(attachment) FROM erp_suspended_bills sb LEFT JOIN erp_companies c ON c.id = sb.customer_id WHERE sb.suspend_id = erp_suspended.id ) as attachment")
             ->from("erp_suspended")
@@ -12202,7 +12211,7 @@ class Sales extends MY_Controller
                     </center>', "id");
         echo $this->datatables->generate();
     }
-	
+
 	function suppend_actions()
     {
         if (!$this->Owner) {
@@ -12216,7 +12225,7 @@ class Sales extends MY_Controller
 
             if (!empty($_POST['val'])) {
                 if ($this->input->post('form_action') == 'delete') {
-					
+
                     $error = false;
                     foreach ($_POST['val'] as $id) {
                         if (!$this->settings_model->deleteSuppend($id)) {
@@ -12294,7 +12303,7 @@ class Sales extends MY_Controller
                                 'bold'  => true,
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'PDF');
@@ -12310,7 +12319,7 @@ class Sales extends MY_Controller
                                 'bold'  => true,
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
@@ -12327,8 +12336,8 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-    } 
-	
+    }
+
 	function listSaleRoom_actions()
     {
         if (!$this->Owner) {
@@ -12362,7 +12371,7 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('G1', lang('paid'));
                     $this->excel->getActiveSheet()->SetCellValue('H1', lang('balance'));
 					$this->excel->getActiveSheet()->SetCellValue('I1', lang('payment_status'));
-                    
+
 
                     $row = 2;
                     foreach ($_POST['val'] as $id) {
@@ -12411,7 +12420,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                    
+
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'PDF');
                         return $objWriter->save('php://output');
@@ -12425,7 +12434,7 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        
+
                         $this->excel->getActiveSheet()->getStyle('A1:I1')->applyFromArray($styleArray);
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
@@ -12441,8 +12450,8 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-    } 
-	
+    }
+
 	function show_attachments($id)
 	{
 		$this->data['file'] = $id;
@@ -12465,7 +12474,7 @@ class Sales extends MY_Controller
         $this->data['room']             = $q_suspend->suspend_name;
         $this->data['suspended_bills']  = $q_suspend_bill;
         $this->data['error']            = validation_errors() ? validation_errors() : $this->session->flashdata('error');
-        
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('View_Room_Report')));
         $meta = array('page_title' => lang('view_report'), 'bc' => $bc);
         $this->page_construct('reports/view_room_report', $meta, $this->data);
@@ -12473,7 +12482,7 @@ class Sales extends MY_Controller
 
     /**********suspend**********/
     function suspend($warehouse_id = NULL)
-	{	
+	{
 		$this->load->model('reports_model');
 		$this->data['warehouse_id'] = $warehouse_id;
 		$this->data['users'] = $this->reports_model->getStaff();
@@ -12484,12 +12493,12 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('list_sales_suspend'), 'bc' => $bc);
         $this->page_construct('sales/suspends', $meta, $this->data);
 	}
-	
+
 	function getSuspend($warehouse_id = NULL)
 	{
-		
-        $this->erp->checkPermissions('index');	
-		
+
+        $this->erp->checkPermissions('index');
+
 		if ($this->input->get('user')) {
             $user_query = $this->input->get('user');
         } else {
@@ -12534,20 +12543,20 @@ class Sales extends MY_Controller
             $user = $this->site->getUser();
             $warehouse_id = $user->warehouse_id;
         }
-		
-        $add_payment_link = anchor('pos/index/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), '');      
+
+        $add_payment_link = anchor('pos/index/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), '');
         $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
             . lang('actions') . ' <span class="caret"></span></button>
-	        <ul class="dropdown-menu pull-right" role="menu">            
+	        <ul class="dropdown-menu pull-right" role="menu">
 	            <li>' . $add_payment_link . '</li>
 	        </ul>
-	    </div></div>';       
+	    </div></div>';
 
         $this->load->library('datatables');
 		if($warehouse_id){
 			$this->datatables
-                ->select($this->db->dbprefix('suspended_bills').".id as idd,".$this->db->dbprefix('sales').".date, ".$this->db->dbprefix('sales').".suspend_note as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('sales').".biller_id) as biller,".$this->db->dbprefix('sales').".customer, 
+                ->select($this->db->dbprefix('suspended_bills').".id as idd,".$this->db->dbprefix('sales').".date, ".$this->db->dbprefix('sales').".suspend_note as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('sales').".biller_id) as biller,".$this->db->dbprefix('sales').".customer,
             	case when DATE(".$this->db->dbprefix('suspended_bills').".date)+ INTERVAL (SELECT show_suspend_bar-1 from ".$this->db->dbprefix('pos_settings')." where ".$this->db->dbprefix('pos_settings').".default_biller=".$this->db->dbprefix('suspended_bills').".biller_id) DAY <= DATE(SYSDATE()) then 'completed' else 'pending' end AS sale_status,
             	".$this->db->dbprefix('sales').".grand_total as grand_total, ".$this->db->dbprefix('sales').".paid as paid, (CASE WHEN ".$this->db->dbprefix('sales').".paid IS NULL THEN ".$this->db->dbprefix('sales').".grand_total ELSE ".$this->db->dbprefix('sales').".grand_total - ".$this->db->dbprefix('sales').".paid END) as balance, CASE WHEN ".$this->db->dbprefix('sales').".paid = 0 THEN 'pending' WHEN ".$this->db->dbprefix('sales').".grand_total = ".$this->db->dbprefix('sales').".paid THEN 'completed' WHEN ".$this->db->dbprefix('sales').".grand_total > ".$this->db->dbprefix('sales').".paid THEN 'partial' ELSE 'pending' END as payment_status")
 				->join($this->db->dbprefix('sales'), $this->db->dbprefix('sales').'.suspend_note = '.$this->db->dbprefix('suspended_bills').'.suspend_name', 'left')
@@ -12556,19 +12565,19 @@ class Sales extends MY_Controller
 				->where('sales.suspend_note !=', " ");
 		}else{
 			$this->datatables
-                ->select($this->db->dbprefix('suspended_bills').".id as idd,".$this->db->dbprefix('sales').".date, ".$this->db->dbprefix('sales').".suspend_note as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('sales').".biller_id) as biller,".$this->db->dbprefix('sales').".customer, 
+                ->select($this->db->dbprefix('suspended_bills').".id as idd,".$this->db->dbprefix('sales').".date, ".$this->db->dbprefix('sales').".suspend_note as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('sales').".biller_id) as biller,".$this->db->dbprefix('sales').".customer,
             	case when DATE(".$this->db->dbprefix('suspended_bills').".date)+ INTERVAL (SELECT show_suspend_bar-1 from ".$this->db->dbprefix('pos_settings')." where ".$this->db->dbprefix('pos_settings').".default_biller=".$this->db->dbprefix('suspended_bills').".biller_id) DAY <= DATE(SYSDATE()) then 'completed' else 'pending' end AS sale_status,
             	".$this->db->dbprefix('sales').".grand_total as grand_total, ".$this->db->dbprefix('sales').".paid as paid, (CASE WHEN ".$this->db->dbprefix('sales').".paid IS NULL THEN ".$this->db->dbprefix('sales').".grand_total ELSE ".$this->db->dbprefix('sales').".grand_total - ".$this->db->dbprefix('sales').".paid END) as balance, CASE WHEN ".$this->db->dbprefix('sales').".paid = 0 THEN 'pending' WHEN ".$this->db->dbprefix('sales').".grand_total = ".$this->db->dbprefix('sales').".paid THEN 'completed' WHEN ".$this->db->dbprefix('sales').".grand_total > ".$this->db->dbprefix('sales').".paid THEN 'partial' ELSE 'pending' END as payment_status")
 				->join($this->db->dbprefix('sales'), $this->db->dbprefix('sales').'.suspend_note = '.$this->db->dbprefix('suspended_bills').'.suspend_name', 'left')
 				->where('sales.suspend_note !=', " ")
                 ->from('suspended_bills');
-		}		
+		}
 		if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin) {
             $this->datatables->where('created_by', $this->session->userdata('user_id'));
         } elseif ($this->Customer) {
             $this->datatables->where('customer_id', $this->session->userdata('user_id'));
         }
-		
+
 		if ($user_query) {
 			$this->datatables->where('suspended_bills.created_by', $user_query);
 		}
@@ -12590,9 +12599,9 @@ class Sales extends MY_Controller
 		}
 
         $this->datatables->add_column("Actions", $action, "idd");
-        echo $this->datatables->generate();  
+        echo $this->datatables->generate();
 	}
-	
+
 	function modal_view_suspend($id = NULL)
     {
         // $this->erp->checkPermissions('index', TRUE);
@@ -12608,13 +12617,13 @@ class Sales extends MY_Controller
 		$susin = $this->sales_model->getInvoiceBySuspendIDs($id);
         if(isset($susin)){
             foreach($susin as $test){
-				
+
             }
         }
-        
+
         //$detail= $this->sales_model->getAllSuspendDetail($id);
 		$detail= $this->sales_model->getAllSuspendBySupendID($id);
-        
+
         $this->data['customer'] = $this->site->getCompanyByID($detail->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($detail->biller_id);
         $this->data['created_by'] = $this->site->getUser($detail->created_by);
@@ -12622,7 +12631,7 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($detail->warehouse_id);
         $this->data['inv'] = $inv;
 		$this->data['susin'] = $test;
-        $this->data['detail'] =$detail; 
+        $this->data['detail'] =$detail;
         $this->data['suspend'] = $this->sales_model->getAllRoomDetail($detail->suspend_id);
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
@@ -12630,9 +12639,9 @@ class Sales extends MY_Controller
 
         $this->load->view($this->theme.'sales/suspend_modal_view', $this->data);
     }
-    
+
     /***********suspend end*********/
-	
+
 	/*************Book**************/
 	function modal_book($id = NULL)
     {
@@ -12672,10 +12681,10 @@ class Sales extends MY_Controller
 		}
     }
 	/*************Book**************/
-	
+
 	/**********suspend**********/
     function customers_alerts($warehouse_id = NULL)
-	{	
+	{
 		$this->load->model('reports_model');
 		$this->data['warehouse_id'] = $warehouse_id;
 		$this->data['users'] = $this->reports_model->getStaff();
@@ -12686,11 +12695,11 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('list_customers_alerts'), 'bc' => $bc);
         $this->page_construct('sales/customers_alerts', $meta, $this->data);
 	}
-	
+
 	function getCustomersAlerts($warehouse_id = NULL)
 	{
-		
-        $this->erp->checkPermissions('index');	
+
+        $this->erp->checkPermissions('index');
 
         if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
@@ -12716,12 +12725,12 @@ class Sales extends MY_Controller
             $user = $this->site->getUser();
             $warehouse_id = $user->warehouse_id;
         }
-		
-        $add_payment_link = anchor('pos/index/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), '');      
+
+        $add_payment_link = anchor('pos/index/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), '');
         $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
             . lang('actions') . ' <span class="caret"></span></button>
-	        <ul class="dropdown-menu pull-right" role="menu">            
+	        <ul class="dropdown-menu pull-right" role="menu">
 	            <li>' . $add_payment_link . '</li>
 	        </ul>
 	    </div></div>';
@@ -12741,11 +12750,11 @@ class Sales extends MY_Controller
 		}
 
         $this->datatables->add_column("Actions", $action, "id");
-        echo $this->datatables->generate();  
+        echo $this->datatables->generate();
 	}
 
     function delivery_alerts($warehouse_id = NULL)
-	{    
+	{
         $this->load->model('reports_model');
         $this->data['warehouse_id'] = $warehouse_id;
         $this->data['users'] = $this->reports_model->getStaff();
@@ -12759,8 +12768,8 @@ class Sales extends MY_Controller
 
     function getDeliveryAlerts($warehouse_id = NULL)
 	{
-        
-        $this->erp->checkPermissions('index');  
+
+        $this->erp->checkPermissions('index');
 
         if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
@@ -12786,12 +12795,12 @@ class Sales extends MY_Controller
             $user = $this->site->getUser();
             $warehouse_id = $user->warehouse_id;
         }
-        
-        $add_payment_link = anchor('pos/index/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), '');      
+
+        $add_payment_link = anchor('pos/index/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), '');
         $action = '<div class="text-center"><div class="btn-group text-left">'
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
             . lang('actions') . ' <span class="caret"></span></button>
-            <ul class="dropdown-menu pull-right" role="menu">            
+            <ul class="dropdown-menu pull-right" role="menu">
                 <li>' . $add_payment_link . '</li>
             </ul>
         </div></div>';
@@ -12799,10 +12808,10 @@ class Sales extends MY_Controller
         $this->load->library('datatables');
 
             $this->datatables
-            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username, 
-                    COALESCE(SUM(erp_sale_order_items.quantity),0) as qty, 
-                    COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received, 
-                    COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance, 
+            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username,
+                    COALESCE(SUM(erp_sale_order_items.quantity),0) as qty,
+                    COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received,
+                    COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance,
                     (IF(ISNULL(".$this->db->dbprefix("sale_order").".delivery_status), CONCAT(erp_sale_order.id, '___', 'delivery'), CONCAT(erp_sale_order.id, '___', ".$this->db->dbprefix("sale_order").".delivery_status))) as delivery_status")
             ->from('sale_order')
             ->join('companies as erp_cust', 'cust.id = sale_order.customer_id', 'inner')
@@ -12822,7 +12831,7 @@ class Sales extends MY_Controller
         }
 
         $this->datatables->add_column("Actions", $action, "id");
-        echo $this->datatables->generate();  
+        echo $this->datatables->generate();
     }
 
     function view_delivery_alert($id = NULL)
@@ -12831,12 +12840,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $inv = $this->sales_model->getSaleInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['inv'] = $inv;
-        
+
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         // $sale = $this->sales_model->getInvoiceByID($sid->sale_id);
         $this->data['biller'] = $this->site->getCompanyByID($sale->biller_id);
@@ -12844,10 +12853,10 @@ class Sales extends MY_Controller
         $this->data['setting'] = $this->site->get_setting();
         $this->data['user'] = $this->site->getUser($sid->created_by);
         $this->data['page_title'] = lang("delivery_order");
-        
+
         $this->load->view($this->theme . 'sales/view_delivery_alert', $this->data);
     }
-    
+
 	//------------------- Sale export as Excel and pdf -----------------------
 	function getSalesAll($pdf = NULL, $excel = NULL)
     {
@@ -12863,7 +12872,7 @@ class Sales extends MY_Controller
 
             $this->db
                 ->select($this->db->dbprefix('sales') . ".date as dates, " . $this->db->dbprefix('sales') . ".reference_no as reference_nos,". $this->db->dbprefix('sales') .".biller as billers,
-				" . $this->db->dbprefix('sales') . ".customer as customers, " . $this->db->dbprefix('sales') . ".sale_status as sale_statuses, 
+				" . $this->db->dbprefix('sales') . ".customer as customers, " . $this->db->dbprefix('sales') . ".sale_status as sale_statuses,
 				" . $this->db->dbprefix('sales') . ".grand_total as grand_totals, " . $this->db->dbprefix('sales') . ".paid as paids,
 				(" . $this->db->dbprefix('sales') . ". grand_total - paid) as balances,
 				" . $this->db->dbprefix('sales') . ".payment_status as payment_statuses");
@@ -12902,7 +12911,7 @@ class Sales extends MY_Controller
 				$this->excel->getActiveSheet()->SetCellValue('I1', lang('payment_status'));
 
                 $row = 2;
-				
+
                 foreach ($data as $data_row) {
                     //$this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->erp->hrld($data_row->id));
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $data_row->dates);
@@ -12970,7 +12979,7 @@ class Sales extends MY_Controller
         }
     }
 	//-------------------End Sale export -------------------------------------
-	
+
 	//-------------------Loan export as Excel and PDF-------------------------
 	function getLoansAll($pdf = NULL, $excel = NULL)
     {
@@ -12982,16 +12991,16 @@ class Sales extends MY_Controller
 
 			/*
 			$this->datatables
-			->select($this->db->dbprefix('loans').".reference_no, sales.date, sales.reference_no as ref_no, sales.biller, sales.customer, sales.sale_status, 
+			->select($this->db->dbprefix('loans').".reference_no, sales.date, sales.reference_no as ref_no, sales.biller, sales.customer, sales.sale_status,
 			".$this->db->dbprefix('sales').".grand_total, sales.paid, (".$this->db->dbprefix('sales').".grand_total- ".$this->db->dbprefix('sales').".paid) as balance, sales.payment_status")
 			->from('sales')
 			->join('loans','sales.id=loans.reference_no','INNER')
 			->group_by('loans.reference_no');
 			*/
-		
+
             $this->db
                 ->select($this->db->dbprefix('sales') . ".date as dates, " . $this->db->dbprefix('sales') . ".reference_no as reference_nos,". $this->db->dbprefix('sales') .".biller as billers,
-				" . $this->db->dbprefix('sales') . ".customer as customers, " . $this->db->dbprefix('sales') . ".sale_status as sale_statuses, 
+				" . $this->db->dbprefix('sales') . ".customer as customers, " . $this->db->dbprefix('sales') . ".sale_status as sale_statuses,
 				" . $this->db->dbprefix('sales') . ".grand_total as grand_totals, (".$this->db->dbprefix('sales').".paid + (".$this->db->dbprefix('sales').".other_cur_paid / ".$this->db->dbprefix('sales').".other_cur_paid_rate)) as paids,
 				(" . $this->db->dbprefix('sales') . ". grand_total - (".$this->db->dbprefix('sales').".paid + (".$this->db->dbprefix('sales').".other_cur_paid / ".$this->db->dbprefix('sales').".other_cur_paid_rate))) as balances,
 				" . $this->db->dbprefix('sales') . ".payment_status as payment_statuses");
@@ -13027,7 +13036,7 @@ class Sales extends MY_Controller
 				$this->excel->getActiveSheet()->SetCellValue('I1', lang('payment_status'));
 
                 $row = 2;
-				
+
                 foreach ($data as $data_row) {
                     //$this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->erp->hrld($data_row->id));
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $data_row->dates);
@@ -13095,7 +13104,7 @@ class Sales extends MY_Controller
         }
     }
 	//-------------------End Loan export--------------------------------------
-    
+
 	//------------------- Sale export as Excel and pdf -----------------------
 	function getReturnsAll_action($wh=null)
     {
@@ -13121,11 +13130,11 @@ class Sales extends MY_Controller
             $this->excel->getActiveSheet()->SetCellValue('G1', lang('grand_total'));
             $this->excel->getActiveSheet()->SetCellValue('H1', lang('return_paid'));
             $this->excel->getActiveSheet()->SetCellValue('I1', lang('balance'));
-            
-            $row = 2; 
-            foreach ($_POST['val'] as $id) {                  
+
+            $row = 2;
+            foreach ($_POST['val'] as $id) {
                 $this->db
-                ->select($this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref, 
+                ->select($this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref,
 							erp_sales.reference_no AS `sal_ref`,
 						" . $this->db->dbprefix('return_sales') . ".biller, " . $this->db->dbprefix('return_sales') . ".customer, " . $this->db->dbprefix('return_sales') . ".surcharge, " . $this->db->dbprefix('return_sales') . ".grand_total, " . $this->db->dbprefix('return_sales') . ".id as id, erp_return_sales.paid,
                             (erp_return_sales.grand_total-erp_return_sales.paid) as balance")
@@ -13136,20 +13145,20 @@ class Sales extends MY_Controller
                 }
                 $q = $this->db->get_where('return_sales', array('return_sales.id' => $id), 1);
                 if ($q->num_rows() > 0) {
-                    $data_row = $q->row(); 				
+                    $data_row = $q->row();
                     // $this->erp->print_arrays($data);
                     $sum_sur += $data_row->surcharge;
                     $sum_grand += $data_row->grand_total;
                     $sum_paid += $data_row->paid;
                     $sum_banlance += $data_row->balance;
-					
+
 					if($data_row->paid == null){
 						$data_row->paid = 0;
 					}
 					if($data_row->balance == null){
 						$data_row->balance = 0;
 					}
-					
+
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $data_row->date);
     				$this->excel->getActiveSheet()->SetCellValue('B' . $row, $data_row->ref);
                     $this->excel->getActiveSheet()->SetCellValue('C' . $row, $data_row->sal_ref);
@@ -13159,14 +13168,14 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatDecimal(lang($data_row->grand_total)));
                     $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatDecimal(lang($data_row->paid)));
     				$this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatDecimal(lang($data_row->balance)));
-                    $new_row = $row+1; 
+                    $new_row = $row+1;
                     $this->excel->getActiveSheet()->SetCellValue('F' . $new_row, $sum_sur);
                     $this->excel->getActiveSheet()->SetCellValue('G' . $new_row, $this->erp->formatDecimal($sum_grand));
                     $this->excel->getActiveSheet()->SetCellValue('H' . $new_row, $this->erp->formatDecimal($sum_paid));
                     $this->excel->getActiveSheet()->SetCellValue('I' . $new_row, $this->erp->formatDecimal($sum_banlance));
                 }
                 $row++;
-                         
+
             }
         }else{
             // echo "user";exit();
@@ -13182,11 +13191,11 @@ class Sales extends MY_Controller
             $this->excel->getActiveSheet()->SetCellValue('G1', lang('grand_total'));
             $this->excel->getActiveSheet()->SetCellValue('H1', lang('return_paid'));
             $this->excel->getActiveSheet()->SetCellValue('I1', lang('balance'));
-            
-            $row = 2; 
-            foreach ($_POST['val'] as $id) {                  
+
+            $row = 2;
+            foreach ($_POST['val'] as $id) {
                 $this->db
-                ->select($this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref, 
+                ->select($this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref,
                             erp_sales.reference_no AS `sal_ref`,
                         " . $this->db->dbprefix('return_sales') . ".biller, " . $this->db->dbprefix('return_sales') . ".customer, " . $this->db->dbprefix('return_sales') . ".surcharge, " . $this->db->dbprefix('return_sales') . ".grand_total, " . $this->db->dbprefix('return_sales') . ".id as id, erp_return_sales.paid,
                             (erp_return_sales.grand_total-erp_return_sales.paid) as balance")
@@ -13198,20 +13207,20 @@ class Sales extends MY_Controller
                 }
                 $q = $this->db->get_where('return_sales', array('return_sales.id' => $id), 1);
                 if ($q->num_rows() > 0) {
-                    $data_row = $q->row();              
+                    $data_row = $q->row();
                     // $this->erp->print_arrays($data);
                     $sum_sur += $data_row->surcharge;
                     $sum_grand += $data_row->grand_total;
                     $sum_paid += $data_row->paid;
                     $sum_banlance += $data_row->balance;
-                    
+
                     if($data_row->paid == null){
                         $data_row->paid = 0;
                     }
                     if($data_row->balance == null){
                         $data_row->balance = 0;
                     }
-                    
+
                     $this->excel->getActiveSheet()->SetCellValue('A' . $row, $data_row->date);
                     $this->excel->getActiveSheet()->SetCellValue('B' . $row, $data_row->ref);
                     $this->excel->getActiveSheet()->SetCellValue('C' . $row, $data_row->sal_ref);
@@ -13221,17 +13230,17 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatDecimal(lang($data_row->grand_total)));
                     $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatDecimal(lang($data_row->paid)));
                     $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatDecimal(lang($data_row->balance)));
-                    $new_row = $row+1; 
+                    $new_row = $row+1;
                     $this->excel->getActiveSheet()->SetCellValue('F' . $new_row, $sum_sur);
                     $this->excel->getActiveSheet()->SetCellValue('G' . $new_row, $this->erp->formatDecimal($sum_grand));
                     $this->excel->getActiveSheet()->SetCellValue('H' . $new_row, $this->erp->formatDecimal($sum_paid));
                     $this->excel->getActiveSheet()->SetCellValue('I' . $new_row, $this->erp->formatDecimal($sum_banlance));
                 }
                 $row++;
-                         
+
             }
         }
-                
+
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -13303,15 +13312,15 @@ class Sales extends MY_Controller
                     exit();
                 }
 
-           
+
 
             $this->session->set_flashdata('error', lang('nothing_found'));
             redirect($_SERVER["HTTP_REFERER"]);
 
         }
     }
-	
-	
+
+
     public function getSaleReturnQuantity()
 	{
         if ($this->input->get('sale_ref')) {
@@ -13320,12 +13329,12 @@ class Sales extends MY_Controller
         if ($this->input->get('product_id')) {
             $product_id = $this->input->get('product_id', TRUE);
         }
-		
+
         $quantity = $this->sales_model->getSaleItemByRefPIDReturn($sale_ref, $product_id);
         $quantity = $quantity->quantity;
         echo json_encode($quantity);
     }
-	
+
 	function getDeliveryList($start = NULL, $end = NULL)
     {
         $this->erp->checkPermissions('deliveries');
@@ -13380,7 +13389,7 @@ class Sales extends MY_Controller
 
         echo $this->datatables->generate();
     }
-	
+
 	function delivery_list()
 	{
 
@@ -13408,11 +13417,11 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('deliveries_list'), 'bc' => $bc);
         $this->page_construct('sales/deliveries_list', $meta, $this->data);
 	}
-	
+
 	function delivery_added($id = NULL,$status=Null)
 	{
         $this->erp->checkPermissions('deliveries');
-	
+
 		$this->form_validation->set_rules('customer', lang("customer"), 'required');
 		$this->form_validation->set_rules('delivery_by', lang("delivery_by"), 'required');
 		// $this->form_validation->set_rules('reference_no', lang("reference_no"), 'trim|required|is_unique[sales.reference_no]');
@@ -13420,12 +13429,12 @@ class Sales extends MY_Controller
         if ($this->form_validation->run() == true) {
 
         } else {
-			
+
 			$this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$date = date('d/m/Y H:i');
 			$this->data['date'] = $date;
 			$this->data['status'] = $status;
-			
+
 			if($status == 'sale_order'){
 			    $this->data['sale_order_id'] = $id;
 				$this->data['tax_rates'] = $this->site->getAllTaxRates();
@@ -13441,17 +13450,17 @@ class Sales extends MY_Controller
 					$biller_id = $this->session->userdata('biller_id');
 					$this->data['reference'] = $this->site->getReference('do',$biller_id);
 				}
-			
+
 				$this->data['user'] = $this->sales_model->getUserFromSaleOrderByID($id);
 			}
-			
+
 			if($status == 'invoice'){
-				
+
 				$this->data['tax_rates'] = $this->site->getAllTaxRates();
 				$div = $this->sales_model->getSaleRecordByID($id);
 				$this->data['deliveries'] = $div;
 				$this->data['delivery_items'] = $this->sales_model->getSaleItemBySaleID($id);
-				
+
 				$this->data['user'] = $this->sales_model->getUserFromSaleBySaleID($id);
 				$this->data['reference'] = $this->site->getReference('do',$div->biller_id);
 				if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
@@ -13473,7 +13482,7 @@ class Sales extends MY_Controller
         }
 
     }
-	
+
 	public function sale_edit()
 	{
 		$id   = $_REQUEST['id'];
@@ -13482,7 +13491,7 @@ class Sales extends MY_Controller
 		$warehouse = $_REQUEST['ware'];
 		$this->sales_model->saleEdit($id, $qty, $edit, $warehouse);
 	}
-	
+
 	public function product_serial($warehouse_id = NULL)
 	{
 		$this->erp->checkPermissions();
@@ -13503,10 +13512,10 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('products_serial'), 'bc' => $bc);
         $this->page_construct('sales/products_serial', $meta, $this->data);
 	}
-	
+
 	function getSaleOrderitems($start = NULL, $end = NULL)
     {
-		
+
         $this->erp->checkPermissions('deliveries');
 
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
@@ -13540,10 +13549,10 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
 
 		$this->datatables
-            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username, 
-					COALESCE(SUM(erp_sale_order_items.quantity),0) as qty, 
-					COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received, 
-					COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance, 
+            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username,
+					COALESCE(SUM(erp_sale_order_items.quantity),0) as qty,
+					COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received,
+					COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance,
 					(IF(ISNULL(".$this->db->dbprefix("sale_order").".delivery_status), CONCAT(erp_sale_order.id, '___', 'delivery'), CONCAT(erp_sale_order.id, '___', ".$this->db->dbprefix("sale_order").".delivery_status))) as delivery_status")
             ->from('sale_order')
 			->join('companies as erp_cust', 'cust.id = sale_order.customer_id', 'inner')
@@ -13552,7 +13561,7 @@ class Sales extends MY_Controller
 			->join('sale_order_items','sale_order.id=sale_order_items.sale_order_id','left')
 			->where('sale_order.order_status =', 'completed')
 			->where('sale_order.sale_status <>', 'sale')
-			
+
 			->group_by('sale_order.id');
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
@@ -13599,7 +13608,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
         if ($biller_id) {
             $this->datatables
-                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username, 
+                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username,
                         COALESCE(SUM(erp_sale_items.quantity),0) as qty, COALESCE(SUM(erp_sale_items.quantity_received),0) as qty_received,
                         COALESCE(SUM(erp_sale_items.quantity),0) - COALESCE(SUM(erp_sale_items.quantity_received),0) as balance,
                         (IF(ISNULL(".$this->db->dbprefix("sales").".delivery_status), CONCAT(erp_sales.id, '___', 'delivery'),
@@ -13614,7 +13623,7 @@ class Sales extends MY_Controller
         } else {
 
     		$this->datatables
-                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username, 
+                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username,
     					SUM(IF(
             erp_delivery_items.option_id,
             (
@@ -13646,14 +13655,14 @@ class Sales extends MY_Controller
 
         echo $this->datatables->generate();
     }
-	
+
 	function getPOSOrderitems($start = NULL, $end = NULL)
     {
         //$this->erp->checkPermissions('deliveries');
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
         $detail_link = anchor('sales/view_delivery/$1', '<i class="fa fa-file-text-o"></i> ' . lang('delivery_details'), 'data-toggle="modal" data-target="#myModal"');
 		$add_link = anchor('pos/delivery_added/$1', '<i class="fa fa-file-text-o delivery_added"></i> ' . lang('add_delivery'), 'data-toggle="modal" data-target="#myModal2"');
-		
+
 		$update_link = anchor('sales/delivery_update/$1', '<i class="fa fa-file-text-o"></i> ' . lang('update_delivery'), 'data-toggle="modal" data-target="#myModal"');
         $email_link = anchor('sales/email_delivery/$1', '<i class="fa fa-envelope"></i> ' . lang('email_delivery'), 'data-toggle="modal" data-target="#myModal"');
         $edit_link = anchor('sales/edit_delivery/$1', '<i class="fa fa-edit"></i> ' . lang('edit_delivery'), 'data-toggle="modal" data-target="#myModal"');
@@ -13666,10 +13675,10 @@ class Sales extends MY_Controller
             . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
             . lang('actions') . ' <span class="caret"></span></button>
 		<ul class="dropdown-menu pull-right" role="menu">
-			
+
 			<li>' . $add_link . '</li>
 			<li>' . $edit_link . '</li>
-			
+
         </ul>
 		</div></div>';
 
@@ -13679,7 +13688,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
         if ($biller_id) {
             $this->datatables
-                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username, 
+                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username,
                         COALESCE(SUM(erp_sale_items.quantity),0) as qty, COALESCE(SUM(erp_sale_items.quantity_received),0) as qty_received,
                         COALESCE(SUM(erp_sale_items.quantity),0) - COALESCE(SUM(erp_sale_items.quantity_received),0) as balance,
                         (IF(ISNULL(".$this->db->dbprefix("sales").".delivery_status), CONCAT(erp_sales.id, '___', 'delivery'),
@@ -13694,7 +13703,7 @@ class Sales extends MY_Controller
                 ->group_by('sales.id');
         } else {
     		$this->datatables
-                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username, 
+                ->select("sales.id as id, sales.date, sales.reference_no, pro.company, sales.customer, users.username,
     					COALESCE(SUM(erp_sale_items.quantity),0) as qty, COALESCE(SUM(erp_sale_items.quantity_received),0) as qty_received,
     					COALESCE(SUM(erp_sale_items.quantity),0) - COALESCE(SUM(erp_sale_items.quantity_received),0) as balance,
     					(IF(ISNULL(".$this->db->dbprefix("sales").".delivery_status), CONCAT(erp_sales.id, '___', 'delivery'),
@@ -13715,11 +13724,11 @@ class Sales extends MY_Controller
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
     }
-	
-	
+
+
 	function add_deliveries($start_date = NULL, $end_date = NULL)
     {
-        
+
         $this->erp->checkPermissions('add_delivery',NULL,'sales');
 
 		if (!$start_date) {
@@ -13744,7 +13753,7 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
         $this->page_construct('sales/add_deliveries', $meta, $this->data);
     }
-	
+
 	function add_new_delivery()
 	{
         // get deliveries and add deliveries and add delivery_items
@@ -13759,6 +13768,7 @@ class Sales extends MY_Controller
             }
 
             $location = $this->input->post('add_item_location');
+
 
 			$sale_id = $this->input->post('sale_id');
 			$sale_reference_no = $this->input->post('sale_reference');
@@ -13791,12 +13801,13 @@ class Sales extends MY_Controller
 				'pos'				=> $pos,
                 'location'          => $location
 			);
-			
+			//$this->erp->print_arrays($delivery);
+
 			if($delivery){
-				
+
 				$product_id     = $this->input->post('product_id');
 				$warehouse_id   = $this->input->post('warehouse_id');
-				$quantity       = $this->input->post('bquantity');  
+				$quantity       = $this->input->post('bquantity');
 				$quantity_received = $this->input->post('cur_quantity_received');
 				$option_id = $this->input->post('option_id');
 				$sale_item_id = $this->input->post('delivery_id');
@@ -13807,7 +13818,8 @@ class Sales extends MY_Controller
 				$items_id = $this->input->post('delivery_id');
 				$piece = $this->input->post('piece');
 				$wpiece = $this->input->post('wpiece');
-				
+
+
 				$pro_num = sizeof($product_id);
 				for($i=0; $i<$pro_num; $i++) {
 					$rec_quantity = $quantity_received[$i];
@@ -13820,7 +13832,7 @@ class Sales extends MY_Controller
 					}else{
 						$cost = ($unit_cost->cost);
 					}
-					
+
 					$deliverie_items[] =  array(
 						'item_id'           => $items_id[$i],
 						'product_id'        => $product_id[$i],
@@ -13854,12 +13866,12 @@ class Sales extends MY_Controller
 					$this->site->costing($products);
 				}
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
-				
+
 				if($delivery_id > 0){
-					
+
 					$invoice_status = false;
 					$sale_order_status = false;
-					
+
 					if($type == "invoice" || $pos == 1) {
 						$sale_item = $this->sales_model->getSItemsBySaleID($sale_id, $product_id);
 						for($i=0; $i< sizeof($sale_item); $i++){
@@ -13872,21 +13884,21 @@ class Sales extends MY_Controller
 							}
 						}
 					}
-					
+
 					if($type=="sale_order" && $pos != 1) {
 						$sale_order_item = $this->sales_model->getSaleOrderItem($sale_id, $product_id);
 						for($i=0;$i<sizeof($sale_order_item);$i++){
 							$unit_qty = $this->site->getProductVariantByOptionID($sale_order_item[$i]->option_id);
 							$qtyReceived = $sale_order_item[$i]->quantity_received;
 							$lastQtyReceived = $qtyReceived + $quantity_received[$i];
-							$qty_received = array('quantity_received' => $lastQtyReceived);							
+							$qty_received = array('quantity_received' => $lastQtyReceived);
 							$condition = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_order_id'=>$sale_id);
 							if($this->sales_model->updateSaleOrderQtyReceived($qty_received,$condition)){
 								$sale_order_status = true;
 							}
 						}
 					}
-					
+
 					if($invoice_status == true) {
 						// update delivery status
 						$getAllQty = $this->sales_model->getAllSaleItemQty($sale_id);
@@ -13898,24 +13910,24 @@ class Sales extends MY_Controller
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
 								$updateStatus = true;
-								
+
 							}elseif($qty->qty - $qty->qty_received == 0){
 								$status = array('delivery_status' => 'completed');
 								$condition = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
-								$updateStatus = true;   
+								$updateStatus = true;
 							}
 
 						}
-						
+
 						if($updateStatus == true) {
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
 								$delivery_quantity = $delivery_item['quantity_received'];
 								$getproduct = $this->site->getProductByID($delivery_item['product_id']);
 								$getsaleitem = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
-								
+
 								$stock_info[] = array(
 									'product_id'        => $delivery_item['product_id'],
 									'product_code'      => $getproduct->code,
@@ -13939,9 +13951,9 @@ class Sales extends MY_Controller
 									'transaction_id'    => $getsaleitem->id,
 									'status'            => ($delivery_status == 'completed'? 'received':'pending')
 								);
-								
+
 							}
-							
+
 							if(sizeof($stock_info) >0){
 								if($delivery_status == "completed") {
 									$cost = $this->site->costing($stock_info);
@@ -13955,11 +13967,11 @@ class Sales extends MY_Controller
 									redirect("sales/add_deliveries");
 								}
 							}
-							
+
 						}
-						
+
 					}
-					
+
 					if($sale_order_status == true){
 						// update delivery status
 						$getAllQty = $this->sales_model->getAllSaleOrderItemQty($sale_id);
@@ -13976,12 +13988,12 @@ class Sales extends MY_Controller
 								$condition = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sale_order', $status);
-								$updateStatus = true;   
+								$updateStatus = true;
 							}
 						}
-						
+
 						if($updateStatus == true) {
-							
+
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
 								$getproduct = $this->site->getProductByID($delivery_item['product_id']);
@@ -13992,9 +14004,9 @@ class Sales extends MY_Controller
 								}else{
 									$delivery_quantity = ($delivery_item['quantity_received']);
 								}
-								
+
 								$delivery_quantity = ($delivery_item['quantity_received']);
-								
+
 								$stock_info[] = array(
 									'product_id' => $delivery_item['product_id'],
 									'delivery_id' => $delivery_id,
@@ -14018,7 +14030,7 @@ class Sales extends MY_Controller
 									'transaction_id'    => $getsaleitem->id,
 									'product_noted' => $getsaleitem->product_noted
 								);
-								
+
 							}
 							if(sizeof($stock_info) > 0) {
 								if($delivery_status == "completed") {
@@ -14029,11 +14041,11 @@ class Sales extends MY_Controller
 								$this->session->set_flashdata('message', lang("delivery added successfully"));
 								redirect("sales/add_deliveries");
 							}
-							
+
 						}
-						
+
 					}
-				
+
 				}else{
 					$this->session->set_flashdata('error', lang("delivery not inserted"));
 					redirect($_SERVER["HTTP_REFERER"]);
@@ -14045,7 +14057,7 @@ class Sales extends MY_Controller
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-	
+
 	function getPOSOrderDeliveries($wh=null, $start = NULL, $end = NULL)
     {
         $this->erp->checkPermissions('index', null, 'sale_order');
@@ -14066,7 +14078,7 @@ class Sales extends MY_Controller
 							<!--<li>' . $print_cabon_link . '</li>-->
 							<li>' . $detail_link . '</li>'
 							.(($this->Owner || $this->Admin) ? '<li class="edit_deli">'.$edit_link.'</li>' : ($this->GP['sales-edit_delivery'] ? '<li class="edit_deli">'.$edit_link.'</li>' : '')).
-							
+
 							'<li>' . $pdf_link . '</li>
 							<!--<li class="add">' . $add_link . '</li>-->
 							<!--<li>' . $delete_link . '</li>-->
@@ -14087,7 +14099,7 @@ class Sales extends MY_Controller
             ->where('deliveries.biller_id', $biller_id)
             ->group_by('deliveries.id')
             ->order_by('deliveries.id', 'desc');
-        }else{		
+        }else{
     		$this->datatables
                 ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address, COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
                 ->from('deliveries')
@@ -14105,22 +14117,22 @@ class Sales extends MY_Controller
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
-		
+
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
     }
-	
-	
-	function add_new_delivery_old() 
+
+
+	function add_new_delivery_old()
 	{
         // get deliveries and add deliveries and add delivery_items
         $this->form_validation->set_rules('delivery_by', lang("delivery_by"), 'trim|required');
 
         if ($this->form_validation->run() == true) {
-		
+
         $date = date('Y-m-d H:i:s');
         $sale_id = $this->input->post('sale_id');
-        
+
         $sale_reference_no = $this->input->post('sale_reference');
         $customer_id = $this->input->post('customer_id');
         $biller_id = $this->input->post('biller_id');
@@ -14129,7 +14141,7 @@ class Sales extends MY_Controller
         $note = $this->input->post('note');
         $created_by = $this->input->post('saleman_by');
 		$pos = $this->input->post("pos");
-		
+
         $delivery_by = $this->input->post('delivery_by');
 		if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 			$biller_id = $this->site->get_setting()->default_biller;
@@ -14140,7 +14152,7 @@ class Sales extends MY_Controller
 		}
         $type = $this->input->post('status');
         $delivery_status = $this->input->post('delivery_status');
-        
+
         $delivery = array(
             'date'              => $date,
             'sale_id'           => $sale_id,
@@ -14157,21 +14169,21 @@ class Sales extends MY_Controller
             'sale_status'       => 'pending',
             'delivery_status'   => $delivery_status
         );
-		
+
 			if($delivery){
 				$product_id     = $this->input->post('product_id');
 				$warehouse_id   = $this->input->post('warehouse_id');
-				$quantity       = $this->input->post('bquantity');  
+				$quantity       = $this->input->post('bquantity');
 				$quantity_received = $this->input->post('cur_quantity_received');
 				$option_id = $this->input->post('option_id');
 				$sale_item_id = $this->input->post('delivery_id');
-				
+
 				$product_id = $this->input->post('product_id');
 				$product_code = $this->input->post('product_code');
 				$product_name = $this->input->post('product_name');
 				$product_type = $this->input->post('product_type');
 				$items_id = $this->input->post('delivery_id');
-				
+
 				$pro_num = sizeof($product_id);
 					for($i=0; $i<$pro_num; $i++) {
 						$rec_quantity = $quantity_received[$i];
@@ -14179,14 +14191,14 @@ class Sales extends MY_Controller
 						$ending_balance = $quantity[$i] - $quantity_received[$i];
 						$unit_cost = $this->sales_model->getCurCost($product_id[$i]);
 						$unit_qty = $this->site->getProductVariantByOptionID($option_id[$i]);
-						//$this->erp->print_arrays($unit_cost);		
+						//$this->erp->print_arrays($unit_cost);
 						if($unit_qty)
 						{
 							$cost = ($unit_cost->cost*$unit_qty->qty_unit);
 						}else{
 							$cost = ($unit_cost->cost);
 						}
-						
+
 						$deliverie_items[] =  array(
 							'item_id'           => $items_id[$i],
 							'product_id'        => $product_id[$i],
@@ -14202,10 +14214,10 @@ class Sales extends MY_Controller
 							'created_by'        => $this->session->userdata('user_id'),
 						);
 					}
-				
-				
+
+
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
-				
+
 				if($delivery_id > 0){
 					$invoice_status = false;
 					$sale_order_status = false;
@@ -14221,7 +14233,7 @@ class Sales extends MY_Controller
 							}
 						}
 					}
-					
+
 					if($type=="sale_order") {
 						if($pos==1){
 							$sale_order_item = $this->sales_model->getPOSSaleOrderItem($sale_id);
@@ -14245,42 +14257,42 @@ class Sales extends MY_Controller
 									$sale_order_status = true;
 								}
 							}
-							
+
 						}
-						
-				     
+
+
 					}
-					
+
 					if($invoice_status == true) {
 					// update delivery status
 						$getAllQty = $this->sales_model->getAllSaleItemQty($sale_id);
 						$updateStatus = false;
 						foreach($getAllQty as $qty){
-							
+
 							if($qty->qty - $qty->qty_received > 0){
 								$status = array('delivery_status' => 'partial');
 								$condition = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
 								$updateStatus = true;
-								
+
 							}elseif($qty->qty - $qty->qty_received == 0){
 								$status = array('delivery_status' => 'completed');
 								$condition = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
-								$updateStatus = true;   
+								$updateStatus = true;
 							}
 
 						}
-						
+
 						if($updateStatus == true) {
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
 								$delivery_quantity = $delivery_item['quantity_received'];
 								$getproduct = $this->site->getProductByID($delivery_item['product_id']);
 								$getsaleitem = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
-								
+
 								$stock_info[] = array(
 									'product_id'        => $delivery_item['product_id'],
 									'product_code'      => $getproduct->code,
@@ -14304,9 +14316,9 @@ class Sales extends MY_Controller
 									'transaction_id'    => $getsaleitem->id,
 									'status'            => ($delivery_status == 'completed'? 'received':'pending')
 								);
-								
+
 							}
-							
+
 							if(sizeof($stock_info) >0){
 								if($delivery_status == "completed") {
 									$cost = $this->site->costing($stock_info);
@@ -14316,17 +14328,17 @@ class Sales extends MY_Controller
 								$this->session->set_flashdata('message', lang("delivery added successfully"));
 								redirect("sales/add_deliveries");
 							}
-							
+
 						}
-						
+
 					}
-					
+
 					if($sale_order_status == true){
 						// update delivery status
 						if($pos==1){
 							$getAllQty = $this->sales_model->getAllPOSSaleOrderItemQty($sale_id);
 							$updateStatus = false;
-							
+
 							foreach($getAllQty as $qty){
 								if($qty->qty - $qty->qty_received > 0){
 									$status = array('delivery_status' => 'partial');
@@ -14339,10 +14351,10 @@ class Sales extends MY_Controller
 									$condition = array('id'=>$sale_id);
 									$this->db->where($condition);
 									$this->db->update('sales', $status);
-									$updateStatus = true;   
+									$updateStatus = true;
 								}
 							}
-							
+
 						}else{
 							$getAllQty = $this->sales_model->getAllSaleOrderItemQty($sale_id);
 							$updateStatus = false;
@@ -14358,16 +14370,16 @@ class Sales extends MY_Controller
 									$condition = array('id'=>$sale_id);
 									$this->db->where($condition);
 									$this->db->update('sale_order', $status);
-									$updateStatus = true;   
+									$updateStatus = true;
 								}
 							}
 						}
-						
-						
-						
-						
+
+
+
+
 						if($updateStatus == true) {
-							
+
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
 								$getproduct = $this->site->getProductByID($delivery_item['product_id']);
@@ -14376,7 +14388,7 @@ class Sales extends MY_Controller
 								}else{
 									$getsaleitem = $this->sales_model->getSaleOrderItemByID($delivery_item['item_id']);
 								}
-								
+
 								$unit_qty = $this->site->getProductVariantByOptionID($delivery_item['option_id']);
 								if($unit_qty)
 								{
@@ -14384,9 +14396,9 @@ class Sales extends MY_Controller
 								}else{
 									$delivery_quantity = ($delivery_item['quantity_received']);
 								}
-								
+
 								$delivery_quantity = ($delivery_item['quantity_received']);
-								
+
 								$stock_info[] = array(
 									'product_id' => $delivery_item['product_id'],
 									'delivery_id' => $delivery_id,
@@ -14408,27 +14420,27 @@ class Sales extends MY_Controller
 									'real_unit_price' => $getsaleitem->real_unit_price,
 									'product_noted' => $getsaleitem->product_noted
 								);
-								
+
 							}
-							
+
 							//$this->erp->print_arrays($delivery_id);
-							
+
 							if(sizeof($stock_info) > 0) {
 								if($delivery_status == "completed") {
 									$cost = $this->site->costing($stock_info);
 									//$this->erp->print_arrays($cost);
-									
+
 									$this->site->syncPurchaseItems_delivery($cost,$delivery_id);
 									$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);
 								}
 								$this->session->set_flashdata('message', lang("delivery added successfully"));
 								redirect("sales/add_deliveries");
 							}
-							
+
 						}
-						
+
 					}
-				
+
 				}else{
 					$this->session->set_flashdata('error', lang("delivery not inserted"));
 					redirect($_SERVER["HTTP_REFERER"]);
@@ -14439,11 +14451,11 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', lang("Field Delivery by is required"));
             redirect($_SERVER["HTTP_REFERER"]);
         }
-        
+
 
     }
-	
-	
+
+
 	public function getProductSerial($warehouse_id = NULL)
 	{
 		$this->erp->checkPermissions('product_serial');
@@ -14463,7 +14475,7 @@ class Sales extends MY_Controller
                 ->from('sales')
 				->where('sale_items.serial_no != "" ')
 				->where('sales.warehouse_id', $warehouse_id);
-        } 
+        }
 		else {
 			$this->datatables
                 ->select('sales.id as idd, products.image, sales.date, sales.reference_no, products.code, products.name as pname, categories.name as cname, products.cost, products.price, sale_items.quantity, products.unit, sale_items.serial_no')
@@ -14475,7 +14487,7 @@ class Sales extends MY_Controller
         }
         echo $this->datatables->generate();
 	}
-	
+
 	function payment_schedule($pdf = NULL, $excel = NULL)
     {
         $this->erp->checkPermissions('Sales');
@@ -14485,7 +14497,7 @@ class Sales extends MY_Controller
         if ($pdf || $excel) {
 
             $this->db
-                ->select($this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref, 
+                ->select($this->db->dbprefix('return_sales') . ".date as date, " . $this->db->dbprefix('return_sales') . ".reference_no as ref,
 							erp_sales.reference_no AS `sal_ref`,
 						" . $this->db->dbprefix('return_sales') . ".biller, " . $this->db->dbprefix('return_sales') . ".customer, " . $this->db->dbprefix('return_sales') . ".surcharge, " . $this->db->dbprefix('return_sales') . ".grand_total, " . $this->db->dbprefix('return_sales') . ".id as id")
                 ->join('sales', 'sales.id=return_sales.sale_id', 'left')
@@ -14511,34 +14523,34 @@ class Sales extends MY_Controller
                 $this->excel->getActiveSheet()->setTitle(lang('return_sales'));
 
                 $this->excel->getActiveSheet()->SetCellValue('D3', lang('???????????????????????? Monthly Payment Schedule'));
-                
-				
+
+
 				$this->excel->getActiveSheet()->SetCellValue('A7', lang('?????????????'));
 				$this->excel->getActiveSheet()->SetCellValue('C7', lang('???? ?????'));
-				
+
 				$this->excel->getActiveSheet()->SetCellValue('A8', lang('?????????'));
 				$this->excel->getActiveSheet()->SetCellValue('C8', lang('???? Trapeang Sang Chiek, ??????? ?????????'));
 				$this->excel->getActiveSheet()->SetCellValue('C9', lang('???????,?????????'));
-				
+
 				$this->excel->getActiveSheet()->SetCellValue('F9', lang('Dealer Number:'));
 				$this->excel->getActiveSheet()->SetCellValue('G9', lang('KDL-04'));
-				
-				
+
+
 				$this->excel->getActiveSheet()->SetCellValue('A10', lang('???????????'));
 				$this->excel->getActiveSheet()->SetCellValue('C10', lang('0966199788'));
 				$this->excel->getActiveSheet()->SetCellValue('F10', lang('LID Number'));
 				$this->excel->getActiveSheet()->SetCellValue('G10', lang('GLF-KDL-04-00047708'));
-				
+
 				$this->excel->getActiveSheet()->SetCellValue('A10', lang('???????????????:'));
 				$this->excel->getActiveSheet()->SetCellValue('C10', lang('6777(?????????)'));
 				$this->excel->getActiveSheet()->SetCellValue('F10', lang('??????????:'));
 				$this->excel->getActiveSheet()->SetCellValue('G10', lang(' 00047708'));
-				
+
 				$this->excel->getActiveSheet()->SetCellValue('B15', lang('???????????(Motorcycle model)'));
 				$this->excel->getActiveSheet()->SetCellValue('D15', lang('????? 125'));
 				$this->excel->getActiveSheet()->SetCellValue('F15', lang('?????????'));
 				$this->excel->getActiveSheet()->SetCellValue('H15', lang('????? 125'));
-				
+
 				// Style ///
 				$smallfont_blue = array(
 				'font'  => array(
@@ -14546,7 +14558,7 @@ class Sales extends MY_Controller
 					'color' => array('rgb' => '3498db'),
 					'size'  => 8,
 					'name'  => ''
-				));		
+				));
 				$smallfont= array(
 				'font'  => array(
 					'bold'  => false,
@@ -14555,47 +14567,47 @@ class Sales extends MY_Controller
 					'name'  => ''
 				));
 				$this->excel->getActiveSheet()->getStyle('B15')->applyFromArray($smallfont);
-				$border_style= array('borders' => array('allborders' => array('style' => 
+				$border_style= array('borders' => array('allborders' => array('style' =>
 					PHPExcel_Style_Border::BORDER_DASHED ,'color' => array('argb' => '000000'),)));
 				$this->excel->getActiveSheet()->getStyle('D15')->applyFromArray($border_style)->applyFromArray($smallfont_blue)->getAlignment()->applyFromArray(
 					array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,)
 				);
-				
-				
-				
+
+
+
 				$this->excel->getActiveSheet()->getStyle('D3')->getFont()->setBold(true);
 				$this->excel->getActiveSheet()->getStyle('A1')
         ->getFill()
         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
         ->getStartColor()
         ->setRGB('FF0000');
-				
-				
-				
+
+
+
 				$this->excel->getActiveSheet()->mergeCells("B15:C15");
 				$this->excel->getActiveSheet()->getStyle('B15')->getAlignment()->applyFromArray(
     array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,)
 );
-				
+
 				$this->excel->getActiveSheet()->getStyle('C7')->getFont()->getColor()->setRGB('3498db');
 				$this->excel->getActiveSheet()->getStyle('C8')->getFont()->getColor()->setRGB('3498db');
 				$this->excel->getActiveSheet()->getStyle('C9')->getFont()->getColor()->setRGB('3498db');
 				$this->excel->getActiveSheet()->getStyle('C10')->getFont()->getColor()->setRGB('3498db');
 				$this->excel->getActiveSheet()->getStyle('C11')->getFont()->getColor()->setRGB('3498db');
-					
-				
+
+
 				$this->excel->getActiveSheet()->getStyle('G9')->getFont()->getColor()->setRGB('3498db');
 				$this->excel->getActiveSheet()->getStyle('G10')->getFont()->getColor()->setRGB('3498db');
 				$this->excel->getActiveSheet()->getStyle('G11')->getFont()->getColor()->setRGB('3498db');
-				
-				
-				
-				
-                                
-				
-				
-				
-				
+
+
+
+
+
+
+
+
+
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
                 $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(12);
@@ -14647,7 +14659,7 @@ class Sales extends MY_Controller
 
         }
     }
-	
+
 	//################ House #################//
     function house_calendar($warehouse_id = NULL)
 	{
@@ -14670,15 +14682,15 @@ class Sales extends MY_Controller
         $payments_link = anchor('customers/view/$1', '<i class="fa fa-money"></i> ' . lang('customer_details'), 'data-toggle="modal" data-target="#myModal"');
 
         $this->datatables
-            ->select("products.id as id, products.name, IF(erp_sales.id, erp_sales.customer, erp_sale_order.customer) as customer_name, 
-					IF(erp_sales.grand_total > 0, COALESCE(erp_sales.grand_total, 0), COALESCE(erp_products.price, 0)) as price, 
-					IF(erp_sales.paid > 0, COALESCE((SELECT SUM(amount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id AND erp_payments.paid_by = 'deposit' GROUP BY erp_payments.sale_id ), 0), COALESCE(erp_sale_order.paid, 0)) as deposite, 
-					IF(erp_sales.paid > 0, COALESCE((SELECT SUM(amount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id AND erp_payments.paid_by = 'down' GROUP BY erp_payments.sale_id ), 0), COALESCE(erp_sale_order.down_amount, 0)) as down_payment, 
+            ->select("products.id as id, products.name, IF(erp_sales.id, erp_sales.customer, erp_sale_order.customer) as customer_name,
+					IF(erp_sales.grand_total > 0, COALESCE(erp_sales.grand_total, 0), COALESCE(erp_products.price, 0)) as price,
+					IF(erp_sales.paid > 0, COALESCE((SELECT SUM(amount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id AND erp_payments.paid_by = 'deposit' GROUP BY erp_payments.sale_id ), 0), COALESCE(erp_sale_order.paid, 0)) as deposite,
+					IF(erp_sales.paid > 0, COALESCE((SELECT SUM(amount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id AND erp_payments.paid_by = 'down' GROUP BY erp_payments.sale_id ), 0), COALESCE(erp_sale_order.down_amount, 0)) as down_payment,
 					IF(erp_sales.grand_total > 0, (COALESCE(erp_sales.grand_total, 0) - (COALESCE((SELECT SUM(amount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id AND erp_payments.paid_by = 'deposit' GROUP BY erp_payments.sale_id ), 0) + COALESCE((SELECT SUM(amount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id AND erp_payments.paid_by = 'down' GROUP BY erp_payments.sale_id ), 0))), (COALESCE(erp_sale_order.grand_total, 0) - (COALESCE(erp_sale_order.paid, 0) + COALESCE(erp_sale_order.down_amount, 0)))) as loan_amount,
-					IF(erp_sales.note, sales.note, erp_sale_order.note) as note, 
-					IF(erp_sales.id, (SELECT MIN(dateline) FROM erp_loans WHERE sale_id = erp_sales.id), (SELECT MIN(dateline) FROM erp_order_loans WHERE sale_id = erp_sale_order.id)) as start_date, 
-					IF(erp_sales.id, (SELECT MAX(dateline) FROM erp_loans WHERE sale_id = erp_sales.id), (SELECT MAX(dateline) FROM erp_order_loans WHERE sale_id = erp_sale_order.id)) as end_date, 
-					IF(erp_sales.term_id, (SELECT description FROM erp_terms WHERE erp_terms.id = erp_sales.term_id), ((SELECT description FROM erp_terms WHERE erp_terms.id = erp_sale_order.term_id))) as term, 
+					IF(erp_sales.note, sales.note, erp_sale_order.note) as note,
+					IF(erp_sales.id, (SELECT MIN(dateline) FROM erp_loans WHERE sale_id = erp_sales.id), (SELECT MIN(dateline) FROM erp_order_loans WHERE sale_id = erp_sale_order.id)) as start_date,
+					IF(erp_sales.id, (SELECT MAX(dateline) FROM erp_loans WHERE sale_id = erp_sales.id), (SELECT MAX(dateline) FROM erp_order_loans WHERE sale_id = erp_sale_order.id)) as end_date,
+					IF(erp_sales.term_id, (SELECT description FROM erp_terms WHERE erp_terms.id = erp_sales.term_id), ((SELECT description FROM erp_terms WHERE erp_terms.id = erp_sale_order.term_id))) as term,
 					CASE WHEN erp_products.id = erp_sale_items.product_id THEN 'sold' WHEN erp_products.id = erp_sale_order_items.product_id THEN 'order' ELSE 'aval' END AS status, sales.attachment as attachment")
             ->join('sale_items', 'sale_items.product_id = products.id', 'left')
             ->join('sale_order_items', 'sale_order_items.product_id = products.id', 'left')
@@ -14698,7 +14710,7 @@ class Sales extends MY_Controller
                     </center>', "id");
         echo $this->datatables->generate();
     }
-	
+
     //+++++++++++++ Suspends +++++++++++++//
     function house_sales($warehouse_id = NULL)
 	{
@@ -14715,9 +14727,9 @@ class Sales extends MY_Controller
 
     function getHouseSale($warehouse_id = NULL)
 	{
-        
-        $this->erp->checkPermissions('index');  
-        
+
+        $this->erp->checkPermissions('index');
+
         if ($this->input->get('user')) {
             $user_query = $this->input->get('user');
         } else {
@@ -14762,20 +14774,20 @@ class Sales extends MY_Controller
             $user = $this->site->getUser();
             $warehouse_id = $user->warehouse_id;
         }
-        
-        $add_payment_link = anchor('sales/loan_view/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal"');  
+
+        $add_payment_link = anchor('sales/loan_view/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal"');
         $transfer_link = anchor('sales/transfer_owner/$1', '<i class="fa fa-exchange"></i> ' . lang('transfer_owner'), 'data-toggle="modal" data-target="#myModal"');
-		$customer_statement = anchor('sales/customer_statement/$1', '<i class="fa fa-money"></i> ' . lang('customer_statement'), 'data-toggle="modal" data-target="#myModal"'); 
-		
+		$customer_statement = anchor('sales/customer_statement/$1', '<i class="fa fa-money"></i> ' . lang('customer_statement'), 'data-toggle="modal" data-target="#myModal"');
+
         $action = '<div class="text-center"><div class="btn-group text-left">'
 					. '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
 						. lang('actions') . ' <span class="caret"></span></button>
-						<ul class="dropdown-menu pull-right" role="menu">            
+						<ul class="dropdown-menu pull-right" role="menu">
 							<li>' . $add_payment_link . '</li>
 							<li>' . $transfer_link . '</li>
 							<li>' . $customer_statement . '</li>
 						</ul>
-				</div></div>';       
+				</div></div>';
 
         $this->load->library('datatables');
         if($warehouse_id){
@@ -14783,7 +14795,7 @@ class Sales extends MY_Controller
                 ->select($this->db->dbprefix('sales').".id as idd,".$this->db->dbprefix('sales').".date, "
                     .$this->db->dbprefix('sale_items').".product_name as suspend,"
                     .$this->db->dbprefix('sales').".biller,".$this->db->dbprefix('sales').".customer,".$this->db->dbprefix('sales').".sale_status as sale_status,
-                    ".$this->db->dbprefix('sales').".grand_total as grand_total, 
+                    ".$this->db->dbprefix('sales').".grand_total as grand_total,
                     ".$this->db->dbprefix('sales').".paid as paid, (CASE WHEN ".$this->db->dbprefix('sales').".paid IS NULL THEN ".$this->db->dbprefix('sales').".grand_total ELSE ".$this->db->dbprefix('sales').".grand_total - ".$this->db->dbprefix('sales').".paid END) as balance, ".$this->db->dbprefix('sales').".payment_status as payment_status")
                 ->join($this->db->dbprefix('loans'), $this->db->dbprefix('sales').'.id = '.$this->db->dbprefix('loans').'.sale_id', 'right')
                 ->join($this->db->dbprefix('sale_items'), $this->db->dbprefix('sales').'.id = '.$this->db->dbprefix('sale_items').'.sale_id', 'inner')
@@ -14795,19 +14807,19 @@ class Sales extends MY_Controller
                 ->select($this->db->dbprefix('sales').".id as idd,".$this->db->dbprefix('sales').".date, "
                     .$this->db->dbprefix('sale_items').".product_name as suspend,"
                     .$this->db->dbprefix('sales').".biller,".$this->db->dbprefix('sales').".customer,".$this->db->dbprefix('sales').".sale_status as sale_status,
-                    ".$this->db->dbprefix('sales').".grand_total as grand_total, 
+                    ".$this->db->dbprefix('sales').".grand_total as grand_total,
                     ".$this->db->dbprefix('sales').".paid as paid, (CASE WHEN ".$this->db->dbprefix('sales').".paid IS NULL THEN ".$this->db->dbprefix('sales').".grand_total ELSE ".$this->db->dbprefix('sales').".grand_total - ".$this->db->dbprefix('sales').".paid END) as balance, ".$this->db->dbprefix('sales').".payment_status as payment_status")
                 ->join($this->db->dbprefix('loans'), $this->db->dbprefix('sales').'.id = '.$this->db->dbprefix('loans').'.sale_id', 'right')
                 ->join($this->db->dbprefix('sale_items'), $this->db->dbprefix('sales').'.id = '.$this->db->dbprefix('sale_items').'.sale_id', 'inner')
 				->group_by('sales.id')
                 ->from('sales');
-        }       
+        }
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin) {
             $this->datatables->where('created_by', $this->session->userdata('user_id'));
         } elseif ($this->Customer) {
             $this->datatables->where('customer_id', $this->session->userdata('user_id'));
         }
-        
+
         if ($user_query) {
             $this->datatables->where('suspended_bills.created_by', $user_query);
         }
@@ -14829,9 +14841,9 @@ class Sales extends MY_Controller
         }
 
         $this->datatables->add_column("Actions", $action, "idd");
-        echo $this->datatables->generate();  
+        echo $this->datatables->generate();
     }
-	
+
 	//********************* Transfer Owner *************************/
 	//********************* Transfer Owner *************************/
 	function transfer_owner($id)
@@ -14846,7 +14858,7 @@ class Sales extends MY_Controller
 		//$this->erp->print_arrays($transfer['transfer_owner']);
 		$this->load->view($this->theme.'sales/modal_transfer', $this->data);
 	}
-	
+
 	function trasfer_submit($id)
 	{
 		$customer = $this->input->post('customer');
@@ -14906,14 +14918,14 @@ class Sales extends MY_Controller
 		}
 		redirect($_SERVER["HTTP_REFERER"]);
 	}
-	
+
 	function getProductVariant()
 	{
 		$product_id = $this->input->get('pro_id');
 		$product_variant = $this->sales_model->getProductVariantByid($product_id);
 		echo json_encode($product_variant);
 	}
-	
+
 	function getProductVariantOptionAndID()
 	{
 		$product_id = $this->input->get('product_id');
@@ -14924,7 +14936,7 @@ class Sales extends MY_Controller
 		}
 		return Null;
 	}
-	
+
 	function getPartialAmount()
 	{
 		$sale_order_id = $this->input->get('sale_order_id');
@@ -14933,9 +14945,9 @@ class Sales extends MY_Controller
 			echo json_encode($partial_amount);
 		}
 		return false;
-		
+
 	}
-	
+
 	function getPaidAmountBySaleOrderId($sale_order_id=Null)
 	{
 		$sale_order_id = $this->input->get('sale_order_id');
@@ -14944,9 +14956,9 @@ class Sales extends MY_Controller
 			echo json_encode($paid_amount);
 		}
 		return false;
-		
+
 	}
-	
+
 	public function checkrefer()
 	{
 		if($this->input->get('items')){
@@ -14954,7 +14966,7 @@ class Sales extends MY_Controller
 		}else{
 			$items = '';
 		}
-		
+
 		if(is_array($items)){
 			$isAuth = 0;
 			$first = 1;
@@ -14981,9 +14993,9 @@ class Sales extends MY_Controller
 		}
 		echo json_encode(2);
 	}
-    
+
 	function invoice_devery($id)
-    {    
+    {
 		$this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
 
 		$this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
@@ -15007,7 +15019,7 @@ class Sales extends MY_Controller
     }
 
 	function invoice_deveryStatement($id)
-    {   
+    {
         $this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
         $this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
         $this->data['ref'] = $this->sales_model->getDeliveryRefIDBill($id);
@@ -15017,7 +15029,7 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('invoice_devery'), 'bc' => $bc);
         $this->page_construct('sales/invoice_deveriesStatement', $meta, $this->data);
     }
-	
+
 	public function sales_invoice($id = null)
     {
         $this->erp->checkPermissions('index');
@@ -15044,7 +15056,7 @@ class Sales extends MY_Controller
         $this->load->view($this->theme .'sales/invoice_sales_a5',$this->data);
 
     }
-	
+
 	function print_invoice($id)
     {
         $deposit_so_id = $this->sales_model->getDeposit($id);
@@ -15060,22 +15072,22 @@ class Sales extends MY_Controller
         $meta = array('page_title' => lang('invoice_devery'), 'bc' => $bc);
         $this->page_construct('sales/print_invoice', $meta, $this->data);
     }
-	
+
 	function getPrinciple_id()
     {
-		$this->erp->checkPermissions('index');  
+		$this->erp->checkPermissions('index');
 		$principle_id = $this->input->get('principal_id');
 		$rows['principle'] = $this->sales_model->getPrinciple_id($principle_id);
         echo json_encode($rows);
     }
-	
+
 	function down_payment($id=null)
 	{
-		
+
 		$this->form_validation->set_rules('loan_amount', lang("loan_amount"), 'required');
 
         if ($this->form_validation->run() == true) {
-			
+
 				$sale_id 	   = $this->input->post('sale_id');
 				$biller_id     = $this->input->post('biller_id');
 				$frequency     = $this->input->post('frequency');
@@ -15086,27 +15098,27 @@ class Sales extends MY_Controller
 				$down		   = $this->input->post('down_payment');
 				$payment_down  = $this->erp->fld(trim($this->input->post('payment_down_date')));
 				$down_date     = $this->erp->fld(trim($this->input->post('down_date')));
-				$priciple_loan = $this->input->post('priciple_loan'); 
-				$priciple_term = $this->input->post('priciple_term'); 
-				
+				$priciple_loan = $this->input->post('priciple_loan');
+				$priciple_term = $this->input->post('priciple_term');
+
 				$jl_id         = $this->input->post('jl_gov_id');
 				$jl_name	   = $this->input->post('jl_name');
 				$jl_dob		   = $this->input->post('jl_dob');
 				$jl_gender     = $this->input->post('jl_gender');
 				$jl_phone	   = $this->input->post('jl_phone_1');
-				
-				$sale_ref 	  = $this->sales_model->getSaleById($sale_id)->reference_no; 
+
+				$sale_ref 	  = $this->sales_model->getSaleById($sale_id)->reference_no;
 				$paid_by      = $this->input->post('paid_by');
 				$reference_no = $this->input->post("sale_id");
 				$discount     = $this->input->post("discount");
-				
+
 				if($paid_by == "deposit"){
 					$payment_reference = $sale_ref;
 				}else{
 					$payment_reference = (($paid_by == 'deposit')? $this->site->getReference('pay',$biller_id):($this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp',$biller_id)));
 				}
-				
-				
+
+
 				$payment = array(
 								'date' => $payment_down,
 								'sale_id' => $sale_id,
@@ -15119,7 +15131,7 @@ class Sales extends MY_Controller
 								'biller_id'	=> $biller_id,
 								'add_payment' => '1',
 								'is_down_payment'=>'1');
-				
+
 				$loan_info =  array('biller_id'=>$biller_id,
 								'term' => $term,
 								'term_id' =>"",
@@ -15132,23 +15144,23 @@ class Sales extends MY_Controller
 								'principle_amount'=>$priciple_loan,
 								'down_date'=>$payment_down,
 								'installment_date'=>$down_date);
-				
-						
+
+
 				$jl_data = array('group_name'=>'join_lease',
 								 'name'=>$jl_name,
 								 'cf1'=>$jl_id,
 								 'date_of_birth'=>$this->erp->fld(trim($jl_dob)),
 								 'gender'=>$jl_gender,
 								 'phone'=>$jl_phone);
-				
+
 				$total_interest = 0;
 				$no = sizeof($_POST['no']);
 				$period = 1;
-			
+
 					for($m = 0; $m < $no; $m++){
-						
+
 						$dateline = $this->erp->fld(trim($_POST['dateline'][$m]));
-						
+
 							$loans[] = array(
 							'period' 	=> $period,
 							'sale_id' 	=> $sale_id,
@@ -15164,14 +15176,14 @@ class Sales extends MY_Controller
 						);
 						$period++;
 					}
-					
+
 				$join_lease	=  $this->sales_model->AddJoinLease($jl_data,$sale_id);
 				$payment    =  $this->sales_model->addPayment($payment);
 				$result     =  $this->sales_model->Addloans($loans,$sale_id,$loan_info);
 				redirect("sales");
-				
+
 		}else{
-			
+
 			$this->data['billers']          = $this->site->getAllCompanies('biller');
 			$this->data['warehouses']       = $this->site->getAllWarehouses();
 			$inv                            = $this->sales_model->getInvoiceByID($id);
@@ -15194,10 +15206,10 @@ class Sales extends MY_Controller
 			$this->data['LoanRated']   		= $this->sales_model->LoanRated($inv->so_id);
 			$this->data['frequen']     		= $this->sales_model->getSalesBySaleId($id);
             $this->data['payments']    		= $this->sales_model->getPaymentsForSaleFlora($id);
-			
+
 			$return = $this->sales_model->getReturnBySID($id);
 			$this->data['return_sale'] = $return;
-			
+
             if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['biller_id'] = $biller_id;
@@ -15208,7 +15220,7 @@ class Sales extends MY_Controller
 				$this->data['reference'] = $this->site->getReference('sp',$biller_id);
 			}
             $records = $this->sales_model->getAllInvoiceItemsByID($id);
-        
+
             foreach($records as $record){
                 $product_option = $record->option_id;
                 if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15219,30 +15231,30 @@ class Sales extends MY_Controller
             $this->data['rows'] = $records;
             $this->data['loan'] = $this->sales_model->getLoanBySaleId($id);
 			$this->data['jsrows']      = json_encode($this->sales_model->getAllInvoiceItems($id));
-			
+
 			//cmt
 			$customer = $this->site->getCompanyByID($inv->customer_id);
 			$customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 			$c = rand(100000, 9999999);
-			
+
 			$this->data['id'] = $id;
 			$this->data['p'] = $this->auth_model->getPermission($id);
-			$this->data['cat'] = $this->auth_model->getCategory(); 
+			$this->data['cat'] = $this->auth_model->getCategory();
 			$bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales/down_payment'), 'page' => lang('down_payment')), array('link' => '#', 'page' => lang('down_payment')));
 			$meta = array('page_title' => lang('down_payment'), 'bc' => $bc);
 			$this->page_construct('sales/down_payment', $meta, $this->data);
-			
+
 		}
-       
+
 	}
-	
+
 	function edit_down_payment($id=null)
 	{
-		
+
 		$this->form_validation->set_rules('loan_amount', lang("loan_amount"), 'required');
 
         if ($this->form_validation->run() == true) {
-			
+
 				$sale_id 			= $this->input->post('sale_id');
 				$biller_id  		= $this->input->post('biller_id');
 				$frequency  		= $this->input->post('frequency');
@@ -15254,27 +15266,27 @@ class Sales extends MY_Controller
 				$payment_down  		= $this->erp->fld(trim($this->input->post('payment_down_date')));
 				$down				= $this->input->post('down_payment');
 				$down_date  		= $this->erp->fld(trim($this->input->post('down_date')));
-				$priciple_loan		= $this->input->post('priciple_loan'); 
-				$priciple_term      = $this->input->post('priciple_term'); 
-				
+				$priciple_loan		= $this->input->post('priciple_loan');
+				$priciple_term      = $this->input->post('priciple_term');
+
 				$jl_row				= $this->input->post('jl_id');
 				$jl_id     	 		= $this->input->post('jl_gov_id');
 				$jl_name			= $this->input->post('jl_name');
 				$jl_dob				= $this->input->post('jl_dob');
 				$jl_gender  		= $this->input->post('jl_gender');
 				$jl_phone			= $this->input->post('jl_phone_1');
-				
-				$sale_ref 	  		= $this->sales_model->getSaleById($sale_id)->reference_no; 
+
+				$sale_ref 	  		= $this->sales_model->getSaleById($sale_id)->reference_no;
 				$paid_by      		= $this->input->post('paid_by');
 				$reference_no 		= $this->input->post("sale_id");
 				$discount     		= $this->input->post("discount");
-				
+
 				if($paid_by == "deposit"){
 					$payment_reference = $sale_ref;
 				}else{
 					$payment_reference = (($paid_by == 'deposit')? $this->site->getReference('pay',$biller_id):($this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('sp',$biller_id)));
 				}
-				
+
 				$payment = array('date' => $payment_down,
 								'sale_id' => $sale_id,
 								'reference_no' => $payment_reference,
@@ -15286,7 +15298,7 @@ class Sales extends MY_Controller
 								'biller_id'	=> $biller_id,
 								'add_payment' => '1',
 								'is_down_payment'=>'1');
-						
+
 				$loan_info =  array('biller_id'=>$biller_id,
 								'term' => $term,
 								'term_id' =>"",
@@ -15299,22 +15311,22 @@ class Sales extends MY_Controller
 								'principle_amount'=>$priciple_loan,
 								'down_date'=>$payment_down,
 								'installment_date'=>$down_date);
-						
+
 				$jl_data = array('group_name'=>'join_lease',
 								 'name'=>$jl_name,
 								 'cf1'=>$jl_id,
 								 'date_of_birth'=>$this->erp->fld(trim($jl_dob)),
 								 'gender'=>$jl_gender,
 								 'phone'=>$jl_phone);
-				
+
 				$total_interest = 0;
 				$no = sizeof($_POST['no']);
 				$period = 1;
-			
+
 					for($m = 0; $m < $no; $m++){
-						
+
 						$dateline = $this->erp->fld(trim($_POST['dateline'][$m]));
-						
+
 							$loans[] = array(
 							'period' 	=> $period,
 							'sale_id' 	=> $sale_id,
@@ -15334,9 +15346,9 @@ class Sales extends MY_Controller
 				$payment    =  $this->sales_model->addPayment($payment);
 				$result     =  $this->sales_model->Addloans($loans,$sale_id,$loan_info,1);
 				redirect("sales");
-				
+
 		}else{
-			
+
 			$this->data['billers']     		= $this->site->getAllCompanies('biller');
 			$this->data['warehouses']  		= $this->site->getAllWarehouses();
 			$inv                       		= $this->sales_model->getInvoiceByID($id);
@@ -15355,16 +15367,16 @@ class Sales extends MY_Controller
 			$this->data['inv']		   		= $inv;
 			$down_data                 		= $this->sales_model->getSaleLoan($id);
 			$this->data['order_down']  		= $down_data;
-			
+
 		    $this->data['jl_data']     		= $this->sales_model->jl_data($down_data->join_lease_id);
 			$this->data['LoanRated']   		= $this->sales_model->LoanRated($inv->so_id);
-			
+
 
             $this->data['frequen']     = $this->sales_model->getSalesBySaleId($id);
             $this->data['payments'] = $this->sales_model->getPaymentsForSaleFlora($id);
 
             $records = $this->sales_model->getAllInvoiceItemsByID($id);
-        
+
             foreach($records as $record){
                 $product_option = $record->option_id;
                 if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15379,7 +15391,7 @@ class Sales extends MY_Controller
 
 			$return                    = $this->sales_model->getReturnBySID($id);
 			$this->data['return_sale'] = $return;
-			
+
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) {
 				$biller_id = $this->site->get_setting()->default_biller;
 				$this->data['biller_id'] = $biller_id;
@@ -15389,32 +15401,32 @@ class Sales extends MY_Controller
 				$this->data['biller_id'] = $biller_id;
 				$this->data['reference'] = $this->site->getReference('sp',$biller_id);
 			}
-			
+
 			$this->data['jsrows']      = json_encode($this->sales_model->getAllInvoiceItems($id));
 			//cmt
 			$customer = $this->site->getCompanyByID($inv->customer_id);
 			$customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 			$c = rand(100000, 9999999);
-			
+
 			$this->data['id'] = $id;
 			$this->data['p'] = $this->auth_model->getPermission($id);
-			$this->data['cat'] = $this->auth_model->getCategory(); 
+			$this->data['cat'] = $this->auth_model->getCategory();
 			$bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales/down_payment'), 'page' => lang('down_payment')), array('link' => '#', 'page' => lang('down_payment')));
 			$meta = array('page_title' => lang('down_payment'), 'bc' => $bc);
 			$this->page_construct('sales/edit_down_payment', $meta, $this->data);
-			
+
 		}
-       
+
 	}
-	
+
 	public function cash_payment_schedule_preview_by_id($id=null)
 	{
 		$this->erp->checkPermissions('index');
 		//$this->erp->print_arrays($this->sales_model->getSaleItemBySaleID($id));
-		
+
 		$inv = $this->sales_model->getInvoiceByID($id);
 		$this->data['sale_id']	  = $id;
-		$this->data['loan']       = $this->sales_model->getLoanBySaleId($id); 
+		$this->data['loan']       = $this->sales_model->getLoanBySaleId($id);
 		$this->data['countloans'] = $this->sales_model->getLoanBySaleId($id);
 		$this->data['sale_item']  = $this->sales_model->getSaleItemBySaleID($id);
 		$this->data['inv']        = $inv;
@@ -15423,10 +15435,10 @@ class Sales extends MY_Controller
 		$this->data['modal_js']   = $this->site->modal_js();
 		$this->load->view($this->theme.'sales/cash_payment_schedule_process',$this->data);
 	}
-	
 
 
-	
+
+
     function the_flora_form($id)
 	{
         // echo $id;exit();
@@ -15456,7 +15468,7 @@ class Sales extends MY_Controller
         $this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getTheCustomers($id);
         $this->data['saller'] = $this->site->getSaller($id);
-		
+
 		$this->data['jl_data'] = $this->sales_model->getJoinlease($id);
 		$get_d_m_y = $this->sales_model->getJoinlease($id);
 		$jl_data_date = explode("-", $get_d_m_y->date_of_birth);
@@ -15491,7 +15503,7 @@ class Sales extends MY_Controller
         $month_index = $db_down_pay[1];
         $this->data['db_down_pay_month'] = $months[$month_index];
         $this->data['db_down_pay_date'] = $db_down_pay[2];
-		
+
         $this->data['product'] = $this->sales_model->getProductSale($id);
         //get_dob_cus
         $customers = $this->site->getCompanyByID($inv->customer_id);
@@ -15502,7 +15514,7 @@ class Sales extends MY_Controller
         $this->data['dbcus_date'] = $db_cus[2];
         ////////////////////////
 
-        
+
         $this->data['rows'] = $this->sales_model->getAllInvoiceItems($id);
         // $this->erp->print_arrays($this->data['rows']);
         $this->data['cust_id'] = $inv->customer_id;
@@ -15510,7 +15522,7 @@ class Sales extends MY_Controller
         // $this->erp->print_arrays($this->data);
         $this->load->view($this->theme.'sales/the_flora_form', $this->data);
     }
-	
+
 	public function contrast_sale($id = null)
     {
 	//	$this->erp->print_arrays($this->sales_model->getJoinlease($id));
@@ -15543,15 +15555,15 @@ class Sales extends MY_Controller
 		$this->data['date_day'] = $date_ex[2];
 		//end get date of sale
 
-		
-		
+
+
         //get product sale
         $this->data['product'] = $this->sales_model->getProductSale($id);
 		$wid_height = $this->sales_model->getProductSale($id);
 		$width_height = split (" x ", $wid_height->cf5);
 		$this->data['height'] = $width_height[1];
 		$this->data['width'] = $width_height[0];
-		
+
 		$this->data['jl_data'] = $this->sales_model->getJoinlease($id);
 		$get_d_m_y = $this->sales_model->getJoinlease($id);
 		$jl_data_date = explode("-", $get_d_m_y->date_of_birth);
@@ -15559,12 +15571,12 @@ class Sales extends MY_Controller
         $m_index = $jl_data_date[1];
         $this->data['jl_month'] = $months[$m_index];
         $this->data['jl_date'] = $jl_data_date[2];
-		
+
         $this->data['rows'] = $this->sales_model->getAllInvoiceItemsByID($id);
-       
+
         $this->data['inv'] = $inv;
 		$sallers = $this->site->getSaller($id);
-        
+
 		// get date of birth saller
 		$db = explode("-", $sallers->date_of_birth);
 		$this->data['db_year'] = $db[0];
@@ -15580,14 +15592,14 @@ class Sales extends MY_Controller
 		$this->data['dbcus_month'] = $months[$monthcus_index];
 		$this->data['dbcus_date'] = $db_cus[2];
 		//end get date of birth customer
-		
+
 		$this->data['saller'] = $sallers;
 		// $this->erp->print_arrays($this->data['saller']);
         $this->data['customer'] = $customers;
         $this->load->view($this->theme .'sales/contrast_sale',$this->data);
 
     }
-    
+
 	function view_document($id=null)
 	{
         $this->erp->checkPermissions('index', TRUE);
@@ -15601,11 +15613,11 @@ class Sales extends MY_Controller
         $payment = $this->sales_model->getPaymentByID($id);
         $this->data['biller'] = $this->site->getCompanyByID($payment->biller_id);
         // $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
-        
+
 
 
         /*$this->data['inv'] = $inv;
-        
+
         $payments = $this->sales_model->getCurrentBalance($inv->id);
         $current_balance = $inv->grand_total;
         foreach($payments as $curr_pay) {
@@ -15616,9 +15628,9 @@ class Sales extends MY_Controller
         $rowpay = $this->sales_model->getPayments($payment->reference_no);
         $this->data['rowpay'] = $rowpay;
         // $this->erp->print_arrays($rowpay);
-        $this->data['paid'] = $this->sales_model->getPaid($payment->reference_no); 
+        $this->data['paid'] = $this->sales_model->getPaid($payment->reference_no);
         // $this->erp->print_arrays($this->sales_model->getPaid($payment->reference_no));
-        // $this->data['paid'] = $this->sales_model->getRate($payment->reference_no); 
+        // $this->data['paid'] = $this->sales_model->getRate($payment->reference_no);
         $this->data['rows'] = $this->sales_model->getAllInvoiceItems($payment->id);
         // $this->erp->print_arrays($this->sales_model->getAllInvoiceItems($payment->id));
         $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
@@ -15628,21 +15640,21 @@ class Sales extends MY_Controller
         // $this->erp->print_arrays($cus);
         $this->data['payment'] = $payment;
         $this->data['page_title'] = $this->lang->line("payment_note");
-        
+
         $this->load->view($this->theme . 'sales/view_payment', $this->data);
     }
-	
+
 	function view_payment_cus_old($id=null)
     {
         // $this->erp->print_arrays($id);
         $payment = $this->sales_model->getPaymentByID($id);
         $this->data['biller'] = $this->site->getCompanyByID($payment->biller_id);
         // $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
-        
+
 
 
         /*$this->data['inv'] = $inv;
-        
+
         $payments = $this->sales_model->getCurrentBalance($inv->id);
         $current_balance = $inv->grand_total;
         foreach($payments as $curr_pay) {
@@ -15653,9 +15665,9 @@ class Sales extends MY_Controller
         $rowpay = $this->sales_model->getPayments($payment->reference_no);
         $this->data['rowpay'] = $rowpay;
         // $this->erp->print_arrays($rowpay);
-        $this->data['paid'] = $this->sales_model->getPaid($payment->reference_no); 
+        $this->data['paid'] = $this->sales_model->getPaid($payment->reference_no);
         // $this->erp->print_arrays($this->sales_model->getPaid($payment->reference_no));
-        // $this->data['paid'] = $this->sales_model->getRate($payment->reference_no); 
+        // $this->data['paid'] = $this->sales_model->getRate($payment->reference_no);
         $this->data['rows'] = $this->sales_model->getAllInvoiceItems($payment->id);
         // $this->erp->print_arrays($this->sales_model->getAllInvoiceItems($payment->id));
         $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
@@ -15665,10 +15677,10 @@ class Sales extends MY_Controller
         // $this->erp->print_arrays($cus);
         $this->data['payment'] = $payment;
         $this->data['page_title'] = $this->lang->line("payment_note");
-        
+
         $this->load->view($this->theme . 'sales/view_payment_cus', $this->data);
     }
-	
+
 	function view_payment_cus($biller_id = Null, $payment_ref = Null,$idd)
     {
 		$reference_no = str_replace('_', '/', $payment_ref);
@@ -15677,7 +15689,7 @@ class Sales extends MY_Controller
         $rowpay = $this->sales_model->getPayments($reference_no);
         $this->data['rowpay'] = $rowpay;
 		//$this->erp->print_arrays($this->data['rowpay']);
-        $this->data['paid'] = $this->sales_model->getPaid($reference_no); 
+        $this->data['paid'] = $this->sales_model->getPaid($reference_no);
         //$this->data['rows'] = $this->sales_model->getAllInvoiceItems($id);
         $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
         $this->data['id'] = $id;
@@ -15688,7 +15700,7 @@ class Sales extends MY_Controller
         $this->load->view($this->theme . 'sales/view_payment_cus', $this->data);
     }
 
-    function knk_group($id=null) 
+    function knk_group($id=null)
 	{
         // $this->erp->print_arrays($id);
         $this->erp->checkPermissions('index');
@@ -15696,13 +15708,13 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        
+
         $this->load->model('pos_model');
         $this->data['pos'] = $this->pos_model->getSetting();
-        
+
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        
-        $inv = $this->sales_model->getInvoiceByID($id);  
+
+        $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         // $this->erp->print_arrays($this->data['customer']);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
@@ -15722,10 +15734,10 @@ class Sales extends MY_Controller
         $this->data['rows'] = $this->sales_model->getAllInvoiceItems($id);
         // $this->erp->print_arrays($this->data['rows']);
         $this->data['logo'] = true;
-        
+
         $this->load->view($this->theme . 'sales/knk_invoice', $this->data);
     }
-	
+
     function print_st_invoice($id=null)
 	{
         $this->erp->checkPermissions('add', true, 'sales');
@@ -15746,11 +15758,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15767,7 +15779,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/invoice_st_a4',$this->data);
     }
-	
+
 	function invoice_phum_meas($id=null)
 	{
         $this->erp->checkPermissions('add', true, 'sales');
@@ -15788,11 +15800,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15809,7 +15821,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/invoice_phum_meas',$this->data);
     }
-	
+
 	 function invoice_ppcp($id=null)
 	{
         $this->erp->checkPermissions('add', true, 'sales');
@@ -15830,11 +15842,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15873,11 +15885,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15916,11 +15928,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15959,11 +15971,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -15980,7 +15992,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/invoice_kc',$this->data);
     }
-	
+
 	function print_st_invoice_uy_sing($id=null)
 	{
         $this->erp->checkPermissions('add', true, 'sales');
@@ -16001,11 +16013,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -16022,7 +16034,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/invoice_st_a4_uy_sing',$this->data);
     }
-    
+
 	function idd_invoice($id=null)
     {
         // $this->erp->print_arrays($id);
@@ -16052,11 +16064,11 @@ class Sales extends MY_Controller
         $this->data['invs'] = $inv;
         // $this->erp->print_arrays($this->data['invs']);
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -16073,7 +16085,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/idd_invoice',$this->data);
     }
-     
+
 	function invoice_st_a5($id=null)
     {
         // $this->erp->print_arrays($id);
@@ -16096,11 +16108,11 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
-        
+
         foreach($records as $record){
             $product_option = $record->option_id;
             if($product_option != Null && $product_option != "" && $product_option != 0){
@@ -16117,7 +16129,7 @@ class Sales extends MY_Controller
         $this->data['sid'] = $id;
         $this->load->view($this->theme .'sales/invoice_st',$this->data);
     }
-	function primo_invoice($id=null) 
+	function primo_invoice($id=null)
 	{
         // $this->erp->print_arrays($id);
         $this->erp->checkPermissions('add', true, 'sales');
@@ -16143,7 +16155,7 @@ class Sales extends MY_Controller
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['invs'] = $inv;
         $this->data['payment_term'] = $this->sales_model->getPaymentermID($inv->payment_term);
-        
+
         $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] = $return;
         $records = $this->sales_model->getAllInvoiceItems($id);
@@ -16184,20 +16196,20 @@ class Sales extends MY_Controller
             }
         }
         $this->data['curr_balance'] = $current_balance;
-        
+
         /* Apartment */
         $this->data['rows'] = $this->sales_model->getAllInvoiceItems($inv->id);
         $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
         /* / */
-        
+
         $this->data['payment'] = $payment;
         $this->data['page_title'] = $this->lang->line("payment_note");
-        
+
         $this->load->view($this->theme . 'sales/view_receipt_primo', $this->data);
     }
-	
+
 	function changePaymentDate($ids = NULL) {
-		
+
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
 
@@ -16218,7 +16230,7 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-		
+
         if ($this->form_validation->run() == true && $this->sales_model->updatePaymentDate($data)) {
             $this->session->set_flashdata('message', lang("payment_date_changed"));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -16230,11 +16242,11 @@ class Sales extends MY_Controller
             $this->data['modal_js'] = $this->site->modal_js();
             $this->load->view($this->theme . 'sales/update_payment_date', $this->data);
         }
-		
+
     }
-	
+
 	function changeLoanTerm($id) {
-		
+
         $this->erp->checkPermissions();
         $this->load->helper('security');
 
@@ -16269,7 +16281,7 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-		
+
         if ($this->form_validation->run() == true && $this->sales_model->updateLoanTerm($id, $loans)) {
             $this->session->set_flashdata('message', lang("payment_date_changed"));
             redirect($_SERVER["HTTP_REFERER"]);
@@ -16286,7 +16298,7 @@ class Sales extends MY_Controller
 			$this->data['userBankAccounts'] = $this->site->getAllBankAccountsByUserID();
 			$this->data['sale']       		= $sale;
 			$this->data['loan']       		= $loan;
-		
+
 			$this->data['loaned_amt'] 		= $this->sales_model->getRe_Loan($id);
 			$this->data['left_term']  		= $left_term;
 			$this->data['owned_loan'] 		= $owned_loan;
@@ -16295,9 +16307,9 @@ class Sales extends MY_Controller
             $this->data['modal_js']   		= $this->site->modal_js();
             $this->load->view($this->theme . 'sales/update_term', $this->data);
         }
-		
+
 	}
-	
+
 	function checkProductStockByDate(){
 		$exp_id = $this->input->get('exp_id');
 		$option_id = $this->input->get('option_id');
@@ -16309,7 +16321,7 @@ class Sales extends MY_Controller
 			echo json_encode($pStockAndRequestQty);
 		}
 	}
-	
+
 	function getPQtyByDate(){
 		$product_id = $this->input->post('product_id');
 		$warehouse_id = $this->input->post('warehouse_id');
@@ -16319,9 +16331,9 @@ class Sales extends MY_Controller
 		}else{
 			return false;
 		}
-		
+
 	}
-	
+
 	function getCurrentStockQtyByDate(){
 		$exp_id = $this->input->get('exp_id');
 		$product_id = $this->input->get('product_id');
@@ -16333,7 +16345,7 @@ class Sales extends MY_Controller
 		}else{
 			return false;
 		}
-	}	
+	}
 	function print_w($id = NULL)
     {
         $this->erp->checkPermissions('add', true, 'sales');
@@ -16353,12 +16365,12 @@ class Sales extends MY_Controller
 		  $this->data['id'] = $id;
         $this->load->view($this->theme .'sales/print_w',$this->data);
     }
-	
+
 	function getDigitalDatas($id){
 		$digital_items = $this->sales_model->getDigitalItemsBySaleID($id);
 		$free_items = $this->sales_model->getSaleItemFreeBySaleID($id);
 		$standard_items = $this->sales_model->getSaleItemFreeBySaleID($id);
-		
+
 		foreach($standard_items as $standard_item){
 			$standard = (object) array(
 				"name" => $standard_item->product_name,
@@ -16367,11 +16379,11 @@ class Sales extends MY_Controller
 			);
 			array_push($digital_items,$standard);
 		}
-		
-		
+
+
 		return $digital_items;
 	}
-	
+
 	function print_w_a5($id = NULL)
     {
 		$digitalDatas = $this->getDigitalDatas($id);
@@ -16387,7 +16399,7 @@ class Sales extends MY_Controller
         $this->data['user'] = $this->site->getUser($inv->created_by);
         $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
         $this->data['inv'] = $inv;
-		
+
 		//$this->erp->print_arrays($rows);
 		$this->data['digitalDatas'] = $digitalDatas;
 		$this->data['id'] = $id;

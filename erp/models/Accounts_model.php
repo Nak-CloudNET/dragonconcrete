@@ -6,7 +6,7 @@ class Accounts_model extends CI_Model
     {
         parent::__construct();
     }
-	
+
 	public function getPaymentReferenceBySaleRef($sale_ref)
 	{
 		$q = $this->db->select('payments.reference_no as paymentRef')
@@ -19,7 +19,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
 	}
-	
+
 	public function deleteChartAccount($id)
 	{
 		$q = $this->db->delete('gl_charts', array('accountcode' => $id));
@@ -50,11 +50,11 @@ class Accounts_model extends CI_Model
             return $data;
         }
     }
-	
+
 	public function getAlltypes()
 	{
 		$q = $this->db->query("SELECT * from erp_groups WHERE erp_groups.id IN (3,4)");
-		
+
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
@@ -63,8 +63,8 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
 	}
-	
-	public function getAllcharts() 
+
+	public function getAllcharts()
 	{
         $q = $this->db->get('warehouses');
         if ($q->num_rows() > 0) {
@@ -75,7 +75,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-    
+
 	public function getWHProduct($id)
     {
         $this->db->select('products.id, code, name, warehouses_products.quantity, cost, tax_rate')
@@ -169,17 +169,17 @@ class Accounts_model extends CI_Model
 
         return FALSE;
     }
-	
+
 	public function getAccountSections()
 	{
 		$this->db->select("sectionid,sectionname");
 		$section = $this->db->get("gl_sections");
 		if($section->num_rows() > 0){
-			return $section->result_array();	
+			return $section->result_array();
 		}
 		return false;
 	}
-	
+
 	public function getSubAccounts($section_code)
 	{
 		$this->db->select('accountcode as id, accountname as text');
@@ -195,8 +195,8 @@ class Accounts_model extends CI_Model
 
         return FALSE;
 	}
-	
-	
+
+
 	public function getpeoplebytype($company)
 	{
 		if($company == 'emp'){
@@ -217,8 +217,8 @@ class Accounts_model extends CI_Model
 
         return FALSE;
 	}
-	
-	
+
+
 	public function addChartAccount($data)
 	{
 		//$this->erp->print_arrays($data);
@@ -227,7 +227,7 @@ class Accounts_model extends CI_Model
         }
         return false;
 	}
-	
+
 	public function updateChartAccount($id,$data)
 	{
 		//$this->erp->print_arrays($data);
@@ -265,7 +265,7 @@ class Accounts_model extends CI_Model
         }
         return false;
     }
-	
+
 	public function updateSetting($data)
 	{
 		if ($this->db->update('account_settings', $data)) {
@@ -295,7 +295,7 @@ class Accounts_model extends CI_Model
 
         return FALSE;
     }
-	
+
 	public function getChartAccountByID($id)
 	{
 		$this->db->select('gl_charts.accountcode,gl_charts.accountname,gl_charts.parent_acc,gl_charts.sectionid,gl_sections.sectionname, bank ');
@@ -308,7 +308,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
 	}
-	
+
 	public function getAllChartAccount()
 	{
 		$this->db->select('gl_charts.accountcode,gl_charts.accountname,gl_charts.parent_acc,gl_charts.sectionid');
@@ -320,7 +320,7 @@ class Accounts_model extends CI_Model
 
         return FALSE;
 	}
-	
+
 	public function getAllChartAccountIn($section_id)
 	{
 		$q = $this->db->query("SELECT
@@ -332,13 +332,13 @@ class Accounts_model extends CI_Model
 									erp_gl_charts
 								WHERE
 									sectionid IN ($section_id)");
-		
+
         if ($q->num_rows() > 0) {
             return $q->result();
         }
         return FALSE;
 	}
-	
+
 	public function getCustomers()
     {
         $q = $this->db->query("SELECT
@@ -348,13 +348,13 @@ class Accounts_model extends CI_Model
 								WHERE
 									group_name = 'biller'
 								");
-		
+
         if ($q->num_rows() > 0) {
             return $q->result();
         }
         return FALSE;
     }
-	
+
 	public function getAllChartAccounts()
 	{
 		$q = $this->db->query("SELECT
@@ -365,13 +365,13 @@ class Accounts_model extends CI_Model
 								FROM
 									erp_gl_charts
 								");
-		
+
         if ($q->num_rows() > 0) {
             return $q->result();
         }
         return FALSE;
 	}
-	
+
 	public function getBillers()
     {
 		$this->db->select('company');
@@ -386,7 +386,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getBillersArray($id)
     {
 		$this->db->where_in('id', $id);
@@ -399,7 +399,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getSalename()
     {
 		$this->db->select('accountname');
@@ -414,7 +414,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getsalediscount()
     {
 		$this->db->select('accountname');
@@ -429,7 +429,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getsale_tax()
     {
 		$this->db->select('accountname');
@@ -444,7 +444,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getreceivable()
     {
 		$this->db->select('accountname');
@@ -459,7 +459,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getpurchases()
     {
 		$this->db->select('accountname');
@@ -474,7 +474,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getGLYearMonth()
 	{
 		$query = $this->db->select("MIN(YEAR(tran_date)) AS min_year, MIN(MONTH(tran_date)) AS min_month")
@@ -484,8 +484,8 @@ class Accounts_model extends CI_Model
 		}
 		return false;
 	}
-	
-	
+
+
 	public function getpurchase_tax()
     {
 		$this->db->select('accountname');
@@ -500,8 +500,8 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
-	
+
+
 	public function getpurchasediscount()
     {
 		$this->db->select('accountname');
@@ -516,7 +516,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getpayable()
     {
 		$this->db->select('accountname');
@@ -531,7 +531,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_sale_freights()
     {
 		$this->db->select('accountname');
@@ -546,7 +546,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_purchase_freights()
     {
 		$this->db->select('accountname');
@@ -561,7 +561,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-    
+
 	public function getstocks()
     {
 		$this->db->select('accountname');
@@ -576,7 +576,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getstock_adjust()
     {
 		$this->db->select('accountname');
@@ -591,7 +591,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_cost()
     {
 		$this->db->select('accountname');
@@ -606,7 +606,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getpayrolls()
     {
 		$this->db->select('accountname');
@@ -621,7 +621,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_cash()
     {
 		$this->db->select('accountname');
@@ -636,7 +636,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getcredit_card()
     {
 		$this->db->select('accountname');
@@ -651,7 +651,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_sale_deposit()
     {
 		$this->db->select('accountname');
@@ -666,7 +666,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_purchase_deposit()
     {
 		$this->db->select('accountname');
@@ -681,7 +681,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getcheque()
     {
 		$this->db->select('accountname');
@@ -696,7 +696,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_loan()
     {
 		$this->db->select('accountname');
@@ -711,7 +711,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_retained_earning()
     {
 		$this->db->select('accountname');
@@ -726,7 +726,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function get_cost_of_variance()
     {
 		$this->db->select('accountname');
@@ -741,7 +741,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getInterestIncome()
     {
 		$this->db->select('accountname');
@@ -756,7 +756,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getTransferOwner()
     {
 		$this->db->select('accountname');
@@ -771,7 +771,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getgift_card()
     {
 		$this->db->select('accountname');
@@ -786,7 +786,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getAllChartAccountBank(){
 		$this->db->select('gl_charts.accountcode,gl_charts.accountname,gl_charts.parent_acc,gl_charts.sectionid');
 		$this->db->from('gl_charts');
@@ -798,19 +798,19 @@ class Accounts_model extends CI_Model
 
         return FALSE;
 	}
-	
+
 	public function updateJournal($rows, $old_reference_no = NULL) {
 		//$ids = '';
 		//$ref = '';
 		//$this->erp->print_arrays($rows);
 		foreach($rows as $data){
-			$gl_chart = $this->getChartAccountByID($data['account_code']);	
+			$gl_chart = $this->getChartAccountByID($data['account_code']);
 			if($gl_chart > 0){
 				$data['sectionid'] = $gl_chart->sectionid;
 				$data['narrative'] = $gl_chart->accountname;
 			}
 			//$ref = $data['reference_no'];
-			
+
 			if($data['tran_id'] != 0){
 				$this->db->where('tran_id' , $data['tran_id']);
 				$q = $this->db->update('gl_trans', $data);
@@ -858,9 +858,9 @@ class Accounts_model extends CI_Model
 	//	$ids_arr = explode(',', $ids);
 	//	$this->db->where_not_in('tran_id', $ids_arr);
 	//	$this->db->where('reference_no', $ref);
-	//	$this->db->delete('gl_trans'); 
+	//	$this->db->delete('gl_trans');
 	}
-	
+
 	public function addJournal($rows){
 		foreach($rows as $data){
 			$gl_chart = $this->getChartAccountByID($data['account_code']);
@@ -868,10 +868,10 @@ class Accounts_model extends CI_Model
 				$data['sectionid'] = $gl_chart->sectionid;
 				$data['narrative'] = $gl_chart->accountname;
 			}
-			
+
 			if ($this->db->insert('gl_trans', $data)) {
 				$tran_id = $this->db->insert_id();
-				
+
 				if ($gl_chart->bank == 1) {
 					$payment = array(
 						'date' 			=> $data['tran_date'],
@@ -888,15 +888,15 @@ class Accounts_model extends CI_Model
 
 					$this->db->insert('payments', $payment);
 				}
-				
+
 				if ($this->site->getReference('jr',$data['biller_id']) == $data['reference_no']) {
 					$this->site->updateReference('jr',$data['biller_id']);
 				}
-				
+
 			}
 		}
 	}
-	
+
 	public function getJournalByTranNoTranID($tran_id, $tran_no){
 		$q = $this->db->get_where('gl_trans', array('tran_id' => $tran_id, 'tran_no' => $tran_no), 1);
 		if($q->num_rows() > 0){
@@ -905,7 +905,7 @@ class Accounts_model extends CI_Model
 		}
 		return FALSE;
 	}
-	
+
 	public function getTranNo(){
 		/*
 		$this->db->query("UPDATE erp_order_ref
@@ -926,7 +926,7 @@ class Accounts_model extends CI_Model
 		}
 		return FALSE;
 	}
-	
+
 	public function getTranNoByRef($ref){
 		$this->db->select('tran_no');
 		$this->db->where('reference_no', $ref);
@@ -937,7 +937,7 @@ class Accounts_model extends CI_Model
 		}
 		return FALSE;
 	}
-	
+
 	public function getTranTypeByRef($ref){
 		$this->db->select('tran_type');
 		$this->db->where('reference_no', $ref);
@@ -948,7 +948,7 @@ class Accounts_model extends CI_Model
 		}
 		return FALSE;
 	}
-	
+
 	public function deleteJournalByRef($ref){
 		$q = $this->db->delete('gl_trans', array('reference_no' => $ref));
 		if($q){
@@ -956,9 +956,9 @@ class Accounts_model extends CI_Model
 		}
 		return false;
 	}
-	
+
 	public function getJournalByRef($ref){
-		$this->db->select('gl_trans.*, (IF(erp_gl_trans.amount > 0, erp_gl_trans.amount, null)) as debit, 
+		$this->db->select('gl_trans.*, (IF(erp_gl_trans.amount > 0, erp_gl_trans.amount, null)) as debit,
 							(IF(erp_gl_trans.amount < 0, abs(erp_gl_trans.amount), null)) as credit');
 		$q = $this->db->get_where('gl_trans', array('reference_no' => $ref));
         if ($q->num_rows() > 0) {
@@ -968,9 +968,9 @@ class Accounts_model extends CI_Model
             return $data;
         }
 	}
-	
+
 	public function getJournalByTranNo($tran_no){
-		$this->db->select('gl_trans.*, (IF(erp_gl_trans.amount > 0, erp_gl_trans.amount, null)) as debit, 
+		$this->db->select('gl_trans.*, (IF(erp_gl_trans.amount > 0, erp_gl_trans.amount, null)) as debit,
 							(IF(erp_gl_trans.amount < 0, abs(erp_gl_trans.amount), null)) as credit');
 		$q = $this->db->get_where('gl_trans', array('tran_no' => $tran_no));
         if ($q->num_rows() > 0) {
@@ -980,7 +980,7 @@ class Accounts_model extends CI_Model
             return $data;
         }
 	}
-	
+
     public function getTransferByID($id)
     {
 
@@ -1124,7 +1124,7 @@ class Accounts_model extends CI_Model
         return FALSE;
     }
 
-    public function getPurchasedItems($product_id, $warehouse_id, $option_id = NULL) 
+    public function getPurchasedItems($product_id, $warehouse_id, $option_id = NULL)
 	{
         $orderby = ($this->Settings->accounting_method == 1) ? 'asc' : 'desc';
         $this->db->select('id, quantity, quantity_balance, net_unit_cost, unit_cost, item_tax');
@@ -1177,10 +1177,10 @@ class Accounts_model extends CI_Model
         }
         $this->site->syncQuantity(NULL, NULL, NULL, $product_id);
     }
-	
+
 	function getBalanceSheetDetailByAccCode($code = NULL, $section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL) {
 		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN ($biller_id) "; 
+			$where_biller = " AND erp_gl_trans.biller_id IN ($biller_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
@@ -1313,7 +1313,7 @@ class Accounts_model extends CI_Model
 		WHERE
 			erp_gl_trans.account_code = '$code'
 			AND	erp_gl_trans.sectionid IN ($section)
-			$where_biller 
+			$where_biller
 			$where_date
 		GROUP BY
 			erp_gl_trans.reference_no,
@@ -1322,10 +1322,10 @@ class Accounts_model extends CI_Model
 		");
 		return $query;
 	}
-	
+
 	function getBalanceSheetDetailPurByAccCode($code = NULL, $section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL) {
 		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
@@ -1499,7 +1499,7 @@ class Accounts_model extends CI_Model
 		WHERE
 			erp_gl_trans.account_code = '$code'
 			AND	erp_gl_trans.sectionid IN ($section)
-			$where_biller 
+			$where_biller
 			$where_date
 		GROUP BY
 			erp_gl_trans.reference_no,
@@ -1509,78 +1509,16 @@ class Accounts_model extends CI_Model
 		");
 		return $query;
 	}
-	
+
 	public function getStatementByBalaneSheetDate($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
 		$where_biller = '';
 		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
 			$where_date = " AND date(erp_gl_trans.tran_date) BETWEEN '$from_date'
-			AND '$to_date' "; 
-		}
-		$this->db->query('SET SQL_BIG_SELECTS=1');
-		$query = $this->db->query("SELECT
-			erp_gl_trans.account_code,
-			erp_gl_trans.sectionid,
-			erp_gl_charts.accountname,
-			erp_gl_charts.parent_acc,
-			sum(erp_gl_trans.amount) AS amount,
-			erp_gl_trans.biller_id
-		FROM
-			erp_gl_trans
-		INNER JOIN erp_gl_charts ON erp_gl_charts.accountcode = erp_gl_trans.account_code
-		WHERE 
-			erp_gl_trans.sectionid IN ($section)
-			$where_biller
-			$where_date
-		GROUP BY
-			erp_gl_trans.account_code
-		");
-
-		return $query;
-	}
-	public function getStatementByBalaneSheetDateByCustomer($section = NULL,$from_date= NULL,$to_date = NULL,$customer_id = NULL){
-		$where_customer = '';
-		if($customer_id != NULL){
-			$where_customer = " AND erp_gl_trans.customer_id IN($customer_id) "; 
-		}
-		$where_date = '';
-		if($from_date && $to_date){
-			$where_date = " AND date(erp_gl_trans.tran_date) BETWEEN '$from_date'
-			AND '$to_date' "; 
-		}
-		$this->db->query('SET SQL_BIG_SELECTS=1');
-		$query = $this->db->query("SELECT
-			erp_gl_trans.account_code,
-			erp_gl_trans.sectionid,
-			erp_gl_charts.accountname,
-			erp_gl_charts.parent_acc,
-			sum(erp_gl_trans.amount) AS amount,
-			erp_gl_trans.biller_id
-		FROM
-			erp_gl_trans
-		INNER JOIN erp_gl_charts ON erp_gl_charts.accountcode = erp_gl_trans.account_code
-		WHERE 
-			erp_gl_trans.sectionid IN ($section)
-			$where_customer
-			$where_date
-		GROUP BY
-			erp_gl_trans.account_code
-		");
-
-		return $query;
-	}
-	public function getStatementByDate($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
-		$where_biller = '';
-		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
-		}
-		$where_date = '';
-		if($from_date && $to_date){
-			$where_date = " AND erp_gl_trans.tran_date BETWEEN '$from_date'
-			AND '$to_date' "; 
+			AND '$to_date' ";
 		}
 		$this->db->query('SET SQL_BIG_SELECTS=1');
 		$query = $this->db->query("SELECT
@@ -1603,16 +1541,79 @@ class Accounts_model extends CI_Model
 
 		return $query;
 	}
-	
-	public function getStatementBalaneSheetByDateBill($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
-		$where_biller = '';
-		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
+	public function getStatementByBalaneSheetDateByCustomer($section = NULL,$from_date= NULL,$to_date = NULL,$customer_id = NULL){
+		$where_customer = '';
+		if($customer_id != NULL){
+			$where_customer = " AND erp_gl_trans.customer_id IN($customer_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
 			$where_date = " AND date(erp_gl_trans.tran_date) BETWEEN '$from_date'
-			AND '$to_date' "; 
+			AND '$to_date' ";
+		}
+		$this->db->query('SET SQL_BIG_SELECTS=1');
+		$query = $this->db->query("SELECT
+			erp_gl_trans.account_code,
+			erp_gl_trans.sectionid,
+			erp_gl_charts.accountname,
+			erp_gl_charts.parent_acc,
+			sum(erp_gl_trans.amount) AS amount,
+			erp_gl_trans.biller_id
+		FROM
+			erp_gl_trans
+		INNER JOIN erp_gl_charts ON erp_gl_charts.accountcode = erp_gl_trans.account_code
+		WHERE
+			erp_gl_trans.sectionid IN ($section)
+			$where_customer
+			$where_date
+		GROUP BY
+			erp_gl_trans.account_code
+		");
+
+		return $query;
+	}
+	public function getStatementByDate($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
+		$where_biller = '';
+		if($biller_id != NULL){
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
+		}
+		$where_date = '';
+		if($from_date && $to_date){
+			$where_date = " AND erp_gl_trans.tran_date BETWEEN '$from_date'
+			AND '$to_date' ";
+		}
+
+		$this->db->query('SET SQL_BIG_SELECTS=1');
+		$query = $this->db->query("SELECT
+			erp_gl_trans.account_code,
+			erp_gl_trans.sectionid,
+			erp_gl_charts.accountname,
+			erp_gl_charts.parent_acc,
+			sum(erp_gl_trans.amount) AS amount,
+			erp_gl_trans.biller_id
+		FROM
+			erp_gl_trans
+		INNER JOIN erp_gl_charts ON erp_gl_charts.accountcode = erp_gl_trans.account_code
+		WHERE
+			erp_gl_trans.sectionid IN ($section)
+			$where_biller
+			$where_date
+		GROUP BY
+			erp_gl_trans.account_code
+		");
+
+		return $query;
+	}
+
+	public function getStatementBalaneSheetByDateBill($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
+		$where_biller = '';
+		if($biller_id != NULL){
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
+		}
+		$where_date = '';
+		if($from_date && $to_date){
+			$where_date = " AND date(erp_gl_trans.tran_date) BETWEEN '$from_date'
+			AND '$to_date' ";
 		}
 		$this->db->query('SET SQL_BIG_SELECTS=1');
 		$query = $this->db->query("SELECT
@@ -1636,16 +1637,16 @@ class Accounts_model extends CI_Model
 
 		return $query;
 	}
-	
+
 	public function getStatementByDateBill($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
 		$where_biller = '';
 		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
 			$where_date = " AND erp_gl_trans.tran_date BETWEEN '$from_date'
-			AND '$to_date' "; 
+			AND '$to_date' ";
 		}
 		$this->db->query('SET SQL_BIG_SELECTS=1');
 		$query = $this->db->query("SELECT
@@ -1672,7 +1673,7 @@ class Accounts_model extends CI_Model
 
 	function getStatementDetailByAccCode($code = NULL, $section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL) {
 		if($biller_id != NULL){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
@@ -1700,7 +1701,7 @@ class Accounts_model extends CI_Model
 		WHERE
 			erp_gl_trans.account_code = '$code'
 			AND	erp_gl_trans.sectionid IN ($section)
-			$where_biller 
+			$where_biller
 			$where_date
 		GROUP BY
 			erp_sales.reference_no,
@@ -1709,7 +1710,7 @@ class Accounts_model extends CI_Model
 		");
 		return $query;
 	}
-	
+
 	public function getMonthlyIncomes($excep_acccode = NULL, $section = NULL,$from_date, $to_date, $biller_id = NULL)
 	{
 		$where_biller = '';
@@ -1717,14 +1718,14 @@ class Accounts_model extends CI_Model
 		$where_date = '';
 		$where_except_code = '';
 		if($biller_id){
-			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) "; 
+			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
 		}
 		if(!$year){
 			$year = date('Y');
 		}
 		if($from_date && $to_date){
 			$where_date = " AND gl.tran_date BETWEEN '$from_date'
-			AND '$to_date' "; 
+			AND '$to_date' ";
 		}
 		if($excep_acccode){
 			$where_except_code = " AND gl.account_code NOT IN($excep_acccode) ";
@@ -1885,7 +1886,7 @@ class Accounts_model extends CI_Model
 									WHERE
 										MONTH (gl.tran_date) = '09'
 									AND gl.sectionid IN (40, 70)
-									AND gl.account_code = '$acc_code' 
+									AND gl.account_code = '$acc_code'
 									$where_date
 									GROUP BY
 										gl.biller_id
@@ -1942,9 +1943,9 @@ class Accounts_model extends CI_Model
 		");
 		return $query;
 	}
-	
+
 	public function addJournals($rows)
-	{		
+	{
 		 if (!empty($rows)) {
 			foreach($rows as $row){
 					$this->db->insert('gl_trans', $row);
@@ -1953,7 +1954,7 @@ class Accounts_model extends CI_Model
 		}
         return false;
     }
-	
+
 	public function addCharts($data = array())
 	{
         if ($this->db->insert_batch('gl_charts', $data)) {
@@ -1961,7 +1962,7 @@ class Accounts_model extends CI_Model
         }
         return false;
     }
-	
+
 	public function getSectionIdByCode($code)
 	{
         $q = $this->db->get_where('gl_charts', array('accountcode' => $code), 1);
@@ -1970,7 +1971,7 @@ class Accounts_model extends CI_Model
         }
         return FALSE;
     }
-	
+
 	public function getAccountCode($accountcode)
 	{
 		$this->db->select('accountcode');
@@ -1979,21 +1980,21 @@ class Accounts_model extends CI_Model
             return $q->row();
         }
 	}
-	
+
 	public function getConditionTax()
 	{
 		$this->db->where('id','1');
 		$q=$this->db->get('condition_tax');
 		return $q->result();
 	}
-	
+
 	public function getConditionTaxById($id)
 	{
 		$this->db->where('id',$id);
 		$q=$this->db->get('condition_tax');
 		return $q->row();
 	}
-	
+
 	public function update_exchange_tax_rate($id,$data)
 	{
 		$this->db->where('id',$id);
@@ -2001,8 +2002,8 @@ class Accounts_model extends CI_Model
 		if($update){
 			return true;
 		}
-	} 
-	
+	}
+
 	public function getKHM()
 	{
 		$q = $this->db->get_where('currencies', array('code'=> 'KHM'), 1);
@@ -2011,16 +2012,16 @@ class Accounts_model extends CI_Model
             return $q->rate;
 		}
 	}
-	
+
 	public function addConditionTax($data)
 	{
-		if ($this->db->insert('condition_tax', $data)) 
+		if ($this->db->insert('condition_tax', $data))
 		{
             return true;
         }
         return false;
 	}
-	
+
 	public function deleteConditionTax($id)
 	{
 		$q = $this->db->delete('condition_tax', array('id' => $id));
@@ -2030,7 +2031,7 @@ class Accounts_model extends CI_Model
 			return false;
 		}
 	}
-	
+
 	public function getCustomersDepositByCustomerID($customer_id)
 	{
 		$q = $this->db
@@ -2046,22 +2047,22 @@ class Accounts_model extends CI_Model
 		}
 		return false;
 	}
-	
+
 	public function ar_by_customer($start_date=null, $end_date=null, $customer2=null, $balance2=null, $condition=null, $sale_id=null)
     {
         $w = '';
         if($start_date){
             $w .= " AND (erp_sales.date) >= '".$start_date." 00:00:00'";
         }
-        
+
         if($end_date){
             $w .= " AND (erp_sales.date) <= '".$end_date."23:59:00' ";
         }
-        
+
         if($customer2){
             $w .= " AND erp_sales.customer_id = '".$customer2."' ";
-        }       
-        
+        }
+
         if(!$balance2){
             $balance2 = "all";
         }
@@ -2071,7 +2072,7 @@ class Accounts_model extends CI_Model
         if($balance2 == "owe"){
             $w .= " AND erp_sales.grand_total > 0 ";
         }
-        
+
         if($condition=='customer'){
             $q = $this->db
             ->select("sales.customer_id,
@@ -2089,7 +2090,7 @@ class Accounts_model extends CI_Model
             }
             return false;
         }elseif($condition=='detail'){
-            
+
             $q = $this->db
             ->select("sales.customer_id,
                         sales.id,
@@ -2107,12 +2108,12 @@ class Accounts_model extends CI_Model
             ->where("1 = 1 ".$w."")
             ->group_by("sales.reference_no")
             ->order_by("sales.reference_no", "desc")
-            ->get();                
+            ->get();
             if($q->num_rows() > 0){
                 return $q->result();
             }
             return false;
-            
+
         }elseif($condition=='payment'){
             $q = $this->db
             ->select("payments.amount,
@@ -2129,22 +2130,22 @@ class Accounts_model extends CI_Model
             return false;
         }
     }
-	
+
 	public function ap_by_supplier($start_date=null, $end_date=null, $supplier2=null, $balance2=null, $condition=null, $purchase_id=null)
     {
         $w = '';
         if($start_date){
             $w .= " AND (erp_purchases.date) >= '".$start_date." 00:00:00'";
         }
-        
+
         if($end_date){
             $w .= " AND (erp_purchases.date) <= '".$end_date."23:59:00' ";
         }
-        
+
         if($supplier2){
             $w .= " AND erp_purchases.supplier_id = '".$supplier2."' ";
         }
-        
+
         if(!$balance2){
             $balance = "all";
         }
@@ -2154,9 +2155,9 @@ class Accounts_model extends CI_Model
         if($balance2 == "owe"){
             $w .= " AND erp_purchases.grand_total > 0 ";
         }
-        
+
         if($condition=='supplier'){
-            
+
             $q = $this->db->select("purchases.supplier_id,
                         if(erp_companies.company IS NULL or erp_companies.company='',erp_companies.name,erp_companies.company) as supplier,
                         '".$start_date."' AS start_date,
@@ -2172,9 +2173,9 @@ class Accounts_model extends CI_Model
                 return $q->result();
             }
             return false;
-            
+
         }elseif($condition=='detail'){
-        
+
             $q = $this->db->select("purchases.supplier_id,
                         purchases.id,
                         purchases.supplier,
@@ -2195,9 +2196,9 @@ class Accounts_model extends CI_Model
                 return $q->result();
             }
             return false;
-            
+
         }elseif($condition=='payment'){
-            
+
             $q = $this->db->select("payments.amount,
                       payments.reference_no,
                       payments.date
@@ -2212,7 +2213,7 @@ class Accounts_model extends CI_Model
             return false;
         }
     }
-	
+
 	public function increaseTranNo()
 	{
 		$q = $this->db->get_where('erp_order_ref',array("DATE_FORMAT(date,'%Y-%m')"=>date('Y-m')),1);
@@ -2221,7 +2222,7 @@ class Accounts_model extends CI_Model
 			}
 			return false;
 	}
-	
+
 	public function UpdateincreaseTranNo($tr)
 	{
 		$q = $this->db->update('erp_order_ref',array('tr'=>$tr),array("DATE_FORMAT(date,'%Y-%m')"=>date('Y-m')));
@@ -2239,7 +2240,7 @@ class Accounts_model extends CI_Model
         }
         return false;
     }
-	
+
 	public function checkreferPur($id)
 	{
         $q = $this->db->get_where('erp_purchases',array('id'=>$id),1);
@@ -2262,7 +2263,7 @@ class Accounts_model extends CI_Model
 	public function ar_by_customerV2($start_date=null, $end_date=null, $customer=null, $balance=null){
 		$this->db->select("sales.customer_id, sales.customer", false)
             ->from("sales");
-           
+
 		   if($start_date && $end_date){
 			   $this->db->where('date_format(erp_sales.date,"%Y-%m-%d") BETWEEN "' . $start_date . '" and "' . $end_date . '"');
 		   }
@@ -2283,11 +2284,11 @@ class Accounts_model extends CI_Model
             }
             return false;
 	}
-    
+
 	public function getSaleByCustomerV2($cus_id){
 		$this->db->select("sales.id,CONCAT(erp_users.first_name,' ',erp_users.last_name) as fullname", false)
             ->from("sales")->join("users","users.id=sales.saleman_by","LEFT");
-			
+
 			 $this->db->where('customer_id',$cus_id);
             $this->db->order_by("date", "asc");
             $q = $this->db->get();

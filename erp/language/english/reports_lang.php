@@ -245,3 +245,5 @@ $lang["total_shipping"]				= "Total Shipping";
 $lang["total_overhead"]				= "Total Overhead";			
 $lang["saleman_detail_report"]		= "Saleman Details Report";
 $lang['issued_by']					= "Issued By";
+$lang['qty_po']						= "Qty PO";
+$lang['quantity_balance']			= "Quantity Balance";
