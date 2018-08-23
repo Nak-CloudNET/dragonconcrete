@@ -9,7 +9,7 @@
     }
     hr{
     border-color:#333;
-    
+
     }
 </style>
 <div class="modal-dialog modal-lg no-modal-header">
@@ -47,7 +47,7 @@
 						<?php if($inv->due_date) { ?>
 							<?= lang("due_date"); ?>: <?= $inv->due_date; ?><br>
 						<?php  } ?>
-                        
+
                         <?= lang("sale_status"); ?>:
                         <?php if ($inv->sale_status == 'completed') { ?>
                             <span class="label label-success" ><?= lang($inv->sale_status); ?></span>
@@ -88,12 +88,12 @@
             <div class="row" style="margin-bottom:15px;">
                 <div class="col-xs-6">
                     <?php echo $this->lang->line("from"); ?>:
-                    
+
                      <?php if ($Settings->system_management == 'project') { ?>
-          
+
                         <h2 style="margin-top:10px;"><?= $inv->biller ?></h2>
                     <?php } ?>
-                    <?php  
+                    <?php
                         echo $biller->address . "<br>" . $biller->city . " " . $biller->postal_code . " " . $biller->state . "<br>" . $biller->country."<br>";
                     ?>
                     <?php
@@ -108,7 +108,7 @@
                     <?php } ?>
                     <?php
                         echo ($customer->address ? $customer->address . "<br>" : ''). ($customer->city ? $customer->city . " " . $customer->postal_code . " " . $customer->state . "<br>" : ''). ($customer->country ? $customer->country : '');
-                    
+
                     // echo "<p>";
                     if(isset($customer->cf1)){
                         if ($customer->cf1 != "-" && $customer->cf1 != "") {
@@ -144,7 +144,7 @@
                     // echo "</p>";
                     echo ($customer->phone ? lang("tel") . ": " . $customer->phone . "<br>" : '');
                     echo ($customer->email ? lang("email") . ": " . $customer->email : '');
-                    ?>         
+                    ?>
 
                 </div>
             </div>
@@ -229,7 +229,7 @@
 									echo '<td style="width: 100px; text-align:right; vertical-align:middle;">' . ($row->discount != 0 ? '<small>(' . $row->discount . ')</small> ' : '') . $this->erp->formatMoney($row->item_discount) . '</td>';
 								}
 								?>
-								<td style="text-align:right; width:120px;"><?= $row->subtotal!=0?$this->erp->formatMoney($row->subtotal):$free; 
+								<td style="text-align:right; width:120px;"><?= $row->subtotal!=0?$this->erp->formatMoney($row->subtotal):$free;
 									$total += $row->subtotal;
 									?></td>
 							</tr>
@@ -296,7 +296,7 @@
                         echo '<tr><td></td><td colspan="' . $col . '" style="text-align:right; padding-right:10px;;">' . lang("shipping") . ' (' . $default_currency->code . ')</td><td style="text-align:right; padding-right:10px;">' . $this->erp->formatMoney($inv->shipping) . '</td></tr>';
                     }
                     ?>
-					
+
                     <tr>
                         <td></td>
                         <td colspan="<?= $col; ?>"
@@ -355,7 +355,7 @@
                         <?php } ?>
                 </div>
 				<br/>
-				
+
 				<br/>
 				<div class="row">
 					<div class="clearfix"></div>
@@ -400,7 +400,7 @@
                 </div>
             </div>
             <?php if (!$Supplier || !$Customer) { ?>
-							 
+
                 <div class="buttons">
                     <div class="btn-group btn-group-justified">
 						<!--
@@ -479,7 +479,7 @@
                                 <span class="hidden-sm hidden-xs"><?= lang('view') ?></span>
                             </a>
                         </div>-->
-						
+
 						<!--<div class="btn-group">
                             <a href="<?= site_url('sales/contrast_sale/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('flora') ?>">
                                 <i class="fa fa-download"></i>
@@ -529,7 +529,7 @@
                                 <span class="hidden-sm hidden-xs"><?= lang('sales_invoice') ?></span>
                             </a>
                         </div>-->
-						
+
                         <?php if ($inv->sale_status != 'completed') { ?>
 						<?php if ($GP['sales-edit']) { ?>
                         <div class="btn-group">
@@ -552,10 +552,11 @@
 						<?php } ?>
                     </div>
                 </div>
-				
-				<div class="buttons" >
-                    <div class="btn-group btn-group-justified">
 
+				<div class="buttons" >
+
+                    <div class="btn-group btn-group-justified">
+<!--                        --><?php //$this->erp->print_arrays($biller); ?>
 						<div class="btn-group">
                             <a href="<?= site_url('sales/invoice_combine_item/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('invoice_combine_item') ?>">
                                 <i class="fa fa-download"></i>
@@ -657,7 +658,7 @@
                             </a>
                         </div>-->
 					 </div>
-				</div>	
+				</div>
 				<div class="buttons" >
 					<!--<div class="btn-group">
                         <a href="<?= site_url('sales/invoice_cid/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('invoice_cid') ?>">

@@ -2065,6 +2065,7 @@ class Sales extends MY_Controller
         if($this->input->get('id')){
             $id = $this->input->get('id');
         }
+
 		$this->load->model('pos_model');
 		$this->data['pos'] 			= $this->pos_model->getSetting();
 		$this->data['setting'] 		= $this->site->get_setting();
@@ -2073,13 +2074,14 @@ class Sales extends MY_Controller
 		if (!$this->session->userdata('view_right')) {
             $this->erp->view_rights($inv->created_by, true);
         }
+
         $this->data['customer'] 	= $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] 		= $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] 	= $this->site->getUser($inv->created_by);
         $this->data['updated_by'] 	= $inv->updated_by ? $this->site->getUser($inv->updated_by) : NULL;
         $this->data['warehouse'] 	= $this->site->getWarehouseByID($inv->warehouse_id);
-        $this->data['inv'] 			= $inv;
-        $return 					= $this->sales_model->getReturnBySID($id);
+        $this->data['inv']= $inv;
+        $return = $this->sales_model->getReturnBySID($id);
         $this->data['return_sale'] 	= $return;
         $this->data['rows'] 		= $this->sales_model->getAllInvoiceItems($id);
 

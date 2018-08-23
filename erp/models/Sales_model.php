@@ -65,7 +65,7 @@ class Sales_model extends CI_Model
 				if($warehouse_id != ""){
 					$this->db->where("warehouses_products.warehouse_id",$warehouse_id);
 				}
-
+				
 			}
         }
 
@@ -78,7 +78,7 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
+	
     public function getQtyOrder($product_id){
 		$this->db->select('COALESCE(erp_sale_order_items.quantity,0) as quantity')
 		         ->join('erp_sale_order_items','erp_sale_order.id = erp_sale_order_items.sale_order_id','left')
@@ -89,19 +89,19 @@ class Sales_model extends CI_Model
             return $q->row();
         }
         return FALSE;
-
+				 
 	}
 	public function getSaleExportByID($id=null, $wh=null)
     {
 		$this->db
-			->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no,
-			sales.reference_no as sale_no, sales.biller, group_areas.areas_group, sales.customer,
+			->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no, 
+			sales.reference_no as sale_no, sales.biller, group_areas.areas_group, sales.customer, 
 			users.username AS saleman, sales.sale_status, COALESCE(erp_sales.grand_total,0) as amount,
 			COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-			COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
+			COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
 			(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
-			SUM(COALESCE(erp_payments.discount,0)) as discount,
-			(COALESCE(erp_sales.grand_total,0)- COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance,
+			SUM(COALESCE(erp_payments.discount,0)) as discount, 
+			(COALESCE(erp_sales.grand_total,0)- COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance, 
 			sales.payment_status,sales.join_lease_id")
 		->join('users', 'users.id = sales.saleman_by', 'left')
 		->join('sale_order', 'sale_order.id = sales.so_id', 'left')
@@ -124,13 +124,13 @@ class Sales_model extends CI_Model
 		{
 			$name = explode(" ", $term);
 			$first = $name[0];
-			$this->db->select('products.id, code, name, type, cost,warehouses_products.quantity, price, tax_rate, tax_method, cf1, product_details,subcategory_id, details,COALESCE((SELECT GROUP_CONCAT(sp.`serial_number`)
+			$this->db->select('products.id, code, name, type, cost,warehouses_products.quantity, price, tax_rate, tax_method, cf1, product_details,subcategory_id, details,COALESCE((SELECT GROUP_CONCAT(sp.`serial_number`) 
 					FROM erp_serial as sp
 				 WHERE sp.product_id='.$this->db->dbprefix('products').'.id
 				), "") as sep')
             ->group_by('products.id');
 			if($this->Owner || $this->admin){
-
+				
 			}else{
 				if($standard != ""){
 					$this->db->where("products.type <> 'standard' ");
@@ -157,14 +157,14 @@ class Sales_model extends CI_Model
 				}
 				return $data;
 			}
-		}
+		} 
 		else {
-
+			
 			$this->db->select('products.id, code, name, type, cost, warehouses_products.quantity, price, tax_rate, tax_method, product_details, details, COALESCE((SELECT GROUP_CONCAT(sp.`serial_number`) FROM erp_serial as sp WHERE sp.product_id='.$this->db->dbprefix('products').'.id ), "") as sep, cf1')
             ->join('warehouses_products', 'warehouses_products.product_id=products.id', 'left')
             ->group_by('products.id');
 			if($this->Owner || $this->admin){
-
+				
 			}else{
 				if($standard != ""){
 					$this->db->where("products.type <> 'standard' ");
@@ -183,7 +183,7 @@ class Sales_model extends CI_Model
 				}
 			}
 			$this->db->where("(code LIKE '%" . $term . "%' OR name LIKE '%" . $term . "%')");
-
+			
 			$this->db->limit($limit);
 			$q = $this->db->get('products');
 			if ($q->num_rows() > 0) {
@@ -194,7 +194,7 @@ class Sales_model extends CI_Model
 			}
 		}
 	}
-	public function getCustomersByArea($area = null){
+	public function getCustomersByArea($area = null){		
 		$this->db->select('id as id, CONCAT(name ," (",company, ")" ) as text');
 		if($area != null) {
 			$q = $this->db->get_where('companies', array('group_name' => 'customer','group_areas_id' => $area));
@@ -207,23 +207,23 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-	public function getCusDetail($customer_id){
+	public function getCusDetail($customer_id){		
 		$this->db->select('companies.credit_limited,IFNULL(sum(erp_sales.grand_total - erp_sales.paid), 0) AS balance');
 		$this->db->join('sales', 'sales.customer_id = companies.id', 'INNER');
 		$this->db->where('companies.id = '.$customer_id.' and (sales.payment_status = "due" or sales.payment_status = "partial" ) ');
 		$result = $this->db->get('companies')->row();
 		return $result;
 	}
-
+	
 	public function getProductCodes($term, $warehouse_id, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('products').'.id,
 				'.$this->db->dbprefix('products').'.code,
-				'.$this->db->dbprefix('products').'.name,
+				'.$this->db->dbprefix('products').'.name, 
 				details, category_id, price,
 				'.$this->db->dbprefix('products').'.image,
-				'. $this->db->dbprefix('categories').'.name as cate_name,
-				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`)
+				'. $this->db->dbprefix('categories').'.name as cate_name, 
+				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`) 
 					FROM erp_related_products as related
 					LEFT JOIN erp_products as related_pro on related_pro.`code` = related.`related_product_code`
 				 WHERE related.product_code='.$this->db->dbprefix('products').'.code
@@ -245,11 +245,11 @@ class Sales_model extends CI_Model
     {
 		$this->db->select($this->db->dbprefix('products').'.id,
 				'.$this->db->dbprefix('products').'.code,
-				'.$this->db->dbprefix('products').'.name,
-				details, category_id, price,
+				'.$this->db->dbprefix('products').'.name, 
+				details, category_id, price, 
 				'.$this->db->dbprefix('products').'.image,
-				'. $this->db->dbprefix('categories').'.name as cate_name,
-				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`)
+				'. $this->db->dbprefix('categories').'.name as cate_name, 
+				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`) 
 					FROM erp_related_products as related
 					LEFT JOIN erp_products as related_pro on related_pro.`code` = related.`related_product_code`
 				 WHERE related.product_code='.$this->db->dbprefix('products').'.code
@@ -270,16 +270,16 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+	
 	public function getPdescription($term, $warehouse_id, $name, $code, $price, $category, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('products').'.id,
 				'.$this->db->dbprefix('products').'.code,
-				'.$this->db->dbprefix('products').'.name,
-				details, category_id, price,
+				'.$this->db->dbprefix('products').'.name, 
+				details, category_id, price, 
 				'.$this->db->dbprefix('products').'.image,
 				'. $this->db->dbprefix('categories').'.name as cate_name,
-				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`)
+				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`) 
 					FROM erp_related_products as related
 					LEFT JOIN erp_products as related_pro on related_pro.`code` = related.`related_product_code`
 				 WHERE related.product_code='.$this->db->dbprefix('products').'.code
@@ -300,16 +300,16 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+	
 	public function getPcategory($term, $warehouse_id, $code, $name, $price, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('products').'.id,
 				'.$this->db->dbprefix('products').'.code,
-				'.$this->db->dbprefix('products').'.name,
-				details, category_id, price,
+				'.$this->db->dbprefix('products').'.name, 
+				details, category_id, price, 
 				'.$this->db->dbprefix('products').'.image,
 				'. $this->db->dbprefix('categories').'.name as cate_name,
-				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`)
+				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`) 
 					FROM erp_related_products as related
 					LEFT JOIN erp_products as related_pro on related_pro.`code` = related.`related_product_code`
 				 WHERE related.product_code='.$this->db->dbprefix('products').'.code
@@ -321,7 +321,7 @@ class Sales_model extends CI_Model
 		}else{
 			$this->db->where("(".$this->db->dbprefix('categories').".name LIKE '%" . $term . "%' and ".$this->db->dbprefix('products').".code LIKE '%" . $code . "%' and ".$this->db->dbprefix('products').".name LIKE '%" . $name . "%' and ".$this->db->dbprefix('products').".price LIKE '%" . $price . "%' )");
 		}
-
+		
 		//$this->db->limit($limit);
 		$q = $this->db->get('products');
 		if ($q->num_rows() > 0) {
@@ -331,16 +331,16 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+	
 	public function getPprice($term, $warehouse_id, $code, $name, $category, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('products').'.id,
 				'.$this->db->dbprefix('products').'.code,
-				'.$this->db->dbprefix('products').'.name,
-				details, category_id, price,
+				'.$this->db->dbprefix('products').'.name, 
+				details, category_id, price, 
 				'.$this->db->dbprefix('products').'.image,
 				'. $this->db->dbprefix('categories').'.name as cate_name,
-				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`)
+				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`) 
 					FROM erp_related_products as related
 					LEFT JOIN erp_products as related_pro on related_pro.`code` = related.`related_product_code`
 				 WHERE related.product_code='.$this->db->dbprefix('products').'.code
@@ -352,7 +352,7 @@ class Sales_model extends CI_Model
 		}else{
 			$this->db->where("(".$this->db->dbprefix('products').".price LIKE '%" . $term . "%' and ".$this->db->dbprefix('products').".code LIKE '%" . $code . "%' and ".$this->db->dbprefix('products').".name LIKE '%" . $name . "%' and ".$this->db->dbprefix('categories').".name LIKE '%" . $category . "%' )");
 		}
-
+		
 		//$this->db->limit($limit);
 		$q = $this->db->get('products');
 		if ($q->num_rows() > 0) {
@@ -362,7 +362,7 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+	
 	public function getPstrap($term, $warehouse_id, $limit = 5)
     {
 		$sub_string = "(
@@ -374,10 +374,10 @@ class Sales_model extends CI_Model
 							WHERE
 								erp_related_products.product_name LIKE '%" . $term . "%'
 						) AS erp_products";
-		$this->db->select('erp_products.id, erp_products.code, erp_products.name, details, category_id, price,
+		$this->db->select('erp_products.id, erp_products.code, erp_products.name, details, category_id, price, 
 				'.$this->db->dbprefix('products').'.image,
 				'. $this->db->dbprefix('categories').'.name as cate_name,
-				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`)
+				COALESCE((SELECT GROUP_CONCAT(related_pro.`name`) 
 					FROM erp_related_products as related
 					LEFT JOIN erp_products as related_pro on related_pro.`code` = related.`related_product_code`
 				 WHERE related.product_code=erp_products.code
@@ -393,7 +393,7 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+    
 	public function getfcode($term, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('suspended').'.id,'.$this->db->dbprefix('suspended').'.name, description, floor, status');
@@ -407,7 +407,7 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+	
 	public function getfdescription($term, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('suspended').'.id,'.$this->db->dbprefix('suspended').'.name, description, floor, status');
@@ -421,7 +421,7 @@ class Sales_model extends CI_Model
 			return $data;
 		}
     }
-
+	
 	public function getffloor($term, $limit = 5)
     {
 		$this->db->select($this->db->dbprefix('suspended').'.id,'.$this->db->dbprefix('suspended').'.name, description, floor, status');
@@ -434,8 +434,8 @@ class Sales_model extends CI_Model
 			}
 			return $data;
 		}
-    }
-
+    }    
+	
     public function getProductComboItems($pid, $warehouse_id = NULL)
     {
         $this->db->select('products.id as id, combo_items.item_code as code, combo_items.quantity as qty, products.name as name,products.type as type, warehouses_products.quantity as quantity')
@@ -531,7 +531,7 @@ class Sales_model extends CI_Model
 
         return FALSE;
     }
-
+    
     function getBillerNameByID($biller_id = null)
 	{
 		$this->db->select('company, name');
@@ -542,7 +542,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	function getCustomerByID($cus_id = null)
 	{
 		$this->db->where(array('id' => $cus_id));
@@ -552,7 +552,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+    
     function getCustomerNameByID($cus_id = null)
 	{
         $this->db->select('name, company');
@@ -563,7 +563,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+    
     public function getSalesReferences($term, $limit = 10)
     {
         $this->db->select('reference_no');
@@ -651,9 +651,9 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	function getCustomerStatementByID($id)
-	{
+	{	
 		$this->db->select('sale_items.unit_price,sales.order_discount,terms.description')
 			 ->join('sale_items', 'sale_items.sale_id = sales.id', 'left')
 			 ->join('terms', 'terms.id = sales.term_id', 'left');
@@ -862,7 +862,7 @@ class Sales_model extends CI_Model
         return FALSE;
     }
 
-
+	
 	function getPaymentBySaleID($sale_id){
 		$q = $this->db->get_where('payments', array('sale_id' => $sale_id), 1);
         if ($q->num_rows() > 0) {
@@ -870,8 +870,8 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
-
+    
+    
     public function getAllsuspendItem($sale_id)
     {
         $this->db->select('suspended_items.*, tax_rates.code as tax_code, tax_rates.name as tax_name, tax_rates.rate as tax_rate, products.unit, products.details as details, product_variants.name as variant')
@@ -888,32 +888,32 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+    
     public function getAllSuspendDetail($id){
-
+    	
     	$q = $this->db->get_where('suspended_bills', array('id' => $id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
-        return FALSE;
+        return FALSE;        
     }
-
+	
 	public function getAllSuspendbySupendID($id){
-
+    	
     	$q = $this->db->get_where('suspended_bills', array('id' => $id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
-        return FALSE;
+        return FALSE;        
     }
-
+    
     public function getAllRoomDetail($id){
-
+    	
     	$q = $this->db->get_where('suspended', array('id' => $id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
-        return FALSE;
+        return FALSE;        
     }
 
     public function getAllReturnItems($return_id)
@@ -950,7 +950,7 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
+	
 	public function getAllInvoiceOrderItems($delivery_id)
     {
         $this->db->select('erp_sale_order_items.id, erp_sale_order_items.product_name, erp_sale_order_items.product_code,products.price, erp_sale_order_items.quantity, erp_sale_order_items.serial_no, erp_sale_order_items.tax, erp_sale_order_items.net_unit_price, erp_sale_order_items.item_tax, erp_sale_order_items.item_discount, erp_sale_order_items.subtotal, products.details');
@@ -969,7 +969,7 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
+	
 	public function getAllDeliveryInvoiceItems($delivery_id)
     {
         $this->db->select('erp_deliveries.*,
@@ -988,7 +988,7 @@ class Sales_model extends CI_Model
 		$this->db->join('units','erp_products.unit = units.id', 'left');
 		$this->db->where('erp_deliveries.id',$delivery_id);
 		$this->db->group_by('delivery_items.id');
-
+		
 		$q = $this->db->get();
 		if($q->num_rows()>0){
 			foreach($q->result() as $result){
@@ -997,7 +997,7 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 		return NULL;
-
+		
     }
 	public function getAllInvoiceItem($product_id)
     {
@@ -1032,7 +1032,7 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
+	
 	public function getAllDeliInvoiceItems($delivery_id)
     {
         $this->db->select('delivery_items.id,delivery_items.product_name, products.code AS product_code , delivery_items.quantity_received as quantity');
@@ -1051,8 +1051,8 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
-
+	
+	
 	public function getProductComboItemsCode($sale_id){
 		$this->db->select('sale_items.id, combo_items.item_code, combo_items.quantity, sale_items.product_code ');
         $this->db->join('products', 'products.id=sale_items.product_id', 'left');
@@ -1072,7 +1072,7 @@ class Sales_model extends CI_Model
             return $data;
         }
 	}
-
+	
     /*public function getInvoiceByID($id)
     {
         $q = $this->db->get_where('sales', array('id' => $id), 1);
@@ -1089,13 +1089,13 @@ class Sales_model extends CI_Model
 			 ->join('terms','terms.id = erp_sales.term_id','left')
 			 ->join('loans','loans.sale_id = erp_sales.id','left')
 			 ->join('term_types','term_types.id = erp_sales.principle_type','left');
-
+			
         $q = $this->db->get_where('erp_sales', array('erp_sales.id' => $id,'companies.group_name'=>'join_lease'));
         if ($q->num_rows() > 0) {
             return $q->row();
         }
 	}
-
+	
 	public function getProductPaymentsForSaleFlora($id=null)
 	{
 		$q = $this->db->get('erp_products');
@@ -1117,34 +1117,14 @@ class Sales_model extends CI_Model
 			 if($wh){
 			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
 			 }
-        $q = $this->db->get_where('sales', array('sales.id' => $id),1);
-        if ($q->num_rows() > 0) {
-            return $q->row();
-        }
-        return FALSE;
-    }
-
-	public function getInvoiceARAgingByID($id=null,$wh=null)
-    {
-		$this->db
-			 ->select("sales.*, companies.phone, companies.email, quotes.reference_no as quote_no, users.username as saleman,(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit, (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, companies.invoice_footer as invoice_footer, group_areas.areas_group")
-			 ->join('companies', 'sales.biller_id = companies.id', 'left')
-			 ->join('quotes', 'sales.quote_id = quotes.id', 'left')
-			 ->join('payments', 'payments.sale_id = sales.id', 'left')
-			 ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
-			 ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
-			 ->join('users', 'sales.saleman_by = users.id', 'left');
-			 if($wh){
-			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
-			 }
         $q = $this->db->get_where('sales', array('sales.customer_id' => $id),1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
         return FALSE;
     }
-
-
+	
+	
     public function getPaymentByID($id)
     {
         $q = $this->db->get_where('payments', array('id' => $id), 1);
@@ -1153,7 +1133,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getLoansByPaymentID($id)
     {
 		$this->db
@@ -1165,7 +1145,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getProductNewByID($id = null)
     {
 		$this->db
@@ -1190,7 +1170,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getSOByID($id=null,$wh=null)
     {
 		$this->db
@@ -1266,7 +1246,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getReturnedQty($sale_id, $product_id, $id) {
 		$this->db->select("SUM(quantity) as returned_qty");
 		$this->db->where("id <>", $id);
@@ -1276,7 +1256,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getInvoiceByID1($id)
     {
 		$this->db
@@ -1292,7 +1272,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getSOInvoiceByID($id)
     {
 		$this->db
@@ -1304,7 +1284,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getSaleInvoiceByID($id)
     {
         $q = $this->db->get_where('erp_sale_order', array('id' => $id), 1);
@@ -1333,7 +1313,7 @@ class Sales_model extends CI_Model
     }
 	public function getInvoiceByIDs($id)
     {
-       $this->db->select($this->db->dbprefix('suspended_bills').".id, date, (select name from ".$this->db->dbprefix('suspended')." where id= ".$this->db->dbprefix('suspended_bills').".suspend_id) as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('suspended_bills').".biller_id) as biller, customer,
+       $this->db->select($this->db->dbprefix('suspended_bills').".id, date, (select name from ".$this->db->dbprefix('suspended')." where id= ".$this->db->dbprefix('suspended_bills').".suspend_id) as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('suspended_bills').".biller_id) as biller, customer, 
             	case when DATE(date)+ INTERVAL (SELECT show_suspend_bar-1 from ".$this->db->dbprefix('pos_settings')." where ".$this->db->dbprefix('pos_settings').".default_biller=biller_id) DAY <= DATE(SYSDATE()) then 'completed' else 'pending' end AS sale_status,
             	total as grand_total, '' as paid, '' as balance, 'pending' as payment_status");
         $q = $this->db->get_where('suspended_bills', array('id' => $id), 1);
@@ -1346,10 +1326,10 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
     }
-
+	
 	public function getInvoiceBySuspendIDs($id)
     {
-       $this->db->select($this->db->dbprefix('suspended_bills').".id, date, (select name from ".$this->db->dbprefix('suspended')." where id= ".$this->db->dbprefix('suspended_bills').".suspend_id) as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('suspended_bills').".biller_id) as biller, customer,
+       $this->db->select($this->db->dbprefix('suspended_bills').".id, date, (select name from ".$this->db->dbprefix('suspended')." where id= ".$this->db->dbprefix('suspended_bills').".suspend_id) as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('suspended_bills').".biller_id) as biller, customer, 
             	case when DATE(date)+ INTERVAL (SELECT show_suspend_bar-1 from ".$this->db->dbprefix('pos_settings')." where ".$this->db->dbprefix('pos_settings').".default_biller=biller_id) DAY <= DATE(SYSDATE()) then 'completed' else 'pending' end AS sale_status,
             	total as grand_total, '' as paid, '' as balance, 'pending' as payment_status");
         $q = $this->db->get_where('suspended_bills', array('suspend_id' => $id), 1);
@@ -1362,12 +1342,12 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
     }
-
+	
 	public function getSuspendbyID($id){
 		// $this->db->select($this->db->dbprefix('sales').".id,".$this->db->dbprefix('sales').".date, ".$this->db->dbprefix('sales').".suspend_note as suspend, (select company from ".$this->db->dbprefix('companies')." where id= ".$this->db->dbprefix('sales').".biller_id) as biller,".$this->db->dbprefix('sales').".customer, case when DATE(".$this->db->dbprefix('suspended_bills').".date)+ INTERVAL (SELECT show_suspend_bar-1 from ".$this->db->dbprefix('pos_settings')." where ".$this->db->dbprefix('pos_settings').".default_biller=".$this->db->dbprefix('suspended_bills').".biller_id) DAY <= DATE(SYSDATE()) then 'completed' else 'pending' end AS sale_status, ".$this->db->dbprefix('sales').".grand_total as grand_total, ".$this->db->dbprefix('sales').".paid as paid, (CASE WHEN ".$this->db->dbprefix('sales').".paid IS NULL THEN ".$this->db->dbprefix('sales').".grand_total ELSE ".$this->db->dbprefix('sales').".grand_total - ".$this->db->dbprefix('sales').".paid END) as balance, CASE WHEN ".$this->db->dbprefix('sales').".paid = 0 THEN 'pending' WHEN ".$this->db->dbprefix('sales').".grand_total = ".$this->db->dbprefix('sales').".paid THEN 'completed' WHEN ".$this->db->dbprefix('sales').".grand_total > ".$this->db->dbprefix('sales').".paid THEN 'partial' ELSE 'pending' END as payment_status")
 		// ->join($this->db->dbprefix('sales'), $this->db->dbprefix('sales').'.suspend_note = '.$this->db->dbprefix('suspended_bills').'.suspend_name', 'right')
 		// ->from('suspended_bills')
-		//
+		// 
 		$this->db->select('erp_sales.id AS id,erp_sales.date,erp_sale_items.product_name AS suspend,erp_sales.biller,erp_sales.customer,erp_sales.sale_status AS sale_status,erp_sales.grand_total AS grand_total,	erp_sales.paid AS paid,(CASE WHEN erp_sales.paid IS NULL THEN erp_sales.grand_total ELSE erp_sales.grand_total - erp_sales.paid END ) AS balance,	erp_sales.payment_status AS payment_status')
 		->from('erp_sales')
 		->join('erp_loans','erp_sales.id = erp_loans.sale_id','right')
@@ -1381,7 +1361,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getLoansByID($id)
     {
         $this->db->select('loans.*,sales.reference_no,
@@ -1399,13 +1379,13 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
     }
-
+	
 	public function getExportLoans($id){
-		$this->db->select($this->db->dbprefix('loans').".sale_id, sales.date,
-					 sales.reference_no as ref_no, sales.biller, sales.customer,
-					 sales.sale_status, ".$this->db->dbprefix('sales').".grand_total,
+		$this->db->select($this->db->dbprefix('loans').".sale_id, sales.date, 
+					 sales.reference_no as ref_no, sales.biller, sales.customer, 
+					 sales.sale_status, ".$this->db->dbprefix('sales').".grand_total, 
 					 IF(".$this->db->dbprefix('loans').".type <> 0,(".$this->db->dbprefix('sales').".paid + (COALESCE(".$this->db->dbprefix('sales').".other_cur_paid / ".$this->db->dbprefix('sales').".other_cur_paid_rate,0))),SUM(IF(".$this->db->dbprefix('loans').".paid_amount > 0,".$this->db->dbprefix('loans').".principle,0))) as paid,
-					 IF(".$this->db->dbprefix('loans').".type <> 0,ROUND((".$this->db->dbprefix('sales').".grand_total- ((IF(".$this->db->dbprefix('loans').".type <> 0,".$this->db->dbprefix('sales').".paid, 0) + (COALESCE(".$this->db->dbprefix('sales').".other_cur_paid / ".$this->db->dbprefix('sales').".other_cur_paid_rate,0))))),3),ROUND((".$this->db->dbprefix('sales').".grand_total- SUM(IF(".$this->db->dbprefix('loans').".paid_amount > 0,".$this->db->dbprefix('loans').".principle,0)))))  as balance,
+					 IF(".$this->db->dbprefix('loans').".type <> 0,ROUND((".$this->db->dbprefix('sales').".grand_total- ((IF(".$this->db->dbprefix('loans').".type <> 0,".$this->db->dbprefix('sales').".paid, 0) + (COALESCE(".$this->db->dbprefix('sales').".other_cur_paid / ".$this->db->dbprefix('sales').".other_cur_paid_rate,0))))),3),ROUND((".$this->db->dbprefix('sales').".grand_total- SUM(IF(".$this->db->dbprefix('loans').".paid_amount > 0,".$this->db->dbprefix('loans').".principle,0)))))  as balance, 
 					 IF(".$this->db->dbprefix('loans').".type = 0 AND ".$this->db->dbprefix('loans').".paid_amount < 0,'due',".$this->db->dbprefix('sales').".payment_status) as payment_status")
 				 ->from('sales')
 				 ->join('loans','sales.id=loans.sale_id','INNER')
@@ -1419,7 +1399,7 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
 	}
-
+	
 	public function getSingleLoanById($id=NULL){
 
 		$this->db->select('loans.*,sales.reference_no,
@@ -1433,7 +1413,7 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
 	}
-
+	
 	public function getMultiPayment($id=array())
 	{
 		$this->db->select('loans.*,
@@ -1452,9 +1432,9 @@ class Sales_model extends CI_Model
 			}
 			return $data;
 		}
-		return FALSE;
+		return FALSE;	
 	}
-
+	
 	public function getMMultiPayment($id=NULL)
 	{
 		$this->db->select('loans.*,
@@ -1470,9 +1450,9 @@ class Sales_model extends CI_Model
 		if ($q->num_rows() > 0) {
 			return $q->row();
 		}
-		return FALSE;
+		return FALSE;	
 	}
-
+	
 	public function getMMMultiPayment($id=NULL)
 	{
 		$this->db->select('loans.*,
@@ -1492,9 +1472,9 @@ class Sales_model extends CI_Model
 			//$this->erp->print_arrays($data);
             return $data;
 		}
-		return FALSE;
+		return FALSE;	
 	}
-
+	
 	public function getLoanByID($id){
 
 		$this->db->select('loans.*,sales.reference_no,
@@ -1508,7 +1488,7 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
 	}
-
+	
 	public function getItemsByID($id)
     {
         $this->db->select('sale_items.product_code,sale_items.product_name,sale_items.unit_price,
@@ -1524,13 +1504,13 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
     }
-
+	
 	public function getSaleInfoByID($id){
 		$this->db->select('sales.id,sales.reference_no,sales.paid,sales.other_cur_paid,sales.other_cur_paid_rate,customer_id
 						');
         $q = $this->db->get_where('sales', array('sales.id' => $id));
         if ($q->num_rows() > 0) {
-
+            
 			//$this->erp->print_arrays($data);
            return $q->row();
         }
@@ -1554,7 +1534,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+    
     public function getReturnSaleBySaleID($sale_id)
     {
         $this->db->select('sale_id');
@@ -1564,7 +1544,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+    
     public function getReturnItemByReturnID($return_id){
         $q = $this->db->get_where('return_sale_item', array('sale_item_id' => $return_id), 1);
         if ($q->num_rows() > 0) {
@@ -1665,7 +1645,7 @@ class Sales_model extends CI_Model
 		$deposit_customer_id = $data['deposit_customer_id'];
 		unset($data['deposit_customer_id']);
 		$data['total_cost'] = 0;
-
+		
 		foreach($items as $g){
 			$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity']);
 			$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
@@ -1674,27 +1654,27 @@ class Sales_model extends CI_Model
 			}else {
 				$data['total_cost'] += $totalCostProducts->total_cost;
 			}
-		}
-
+		} 
+		
 		if($loans) {
 			$data['grand_total'] = $data['paid'];
 			foreach ($loans as $loan) {
 				$data['grand_total'] += $loan['payment'];
 			}
 		}
-
+		
 		if ($this->db->insert('sales', $data)) {
-
+			
 			$sale_id = $this->db->insert_id();
 			if($deliver_id_muti){
 				$this->UpdateDeliveryMulti($deliver_id_muti,$sale_id);
 			}
-
+			
 			if ($this->site->getReference('so',$data['biller_id']) == $data['reference_no']) {
 				$this->site->updateReference('so',$data['biller_id']);
 			}
-			$i = 0;
-
+			$i = 0; 
+			
 			foreach ($items as $item) {
 				$product = $this->site->getProductByID($item['product_id']);
 				$item['unit_cost'] 	= $product->cost;
@@ -1704,18 +1684,18 @@ class Sales_model extends CI_Model
 				$items[$i]['transaction_type'] 	= 'SALE';
 				$items[$i]['transaction_id'] 	= $sale_item_id;
 				$items[$i]['status'] 			= ($data['sale_status'] == 'completed'?'received':'');
-
+				
 				if($data['so_id'] > 0 && $data['type'] = 'sale_order' && $data['type_id'] > 0) {
 					$this->db->update('sale_order', array('sale_status' => 'sale'), array('id' => $data['so_id']));
 				}
-
+				
 				if($this->Settings->product_serial == 1){
 					$this->db->update('serial', array('serial_status'=>0), array('product_id'=>$item['product_id'], 'serial_number'=>$item['serial_no']));
 				}
-
+				
 				if ($data['sale_status'] == 'completed' &&  $this->site->getProductByID($item['product_id'])) {
 					$item_costs = $this->site->item_costing($item);
-
+				
 					foreach ($item_costs as $item_cost) {
 						$item_cost['sale_item_id'] 	= $sale_item_id;
 						$item_cost['sale_id'] 		= $sale_id;
@@ -1728,33 +1708,33 @@ class Sales_model extends CI_Model
 						unset($item_cost['product_name']);
 						unset($item_cost['product_type']);
 						//$option_id = $item_cost['option_id'];
-
+						
 						if(! isset($item_cost['pi_overselling'])) {
 							$this->db->insert('costing', $item_cost);
 						}
 					}
 				}
-
+				
 				$i++;
 			}
-
+			
             if ($data['sale_status'] == 'completed') {
                 $this->site->syncQuantity($sale_id);
             }
-
-
+			
+			
 			if ($data['sale_status'] == 'completed') {
 				$cost = $this->site->costing($items);
 				$this->site->syncPurchaseItems_delivery($cost, $deliver_id_muti);
 			}
-
+			
 			if($loans){
 				foreach($loans as $loan){
 					$loan['sale_id'] = $sale_id;
 					$this->db->insert('loans', $loan);
 				}
 			}
-
+			
 			if(strpos($data['paid'], '-') !== true){
 				if ($data['payment_status'] == 'partial' || $data['payment_status'] == 'paid' && !empty($payment)) {
 					$payment['sale_id'] = $sale_id;
@@ -1768,14 +1748,14 @@ class Sales_model extends CI_Model
 					if ($this->site->getReference('sp') == $payment['reference_no']) {
 						$this->site->updateReference('sp');
 					}
-
+					
 					if($payment['paid_by'] == 'deposit'){
-
+						
 						$deposit = $this->site->getDepositByCompanyID($deposit_customer_id);
 						$deposit_balance = $deposit->deposit_amount;
 						$deposit_balance = $deposit_balance - abs($payment['amount']);
 						unset($payment['gc_balance']);
-
+						
 						if($this->db->update('companies', array('deposit_amount' => $deposit_balance), array('id' => $deposit_customer_id))){
 							$this->db->update('deposits', array('amount' => $deposit_balance), array('company_id' => $deposit_customer_id));
 						}
@@ -1783,8 +1763,8 @@ class Sales_model extends CI_Model
 					$this->site->syncSalePayments($sale_id);
 				}
 			}else{
-
-				$sale_items = $this->site->getAllSaleItems($sale_id);
+				
+				$sale_items = $this->site->getAllSaleItems($sale_id);			
 				$returns = array(
 					'date' => $data['date'],
 					'sale_id' => $sale_id,
@@ -1812,12 +1792,12 @@ class Sales_model extends CI_Model
 					if ($this->site->getReference('re') == $returns['reference_no']){
 						$this->site->updateReference('re');
 					}
-
+				
 					foreach ($items as &$return_item){
 						unset($return_item['unit_price']);
 						$return_item['return_id'] = $return_id;
 						$sale_item_id = $this->db->insert('return_items', $return_item);
-
+						
 						if ($sale_item = $this->sales_model->getSaleItemByID($sale_item_id)) {
 								//$this->db->delete('sale_items', array('id' => $item['sale_item_id']));
 							if ($sale_item->quantity == $return_item['quantity']) {
@@ -1888,7 +1868,7 @@ class Sales_model extends CI_Model
 							}
 							$payment_term = 0;
 						}
-
+						
 						if($payment['paid_by'] == 'deposit'){
 						$deposit = $this->site->getDepositByCompanyID($data['customer_id']);
 						$deposit_balance = $deposit->deposit_amount;
@@ -1897,7 +1877,7 @@ class Sales_model extends CI_Model
 							$this->db->update('deposits', array('amount' => $deposit_balance), array('company_id' => $deposit_customer_id));
 						}
 					}
-
+						
 						//$this->calculateSaleTotals($data['sale_id'], $return_id, $data['surcharge'], $payment_status);
 						$this->calculateSaleTotals($sale_id, $return_id, NULL, $payment_status);
 					}
@@ -1912,7 +1892,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+    
 	public function saleEdit($id, $qty, $sale_id, $ware){
 		$Proqty = $this->getProductQty($id);
 		$WareQty = $this->getWarehouseQty($id, $ware);
@@ -1931,7 +1911,7 @@ class Sales_model extends CI_Model
 		$this->db->delete('costing', array('sale_id' => $sale_id, 'product_id' => $id));
 		return false;
 	}
-
+	
 	public function getProductQty($id){
 		$this->db->select('quantity, price');
         $q = $this->db->get_where('products', array('id' => $id));
@@ -1940,7 +1920,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getWarehouseQty($id, $warehouse){
 		$this->db->select('quantity');
         $q = $this->db->get_where('warehouses_products', array('product_id' => $id, 'warehouse_id'=>$warehouse));
@@ -1949,7 +1929,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function addSaleImport($data = array(), $items = array())
 	{
 		$costing = $this->site->costing($items);
@@ -1987,7 +1967,7 @@ class Sales_model extends CI_Model
 				}
 				$i++;
 			}
-
+			
 			if ($data['sale_status'] == 'completed') {
 				$this->site->syncPurchaseItems($cost);
 			}
@@ -1996,7 +1976,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function addSaleItemImport($items = array(), $old_ref)
 	{
 		$sale = $this->getSaleItemByRef($old_ref);
@@ -2015,14 +1995,14 @@ class Sales_model extends CI_Model
 				$item['sale_id'] = $sale_id;
 				$this->db->insert('sale_items', $item);
 				$sale_item_id = $this->db->insert_id();
-
+				
 				$sale_update = array(
 					'total' => $item['subtotal'] + $sale->total,
 					'grand_total' => $item['subtotal'] + $sale->grand_total
 				);
 				$this->db->update('sales', $sale_update, array('id' => $item['sale_id']));
-
-				/*
+				
+				/* 
 				if ($sale->sale_status == 'completed' && $this->site->getProductByID($item['product_id'])) {
 
 					$item_costs = $this->site->item_costing($item);
@@ -2042,38 +2022,38 @@ class Sales_model extends CI_Model
 				*/
 			}
 		}
-
+		
 		/*
 		if ($sale->sale_status == 'completed') {
 			$this->site->syncPurchaseItems($cost);
 		}
 		*/
-
+		
 	   $this->site->syncQuantity($sale_id);
 		//$this->erp->update_award_points($sale->grand_total, $sale->customer_id, $sale->created_by, NULL ,$sale->saleman_by);
 		return false;
 	}
-
+	
 	public function getSaleItemByRef($sale_ref)
     {
         $this->db->select('sale_items.id AS sale_item_id, sale_items.product_id ,sales.id AS sale_id, sales.reference_no AS sale_reference, sales.total, sales.grand_total');
         $this->db->join('sale_items', 'sale_items.sale_id = sales.id', 'inner');
         $q = $this->db->get_where('sales', array('sales.reference_no' => $sale_ref));
-
+        
         if ($q->num_rows() > 0) {
             return $q->row();
         }
         return FALSE;
     }
-
-
-
+	
+	
+	
 	public function getSale_Del_ByID($id=null, $wh=null)
 	{
 		$ltrans = "(SELECT
 						erp_transfer_items.product_id,
 						erp_transfer_items.transfer_id,
-
+						
 						IFNULL(
 							SUM(
 								erp_transfer_items.quantity * erp_product_variants.qty_unit
@@ -2084,11 +2064,11 @@ class Sales_model extends CI_Model
 						erp_transfer_items
 					LEFT JOIN erp_product_variants ON erp_product_variants.id = erp_transfer_items.option_id
 					GROUP BY
-
+						
 						erp_transfer_items.transfer_id
 					) AS erp_tran";
 
-
+		
 		$this->db->select("transfers.id as id,transfers.from_warehouse_id,erp_transfers.to_warehouse_id,transfers.date, transfer_no, from_warehouse_name as fname, from_warehouse_code as fcode, to_warehouse_name as tname,to_warehouse_code as tcode, erp_tran.qty, transfers.status, transfers.created_by, transfers.shipping, transfers.total_tax, transfers.note, transfers.attachment, transfers.total, transfers.grand_total, transfers.from_warehouse_name")
 			->join('transfer_items', 'transfers.id = transfer_items.transfer_id', 'left')
 			->join($ltrans,'erp_tran.product_id = transfer_items.product_id AND erp_tran.transfer_id = transfer_items.transfer_id','left')
@@ -2097,7 +2077,7 @@ class Sales_model extends CI_Model
 				$this->db->where_in('erp_transfers.from_warehouse_id',$wh);
 			}
 
-		// $this->db->select($this->db->dbprefix('transfers') . '.id, ' . $this->db->dbprefix('transfers') . '.date, ' . $this->db->dbprefix('transfers') . '.transfer_no, ' . $this->db->dbprefix('transfers') . '.from_warehouse_name as fname, ' . $this->db->dbprefix('transfers') . '.from_warehouse_code as fcode, '.$this->db->dbprefix('transfers') . '.to_warehouse_name as tname,'.$this->db->dbprefix('transfers') . '.to_warehouse_code as tcode,'.$this->db->dbprefix('transfer_items') . '.quantity, '.$this->db->dbprefix('transfers') . '.status, from_warehouse_id, to_warehouse_id')
+		// $this->db->select($this->db->dbprefix('transfers') . '.id, ' . $this->db->dbprefix('transfers') . '.date, ' . $this->db->dbprefix('transfers') . '.transfer_no, ' . $this->db->dbprefix('transfers') . '.from_warehouse_name as fname, ' . $this->db->dbprefix('transfers') . '.from_warehouse_code as fcode, '.$this->db->dbprefix('transfers') . '.to_warehouse_name as tname,'.$this->db->dbprefix('transfers') . '.to_warehouse_code as tcode,'.$this->db->dbprefix('transfer_items') . '.quantity, '.$this->db->dbprefix('transfers') . '.status, from_warehouse_id, to_warehouse_id')  
 			// ->join('transfer_items', 'transfers.id=transfer_items.transfer_id', 'left');
 			$q = $this->db->get_where('transfers', array('transfers.id' => $id), 1);
 		if ($q->num_rows() > 0) {
@@ -2134,12 +2114,12 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 	}
-
+	
 	public function resetTransferActionsSync($id)
 	{
 		$osale = $this->sales_model->getSale_Del_ByID($id);
 		$ostatus = $osale->status;
-
+		
 		if ($ostatus == 'sent' ||$ostatus == 'completed') {
 			$this->db->delete('purchase_items', array('transfer_id' => $id));
 		}
@@ -2151,10 +2131,10 @@ class Sales_model extends CI_Model
 			}
 			return true;
 		}
-
+		
 		return FALSE;
 	}
-
+	
     public function updateSale($id, $data, $items = array(), $sale_data)
     {
 		if ($data['sale_status'] == 'completed') {
@@ -2173,7 +2153,7 @@ class Sales_model extends CI_Model
 				$data['total_cost'] += $totalCostProducts->total_cost;
 			}
 		}
-		//$this->erp->print_arrays($id);
+		//$this->erp->print_arrays($id); 
         if ($this->db->update('sales', $data, array('id' => $id))) {
 			foreach($sale_data as $sa){
 				$this->db->delete("inventory_valuation_details",array("field_id"=>$sa['slaeid'], "type"=>"SALE"));
@@ -2184,13 +2164,13 @@ class Sales_model extends CI_Model
 				$purchase_item = $this->site->getPurchaseItemBySaleItem($sItem->id, 'SALE');
 				if($purchase_item){
 					$this->db->delete('purchase_items', array('id' => $purchase_item->id));
-
+					
 				}
 			}
 
 			//======================== End ========================//
 			$this->db->delete('sale_items', array('sale_id' => $id));
-
+			
 			$i = 0;
             foreach ($items as $item) {
 				$product = $this->site->getProductByID($item['product_id']);
@@ -2200,25 +2180,25 @@ class Sales_model extends CI_Model
 				unset($item['old_sqty']);
                 $this->db->insert('sale_items', $item);
                 $sale_item_id = $this->db->insert_id();
-
+				
 				$items[$i]['transaction_type'] = 'SALE';
 				$items[$i]['transaction_id'] = $sale_item_id;
 				$items[$i]['status'] = ($data['sale_status'] == 'completed'?'received':'');
 				$item['old_sqty'] = $old_sqty;
-
+				
                 if ($data['sale_status'] == 'completed' && $this->site->getProductByID($item['product_id'])) {
                     $item_costs = $this->site->item_costing($item);
-
+					
                     foreach ($item_costs as $item_cost) {
                         $item_cost['sale_item_id'] = $sale_item_id;
                         $item_cost['sale_id'] = $id;
-
+						
 						unset($item_cost['transaction_type']);
 						unset($item_cost['transaction_id']);
 						unset($item_cost['status']);
 						unset($item_cost['product_name']);
 						unset($item_cost['product_type']);
-
+						
                         if(! isset($item_cost['pi_overselling'])) {
                             $this->db->insert('costing', $item_cost);
                         }
@@ -2235,14 +2215,14 @@ class Sales_model extends CI_Model
 				}else{
 					$this->db->update('sales', array('payment_status' => 'paid'), array('id' => $id));
 				}
-
+				
 				$this->site->syncSalePayments($sale_id);
 
-
+				
 			}
 			//if($data['payment_status'] == 'paid')
-
-
+			
+			
             if ($data['sale_status'] == 'completed') {
 				$this->site->syncSalePayments($id);
 				$cost = $this->site->costing($items);
@@ -2254,11 +2234,11 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function updateSaleOrder($id, $data, $items = array())
     {
         if ($this->db->update('erp_sale_order', $data, array('id' => $id)) && $this->db->delete('erp_sale_order_items', array('sale_order_id' => $id))) {
-
+            
 			foreach ($items as $item) {
                 $item['sale_order_id'] = $id;
                 $this->db->insert('erp_sale_order_items', $item);
@@ -2267,8 +2247,8 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
-
+	
+	
     public function deleteSale($id)
     {
         $sale_items = $this->resetSaleActions($id);
@@ -2283,7 +2263,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function deleteSuspend($id)
     {
         if ($this->db->delete('suspended_bills', array('id' => $id)) &&
@@ -2358,7 +2338,7 @@ class Sales_model extends CI_Model
                         if($combo_item->type == 'standard') {
                             $cpi = $this->site->getPurchasedItem(array('product_id' => $combo_item->id, 'warehouse_id' => $pi->warehouse_id, 'option_id' => NULL));
                             $bln = $pi->quantity_balance + ($qty*$combo_item->qty);
-
+							
 							$combo_data = array(
 								'product_id' 		=> $combo_items->id,
 								'product_code' 		=> $combo_items->code,
@@ -2375,12 +2355,12 @@ class Sales_model extends CI_Model
 								'quantity_balance' 	=> abs($qty*$combo_item->qty)
 							);
 							$this->db->insert('purchase_items', $combo_data);
-
+							
                         }
                     }
                 } else {
                     $bln = $pi->quantity_balance + $qty;
-
+					
 					$new_arr_data = array(
 						'product_id' 		=> $pr->product_id,
 						'product_code' 		=> $pr->product_code,
@@ -2396,29 +2376,29 @@ class Sales_model extends CI_Model
 						'date' 				=> date('Y-m-d'),
 						'quantity_balance' 	=> abs($qty)
 					);
-
+					
 					$this->db->insert('purchase_items', $new_arr_data);
                 }
             }
         } else {
             if ($sale_item = $this->getSaleItemByID($sale_item_id)) {
-
+				
                 $option_id = isset($sale_item->option_id) && !empty($sale_item->option_id) ? $sale_item->option_id : NULL;
 				if($option_id){
 					$clause = array('product_id' => $sale_item->product_id, 'warehouse_id' => $sale_item->warehouse_id, 'option_id' => $option_id);
 				}else{
 					$clause = array('product_id' => $sale_item->product_id, 'warehouse_id' => $sale_item->warehouse_id);
 				}
-
+				
                 if ($pi = $this->site->getPurchasedItem($clause)) {
                     $quantity_balance = $pi->quantity_balance+$qty;
-
+					
 					$qty_balance = abs($qty);
 					if($option_id){
 						$option = $this->site->getProductVariantOptionIDPID($option_id, $sale_item->product_id);
 						$qty_balance = $qty_balance * $option->qty_unit;
 					}
-
+					
 					$new_arr_data = array(
 						'product_id' 		=> $sale_item->product_id,
 						'product_code' 		=> $sale_item->product_code,
@@ -2437,13 +2417,13 @@ class Sales_model extends CI_Model
 					$this->db->insert('purchase_items', $new_arr_data);
 
                 } else {
-
+					
 					$qty_balance = $qty;
 					if($option_id){
 						$option = $this->site->getProductVariantOptionIDPID($option_id, $sale_item->product_id);
 						$qty_balance = $qty_balance * $option->qty_unit;
 					}
-
+					
                     $clause['purchase_id'] 		= NULL;
                     $clause['transfer_id'] 		= NULL;
                     $clause['quantity'] 		= 0;
@@ -2459,13 +2439,13 @@ class Sales_model extends CI_Model
                 if ($pr->type == 'standard') {
                     if ($pi = $this->site->getPurchasedItem($clause)) {
                         $quantity_balance = $pi->quantity_balance+$qty;
-
+                        
 						$qty_balance = abs($qty);
 						if($option_id){
 							$option = $this->site->getProductVariantOptionIDPID($option_id, $product_id);
 							$qty_balance = $qty_balance * $option->qty_unit;
 						}
-
+						
 						$new_arr_data = array(
 							'product_id' 		=> $pr->id,
 							'product_code' 		=> $pr->code,
@@ -2484,13 +2464,13 @@ class Sales_model extends CI_Model
 						$this->db->insert('purchase_items', $new_arr_data);
 
                     } else {
-
+						
 						$qty_balance = $qty;
 						if($option_id){
 							$option = $this->site->getProductVariantOptionIDPID($option_id, $product_id);
 							$qty_balance = $qty_balance * $option->qty_unit;
 						}
-
+						
                         $clause['purchase_id'] 		= NULL;
                         $clause['transfer_id'] 		= NULL;
                         $clause['quantity'] 		= 0;
@@ -2506,7 +2486,7 @@ class Sales_model extends CI_Model
                         if($combo_item->type == 'standard') {
                             if ($pi = $this->site->getPurchasedItem($clause)) {
                                 $quantity_balance = $pi->quantity_balance+($qty*$combo_item->qty);
-
+								
 								$combo_data = array(
 									'product_id' 		=> $combo_items->id,
 									'product_code' 		=> $combo_items->code,
@@ -2523,7 +2503,7 @@ class Sales_model extends CI_Model
 									'quantity_balance' 	=> abs($qty*$combo_item->qty)
 								);
 								$this->db->insert('purchase_items', $combo_data);
-
+	
                             } else {
                                 $clause['transfer_id'] 		= NULL;
                                 $clause['purchase_id'] 		= NULL;
@@ -2539,7 +2519,7 @@ class Sales_model extends CI_Model
             }
         }
     }
-
+	
 	public function getTotalCostProducts($product_id, $quantity){
 		$this->db->select("SUM(cost* CASE WHEN $quantity <> 0 THEN $quantity ELSE 0 END ) AS total_cost ");
 		$q = $this->db->get_where('products', array('id' => $product_id));
@@ -2560,10 +2540,10 @@ class Sales_model extends CI_Model
 
     public function returnSale($data = array(), $items = array(), $payment = array())
     {
-
+		
 		//$this->erp->print_arrays($items);
         $sale_items = $this->site->getAllSaleItems($data['sale_id']);
-
+		
 		foreach($items as $g){
 			$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
 			if($product_variants) {
@@ -2572,13 +2552,13 @@ class Sales_model extends CI_Model
 				$data['total_cost'] += ($g['unit_cost'] * $g['quantity']);
 			}
 		}
-
+		
         if ($this->db->insert('return_sales', $data)) {
             $return_id = $this->db->insert_id();
 			if ($this->site->getReference('re',$data['biller_id']) == $data['reference_no']) {
 				$this->site->updateReference('re',$data['biller_id']);
 			}
-
+            
 			$total_amount_to_dep = 0;
             foreach ($items as $item) {
 				$item['sale_id'] = $data['sale_id'];
@@ -2598,7 +2578,7 @@ class Sales_model extends CI_Model
                         $subtotal = $sale_item->unit_price * $nqty;
                     }
                 }
-
+				
 				if ($item['product_type'] == 'combo') {
 					$combo_items = $this->site->getProductComboItems($item['product_id'], $item['warehouse_id']);
 					foreach ($combo_items as $combo_item) {
@@ -2620,7 +2600,7 @@ class Sales_model extends CI_Model
 						$this->updatePurchaseItem(NULL,($item['quantity']*$combo_item->qty), NULL, $combo_item->id, $item['warehouse_id'], NULL, $return_item_id);
 					}
 				} else {
-
+					
 					if ($costings = $this->getCostingLines($item['sale_item_id'], $item['product_id'])) {
 						$quantity = $item['quantity'];
 						foreach ($costings as $cost) {
@@ -2651,10 +2631,10 @@ class Sales_model extends CI_Model
 							}
 						}
 					}
-
+					
 					$this->updatePurchaseItem(NULL, $item['quantity']*($cost->qty_unit?$cost->qty_unit:1), $item['sale_item_id'], $item['product_id'], $item['warehouse_id'], $item['option_id'], $return_item_id);
 				}
-
+				
 				$total_amount_to_dep += $item['subtotal'];
                 $this->site->syncQuantity(NULL, NULL, NULL, $item['product_id']);
             }
@@ -2665,8 +2645,8 @@ class Sales_model extends CI_Model
                 $this->db->insert('payments', $payment);
                 if ($this->site->getReference('sp') == $data['reference_no']) {
                     $this->site->updateReference('sp');
-                }
-
+                }			
+				
             }
 			$this->calculateSaleTotalsReturn($data['sale_id'], $return_id, $data['surcharge']);
             $this->site->syncQuantity(NULL, NULL, $sale_items);
@@ -2674,7 +2654,7 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	/* Return Sales */
 	public function returnSales($data = array(), $items = array(), $payment = array())
     {
@@ -2737,7 +2717,7 @@ class Sales_model extends CI_Model
         }
 		//$this->erp->print_arrays($items);
         //$sale_items = $this->site->getAllSaleItems($data['sale_id']);
-
+		
 		foreach($items as $g){
 			$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity']);
 			$data['total_cost'] += $totalCostProducts->total_cost;
@@ -2753,15 +2733,15 @@ class Sales_model extends CI_Model
             $sale_id = 0;
             foreach ($items as $item) {
                 $sale_id = $item['sale_id'];
-
+                
 				$sale_items = $this->site->getAllSaleItems($sale_id);
                 $item['return_id'] = $return_id;
                 $this->db->insert('return_items', $item);
-
+				
 				if($sale_id){
 					$this->calculateSaleTotalsReturn($sale_id, $return_id, $data['surcharge']);
 				}
-
+                
                 if ($item['sale_item_id']) {
                     if ($sale_item = $this->getSaleItemByID($item['sale_item_id'])) {
                         if ($sale_item->quantity == $item['quantity']) {
@@ -2820,25 +2800,25 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+    
     public function getSaleItemByRefPID($sale_ref, $product_id)
     {
         $this->db->select('sale_items.id AS sale_item_id, sales.id AS sale_id');
         $this->db->join('sale_items', 'sale_items.sale_id = sales.id', 'inner');
         $q = $this->db->get_where('sales', array('sales.reference_no' => $sale_ref, 'sale_items.product_id' => $product_id));
-
+        
         if ($q->num_rows() > 0) {
             return $q->row();
         }
         return FALSE;
     }
-
+    
     public function getSaleItemByRefPIDReturn($sale_ref, $product_id)
     {
         $this->db->select('sale_items.quantity');
         $this->db->join('sale_items', 'sale_items.sale_id = sales.id', 'inner');
         $q = $this->db->get_where('sales', array('sales.reference_no' => $sale_ref, 'sale_items.product_id' => $product_id));
-
+        
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -2853,7 +2833,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getSaleItemByProductID($product_id)
     {
         $q = $this->db->get_where('sale_items', array('product_id' => $product_id), 1);
@@ -2862,7 +2842,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	function getSalesById($id){
 		$q = $this->db->get_where('sales', array('id' => $id), 1);
         if ($q->num_rows() > 0) {
@@ -2945,7 +2925,7 @@ class Sales_model extends CI_Model
 					'surcharge' => $surcharge
 				);
 			}
-
+            
             if ($this->db->update('sales', $data, array('id' => $id))) {
                 $this->erp->update_award_points($data['grand_total'], $sale->customer_id, $sale->created_by);
                 return true;
@@ -2956,7 +2936,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function calculateSaleTotalsReturn($id, $return_id, $surcharge = NULL,$payment_status =NULL)
     {
         $sale = $this->getInvoiceByID($id);
@@ -3032,7 +3012,7 @@ class Sales_model extends CI_Model
 					//'surcharge' => $surcharge
 				);
 			}
-
+            
             if ($this->db->update('sales', $data, array('id' => $id))) {
                 $this->erp->update_award_points($data['grand_total'], $sale->customer_id, $sale->created_by);
                 return true;
@@ -3071,7 +3051,7 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function completedDeliveries($id)
     {
         if ($this->db->update('deliveries', array('delivery_status' => 'completed'), array('id' => $id))) {
@@ -3105,7 +3085,7 @@ class Sales_model extends CI_Model
     	$this->db->select("deliveries.customer_id,deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no,deliveries.sale_reference_no AS reference_no ,cust.name as customer_name,cust.address,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status,deliveries.sale_id,deliveries.biller_id")
         ->from('deliveries')
         ->join('(SELECT erp_sales.id AS id,SUM(erp_sale_items.quantity) as qty FROM
-                    erp_sales LEFT JOIN erp_sale_items ON erp_sale_items.sale_id = erp_sales.id GROUP BY erp_sales.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
+                    erp_sales LEFT JOIN erp_sale_items ON erp_sale_items.sale_id = erp_sales.id GROUP BY erp_sales.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')        
         ->join('delivery_items', 'delivery_items.delivery_id = deliveries.id', 'inner')
         ->join('companies as erp_cust', 'cust.id = deliveries.customer_id', 'inner')
         ->where('type','sale_order')
@@ -3129,14 +3109,14 @@ class Sales_model extends CI_Model
 		// 	if($wh){
 	 //        	$this->db->where_in('delivery_items.warehouse_id',$wh);
 	 //        }
-		// $this->db->where('erp_deliveries.id',$id);
+		// $this->db->where('erp_deliveries.id',$id);  
 		// $q = $this->db->get();
 		// if($q->num_rows()>0){
 		// 	return $q->row();
 		// }
 		// return false;
     }
-
+	
 	public function getSaleDeliveryByID($delivery_id=Null)
     {
         $this->db->select('erp_deliveries.*,erp_sales.shipping,erp_sales.order_discount,erp_sales.order_tax,erp_sales.customer_id as customer_id,erp_sales.payment_status,erp_sales.saleman_by,companies.name as company_name,erp_sales.order_tax_id,erp_sales.sale_status,erp_sales.biller_id,erp_sales.delivery_by,erp_sales.payment_term,erp_sales.order_discount_id');
@@ -3150,7 +3130,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
     }
-
+	
 	public function getSaleOrderDeliveryByID($delivery_id=Null)
     {
         $this->db->select('erp_deliveries.*,erp_sale_order.shipping,erp_sale_order.order_discount,erp_sale_order.order_tax,erp_sale_order.customer_id as customer_id,erp_sale_order.payment_status,erp_sale_order.saleman_by,companies.name as company_name,erp_sale_order.order_tax_id,erp_sale_order.sale_status,erp_sale_order.biller_id,erp_sale_order.delivery_by,erp_sale_order.payment_term,erp_sale_order.order_discount_id');
@@ -3164,8 +3144,8 @@ class Sales_model extends CI_Model
 		}
 		return false;
     }
-
-
+	
+	
 	public function getDelivery($id= Null){
 		$this->db->select('deliveries.*, companies.name, companies.company');
 		$this->db->join('companies', 'deliveries.customer_id = companies.id', 'inner');
@@ -3175,7 +3155,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getDeliveryBySaleID($sale_id)
     {
         $q = $this->db->get_where('deliveries', array('sale_id' => $sale_id), 1);
@@ -3184,7 +3164,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function updateStock($products=null){
 		$status=false;
 		foreach($products as $del){
@@ -3198,7 +3178,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function deleteDelivery($id)
     {
 		$stock_info = $this->resetDeliveryActions($id);
@@ -3208,7 +3188,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function deleteDelivery_($id)
     {
 		$stock_info = $this->resetDeliveryActions($id);
@@ -3220,7 +3200,7 @@ class Sales_model extends CI_Model
     }
 
     public function getInvoicePayments($id)
-    {
+    {	
 		$this->db->select('payments.*,gl_charts.accountname')
 				 ->join('gl_charts','gl_charts.accountcode = payments.bank_account','left');
 		$this->db->order_by('id', 'asc');
@@ -3232,9 +3212,9 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
+	
 	public function getInvoicePaymentsLoan($id)
-    {
+    {	
 		$this->db->select('payments.*,gl_charts.accountname')
 				 ->join('gl_charts','gl_charts.accountcode = payments.bank_account','left');
 		$this->db->order_by('id', 'asc');
@@ -3246,7 +3226,7 @@ class Sales_model extends CI_Model
             return $data;
         }
     }
-
+	
 	public function getPayments($fre)
     {
         $this->db->select('*,sales.reference_no as reslae, CONCAT(erp_users.first_name," ",erp_users.last_name) AS name, payments.id AS payment_id')
@@ -3263,8 +3243,8 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
-
+	
+	
 	public function getCurrentBalance($sale_id)
 	{
 		$this->db->select('id, amount, extra_paid')
@@ -3278,7 +3258,7 @@ class Sales_model extends CI_Model
 		}
 		return FALSE;
 	}
-
+	
 	public function getPurchaseByID($id)
 	{
 		$this->db->select('purchases.date,purchases.reference_no,purchases.paid,purchases.biller_id,purchases.supplier_id,payments.paid_by')
@@ -3351,7 +3331,7 @@ class Sales_model extends CI_Model
 			if ($this->site->getReference('sp',$data['biller_id']) == $data['reference_no']) {
 				$this->site->updateReference('sp',$data['biller_id']);
 			}
-
+            
             $this->site->syncSalePayments($data['sale_id']);
             if ($data['paid_by'] == 'gift_card') {
                 $gc = $this->site->getGiftCardbyNO($data['cc_no']);
@@ -3369,7 +3349,7 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function addPaymentMulti($data = array())
     {
         if ($this->db->insert('payments', $data)) {
@@ -3394,11 +3374,11 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function addSalePaymentMulti($data = array())
     {
 		//$this->erp->print_arrays($data);
-
+		
         if ($this->db->insert('payments', $data)) {
 			$payment_id = $this->db->insert_id();
 			if ($this->site->getReference('pp',$data['biller_id']) == $data['reference_no']) {
@@ -3421,16 +3401,16 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function addPurchasePaymentMulti($data = array())
     {
-
+		
         if ($this->db->insert('payments', $data)) {
 			$payment_id = $this->db->insert_id();
 			if ($this->site->getReference('pp',$data['biller_id']) == $data['reference_no']) {
 				$this->site->updateReference('pp',$data['biller_id']);
 			}
-
+			
             $this->site->syncPurchasePayments($data['purchase_id']);
             if ($data['paid_by'] == 'gift_card') {
                 $gc = $this->site->getGiftCardbyNO($data['cc_no']);
@@ -3448,8 +3428,8 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
-
+	
+	
 	public function addSalePaymentLoan($data = array())
 	{
 		$id = $data['id'];
@@ -3468,31 +3448,31 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function addPaymentLoan($data = array(),$loan_id = NULL,$sale_id = NULL)
     {
-
+		
 		//$this->erp->print_arrays($loan_id);
 		$old_loan  = $this->getSingleLoanById($loan_id);
 		$data['paid_amount'] = ($data['paid_amount']+$old_loan->paid_amount);
 		$data['discount']    = ($data['discount']+$old_loan->discount);
-
-        if ($this->db->update('loans', $data, array('id' => $loan_id,'sale_id'=>$sale_id)))
+		
+        if ($this->db->update('loans', $data, array('id' => $loan_id,'sale_id'=>$sale_id))) 
 		{
 			$this->syncLoanPayments($loan_id);
         }
 		return true;
     }
-
+	
 	public function addLoanPayment($payments = array(),$interest=0)
 	{
 		$Interest       = $this->getTotalInterestSale($payments['sale_id']);
 		$updateInterest = ($Interest->total_interest+$interest);
 		$sale_id 		= $payments['sale_id'];
 		//unset($payments['sale_id']);
-
+		
 		$this->db->update('sales', array('total_interest'=>$updateInterest), array('id' => $sale_id));
-
+		
 		if ($this->db->insert('payments', $payments)) {
 				if ($this->site->getReference('sp', $payments['biller_id']) == $payments['reference_no']) {
 					$this->site->updateReference('sp', $payments['biller_id']);
@@ -3505,7 +3485,7 @@ class Sales_model extends CI_Model
 				return true;
 		}
 	}
-
+	
 	public function getLoanAmountId($id=null)
 	{
 		$this->db->select('payment,paid_amount,payment_status');
@@ -3516,15 +3496,15 @@ class Sales_model extends CI_Model
             return $q->row();
         }
 	}
-
-
+	
+	
 	public function syncLoanPayments($id=null)
 	{
 		$loan_id        = $this->getLoanAmountId($id);
         $payment_status = $loan_id->payment == $loan_id->paid_amount? 'paid' : 'partial';
 		$this->db->where('id', $id);
         $this->db->update('loans', array('payment_status'=>$payment_status));
-
+		
     }
 
     public function updatePayment($id, $data = array())
@@ -3538,14 +3518,14 @@ class Sales_model extends CI_Model
 				unset($data['paid_by']);
 			}
 		}
-
+		
 		if ($this->db->update('payments', $data, array('id' => $id))) {
             $this->site->syncSalePayments($data['sale_id']);
             return $id;
         }
         return false;
     }
-
+	
 	public function getSaleId($id)
 	{
 		$q = $this->db->get_where('loans', array('id' => $id), 1);
@@ -3554,7 +3534,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getSaleById($id)
 	{
 		$q = $this->db->get_where('sales', array('id' => $id), 1);
@@ -3563,8 +3543,8 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
-
+	
+    
     public function getSaleByRef($ref)
 	{
 		$q = $this->db->get_where('sales', array('reference_no' => $ref), 1);
@@ -3573,7 +3553,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	/*public function getLoanView($id)
 	{
 		$this->db->order_by('period','DESC');
@@ -3583,12 +3563,12 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}*/
-
+	
 	public function getMonths($id)
 	{
 		$this->db->order_by('period','DESC');
 		$q = $this->db->get_where('loans', array('sale_id' => $id), 1);
-
+		
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -3670,7 +3650,7 @@ class Sales_model extends CI_Model
 		$this->db->join('users','quotes.created_by = users.id', 'left');
 		$this->db->join('companies','quotes.customer_id = companies.id', 'left');
 		$this->db->where('quotes.id',$id);
-		$this->db->from('quotes');
+		$this->db->from('quotes');		
 		$q = $this->db->get();
 		if($q->num_rows()>0){
 			return $q->row();
@@ -3714,7 +3694,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getProductVariantByid($product_id)
     {
         $q = $this->db->get_where('product_variants', array('product_id' => $product_id));
@@ -3723,7 +3703,7 @@ class Sales_model extends CI_Model
         }
         return Null;
     }
-
+	
 	public function getTaxRateByCode($code)
     {
         $q = $this->db->get_where('tax_rates', array('code' => $code), 1);
@@ -3753,7 +3733,7 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
     }
-
+	
 	public function getCombinePaymentBySaleId($id)
     {
 		$this->db->select('id, date, reference_no, biller, customer, sale_status, grand_total, paid, (grand_total-paid) as balance, payment_status');
@@ -3767,8 +3747,8 @@ class Sales_model extends CI_Model
         }
 		return FALSE;
     }
-
-
+	
+	
 	public function getCombinePaymentPurById($id)
     {
 		$this->db->select('id, date, reference_no, supplier,status, grand_total, paid, (grand_total-paid) as balance, payment_status');
@@ -3790,7 +3770,7 @@ class Sales_model extends CI_Model
 			return $q->row()->reference_no;
 		}
 	}
-
+	
 	function getSetting()
     {
         $q = $this->db->get('pos_settings');
@@ -3799,7 +3779,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	function getSettings()
     {
         $q = $this->db->get('settings');
@@ -3808,13 +3788,13 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	function add_booking($id, $data){
 		$this->db->where('id', $id);
 		$this->db->update('erp_suspended',$data);
 		return $this->db->affected_rows();
 	}
-
+	
 	public function getDocumentByID($id){
 		$this->db->select('attachment, attachment1, attachment2')
 				 ->from('sales')
@@ -3825,7 +3805,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getUserBySaleID($sale_id=null){
 		$this->db->select('users.username,companies.name,companies.company');
         $this->db->from('deliveries');
@@ -3859,9 +3839,9 @@ class Sales_model extends CI_Model
 			return $response;
 		}
 		return false;
-
+		
 	}
-
+	
 	public function getSItemsBySaleID($saleId=null, $product_id = array()){
 		$response = $this->db
                  ->select('*')
@@ -3870,9 +3850,9 @@ class Sales_model extends CI_Model
                  ->from('sale_items')
                  ->get()
                  ->result();
-		return $response;
+		return $response;	
 	}
-
+	
 	public function updateSaleItemQtyReceived($qty_received,$condition){
 		$this->db->where($condition);
 		$result = $this->db->update('sale_items', $qty_received);
@@ -3880,7 +3860,7 @@ class Sales_model extends CI_Model
 			return true;
 		}
 	}
-
+	
 	public function updateSaleOrderQtyReceived($qty_received,$condition){
 		$this->db->where($condition);
 		$result = $this->db->update('sale_order_items', $qty_received);
@@ -3888,7 +3868,7 @@ class Sales_model extends CI_Model
 			return true;
 		}
 	}
-
+	
 	public function updatePOSSaleOrderQtyReceived($qty_received,$condition){
 		$this->db->where($condition);
 		$result = $this->db->update('sale_items', $qty_received);
@@ -3901,7 +3881,6 @@ class Sales_model extends CI_Model
     {
         $pos = $delivery['pos'];
         unset($delivery['pos']);
-
 
         if(isset($delivery) && !empty($delivery) && isset($delivery_items) && !empty($delivery_items)){
             foreach($delivery_items as $g){
@@ -3963,7 +3942,7 @@ class Sales_model extends CI_Model
                         );
 
                         $item_costs = $this->site->item_costing($item);
-
+                    	
                         foreach ($item_costs as $item_cost) {
                             $item_cost['delivery_item_id'] = $delivery_item_id;
                             $item_cost['delivery_id'] = $delivery_id;
@@ -3990,14 +3969,14 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function add_delivery_old($delivery, $delivery_items){
-
+		
 		if(isset($delivery) && !empty($delivery) && isset($delivery_items) && !empty($delivery_items)){
-
+			
 			foreach($delivery_items as $g){
 				$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity_received']);
-
+				
 				$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
 				if($product_variants) {
 					$delivery['total_cost'] += $totalCostProducts->total_cost * $product_variants->qty_unit;
@@ -4005,17 +3984,17 @@ class Sales_model extends CI_Model
 					$delivery['total_cost'] += $totalCostProducts->total_cost;
 				}
 			}
-
+			
 			$this->db->insert('deliveries', $delivery);
 			$delivery_id = $this->db->insert_id();
-
+			
 			if($delivery_id > 0){
 				//$this->db->update("erp_sales",array('sale_status'=>'completed'),array('id'=>$delivery['sale_id']));
 				//$this->erp->print_arrays($this->site->getReference('do',$delivery['biller_id']),$delivery['do_reference_no']);
 				if ($this->site->getReference('do',$delivery['biller_id']) == $delivery['do_reference_no']) {
 					$this->site->updateReference('do',$delivery['biller_id']);
 				}
-
+				
 				foreach($delivery_items as $delivery_item){
 					$delivery_item['delivery_id'] = $delivery_id;
 					if($delivery_item['option_id'] == '' || $delivery_item['option_id'] == null) {
@@ -4025,17 +4004,17 @@ class Sales_model extends CI_Model
 					/*if ($delivery_item['sale_id']) {
 						$abc = $this->db->update('sales', array('so_id' => $delivery_item['sale_id']), array('sale_id' => $delivery_item['sale_id']));
 					}*/
-
+					
 					$this->db->insert('delivery_items',$delivery_item);
 					$delivery_item_id = $this->db->insert_id();
-
+					
 					if ($delivery['delivery_status'] == 'completed' && $getproduct = $this->site->getProductByID($delivery_item['product_id'])) {
-
+						
 						if($delivery['type'] == 'sale_order') {
 							$getitem = $this->getSaleOrderItemByID($delivery_item['item_id']);
 						}else {
 							$getitem = $this->getSaleItemByID($delivery_item['item_id']);
-
+							
 						}
 						$item = array(
 							'product_id' 		=> $delivery_item['product_id'],
@@ -4058,7 +4037,7 @@ class Sales_model extends CI_Model
 							unset($item_cost['transaction_id']);
 							unset($item_cost['status']);
 							//$option_id = $item_cost['option_id'];
-
+							
 							if(! isset($item_cost['pi_overselling'])) {
 								$this->db->insert('costing', $item_cost);
 							}
@@ -4067,11 +4046,11 @@ class Sales_model extends CI_Model
 				}
 				return $delivery_id;
 			}
-
+			
 		}
 		return false;
 	}
-
+	
 	public function getAllSaleItemQty($sale_id){
 		$q = $this->db
 				->select("COALESCE(SUM(erp_sale_items.quantity),0) as qty,COALESCE(SUM(erp_sale_items.quantity_received),0) as qty_received,COALESCE(SUM(erp_sale_items.quantity),0) - COALESCE(SUM(erp_sale_items.quantity_received),0) as balance")
@@ -4083,9 +4062,9 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
-
-
+	
+	
+	
 	public function getAllSaleOrderItemQty($sale_id){
 		$q = $this->db
 				->select("COALESCE(SUM(erp_sale_order_items.quantity),0) as qty,COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received,COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance")
@@ -4098,7 +4077,7 @@ class Sales_model extends CI_Model
 		return false;
 	}
 	public function getPOSorderItem_Dev($reference_no,$product_id){
-
+		
 		$this->db->select('sale_items.*');
 		$this->db->from('sales');
 		$this->db->join('sale_items','sale_items.sale_id = sales.id','inner');
@@ -4120,14 +4099,14 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getPOSDeliveryItemsByID($id, $type){
-
+		
 		$response = $this->db->select('delivery_items.*, products.code, sale_items.quantity as ord_qty, sale_items.quantity_received as ord_qty_rec')
 							 ->join('sale_items', 'sale_items.id = delivery_items.item_id', 'inner')
 							 ->join('products', 'products.id = delivery_items.product_id', 'inner');
 		$q = $this->db->get_where('delivery_items', array('delivery_items.delivery_id' => $id));
-
+		
 		if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
@@ -4136,7 +4115,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getSaleorderItemDev($item_id){
 		$q = $this->db->get_where('sale_order_items', array('id' => $item_id));
 		if($q->num_rows()>0){
@@ -4144,7 +4123,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getSaleItemDev($item_id){
 		$q = $this->db->get_where('sale_items', array('id' => $item_id));
 		if($q->num_rows()>0){
@@ -4152,10 +4131,10 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
-
+	
+	
 	public function getSaleorderItem_Dev($reference_no,$product_id){
-
+		
 		$this->db->select('sale_order_items.*');
 		$this->db->from('sale_order');
 		$this->db->join('sale_order_items','sale_order_items.sale_order_id = sale_order.id','inner');
@@ -4166,7 +4145,7 @@ class Sales_model extends CI_Model
 			return $q->row();
 		}
 	}
-
+	
 	public function getUserFromSaleOrderByID($id){
 		$this->db->select('users.*');
 		$this->db->where('sale_order.id',$id);
@@ -4177,7 +4156,7 @@ class Sales_model extends CI_Model
 		}
 		return Null;
 	}
-
+	
 	public function getPaymentByQuoteID($quote_id){
 		$q = $this->db->get_where('payments', array('deposit_quote_id' => $quote_id), 1);
         if ($q->num_rows() > 0) {
@@ -4195,17 +4174,17 @@ class Sales_model extends CI_Model
 		return false;
 	}
 	public function getSaleInfo($sale_id=null){
-		$this->db->select('sales.*, users.username');
+		$this->db->select('sales.*, users.username'); 
 		$this->db->join('users','sales.saleman_by=users.id');
 		$q = $this->db->get_where('sales', array('sales.id' => $sale_id));
-
+		
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
 		return false;
-
+		
 	}
-
+	
 	public function getSaleItemBySaleID($saleId=null){
 		$response = $this->db
                  ->select('*')
@@ -4213,9 +4192,9 @@ class Sales_model extends CI_Model
                  ->from('sale_items')
                  ->get()
                  ->result_array();
-		return $response;
+		return $response;	
 	}
-
+	
 	public function getSaleItemFreeBySaleID($saleId=null){
 		$this->db->select("*");
 		$this->db->from("erp_sale_items");
@@ -4229,9 +4208,9 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 		return false;
-
+				 
 	}
-
+	
 	public function getSaleStandardItemBySaleID($saleId=null){
 		$this->db->select("*");
 		$this->db->from("erp_sale_items");
@@ -4245,18 +4224,18 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 		return false;
-
+				 
 	}
-
-
+	
+	
 	public function getDigitalItemsBySaleID($saleId=null){
-
+		
 		$this->db->select("digital_id,erp_products.name,SUM(erp_sale_items.quantity) as quantity,erp_sale_items.unit_price as price");
 		$this->db->from("erp_sale_items");
 		$this->db->where("sale_id",$saleId);
 		$this->db->where("unit_price <> ",0);
 		$this->db->join("erp_products","erp_sale_items.digital_id = erp_products.id");
-
+		
 		$this->db->group_by("digital_id");
 		$q = $this->db->get();
 		if($q->num_rows()>0){
@@ -4266,9 +4245,9 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 		return false;
-
+				 
 	}
-
+	
 	public function getSubDigitalItemsByDigitalId($sale_id,$digital_id){
 		$this->db->select("*");
 		$this->db->from("erp_sale_items");
@@ -4283,14 +4262,14 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getSole_itemsBySaleID($sale_id){
 			$this->db->select("*");
 			$this->db->from("erp_sale_items");
 			$this->db->where("sale_id",$sale_id);
 			$this->db->where("unit_price <> ",0);
 			$this->db->where("digital_id",0);
-
+			
 			$q = $this->db->get();
 			if($q->num_rows()>0){
 				foreach($q->result() as $row){
@@ -4314,7 +4293,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getDeliveryItemsByID($id, $type){
 		if($type == 'sale_order') {
 			$response = $this->db->select('delivery_items.*, products.code, sale_order_items.quantity as ord_qty, sale_order_items.quantity_received as ord_qty_rec')
@@ -4335,7 +4314,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getDeliveryItemsByItemId($delivery_id = NULL){
 		$response = $this->db
                  ->select('erp_sale_order_items.*, erp_delivery_items.quantity_received AS dqty_received, erp_delivery_items.piece as dpiece, erp_delivery_items.wpiece as dwpiece, CONCAT(erp_delivery_items.piece, " x ", erp_delivery_items.wpiece) as dnote')
@@ -4345,16 +4324,16 @@ class Sales_model extends CI_Model
                  ->get()
                  ->result();
 		if(sizeof($response)>0){
-
+			
 			return $response;
 		}else{
 			return false;
 		}
-
+		
 	}
-
-
-
+	
+	
+	
 	public function getDelivItemsByID($id){
 		$response = $this->db
                  ->select('*')
@@ -4362,19 +4341,19 @@ class Sales_model extends CI_Model
                  ->from('delivery_items')
                  ->get()
                  ->result();
-
+		 
 		if(sizeof($response)>0){
-
+			
 			return $response;
 		}else{
 			return false;
 		}
-
+		
 	}
 	public function save_edit_delivery($id, $delivery, $delivery_items) {
-
+		
 		if($id && $delivery && $delivery_items){
-			$this->resetDeliveryActions($id);
+			$this->resetDeliveryActions($id);	
 			foreach($delivery_items as $g){
 				$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity_received']);
 				$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
@@ -4384,9 +4363,9 @@ class Sales_model extends CI_Model
 					$delivery['total_cost'] += $totalCostProducts->total_cost;
 				}
 			}
-
+			
 			if($this->db->update('deliveries', $delivery, array('id' => $id))) {
-
+				
 				$this->db->delete('delivery_items', array('delivery_id' => $id));
 				$this->db->delete('purchase_items',array('delivery_id' => $id));
 				foreach($delivery_items as $delivery_item){
@@ -4394,13 +4373,13 @@ class Sales_model extends CI_Model
 					if($delivery_item['option_id'] == '' || $delivery_item['option_id'] == null) {
 						unset($delivery_item['option_id']);
 					}
-
+					
 					$old_sqty = $delivery_item['old_sqty'];
 					unset($delivery_item['old_sqty']);
-
+					
 					$this->db->insert('delivery_items',$delivery_item);
 					$delivery_item_id = $this->db->insert_id();
-
+					
 					if ($delivery['delivery_status'] == 'completed' && $getproduct = $this->site->getProductByID($delivery_item['product_id'])) {
 						if($delivery['type'] == 'sale_order') {
 							$getitem = $this->getSaleOrderItemByID($delivery_item['item_id']);
@@ -4410,8 +4389,8 @@ class Sales_model extends CI_Model
 						//$this->erp->print_arrays($getitem);
 						$item = array(
 							'product_id' => $delivery_item['product_id'],
-
-							//'product_type' => $getproduct->type,
+							'product_name' => $delivery_item['product_name'],
+							'product_type' => $getproduct->type,
 							'option_id' => $delivery_item['option_id'],
 							'warehouse_id' => $delivery_item['warehouse_id'],
 							'quantity' => $delivery_item['quantity_received'],
@@ -4420,7 +4399,6 @@ class Sales_model extends CI_Model
 							'old_sqty' => $old_sqty
 						);
 						$item_costs = $this->site->item_costing($item);
-                        //$this->erp->print_arrays($item_costs);
 						foreach ($item_costs as $item_cost) {
 							$item_cost['delivery_item_id'] = $delivery_item_id;
 							$item_cost['delivery_id'] = $id;
@@ -4428,11 +4406,10 @@ class Sales_model extends CI_Model
 								$item_cost['date'] = $delivery['date'];
 							}
 							//$option_id = $item_cost['option_id'];
-
+							
 							if(! isset($item_cost['pi_overselling'])) {
 								$this->db->insert('costing', $item_cost);
 							}
-
 						}
 					}
 				}
@@ -4441,11 +4418,11 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function save_edit_delivery_old($id, $delivery, $delivery_items) {
 		if($id && $delivery && $delivery_items){
 			$this->resetDeliveryActions($id);
-
+			
 			foreach($delivery_items as $g){
 				$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity_received']);
 				$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
@@ -4455,9 +4432,9 @@ class Sales_model extends CI_Model
 					$delivery['total_cost'] += $totalCostProducts->total_cost;
 				}
 			}
-
+			
 			if($this->db->update('deliveries', $delivery, array('id' => $id))) {
-
+				
 				$this->db->delete('delivery_items', array('delivery_id' => $id));
 				$this->db->delete('purchase_items',array('delivery_id' => $id));
 				foreach($delivery_items as $delivery_item){
@@ -4465,10 +4442,10 @@ class Sales_model extends CI_Model
 					if($delivery_item['option_id'] == '' || $delivery_item['option_id'] == null) {
 						unset($delivery_item['option_id']);
 					}
-
+					
 					$this->db->insert('delivery_items',$delivery_item);
 					$delivery_item_id = $this->db->insert_id();
-
+					
 					if ($delivery['delivery_status'] == 'completed' && $getproduct = $this->site->getProductByID($delivery_item['product_id'])) {
 						if($delivery['type'] == 'sale_order') {
 							$getitem = $this->getSaleOrderItemByID($delivery_item['item_id']);
@@ -4494,7 +4471,7 @@ class Sales_model extends CI_Model
 								$item_cost['date'] = $delivery['date'];
 							}
 							//$option_id = $item_cost['option_id'];
-
+							
 							if(! isset($item_cost['pi_overselling'])) {
 								$this->db->insert('costing', $item_cost);
 							}
@@ -4505,35 +4482,35 @@ class Sales_model extends CI_Model
 			}
 		}
 		return false;
-	}
-
+	}	
+	
 	public function getQuantities($deliver_id){
-
+		
 		$this->db->select('delivery_items.id as ditem,deliveries.id,deliveries.sale_id,delivery_items.quantity_received');
 		$this->db->where('deliveries.id=',$deliver_id);
 		$this->db->from('deliveries');
 		$this->db->join('delivery_items','deliveries.id=delivery_items.delivery_id');
-
+		
 		$result = $this->db->get()->result_array();
 		if(sizeof($result)>0){
 			return $result;
 		}
-		return false;
+		return false; 
 	}
 	public function getSaleItemQty($sale_id=null){
-
+		
 		$this->db->select('sale_items.product_id,sale_items.product_code,sale_items.product_name,sale_items.quantity_received,sale_items.quantity,(erp_sale_items.quantity - erp_sale_items.quantity_received) as balance,erp_sale_items.option_id');
-
+		
 		$this->db->where('sale_id=',$sale_id);
 		$this->db->from('sale_items');
 		$result = $this->db->get()->result_array();
 		if(sizeof($result)>0){
 			return $result;
 		}
-		return false;
-
+		return false; 
+		
 	}
-
+	
 	public function getSaleOrder($sale_order_id){
 		$this->db->select("sale_order.*, companies.name, companies.company,
 			CASE erp_sale_order.order_status
@@ -4551,7 +4528,7 @@ class Sales_model extends CI_Model
 			return $q->row();
 		}
 		return false;
-
+		
 	}
 	public function getDepositByID($sale_order_id){
 		$this->db->select("sale_order.id,
@@ -4588,12 +4565,12 @@ class Sales_model extends CI_Model
 			return $q->row();
 		}
 		return false;
-
+		
 	}
-
-
+	
+	
 	public function getSaleOrderItems($sale_order_id){
-
+		
 		$this->db->select('sale_order_items.*,product_variants.name,product_variants.qty_unit');
 		$this->db->join('product_variants', 'product_variants.product_id = sale_order_items.product_id AND sale_order_items.option_id = product_variants.id', 'left');
 		$this->db->from('sale_order_items');
@@ -4604,9 +4581,9 @@ class Sales_model extends CI_Model
 			return $q->result_array();
 		}
 		return false;
-
+		
 	}
-
+	
 	function getSaleOrderInvoice($sale_order_id = Null){
 
 		$this->db->select("
@@ -4642,25 +4619,25 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getSaleOrdItems($sale_order_id){
 		$q = $this->db->get_where('sale_order_items', array('sale_order_id' => $sale_order_id));
 		if($q->num_rows() > 0){
 			return $q->result();
 		}
 		return false;
-
+		
 	}
-
+	
 	public function getPOSOrdItems($sale_order_id){
 		$q = $this->db->get_where('sale_items', array('sale_id' => $sale_order_id));
 		if($q->num_rows() > 0){
 			return $q->result();
 		}
 		return false;
-
+		
 	}
-
+	
 	public function getProductPriceGroup($id, $group_price_id=null){
 		$this->db->select('product_prices.*, price_groups.name AS group_name, products.price as default_price, currencies.rate, (
 			SELECT
@@ -4686,7 +4663,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getProductPriceGroupId($id, $group_price_id){
 		$this->db->select('product_prices.*, price_groups.name AS group_name, products.price as default_price, currencies.rate, (
 			SELECT
@@ -4710,7 +4687,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getSaleOrderItem($sale_order_id, $product_id = array()){
 		$this->db->where_in('product_id', $product_id);
 		$q = $this->db->get_where('sale_order_items', array('sale_order_id' => $sale_order_id));
@@ -4718,19 +4695,19 @@ class Sales_model extends CI_Model
 			return $q->result();
 		}
 		return false;
-
+		
 	}
-
+	
 	public function getPOSSaleOrderItem($sale_id){
 		$q = $this->db->get_where('sale_items', array('sale_id' => $sale_id));
 		if($q->num_rows() > 0){
 			return $q->result();
 		}
 		return false;
-
+		
 	}
-
-
+	
+	
 	public function updateSales($id, $data)
     {
         if ($this->db->update('sales', $data, array('id' => $id))) {
@@ -4738,14 +4715,14 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function getSale_Id($id){
 		$q = $this->db->select('*')
 					  ->get_where('loans', array('id' => $id));
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
-		return FALSE;
+		return FALSE;	 
 	}
 	public function getIndividualVariant($product_id,$product_option){
 		$q = $this->db->get_where('erp_product_variants',array('id'=>$product_option,'product_id'=>$product_id));
@@ -4754,15 +4731,15 @@ class Sales_model extends CI_Model
 		}
 		return Null;
 	}
-
+	
 	public function add_deposit($deposit){
 		if($deposit) {
-			$this->db->insert('deposits',$deposit);
+			$this->db->insert('deposits',$deposit); 
 			if($this->db->affected_rows()>0){
 				return true;
 			}
 		}
-		return false;
+		return false; 
 	}
 	public function get_partialAmount($sale_order_id){
 		$this->db->select('COALESCE(SUM(paid)) as partial_amount');
@@ -4774,7 +4751,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function get_paidAmount($sale_order_id = Null){
 		$this->db->select('COALESCE(SUM(paid)) as partial_amount');
 		$this->db->where('erp_sale_order.id',$sale_order_id);
@@ -4785,9 +4762,9 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function updateOrderStatus($sale_order_id = Null){
-
+		
 		$data = array('sale_status' => 'completed');
 		$this->db->where('id', $sale_order_id);
 		$this->db->update('erp_sale_order', $data);
@@ -4796,7 +4773,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getCurrentInterestByMonth() {
 		$q = $this->db->select('interest')
 						->get_where('loans', array('DATE_FORMAT(dateline,"%Y-%m-%d") <=' => date('Y-m-d')), 1);
@@ -4805,7 +4782,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	/*=====================================chin local add=======================================*/
 	public function getInvoiceDepositBySaleID($id = NULL) {
 		$q = $this->db->get_where('deposits', array('sale_id' => $id));
@@ -4832,14 +4809,14 @@ class Sales_model extends CI_Model
         return FALSE;
     }
 	public function getSaleOrderInfo($sale_order_id=null){
-		$this->db->select('sale_order.*, users.username');
+		$this->db->select('sale_order.*, users.username'); 
 		$this->db->join('users','sale_order.saleman_by = users.id');
 		$q = $this->db->get_where('sale_order', array('sale_order.id' => $sale_order_id));
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
 		return false;
-
+		
 	}
 	public function getDepositByPaymentID($id = null) {
 		$q = $this->db->get_where('deposits', array('deposits.payment_id' => $id));
@@ -4848,7 +4825,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getDepositBySaleID($id)
     {
         $q = $this->db->get_where('deposits', array('sale_id' => $id));
@@ -4860,7 +4837,7 @@ class Sales_model extends CI_Model
         }
 		return false;
     }
-
+	
 	public function deleteDeposit($id)
     {
         if ($id) {
@@ -4869,7 +4846,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getSaleOrderItemByID($id = NULL) {
 		$q = $this->db->get_where('sale_order_items', array('id' => $id));
 		if($q->num_rows() > 0) {
@@ -4877,10 +4854,10 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
-
-
-
+	
+	
+	
+	
 	public function getDeliveriesByID($id = NULL) {
 		$q = $this->db->get_where('deliveries', array('id' => $id));
 		if($q->num_rows() > 0) {
@@ -4919,22 +4896,22 @@ class Sales_model extends CI_Model
         }
 		return false;
 	}
-
+	
 	public function updateDelPurchaseItem($id, $qty, $del_item_id, $product_id = NULL, $warehouse_id = NULL, $option_id = NULL)
     {
 		if ($delivery_item = $this->getDeliveryItemByID($del_item_id)) {
-
+			
 			$option_id = isset($delivery_item->option_id) && !empty($delivery_item->option_id) ? $delivery_item->option_id : NULL;
 			if($option_id){
 				$clause = array('product_id' => $delivery_item->product_id, 'warehouse_id' => $delivery_item->warehouse_id, 'option_id' => $option_id);
 			}else{
 				$clause = array('product_id' => $delivery_item->product_id, 'warehouse_id' => $delivery_item->warehouse_id);
 			}
-
+			
 			if ($pi = $this->site->getPurchasedItem($clause)) {
 				$quantity_balance = $pi->quantity_balance+$qty;
 				$getproduct = $this->site->getProductByID($product_id);
-
+				
 				$new_arr_data = array(
 					'product_id' => $delivery_item->product_id,
 					'product_code' => $getproduct->code,
@@ -4959,15 +4936,15 @@ class Sales_model extends CI_Model
 				$this->db->insert('purchase_items', $clause);
 			}
 		}
-
-
+		
+		
 		if (! $delivery_item && $product_id) {
 			$pr = $this->site->getProductByID($product_id);
 			$clause = array('product_id' => $product_id, 'warehouse_id' => $warehouse_id, 'option_id' => $option_id);
 			if ($pr->type == 'standard') {
 				if ($pi = $this->site->getPurchasedItem($clause)) {
 					$quantity_balance = $pi->quantity_balance+$qty;
-
+					
 					$new_arr_data = array(
 						'product_id' => $pr->id,
 						'product_code' => $pr->code,
@@ -4983,7 +4960,7 @@ class Sales_model extends CI_Model
 					);
 					//$this->erp->print_arrays($new_arr_data);
 					$this->db->insert('purchase_items', $new_arr_data);
-
+					
 					// $this->db->update('purchase_items', array('quantity_balance' => $quantity_balance), array('id' => $pi->id));
 				} else {
 					$clause['purchase_id'] = NULL;
@@ -4999,7 +4976,7 @@ class Sales_model extends CI_Model
 					if($combo_item->type == 'standard') {
 						if ($pi = $this->site->getPurchasedItem($clause)) {
 							$quantity_balance = $pi->quantity_balance+($qty*$combo_item->qty);
-
+							
 							$combo_data = array(
 								'product_id' => $combo_items->id,
 								'product_code' => $combo_items->code,
@@ -5014,7 +4991,7 @@ class Sales_model extends CI_Model
 								'quantity_balance' => abs($qty*$combo_item->qty)
 							);
 							$this->db->insert('purchase_items', $combo_data);
-
+							
 							// $this->db->update('purchase_items', array('quantity_balance' => $quantity_balance), $clause);
 						} else {
 							$clause['transfer_id'] = NULL;
@@ -5028,7 +5005,7 @@ class Sales_model extends CI_Model
 			}
 		}
     }
-
+	
 	public function resetDeliveryActions($id)
     {
         $delivery = $this->getDeliveriesByID($id);
@@ -5071,9 +5048,9 @@ class Sales_model extends CI_Model
         }
         return $delivery_items;
     }
-
+	
 	/*=====================================end local add========================================*/
-
+	
 	public function getAmountPaidbyCustomer($customer_id = NULL){
 		$result = $this->db->select('(sum(erp_sales.grand_total) - sum(paid)) as amount, credit_limited')
 						 ->from('erp_sales')
@@ -5082,12 +5059,12 @@ class Sales_model extends CI_Model
 						 ->get()->row();
 		return $result;
 	}
-
-
-
-
+	
+	
+	
+	
 	public function getTransferOwner($id = NULL) {
-
+		
 		$this->db->select('sales.grand_total as grand_total, sales.customer');
 		$this->db->where('sales.id', $id);
 		$this->db->from('sales');
@@ -5096,9 +5073,9 @@ class Sales_model extends CI_Model
             return $q->row();
         }
         return FALSE;
-
+		
 	}
-
+	
 	public function getCustomerPaid($sale_id = null, $customer_id = null) {
 		if($sale_id && $customer_id) {
 			$q = $this->db->select('SUM(paid_amount) as paid')
@@ -5109,7 +5086,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function addCustomerTransfer($data = array(), $payment = array()) {
 		if($data) {
 			if($this->db->insert('transfer_customers', $data)) {
@@ -5123,16 +5100,16 @@ class Sales_model extends CI_Model
 					}
 				}
 				return true;
-			}
+			}			
 		}
 		return false;
 	}
-
+	
 	public function getCustomerTransfersBySaleCustomerID($sale_id = NULL, $customer_id = NULL)
     {
 		$this->db
-			->select("loans.id, loans.period,
-					 loans.interest, loans.principle, loans.payment,
+			->select("loans.id, loans.period, 
+					 loans.interest, loans.principle, loans.payment, 
 					 loans.balance, loans.dateline, IF(erp_loans.old_date, erp_loans.old_date, NULL) AS old_date, loans.note,users.username,paid_date
 					 ")
 			->from('loans')
@@ -5145,7 +5122,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getTransferByID($id)
     {
         $q = $this->db->get_where('transfer_customers', array('id' => $id), 1);
@@ -5154,12 +5131,12 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	########Combine Delivery##########
-
+	
 	public function getDeliveryItemsByItemIds($delivery_id = NULL)
 	{
-
+		
 		$ids = array();
 		$iids = '';
 		$i=0;
@@ -5170,10 +5147,10 @@ class Sales_model extends CI_Model
 				$iids = "'".$delivery_id[$i]."'";
 			}else {
 				$iids .= ",'".$delivery_id[$i]."'";
-			}
+			}			
 		}
-
-
+		
+		
 		$response = $this->db
                  ->select('erp_sale_order_items.id,
 						   erp_sale_order_items.sale_order_id,
@@ -5208,7 +5185,7 @@ class Sales_model extends CI_Model
 									erp_delivery_items
 								WHERE
 									erp_delivery_items.product_id = erp_sale_order_items.product_id
-
+								
 								AND
 									erp_delivery_items.delivery_id IN ('.$iids.')
 							), 0) AS dqty_received,
@@ -5233,25 +5210,25 @@ class Sales_model extends CI_Model
 				 ->order_by('erp_delivery_items.delivery_id')
                  ->get()
                  ->result();
-
+		
 		if(sizeof($response)>0){
 			return $response;
 		}else{
 			return false;
 		}
 	}
-
-
+	
+	
 	public function getDeliveriesByIDs($delivery_ids = NULL)
     {
-
+		
 		$gp_id = array();
 		for($i=0;$i<count($delivery_ids);$i++)
 		{
 			$gp_id[] = $delivery_ids[$i];
-
+			
 		}
-
+		
 		$this->db->select('erp_deliveries.*,erp_group_areas.areas_g_code as group_areas_id, SUM(erp_delivery_items.quantity_received) AS quantity, delivery_items.delivery_id as delivery_id,erp_sale_order.warehouse_id,erp_sale_order.shipping,erp_sale_order.order_discount,erp_sale_order.order_tax,erp_sale_order.customer_id as customer_id,erp_sale_order.payment_status,erp_sale_order.saleman_by,companies.name as company_name,erp_sale_order.order_tax_id,erp_sale_order.sale_status AS sale_order_status, erp_sale_order.biller_id,erp_sale_order.delivery_by,erp_sale_order.payment_term,erp_sale_order.order_discount_id');
 		$this->db->from('deliveries');
 		$this->db->join('delivery_items','erp_deliveries.id =delivery_items.delivery_id', 'left');
@@ -5265,17 +5242,17 @@ class Sales_model extends CI_Model
 		}
 		return false;
     }
-
-
+	
+	
 	public function UpdateDeliveryMulti($deliver_ids_m = NULL,$sale_id=NULL){
-
+		
 	    $deli_num = explode(",",$deliver_ids_m);
 		$up_deli = array();
-
+		
 		for($i=0;$i<count($deli_num);$i++)
 		{
 			$up_deli[] = $deli_num[$i];
-
+			
 		}
 		//$this->erp->print_arrays($up_deli);
 		$data = array('sale_status'=>'completed','issued_sale_id' => $sale_id);
@@ -5285,7 +5262,7 @@ class Sales_model extends CI_Model
 			return true;
 		}
 		return false;
-
+		
 	}
 
 	public function getSaleOrdItemsDetail($sale_order_id = NULL) {
@@ -5324,7 +5301,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getPaymentermID($id)
 	{
 		$q = $this->db->get_where('payment_term', array('id' => $id), 1);
@@ -5367,7 +5344,7 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-
+	
 	public function checkrefer($id){
 		$q = $this->db->get_where('erp_deliveries',array('id'=>$id),1);
 		if($q->num_rows() > 0){
@@ -5401,7 +5378,7 @@ class Sales_model extends CI_Model
 			return $q->row();
 		}
 		return false;
-	}
+	}			
 	public function getSaleByDeliveryIdbill($id){
 		$this->db->select('erp_sales.*,erp_companies.company,erp_companies.phone,erp_companies.address,erp_companies.vat_no, erp_companies.invoice_footer as invoice')
 		->join('erp_companies','erp_companies.id=erp_sales.biller_id ','left')
@@ -5453,7 +5430,7 @@ class Sales_model extends CI_Model
 		if($q->num_rows() > 0){
 			foreach($q->result() as $row){
 				$data[] = $row;
-
+				
 			}
 			return $data;
 		}
@@ -5518,69 +5495,68 @@ class Sales_model extends CI_Model
                                 `erp_deliveries`.`location`,
                                 DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
                                 `erp_sale_items`.`item_tax`,
-                                `erp_sale_items`.`discount`
+                                `erp_sale_items`.`discount` 
                             FROM
                                 `erp_deliveries`
                                 LEFT JOIN `erp_sale_items` ON `erp_deliveries`.`issued_sale_id` = `erp_sale_items`.`sale_id`
-                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id`
-                                AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` 
+                                AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id` 
                             WHERE
-                                `erp_sale_items`.`product_type` = 'standard' AND
-                                `erp_sale_items`.`sale_id` = $id
+                                `erp_sale_items`.`product_type` = 'standard' AND 
+                                `erp_sale_items`.`sale_id` = $id 
                             GROUP BY
                                 `erp_delivery_items`.`product_id`,
                                 `erp_deliveries`.`location`,
-                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' )
-
-
-
-
+                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' ) 
+                           
+                                
+                          
+                            
                             UNION
                             SELECT
                                 `erp_sale_items`.`unit_price`,
                                 `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
+                                erp_delivery_items.quantity_received AS quantity,
                                  ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
-                                 `erp_deliveries`.`location`,
                                  DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d'  ) AS date1,
                                 `erp_sale_items`.`item_tax`,
-                                `erp_sale_items`.`discount`
+                                `erp_sale_items`.`discount` 
                             FROM
                                 `erp_sales`
-                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id`
+                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
                                 LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
-                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
+                                
                             WHERE
-                                `erp_sale_items`.`product_type` = 'combo' AND
+                                `erp_sale_items`.`product_type` = 'combo' AND 
                                 `erp_sale_items`.`sale_id` = $id
-
+                                
                             GROUP BY
-                                `erp_delivery_items`.`product_id`,
-                                `erp_deliveries`.`location`,
-                                DATE_FORMAT( erp_deliveries.date, ' %Y-%m-%d' )
+                                `erp_deliveries`.`location` 
                              UNION
                             SELECT
                                 `erp_sale_items`.`unit_price`,
                                 `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
-                                 ( CASE WHEN erp_sale_items.quantity_received > 0 THEN SUM( erp_sale_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
                                 '' AS location,
                                  '' AS date1,
                                 `erp_sale_items`.`item_tax`,
-                                `erp_sale_items`.`discount`
+                                `erp_sale_items`.`discount` 
                             FROM
                                 `erp_sales`
-                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id`
+                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
                                 LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
                                 LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
-
+                                
                             WHERE
-                                `erp_sale_items`.`product_type` = 'service' AND
+                                `erp_sale_items`.`product_type` = 'service' AND 
                                 `erp_sale_items`.`sale_id` = $id
-
+                                
                             GROUP BY
-                                `erp_sale_items`.`product_type`
-
+                                `erp_deliveries`.`location` 
+                                
                               ORDER BY  date1 ASC , location ASC,quantity ASC,unit_price ASC
                             "
          );
@@ -5611,16 +5587,16 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getSaleByDeliveryID2($idd,$pid){
 		$q = $this->db->get_where("erp_sale_items",array("sale_id"=>$idd,"product_id"=>$pid),1);
 		if($q->num_rows() > 0){
-
+			
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function assign_to_user($user_id=NULL,$so_id=NULL)
 	{
 
@@ -5629,7 +5605,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getQustatusByID($id) {
 		$q = $this->db->select('SUM(quantity - quantity_received) as balance,quantity')
 				 ->get_where('erp_quote_items', array('quote_id' => $id));
@@ -5638,9 +5614,9 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
-
-
+	
+	
+	
 	public function getCurCost($id) {
 		$q = $this->db->select('cost')
 		->get_where('erp_products', array('id' => $id));
@@ -5652,7 +5628,7 @@ class Sales_model extends CI_Model
 	##################################
 
 	public function pos_sale($id=null, $wh = null){
-        $this->db->select($this->db->dbprefix('sales').".id as id,
+        $this->db->select($this->db->dbprefix('sales').".id as id, 
 			".$this->db->dbprefix('sales').".date,
 			".$this->db->dbprefix('payments').".date as pdate,
 			".$this->db->dbprefix('sales').".reference_no, biller.company, sales.customer, sales.sale_status , sales.grand_total, COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,	COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit, COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, (".$this->db->dbprefix('sales').".grand_total - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, sales.payment_status")
@@ -5665,7 +5641,7 @@ class Sales_model extends CI_Model
 			if($wh){
 				$this->db->where_in('erp_sales.warehouse_id',$wh);
 			}
-        $q = $this->db->get();
+        $q = $this->db->get();        
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
@@ -5673,19 +5649,19 @@ class Sales_model extends CI_Model
     }
 	public function getCurrency(){
 		$default_currency = $this->site->get_setting()->default_currency;
-		$this->db->select("erp_currencies.*");
+		$this->db->select("erp_currencies.*"); 
 		$this->db->from("erp_currencies");
-		$this->db->where(array("in_out"=>1,"code"=>$default_currency));
-		$q = $this->db->get();
+		$this->db->where(array("in_out"=>1,"code"=>$default_currency)); 
+		$q = $this->db->get(); 
 		if($q->num_rows()>0){
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function getFrequency()
 	{
-		$this->db->select("erp_frequency.*");
+		$this->db->select("erp_frequency.*"); 
 		$q = $this->db->get('erp_frequency');
 		if($q->num_rows() > 0){
 			foreach($q->result() as $row){
@@ -5693,12 +5669,12 @@ class Sales_model extends CI_Model
 			}
 			return $data;
 		}
-		return false;
+		return false; 
 	}
-
+	
 	public function getTerms()
 	{
-		$this->db->select("erp_terms.*");
+		$this->db->select("erp_terms.*"); 
 		$q = $this->db->get('erp_terms');
 		if($q->num_rows() > 0){
 			foreach($q->result() as $row){
@@ -5706,12 +5682,12 @@ class Sales_model extends CI_Model
 			}
 			return $data;
 		}
-		return false;
+		return false; 
 	}
-
+	
 	public function getPrinciple()
 	{
-		$this->db->select("erp_term_types.*");
+		$this->db->select("erp_term_types.*"); 
 		$q = $this->db->get('erp_term_types');
 		if($q->num_rows() > 0){
 			foreach($q->result() as $row){
@@ -5719,14 +5695,14 @@ class Sales_model extends CI_Model
 			}
 			return $data;
 		}
-		return false;
+		return false; 
 	}
-
+	
 	public function getUSCurrency(){
-		$this->db->select("erp_currencies.*");
+		$this->db->select("erp_currencies.*"); 
 		$this->db->from("erp_currencies");
-		$this->db->where(array("in_out"=>1,"code"=>"USD"));
-		$q = $this->db->get();
+		$this->db->where(array("in_out"=>1,"code"=>"USD")); 
+		$q = $this->db->get(); 
 		if($q->num_rows()>0){
 			return $q->row();
 		}
@@ -5740,7 +5716,7 @@ class Sales_model extends CI_Model
 			 ->from('sale_order')
 			 ->join('sale_order_items', 'sale_order_items.sale_order_id = sale_order.id', 'left')
 			 ->group_by('sale_order_items.id');
-
+		
 		$this->db->where('sale_order.id',$so_id);
 		$q = $this->db->get();
 		if($q->num_rows()>0){
@@ -5750,12 +5726,12 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 		return NULL;
-
+		
     }
-
+	
 	public function getPrinciple_id($id=null)
 	{
-		$this->db->select("principles.*");
+		$this->db->select("principles.*"); 
 		$this->db->from("principles");
 		$this->db->where("principles.term_type_id",$id);
 		$q = $this->db->get();
@@ -5765,7 +5741,7 @@ class Sales_model extends CI_Model
 			}
 			return $data;
 		}
-		return false;
+		return false; 
 	}
 
 	public function getAllCompaniesByID($biller_id) {
@@ -5778,31 +5754,31 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getDepositBySo($so_id=null,$company_id=null)
 	{
-		$this->db->select("SUM(amount) AS deposit_amt, GROUP_CONCAT(note) AS note");
+		$this->db->select("SUM(amount) AS deposit_amt, GROUP_CONCAT(note) AS note"); 
 		$this->db->from("deposits");
-		$this->db->where(array("so_id"=>$so_id,"company_id"=>$company_id));
-		$q = $this->db->get();
+		$this->db->where(array("so_id"=>$so_id,"company_id"=>$company_id)); 
+		$q = $this->db->get(); 
 		if($q->num_rows()>0){
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function Addloans($loans=array(),$sale_id=null,$loan_info=array(),$update=null)
 	{
-
+		
 	  if($loan_info['frequency']!=null){
-
+		  
 		if($loans){
-
+				
 			if($update)
 			{
 			   $this->db->delete('loans', array('sale_id' => $sale_id));
 			}
-
+			
 			foreach($loans as $loan){
 				$this->db->insert('loans', $loan);
 			}
@@ -5813,7 +5789,7 @@ class Sales_model extends CI_Model
 		}
 	  }
 	}
-
+	
 	public function term_id($day)
 	{
 		 $this->db->select('id')
@@ -5825,33 +5801,33 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getCustomerMakup($customer_group_id=null,$pro_id=null,$sub_cate=null)
 	{
-		$this->db->select("categories_group.percent");
+		$this->db->select("categories_group.percent"); 
 		$this->db->from("categories_group");
 		if($sub_cate==0)
 		{
-			$this->db->join('products','products.category_id = categories_group.cate_id','left');
+			$this->db->join('products','products.category_id = categories_group.cate_id','left');	
 		}else{
-			$this->db->join('products','products.subcategory_id = categories_group.sub_cate','left');
+			$this->db->join('products','products.subcategory_id = categories_group.sub_cate','left');	
 		}
 		$this->db->join('customer_groups','customer_groups.id = categories_group.customer_group_id','left');
-		$this->db->where("categories_group.customer_group_id",$customer_group_id);
+		$this->db->where("categories_group.customer_group_id",$customer_group_id); 
 		$this->db->where("products.id",$pro_id);
 		if($sub_cate==1)
 		{
-			$this->db->where("categories_group.sub_cate !=","");
+			$this->db->where("categories_group.sub_cate !=",""); 	
 		}
-
-		$q = $this->db->get();
+		 
+		$q = $this->db->get(); 
 		if($q->num_rows()>0){
 			return $q->row();
 		}
 		return false;
 	}
-
-
+	
+	
 	public function getLoanBySaleId($id = NULL) {
 		$q = $this->db->get_where('loans', array('sale_id' => $id));
 		if($q->num_rows() > 0) {
@@ -5882,7 +5858,7 @@ class Sales_model extends CI_Model
 			if($q->num_rows()>0){
 			return $q->row();
 		}
-
+	
     }
 
     public function getSaleOrderBySaleOrderId($id = NULL) {
@@ -5895,16 +5871,16 @@ class Sales_model extends CI_Model
 			if($q->num_rows()>0){
 			return $q->row();
 		}
-
+	
     }
-
+	
 	public function getLoanByDataSaleId($id = NULL,$period_id= NULL) {
-
-		$this->db->select("*");
+		
+		$this->db->select("*"); 
 		$this->db->from("loans");
-		$this->db->where("loans.sale_id",$id);
-		$this->db->where_in("loans.period",$pro_id);
-
+		$this->db->where("loans.sale_id",$id); 
+		$this->db->where_in("loans.period",$pro_id); 
+		
 		$q = $this->db->get();//_where('loans', array('sale_id' => $id,'period' => $period_id));
 		if($q->num_rows() > 0) {
 			foreach (($q->result()) as $row) {
@@ -5914,7 +5890,7 @@ class Sales_model extends CI_Model
 		}
 		return FALSE;
 	}
-
+	
 
 	public function getProductVariantByOptionID($id = NULL) {
 		$this->db
@@ -5927,30 +5903,30 @@ class Sales_model extends CI_Model
 			return $q->row();
 		}
 	}
-
+	
 	public function getTotalInterest($sale_id)
 	{
 		$q = $this->db->get_where('sales', array('id' => $sale_id));
 		if($q->num_rows() > 0) {
-
+			
 			return $q->row();
 		}
 		return FALSE;
 	}
-
+	
 	public function UpdateFunctionLoan($data=null,$interest=null,$sale_id=null,$period=null)
 	{
 		if($this->db->update('loans', $data, array('sale_id' => $sale_id,'period'=>$period)))
 		{
 			$old_interest = $this->getTotalInterest($sale_id);
 			$sum_interest = ($old_interest->interest+$interest);
-
+			
 			$this->db->update('sales', array('total_interest'=>$sum_interest), array('id' => $sale_id));
 			return TRUE;
 		}
 	  return FALSE;
 	}
-
+	
 	public function getAllSORef()
 	{
 		$q = $this->db->get('sale_order');
@@ -5969,7 +5945,7 @@ class Sales_model extends CI_Model
 		if($q->num_rows() > 0){
 			return $q->row();
 		}
-		return false;
+		return false;	
 	}
 	public function getSaleinform($id = null){
 		// $this->erp->print_arrays($id);
@@ -5983,9 +5959,9 @@ class Sales_model extends CI_Model
 		if($q->num_rows() > 0){
 			return $q->row();
 		}
-		return false;
+		return false;	
 	}
-
+	
 
 	public function getItem($id){
 		$this->db->select("
@@ -6012,7 +5988,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getLoansByIDs($ids = array()) {
 		$this->db->where_in('id', $ids);
 		$q = $this->db->get('loans');
@@ -6024,7 +6000,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function updatePaymentDate($data = array()) {
 		if($data) {
 			foreach($data as $dd) {
@@ -6034,7 +6010,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getLastPaidPeriodBySaleID($id = NULL) {
 		$this->db->select('MAX(period) as period, SUM(payment) as total_payment, SUM(interest) as total_interest');
 		$q = $this->db->get_where('loans', array('sale_id' => $id, 'paid_amount > ' => 0));
@@ -6043,7 +6019,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function updateLoanTerm($id = null, $data = array()) {
 		if($id && $data) {
 			if($this->db->delete('loans', array('sale_id' => $id, 'paid_amount <= ' => 0))) {
@@ -6061,7 +6037,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getOwnedLoanBySaleID($id) {
 		$this->db->select('COUNT(erp_loans.id) as loan_num, SUM(erp_loans.principle) as total_principle');
 		$q = $this->db->get_where('loans', array('sale_id' => $id, 'paid_amount' => '0'));
@@ -6070,7 +6046,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function leftTerm($id = NULL) {
 		$this->db->where(array('sale_id' => $id, 'paid_amount <=' => 0));
 		$q = $this->db->get('loans');
@@ -6079,7 +6055,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function getLoanRate($id = NULL)
 	{
 		$this->db->select('rated');
@@ -6118,7 +6094,7 @@ class Sales_model extends CI_Model
 	// 		return $q->row();
 	// 	}
 	// }
-
+	
 	public function getPaidBySale_id($sale_id=null, $payment_id=null){
     	$this->db->select("SUM(erp_payments.amount) as amount")
     			->from("erp_payments")
@@ -6132,7 +6108,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getPurchaseItemExDateByID($id){
 		$this->db->select('erp_purchase_items.expiry');
 		$this->db->from('erp_purchase_items');
@@ -6163,7 +6139,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getAllProductExpireDate($product_id, $warehouse_id){
 		$currDate = date("Y/m/d");
 		$condition = array('product_id'=>$product_id,'warehouse_id'=>$warehouse_id);
@@ -6183,8 +6159,8 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
-
+	
+	
 	public function getProductExpireDate_old($product_id, $warehouse_id){
 		$currDate = date("Y/m/d");
 		$condition = array('product_id'=>$product_id,'warehouse_id'=>$warehouse_id);
@@ -6201,7 +6177,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getReqestQtyByCode($option_id,$pquantity){
 		$this->db->select('erp_product_variants.qty_unit')
 				->from('erp_product_variants')
@@ -6214,47 +6190,47 @@ class Sales_model extends CI_Model
 		}
 		return $pquantity;
 	}
-
+	
 	public function getCurrentStockQuantityByDate($expiry,$product_code,$warehouse_id){
 		$condition = array(
 			'product_code'=>$product_code,
 			'warehouse_id'=>$warehouse_id,
 			'expiry' => $expiry
 		);
-
+		
 		$this->db->select('erp_purchase_items.id,erp_purchase_items.product_id,erp_purchase_items.expiry,
 		erp_purchase_items.warehouse_id,
 		SUM(quantity_balance) as quantity_balance');
 		$this->db->from('erp_purchase_items');
 		$this->db->where($condition);
-
+		
 		$q = $this->db->get();
 		if($q->num_rows()>0){
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function getCurrentStockQuantityByExpDate($expiry,$product_id,$warehouse_id){
 		$condition = array(
 			'product_id'=>$product_id,
 			'warehouse_id'=>$warehouse_id,
 			'expiry' => $expiry
 		);
-
+		
 		$this->db->select('erp_purchase_items.id,erp_purchase_items.product_id,erp_purchase_items.expiry,
 		erp_purchase_items.warehouse_id,
 		SUM(quantity_balance) as quantity_balance');
 		$this->db->from('erp_purchase_items');
 		$this->db->where($condition);
-
+		
 		$q = $this->db->get();
 		if($q->num_rows()>0){
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function getAllCurrentStockQuantityByDate($product_id,$warehouse_id){
 		$condition = array(
 			'product_id'=>$product_id,
@@ -6274,9 +6250,9 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 		return false;
-
+			
 	}
-
+	
 	public function getExpiryDateByID($exp_id){
 		$this->db->select('erp_purchase_items.expiry')
 			->from('erp_purchase_items')
@@ -6287,9 +6263,9 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
+	
 
-
-
+	
 	public function getCurrentStockAndRequestQty($exp_id,$option_id,$pquantity,$product_code,$warehouse_id){
 		$this->db->select('erp_purchase_items.expiry')
 			->from('erp_purchase_items')
@@ -6301,18 +6277,18 @@ class Sales_model extends CI_Model
 			'request_quantity' => $request_quantity,
 			'currentStockQuantity' => $currentStockQuantity
 		);
-
+		
 		if($curStockAndRequestQty != NULL){
 			return $curStockAndRequestQty;
 		}
 		return false;
-
+		
 	}
 	public function getQuantityBalanceBySaleID($sale_id = NULL) {
 		$this->db->select('SUM(erp_sale_items.quantity - erp_return_items.quantity) as quantity');
 		$this->db->join('erp_return_items', 'erp_sale_items.sale_id = erp_return_items.sale_id', 'LEFT');
 		$q = $this->db->get_where('erp_sale_items', array('erp_sale_items.sale_id' => $sale_id));
-
+		
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
@@ -6355,7 +6331,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getVariantName($pro_id=null,$pro_var_id=null)
 	{
 		$this->db->select('name');
@@ -6365,11 +6341,11 @@ class Sales_model extends CI_Model
         }
         return FALSE;
 	}
-
+	
 	public function AddJoinLease($jl_data=array(),$sale_id=null,$jl_id=null)
 	{
 		if($jl_data!=null){
-			if($jl_id){
+			if($jl_id){	
 					$this->db->update('companies', $jl_data,array('id',$jl_id));
 			}else{
 				if($this->db->insert('companies', $jl_data))
@@ -6377,47 +6353,47 @@ class Sales_model extends CI_Model
 					$jl_id = $this->db->insert_id();
 				}
 			}
-
+			
 			$this->db->update('sales', array('join_lease_id' => $jl_id), array('id' => $sale_id));
 			return true;
 		}
-
+		
 	}
-
+	
 	function getOrderLoan($so_id=null)
 	{
 		$this->db->select('term,interest_rate,frequency,depreciation_type,principle_type,join_lease_id,term_id,down_amount,installment_date,principle_term,principle_amount');
 		$q = $this->db->get_where('erp_sale_order', array('erp_sale_order.id' => $so_id));
-
+		
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
 		return false;
 	}
-
-
+	
+	
 	public function jl_data($jl_id=null)
 	{
 		$this->db->select("companies.id,companies.name,companies.phone,companies.gender,companies.date_of_birth,companies.cf1 as identify_card,address");
 		$q = $this->db->get_where('companies', array('companies.id' => $jl_id));
-
+		
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function LoanRated($so_id=null)
 	{
 		$this->db->select("rated");
 		$q = $this->db->get_where('order_loans', array('order_loans.sale_id' => $so_id));
-
+		
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function getDigitalProducts($id)
 	{
 		$this->db->select('products.id, start_date, end_date, code, name, type, cost, warehouses_products.product_id, warehouses_products.quantity AS qoh, warehouses_products.quantity, price, tax_rate, tax_method, image, promotion, promo_price, product_details, details, subcategory_id, cf1, COALESCE((SELECT GROUP_CONCAT(sp.`serial_number`) FROM erp_serial as sp WHERE sp.product_id='.$this->db->dbprefix('products').'.id), "") as sep')
@@ -6433,7 +6409,7 @@ class Sales_model extends CI_Model
             return $data;
         }
 	}
-
+	
 	public function getSaleDeposit($id) {
 		$this->db->select("SUM(erp_payments.amount) as deposit");
 		$q = $this->db->get_where('payments', array('sale_id' => $id, 'paid_by' => 'deposit'));
@@ -6442,7 +6418,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getDownPayment($id) {
 		$this->db->select("SUM(erp_payments.amount) as down");
 		$q = $this->db->get_where('payments', array('sale_id' => $id,'is_down_payment'=>'1'));
@@ -6451,18 +6427,18 @@ class Sales_model extends CI_Model
 		}
 		return false;
 	}
-
+	
 	public function getSaleLoan($sale_id)
 	{
 		$this->db->select('term,interest_rate,frequency,depreciation_type,principle_type,join_lease_id,term_id,down_amount,installment_date,principle_term,principle_amount');
 		$q = $this->db->get_where('erp_sales', array('erp_sales.id' => $sale_id));
-
+		
 		if($q->num_rows() > 0) {
 			return $q->row();
 		}
 		return false;
 	}
-
+	
 	public function getInvoiceItemByID($id,$digital_id){
 		$this->db->select("erp_sale_items.*,units.name as uname,erp_product_variants.name as vname");
 		$this->db->join("erp_products","erp_products.id=erp_sale_items.product_id","LEFT");
@@ -6478,9 +6454,9 @@ class Sales_model extends CI_Model
             }
             return $data;
         }
-
+		
 	}
-
+	
 	public function getInvoiceItemBydigital_id($id){
 		$this->db->select("digital_id");
 		$this->db->where("sale_id",$id);
@@ -6492,34 +6468,34 @@ class Sales_model extends CI_Model
             }
             return $data;
         }
-
+		
 	}
-
-
+	
+	
 	public function getOwedAmountById($id=array())
 	{
 		$this->db->select("SUM(owed) as owed,paid_interest_status");
 		$this->db->where_in("id",$id);
 		$q = $this->db->get('loans');
-		if ($q->num_rows() > 0) {
+		if ($q->num_rows() > 0) {  
             return $q->row();
         }
 	}
-
+	
 	public function getPaidAmount($sale_id=null,$loan_id=array())
 	{
 		$this->db->select("payment,interest");
 		$this->db->where("sale_id",$sale_id);
 		$this->db->where_in("id",$loan_id);
 		$q = $this->db->get('loans');
-		if ($q->num_rows() > 0) {
+		if ($q->num_rows() > 0) {  
             return $q->result();
         }
 	}
 	public function getReturnSaleBySID($sale_id = NULL) {
 		$this->db->select("SUM(COALESCE(grand_total, 0)) as returned, SUM(COALESCE(paid, 0)) as refunded");
 		$q = $this->db->get_where('return_sales', array('sale_id' => $sale_id));
-		if ($q->num_rows() > 0) {
+		if ($q->num_rows() > 0) {  
             return $q->row();
         }
 		return false;
@@ -6527,12 +6503,12 @@ class Sales_model extends CI_Model
 	public function getSaleDiscounts($sale_id = NULL) {
 		$this->db->select("SUM(COALESCE(discount, 0)) as discounted");
 		$q = $this->db->get_where('payments', array('sale_id' => $sale_id));
-		if ($q->num_rows() > 0) {
+		if ($q->num_rows() > 0) {  
             return $q->row()->discounted;
         }
 		return false;
 	}
-
+	
 	public function getPendingSOQTYByProductID($product_id)
     {
         $this->db->select("SUM((COALESCE(erp_sale_order_items.quantity, 0) * COALESCE(erp_product_variants.qty_unit, 1)) - (COALESCE(erp_sale_order_items.quantity_received, 0) * COALESCE(erp_product_variants.qty_unit, 1))) AS psoqty")
@@ -6547,7 +6523,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 	public function getRe_Loan($sale_id = NULL)
     {
         $this->db->select("SUM(principle) AS loan_amount,SUM(paid_amount - (IF (paid_amount > 0, interest, 0))) AS paid_amount")
@@ -6558,5 +6534,5 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
-
+	
 }
