@@ -12779,6 +12779,7 @@ class Reports extends MY_Controller
                     ->join('companies', 'gl_trans.biller_id = companies.id', 'left')
                     ->join('users', 'gl_trans.created_by = users.id', 'left')
 					->where('account_code =', $val->accountcode)
+
                     ->order_by('gl_trans.tran_id', 'asc');
 
                     if ($start_date) {
@@ -12796,7 +12797,7 @@ class Reports extends MY_Controller
 				}
 
 				if($biller_id != ""){
-					 $getListGLTran->where('biller_id' ,$biller_id);
+					 $getListGLTran->where('gl_trans.biller_id' ,$biller_id);
 				}
 				$gltran_list = $getListGLTran->get()->result();
 				if($gltran_list) {
