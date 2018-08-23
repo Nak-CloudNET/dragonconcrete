@@ -172,6 +172,7 @@
                 <?php } ?>
             </ul>
         </div>
+
     </div>
     <div class="box-content">
         <div class="row">

@@ -867,13 +867,27 @@ class Products_model extends CI_Model
 	
 	public function updateQuantityExcelPurchase($data = array())
     {
-		
+
 		foreach($data as $value){
     
 			$this->db->select('*');
 			$this->db->from('products');
 			$this->db->where(array('id'=>$value['product_id']));
 			$prod=$this->db->get();
+			$this->db->select('username');
+			$this->db->from('users');
+            $this->db->join('erp_purchases', 'erp_users.id = erp_purchases.created_by', 'left');
+            $this->db->join('erp_purchase_items', 'erp_purchases.id = erp_purchase_items.purchase_id', 'left');
+            $this->db->where(array('erp_purchase_items.product_id'=>$value['product_id']));
+			$usern=$this->db->get();
+			foreach ($usern as $us){
+                $this->db->select('username');
+                $this->db->from('users');
+                $this->db->join('erp_purchases', 'erp_users.id = erp_purchases.created_by', 'left');
+                $this->db->join('erp_purchase_items', 'erp_purchases.id = erp_purchase_items.purchase_id', 'left');
+                $this->db->where(array('erp_purchase_items.product_id'=>$us['product_id']));
+                $usern=$this->db->get();
+            }
 			$expiry = strtr($value['expiry'], '/', '-');
             $expiry_date = date('Y-m-d', strtotime($expiry));
 			$pur_data = array(
@@ -892,13 +906,14 @@ class Products_model extends CI_Model
 				'subtotal' => $value['cost'] * $value['quantity_balance'],
 				'status' => 'received',
 				'date' => date('Y-m-d'),
-				'expiry' =>  $expiry_date
+				'expiry' =>  $expiry_date,
+				'created_by' =>  $usern->row()->username
 			);
 			
 			if(isset($value['transaction_type'])){
 				$pur_data['transaction_type'] = $value['transaction_type'];
 			}
-			
+            //$this->erp->print_arrays($pur_data);
 			$this->db->insert('purchase_items',$pur_data);
 			
 			$this->site->syncQuantity(NULL, NULL, NULL, $value['product_id']);
