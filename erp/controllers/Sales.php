@@ -8092,7 +8092,7 @@ class Sales extends MY_Controller
         $this->load->view($this->theme . 'sales/official_invoice', $this->data);
     }
 
-    function add_payment($id = NULL)
+    function add_payment($id = NULL )
     {
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
