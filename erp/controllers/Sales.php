@@ -11473,6 +11473,7 @@ class Sales extends MY_Controller
                     $config['allowed_types'] = 'csv';
                     $config['max_size'] = '2000';
                     $config['overwrite'] = TRUE;
+
                     $this->upload->initialize($config);
                     if (!$this->upload->do_upload('userfile'))
                     {
@@ -11507,12 +11508,12 @@ class Sales extends MY_Controller
                     foreach ($final as $key => $value)
                     {
                          $date = strtr($value['opening_date'], '/', '-');
-                            $date = date('Y-m-d H:i:s', strtotime($date));
+                         $date = date('Y-m-d H:i:s', strtotime($date));
                          // statement no need model
 						 $biller = $this->db->get_where('companies', array('id' => $value['shop_id']))->row();
                          $customer = $this->db->where('company_id',$value['customer_no'])->get('deposits');
                          $customer_num = $customer->num_rows();
-					
+
 
                          // if biller id not found error.
                          if(count($biller) <= 0)
@@ -11555,9 +11556,10 @@ class Sales extends MY_Controller
                                 );
 							 }
                          //}
-						 
+
+
 						 $tranNo = $this->db->query("SELECT COALESCE (MAX(tran_no), 0) + 1 as tranNo FROM erp_gl_trans")->row()->tranNo;
-						 
+
 						 // account deposit
 						 $deposit = $this->db->select('*')
 															->from('account_settings')
@@ -11570,7 +11572,7 @@ class Sales extends MY_Controller
 															->join('gl_charts','gl_charts.accountcode = default_open_balance','inner')
 															->join('gl_sections','gl_sections.sectionid = gl_charts.sectionid','inner')
 															->get()->row();
-						
+
 						if($value['deposit'] > 0)
 						{
 							// data deposit
@@ -11634,31 +11636,30 @@ class Sales extends MY_Controller
 							'saleman_by'    =>  $value['sale_id'],
 							'sale_type'     =>  1,
 						);
+                        $cusid=$this->sales_model->getCustomerId();
+                        $ke=array();
+                        $i=0;
+                        foreach ($cusid as $cusids){
+                            $ke[$i] = $cusids->id;
+                            $i++;
+                        }
+                        $customer_id = array_search($value['customer_no'], $ke);
+                        if($customer_id==''){
+                            $this->session->set_flashdata('error', $this->lang->line("Customer id does not exist "));
+                            redirect("sales/customer_opening_balance");
+                        }
                     }
-					//$this->erp->print_arrays($deposit);
-                    /*if($customer_num > 0)
-                    {
-                        $this->db->update_batch('deposits',$data_deposit,'company_id');
-	
-                    }
-                    else
-                    {*/
-						if($data_deposit){
-							$this->db->insert_batch('deposits',$data_deposit);
-						}
-                    //}
+                        if ($data_deposit) {
+                            $this->db->insert_batch('gl_trans', $deposit_gl);
+                            $this->db->insert_batch('gl_trans', $balance_gl);
+                        }
 
-					if($data_deposit){
-						$this->db->insert_batch('gl_trans',$deposit_gl);
-						$this->db->insert_batch('gl_trans',$balance_gl);
-					}
+                        $insert = $this->db->insert_batch('sales', $data_insert);
+                        if ($insert) {
+                            $this->session->set_flashdata('message', $this->lang->line("customer_opening_balance_added"));
+                            redirect("sales/customer_opening_balance");
+                        }
 
-                    $insert = $this->db->insert_batch('sales',$data_insert);
-                    if($insert)
-                    {
-                        $this->session->set_flashdata('message', $this->lang->line("customer_opening_balance_added"));
-                        redirect("sales/customer_opening_balance");
-                    }
             }
         }
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('customer_opening_balance')));

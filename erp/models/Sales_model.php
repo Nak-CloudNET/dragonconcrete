@@ -6532,5 +6532,17 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
+    public function getCustomerId()
+    {
+        $this->db->select('*');
+        $q =$this->db->get('erp_companies');
+        if ($q->num_rows() > 0){
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
 	
 }
