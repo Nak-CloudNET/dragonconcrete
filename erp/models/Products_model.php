@@ -874,20 +874,13 @@ class Products_model extends CI_Model
 			$this->db->from('products');
 			$this->db->where(array('id'=>$value['product_id']));
 			$prod=$this->db->get();
-			$this->db->select('username');
+			$this->db->select('erp_users.id,erp_purchases.biller_id');
 			$this->db->from('users');
             $this->db->join('erp_purchases', 'erp_users.id = erp_purchases.created_by', 'left');
             $this->db->join('erp_purchase_items', 'erp_purchases.id = erp_purchase_items.purchase_id', 'left');
             $this->db->where(array('erp_purchase_items.product_id'=>$value['product_id']));
 			$usern=$this->db->get();
-			foreach ($usern as $us){
-                $this->db->select('username');
-                $this->db->from('users');
-                $this->db->join('erp_purchases', 'erp_users.id = erp_purchases.created_by', 'left');
-                $this->db->join('erp_purchase_items', 'erp_purchases.id = erp_purchase_items.purchase_id', 'left');
-                $this->db->where(array('erp_purchase_items.product_id'=>$us['product_id']));
-                $usern=$this->db->get();
-            }
+            //$this->erp->print_arrays($usern);
 			$expiry = strtr($value['expiry'], '/', '-');
             $expiry_date = date('Y-m-d', strtotime($expiry));
 			$pur_data = array(
@@ -907,7 +900,7 @@ class Products_model extends CI_Model
 				'status' => 'received',
 				'date' => date('Y-m-d'),
 				'expiry' =>  $expiry_date,
-				'created_by' =>  $usern->row()->username
+				'create_id' =>  $usern->row()->id
 			);
 			
 			if(isset($value['transaction_type'])){

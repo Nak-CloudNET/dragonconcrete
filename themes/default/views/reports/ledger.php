@@ -171,7 +171,7 @@
 										<td><?= $gltran->tran_type ?></td>
 										<td><?= $this->erp->hrld($gltran->tran_date); ?></td>
 										<td><?= $gltran->reference_no ?></td>
-										<td><?= ($gltran->tran_type!='JOURNAL'?$gltran->name:$gltran->created_name) ?></td>
+										<td><?= $gltran->name ?></td>
 										<td><?= $gltran->description ?></td>
 										<td><?= $gltran->username ?></td>
 										<td class="right"><?= ($gltran->am1 > 0 ? $this->erp->formatMoney($gltran->am1) : '0.00'); ?></td>
