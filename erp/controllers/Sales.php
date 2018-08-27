@@ -3505,7 +3505,7 @@ class Sales extends MY_Controller
 				//redirect("sales/print_/".$s->row()->id);
 				//redirect("sales/sbps_invoice/".$s->row()->id);
 				//redirect("sales/invoice_teatry/".$s->row()->id);
-				redirect("sales/sales_invoice/".$s->row()->id);
+				redirect("sales/invoice_combine_item/".$s->row()->id);
 			}
 			else if($invoice_view == 1){
 				redirect("sales/invoice/".$s->row()->id);
@@ -6938,7 +6938,7 @@ class Sales extends MY_Controller
                             .(($this->Owner || $this->Admin) ? '<li class="edit_deli">'.$edit_link.'</li>' : ($this->GP['sales-edit_delivery'] ? '<li class="edit_deli">'.$edit_link.'</li>' : '')).
                              (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export_delivery'] ? '<li>'.$pdf_link.'</li>' : '')).
 							 (($this->Owner || $this->Admin) ? '<li class="add_sale">'.$add_link.'</li>' : ($this->GP['sales-add'] ? '<li class="add_sale">'.$add_link.'</li>' : '')).
-							
+
 						'</ul>
 					</div></div>';
 
@@ -8092,7 +8092,7 @@ class Sales extends MY_Controller
         $this->load->view($this->theme . 'sales/official_invoice', $this->data);
     }
 
-    function add_payment($id = NULL)
+    function add_payment($id = NULL )
     {
         $this->erp->checkPermissions('payments', true);
         $this->load->helper('security');
@@ -14996,11 +14996,16 @@ class Sales extends MY_Controller
 
 	function invoice_combine_item($id=NULL)
     {
-		$this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
+        $this->erp->checkPermissions('index');
+
+        $this->data['permission'] = $this->site->getPermission();
+
+        $this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
 
 		$this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
 		$this->data['ref'] = $this->sales_model->getDeliveryRefIDBill($id);
 		$this->data['rows'] = $this->sales_model->getAllSaleCombineByDeliveryIDs($id);
+
         $this->data['idd'] = $id;
 
         $this->load->view($this->theme .'sales/invoice_combine_item',$this->data);

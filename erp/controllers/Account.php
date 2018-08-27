@@ -2672,7 +2672,10 @@ class Account extends MY_Controller
 				END
 			) AS name, 
 			gt.account_code, 
-			gt.narrative,gt.description as note, 
+			gt.narrative,
+			REPLACE(REPLACE(REPLACE(gt.description,'&lt;p&gt;', ''),'&lt;&sol;p&gt;',''),'
+&NewLine;','')  as note,
+			 
 			(IF(gt.amount > 0, gt.amount, IF(gt.amount = 0, 0, null))) as debit, 
 			(IF(gt.amount < 0, abs(gt.amount), null)) as credit,
 			users.username,
