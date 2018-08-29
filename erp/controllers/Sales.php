@@ -520,7 +520,7 @@ class Sales extends MY_Controller
 	
 	function getSales_pending($warehouse_id = NULL, $dt = NULL)
     {
-        $this->erp->checkPermissions('index');
+        //$this->erp->checkPermissions('index');
 		
 		if ($this->input->get('user')) {
             $user_query = $this->input->get('user');
@@ -2062,7 +2062,7 @@ class Sales extends MY_Controller
 	
 	function modal_view($id = NULL)
     {
-        $this->erp->checkPermissions('index', null, 'sales');
+        //$this->erp->checkPermissions('index', null, 'sales');
 
         if($this->input->get('id')){
             $id = $this->input->get('id');
