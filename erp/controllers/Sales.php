@@ -2035,7 +2035,7 @@ class Sales extends MY_Controller
 
     function modal_view_ar($id = NULL, $type = NULL)
     {
-        $this->erp->checkPermissions('index', TRUE);
+        $this->erp->checkPermissions('list_ar_aging', NULL, 'account');
 
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
@@ -2044,7 +2044,7 @@ class Sales extends MY_Controller
         $this->data['pos'] = $this->pos_model->getSetting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $inv = $this->sales_model->getInvoiceByID($id);
-        $this->erp->view_rights($inv->created_by, TRUE);
+        //$this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
