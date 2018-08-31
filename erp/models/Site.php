@@ -4559,7 +4559,7 @@ class Site extends CI_Model
 	
 	public function getComboCost($id)
 	{
-		$this->db->select("SUM(erp_products.cost) AS p_cost")
+		$this->db->select("SUM(erp_products.cost * erp_combo_items.quantity) AS p_cost")
 				 ->from('combo_items')
 				 ->join('products', 'products.code = combo_items.item_code', 'left')
 				 ->where('product_id', $id);

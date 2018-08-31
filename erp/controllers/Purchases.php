@@ -2297,7 +2297,7 @@ class Purchases extends MY_Controller
 						$qty[] 		= $item_quantity;
 						$setting 	= $this->site->get_setting();
 						$ohmygod 	= $this->site->getPurchasedItems($product_details->id, $warehouse_id, $item_option);
-						
+						//$this->erp->print_arrays($product_details->cost);
 						$products[] = array(
 							'create_id' 		=> $create_id,
 							'product_id' 		=> $product_details->id,
@@ -2978,7 +2978,8 @@ class Purchases extends MY_Controller
 		$suppliers = array($supplier->supplier1, $supplier->supplier2, $supplier->supplier3,$supplier->supplier4,$supplier->supplier4);
 		$rows['results'] = $this->site->getSupplierByArray($suppliers);
 		//$rows['results'] = $this->site->getAllCompanies('supplier');
-		//$test['results'] = 'fuck';
+		//$test['results'] = 'fuck'
+        //;
         //$limit['results'] = $this->input->get('limit', TRUE);
         //$rows['results'] = $this->purchases_model->getSupplierSuggestions($term, $limit);
 		echo json_encode($rows);
