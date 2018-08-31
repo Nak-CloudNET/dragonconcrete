@@ -13469,6 +13469,7 @@ class Sales extends MY_Controller
 			$this->data['setting'] = $this->site->get_setting();
 			$this->data['drivers'] = $this->site->getDrivers();
 			$this->data['modal_js'] = $this->site->modal_js();
+
             $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('add_deliveries')));
             $meta = array('page_title' => lang('add_deliveries'), 'bc' => $bc);
             $this->page_construct('sales/delivery_added', $meta, $this->data);
@@ -13751,7 +13752,6 @@ class Sales extends MY_Controller
 	{
         // get deliveries and add deliveries and add delivery_items
         $this->form_validation->set_rules('delivery_reference', lang("delivery_reference"), 'trim|required|is_unique[deliveries.do_reference_no]');
-
         if ($this->form_validation->run('sales/add_new_delivery') == true)
         {
             if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
@@ -13759,23 +13759,22 @@ class Sales extends MY_Controller
             } else {
 			    $date = date('Y-m-d H:i:s');
             }
-
-            $location = $this->input->post('add_item_location');
-
-			$sale_id = $this->input->post('sale_id');
-			$sale_reference_no = $this->input->post('sale_reference');
-			$customer_id = $this->input->post('customer_id');
-			$biller_id = $this->input->post('biller_id');
-			$customer = $this->site->getCompanyByID($customer_id);
-			$address = $customer->address .' '. $customer->city .' '. $customer->state .' '. $customer->postal_code .' '. $customer->country .'<br/> Tel: '. $customer->phone .' Email: '. $customer->email;
-			$note = $this->input->post('note');
-			$created_by = $this->input->post('saleman_by');
-			$pos = $this->input->post("pos");
-			$delivery_by = $this->input->post('delivery_by');
-			$do_reference_no = ($this->input->post('delivery_reference') ? $this->input->post('delivery_reference') : $this->site->getReference('do',$biller_id));
-			$type = $this->input->post('status');
-			$delivery_status = $this->input->post('delivery_status');
-			$delivery = array(
+            $sale_order_item_ids     = $this->input->post('delivery_id');
+            $location                = $this->input->post('add_item_location');
+			$sale_id                 = $this->input->post('sale_id');
+			$sale_reference_no       = $this->input->post('sale_reference');
+			$customer_id             = $this->input->post('customer_id');
+			$biller_id               = $this->input->post('biller_id');
+			$customer                = $this->site->getCompanyByID($customer_id);
+			$address                 = $customer->address .' '. $customer->city .' '. $customer->state .' '. $customer->postal_code .' '. $customer->country .'<br/> Tel: '. $customer->phone .' Email: '. $customer->email;
+			$note                    = $this->input->post('note');
+			$created_by              = $this->input->post('saleman_by');
+			$pos                     = $this->input->post("pos");
+			$delivery_by             = $this->input->post('delivery_by');
+			$do_reference_no         = ($this->input->post('delivery_reference') ? $this->input->post('delivery_reference') : $this->site->getReference('do',$biller_id));
+			$type                    = $this->input->post('status');
+			$delivery_status         = $this->input->post('delivery_status');
+			$delivery = array(   
 				'date'              => $date,
 				'sale_id'           => $sale_id,
 				'do_reference_no'   => $do_reference_no,
@@ -13794,30 +13793,33 @@ class Sales extends MY_Controller
                 'location'          => $location
 			);
 			
-			if($delivery){
+			if($delivery)
+			{
 				
-				$product_id     = $this->input->post('product_id');
-				$warehouse_id   = $this->input->post('warehouse_id');
-				$quantity       = $this->input->post('bquantity');  
-				$quantity_received = $this->input->post('cur_quantity_received');
-				$option_id = $this->input->post('option_id');
-				$sale_item_id = $this->input->post('delivery_id');
-				$product_id = $this->input->post('product_id');
-				$product_code = $this->input->post('product_code');
-				$product_name = $this->input->post('product_name');
-				$product_type = $this->input->post('product_type');
-				$items_id = $this->input->post('delivery_id');
-				$piece = $this->input->post('piece');
-				$wpiece = $this->input->post('wpiece');
+				$product_id         = $this->input->post('product_id');
+				$warehouse_id       = $this->input->post('warehouse_id');
+				$quantity           = $this->input->post('bquantity');
+				$quantity_received  = $this->input->post('cur_quantity_received');
+				$option_id          = $this->input->post('option_id');
+				$sale_item_id       = $this->input->post('delivery_id');
+				$product_id         = $this->input->post('product_id');
+				$product_code       = $this->input->post('product_code');
+				$product_name       = $this->input->post('product_name');
+				$product_type       = $this->input->post('product_type');
+				$items_id           = $this->input->post('delivery_id');
+				$piece              = $this->input->post('piece');
+				$wpiece             = $this->input->post('wpiece');
 				
 				$pro_num = sizeof($product_id);
-				for($i=0; $i<$pro_num; $i++) {
-					$rec_quantity = $quantity_received[$i];
-					$b_quantity = $quantity[$i];
+				for($i=0; $i<$pro_num; $i++)
+				{
+					$rec_quantity   = $quantity_received[$i];
+					$b_quantity     = $quantity[$i];
 					$ending_balance = $quantity[$i] - $quantity_received[$i];
-					$unit_cost = $this->sales_model->getCurCost($product_id[$i]);
-					$unit_qty = $this->site->getProductVariantByOptionID($option_id[$i]);
-					if($unit_qty){
+					$unit_cost      = $this->sales_model->getCurCost($product_id[$i]);
+					$unit_qty       = $this->site->getProductVariantByOptionID($option_id[$i]);
+					if($unit_qty)
+					{
 						$cost = ($unit_cost->cost*$unit_qty->qty_unit);
 					}else{
 						$cost = ($unit_cost->cost);
@@ -13839,7 +13841,8 @@ class Sales extends MY_Controller
 						'ending_balance'    => $ending_balance,
 						'created_by'        => $this->session->userdata('user_id'),
 					);
-					if($delivery_status == 'completed') {
+					if($delivery_status == 'completed')
+					{
 						$products[] = array(
 							'product_id' 		=> $product_id[$i],
 							'product_code' 		=> $product_code[$i],
@@ -13852,57 +13855,83 @@ class Sales extends MY_Controller
 						);
 					}
 				}
-				if($delivery_status == 'completed') {
+				if($delivery_status == 'completed')
+				{
 					$this->site->costing($products);
 				}
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
 				
-				if($delivery_id > 0){
+				if($delivery_id > 0)
+				{
 					
 					$invoice_status = false;
 					$sale_order_status = false;
 					
-					if($type == "invoice" || $pos == 1) {
+					if($type == "invoice" || $pos == 1)
+					{
 						$sale_item = $this->sales_model->getSItemsBySaleID($sale_id, $product_id);
 						for($i=0; $i< sizeof($sale_item); $i++){
-							$qtyReceived = $sale_item[$i]->quantity_received;
+							$qtyReceived     = $sale_item[$i]->quantity_received;
 							$lastQtyReceived = $qtyReceived + $quantity_received[$i];
-							$qty_received = array('quantity_received' => $lastQtyReceived);
-							$condition = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_id'=>$sale_id);
+							$qty_received    = array('quantity_received' => $lastQtyReceived);
+							$condition       = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_id'=>$sale_id);
 							if($this->sales_model->updateSaleItemQtyReceived($qty_received,$condition)){
 								$invoice_status = true;
 							}
 						}
 					}
 					
-					if($type=="sale_order" && $pos != 1) {
-						$sale_order_item = $this->sales_model->getSaleOrderItem($sale_id, $product_id);
-						for($i=0;$i<sizeof($sale_order_item);$i++){
-							$unit_qty = $this->site->getProductVariantByOptionID($sale_order_item[$i]->option_id);
-							$qtyReceived = $sale_order_item[$i]->quantity_received;
-							$lastQtyReceived = $qtyReceived + $quantity_received[$i];
-							$qty_received = array('quantity_received' => $lastQtyReceived);							
-							$condition = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_order_id'=>$sale_id);
-							if($this->sales_model->updateSaleOrderQtyReceived($qty_received,$condition)){
-								$sale_order_status = true;
-							}
-						}
+					if($type=="sale_order" && $pos != 1)
+					{
+                        foreach ($sale_order_item_ids as $sale_order_item_id) 
+                        {
+                            $sale_order_item        = $this->sales_model->getSaleOrderItem($sale_order_item_id,$sale_id, $product_id);
+                                $unit_qty           = $this->site->getProductVariantByOptionID($sale_order_item->option_id);
+
+                                $qtyReceived        = $sale_order_item->quantity_received;
+                                foreach($deliverie_items as $val)
+                                {
+                                    if($val['item_id'] === $sale_order_item_id)
+                                    {
+                                        $qty_r = $val['quantity_received'];
+
+                                    }
+                                }
+                                $lastQtyReceived = $qtyReceived + $qty_r;
+
+                                $qty_received    = array('quantity_received' => $lastQtyReceived);                          
+                                $condition       = array
+                                                (
+                                                    'id'            => $sale_order_item_id,
+                                                    'product_id'    => $sale_order_item->product_id,
+                                                    'product_name'  => $sale_order_item->product_name, 
+                                                    'product_code'  => $sale_order_item->product_code,
+                                                    'sale_order_id' => $sale_id
+                                                );
+                                if($this->sales_model->updateSaleOrderQtyReceived($qty_received,$condition))
+                                {
+                                    $sale_order_status = true;
+                                }
+                        }
+					
 					}
 					
-					if($invoice_status == true) {
+					if($invoice_status == true)
+
+					{
 						// update delivery status
 						$getAllQty = $this->sales_model->getAllSaleItemQty($sale_id);
 						$updateStatus = false;
 						foreach($getAllQty as $qty){
 							if($qty->qty - $qty->qty_received > 0){
-								$status = array('delivery_status' => 'partial');
-								$condition = array('id'=>$sale_id);
+								$status     = array('delivery_status' => 'partial');
+								$condition  = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
 								$updateStatus = true;
 								
 							}elseif($qty->qty - $qty->qty_received == 0){
-								$status = array('delivery_status' => 'completed');
+								$status    = array('delivery_status' => 'completed');
 								$condition = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
@@ -13914,9 +13943,9 @@ class Sales extends MY_Controller
 						if($updateStatus == true) {
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
-								$delivery_quantity = $delivery_item['quantity_received'];
-								$getproduct = $this->site->getProductByID($delivery_item['product_id']);
-								$getsaleitem = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
+								$delivery_quantity  = $delivery_item['quantity_received'];
+								$getproduct         = $this->site->getProductByID($delivery_item['product_id']);
+								$getsaleitem        = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
 								
 								$stock_info[] = array(
 									'product_id'        => $delivery_item['product_id'],
@@ -13998,27 +14027,27 @@ class Sales extends MY_Controller
 								$delivery_quantity = ($delivery_item['quantity_received']);
 								
 								$stock_info[] = array(
-									'product_id' => $delivery_item['product_id'],
-									'delivery_id' => $delivery_id,
-									'product_code' => $getproduct->code,
-									'product_name' => $delivery_item['product_name'],
-									'product_type' => $getproduct->type,
-									'option_id' => $delivery_item['option_id'],
-									'net_unit_price' => $getsaleitem->net_unit_price,
-									'unit_price' => $getsaleitem->unit_price,
-									'quantity' => $delivery_quantity,
-									'warehouse_id' => $delivery_item['warehouse_id'],
-									'item_tax' => $getsaleitem->item_tax,
-									'tax_rate_id' => $getsaleitem->tax_rate_id,
-									'tax' => $getsaleitem->tax,
-									'discount' => $getsaleitem->discount,
-									'item_discount' => $getsaleitem->item_discount,
-									'subtotal' => $getsaleitem->subtotal,
-									'serial_no' => $getsaleitem->serial_no,
-									'real_unit_price' => $getsaleitem->real_unit_price,
+									'product_id'        => $delivery_item['product_id'],
+									'delivery_id'       => $delivery_id,
+									'product_code'      => $getproduct->code,
+									'product_name'      => $delivery_item['product_name'],
+									'product_type'      => $getproduct->type,
+									'option_id'         => $delivery_item['option_id'],
+									'net_unit_price'    => $getsaleitem->net_unit_price,
+									'unit_price'        => $getsaleitem->unit_price,
+									'quantity'          => $delivery_quantity,
+									'warehouse_id'      => $delivery_item['warehouse_id'],
+									'item_tax'          => $getsaleitem->item_tax,
+									'tax_rate_id'       => $getsaleitem->tax_rate_id,
+									'tax'               => $getsaleitem->tax,
+									'discount'          => $getsaleitem->discount,
+									'item_discount'     => $getsaleitem->item_discount,
+									'subtotal'          => $getsaleitem->subtotal,
+									'serial_no'         => $getsaleitem->serial_no,
+									'real_unit_price'   => $getsaleitem->real_unit_price,
 									'transaction_type'  => 'DELIVERY',
 									'transaction_id'    => $getsaleitem->id,
-									'product_noted' => $getsaleitem->product_noted
+									'product_noted'     => $getsaleitem->product_noted
 								);
 								
 							}

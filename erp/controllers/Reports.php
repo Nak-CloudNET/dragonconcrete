@@ -13448,11 +13448,12 @@ class Reports extends MY_Controller
 			$this->excel->getActiveSheet()->SetCellValue('A1', lang('Batch'));
 			$this->excel->getActiveSheet()->SetCellValue('B1', lang('Reference'));
 			$this->excel->getActiveSheet()->SetCellValue('C1', lang('Seq'));
-			$this->excel->getActiveSheet()->SetCellValue('D1', lang('Description'));
-			$this->excel->getActiveSheet()->SetCellValue('E1', lang('Date'));
-			$this->excel->getActiveSheet()->SetCellValue('F1', lang('Type'));
-			$this->excel->getActiveSheet()->SetCellValue('G1', lang('Debit_Amount'));
-			$this->excel->getActiveSheet()->SetCellValue('H1', lang('Credit_Amount'));
+            $this->excel->getActiveSheet()->SetCellValue('D1', lang('Cashier'));
+			$this->excel->getActiveSheet()->SetCellValue('E1', lang('Description'));
+			$this->excel->getActiveSheet()->SetCellValue('F1', lang('Date'));
+			$this->excel->getActiveSheet()->SetCellValue('G1', lang('Type'));
+			$this->excel->getActiveSheet()->SetCellValue('H1', lang('Debit_Amount'));
+			$this->excel->getActiveSheet()->SetCellValue('I1', lang('Credit_Amount'));
 
 			$this->excel->getActiveSheet()->getStyle('E2:F2')->applyFromArray($bold);
 			$this->excel->getActiveSheet()->getStyle('G2:H2')->applyFromArray($bold);
@@ -13466,7 +13467,7 @@ class Reports extends MY_Controller
 				}
 
 				$acc = $accounntCode->get()->result();
-
+                //$this->erp->print_arrays($acc);
 				foreach($acc as $val){
 
 					$gl_tranStart = $this->db->select('sum(amount) as startAmount')->from('gl_trans');
@@ -13507,22 +13508,25 @@ class Reports extends MY_Controller
 
 					$row = 3;
 					$endAccountBalance = 0;
+                    //$this->erp->print_arrays($gltran_list);
 					foreach($gltran_list as $rw){
+					  //  $this->erp->print_arrays($gltran_list);
 						$endAccountBalance += $rw->amount;
 
 						$this->excel->getActiveSheet()->SetCellValue('A'.$row,$rw->tran_id);
-						$this->excel->getActiveSheet()->SetCellValue('B'.$row,$rw->reference_no);
+						$this->excel->getActiveSheet()->SetCellValue('B'.$row,$rw->reference_no.' ');
 						$this->excel->getActiveSheet()->SetCellValue('C'.$row,$rw->tran_no);
 						$this->excel->getActiveSheet()->SetCellValue('D'.$row,$rw->narrative);
-						$this->excel->getActiveSheet()->SetCellValue('E'.$row,$rw->tran_date);
-						$this->excel->getActiveSheet()->SetCellValue('F'.$row, $rw->tran_type);
-						$this->excel->getActiveSheet()->SetCellValue('G'.$row,($rw->amount > 0 ? $this->erp->formatMoney($rw->amount) : '0.00'));
-						$this->excel->getActiveSheet()->SetCellValue('H'.$row,($rw->amount < 1 ? $this->erp->formatMoney(abs($rw->amount)) : '0.00'));
+                        $this->excel->getActiveSheet()->SetCellValue('E'.$row,$rw->narrative);
+						$this->excel->getActiveSheet()->SetCellValue('F'.$row,$rw->tran_date);
+						$this->excel->getActiveSheet()->SetCellValue('G'.$row, $rw->tran_type);
+						$this->excel->getActiveSheet()->SetCellValue('H'.$row,($rw->amount > 0 ? $this->erp->formatMoney($rw->amount) : '0.00'));
+						$this->excel->getActiveSheet()->SetCellValue('I'.$row,($rw->amount < 1 ? $this->erp->formatMoney(abs($rw->amount)) : '0.00'));
 						$row++;
 					}
-					$this->excel->getActiveSheet()->mergeCells('A'.($row+1).':B'.($row+1).':C'.($row+1).':D'.($row+1));
-					$this->excel->getActiveSheet()->mergeCells('E'.($row+1).':F'.($row+1))->setCellValue('E'.($row+1) , lang('Ending Balance: '));
-					$this->excel->getActiveSheet()->mergeCells('G'.($row+1).':H'.($row+1))->setCellValue('G'.($row+1) , $endAccountBalance);
+					//$this->excel->getActiveSheet()->mergeCells('A'.($row+1).':B'.($row+1).':C'.($row+1).':D'.($row+1));
+					//$this->excel->getActiveSheet()->mergeCells('E'.($row+1).':F'.($row+1))->setCellValue('E'.($row+1) , lang('Ending Balance: '));
+					//$this->excel->getActiveSheet()->mergeCells('G'.($row+1).':H'.($row+1))->setCellValue('G'.($row+1) , $endAccountBalance);
 
 				}
 

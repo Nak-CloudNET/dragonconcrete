@@ -536,7 +536,7 @@ $('#podiscount').focus(function () {
 		}
         var product_option = row.children().children('.roption').val(),
         unit_cost = (row.children().children('.realucost').val()),
-        realcost = formatPurDecimal(row.children().children('.realcost').val()),
+        realcost = (row.children().children('.realcost').val()),
         discount = row.children().children('.rdiscount').val(),
         supplier = row.children().children('.rsupplier_id').val();
 		tax_method 	 = row.children().children('.tax_method').val();
@@ -609,9 +609,9 @@ $('#podiscount').focus(function () {
 		 
         var opt = '<p style="margin: 12px 0 0 0;">n/a</p>';
 		 
-		if(site.settings.attributes == 1){ 
+		if(site.settings.attributes == 1){
 			if(item.options !== false) {
-				$.each(item.options,function(index,value){ 
+				$.each(item.options,function(index,value){
 					$("#qty_unit").val(value["qty_unit"]);
 				});
 				var o = 1;
@@ -620,7 +620,7 @@ $('#podiscount').focus(function () {
 					if(o == 1) {
 						$('#lbpiece').text(this.name);
 						$('#piece').val(item.row.piece);
-						$('#wpiece').val(formatDecimal((item.row.wpiece ? item.row.wpiece : this.qty_unit)));
+						$('#wpiece').val(((item.row.wpiece ? item.row.wpiece : this.qty_unit)));
 					}
 					if(o == item.options.length) {
 						if(product_option == '') { product_variant = this.id; } else { product_variant = product_option; }
@@ -631,7 +631,7 @@ $('#podiscount').focus(function () {
 			}else {
 				$('#lbpiece').text("Piece");
 				$('#piece').val(item.row.piece);
-				$('#wpiece').val(formatDecimal((Number(item.row.wpiece) ? item.row.wpiece : 1)));
+				$('#wpiece').val(((Number(item.row.wpiece) ? item.row.wpiece : 1)));
 			}
 		}
         
@@ -642,7 +642,7 @@ $('#podiscount').focus(function () {
         $('#psupplier').val(psupplier);
         $('#old_qty').val(qty);
         $('#pcost').val(unit_cost);
-        $('#punit_cost').val(formatPurDecimal(parseFloat(unit_cost)+parseFloat(pr_tax_val)));
+        $('#punit_cost').val((parseFloat(unit_cost)+parseFloat(pr_tax_val)));
         $('#poption').select2('val', item.row.option);
         $('#old_cost').val(unit_cost);
 		$('#tax_method').select2('val', tax_method);
@@ -665,7 +665,7 @@ $('#podiscount').focus(function () {
 		var wpiece = $("#wpiece").val()-0;
 		if(Number(piece) && Number(wpiece)) {
 			var total  = (piece*wpiece);
-			$("#pquantity").val(formatDecimal(total)).trigger("change");
+			$("#pquantity").val((total)).trigger("change");
 			$("#pnote").val(piece+" x "+wpiece);
 		}else {
 			$("#pnote").val('');
@@ -684,9 +684,10 @@ $('#podiscount').focus(function () {
 		$("#qty_unit").val(qty_unit);
 		console.log(qty_unit +'=='+ net_cost);
 		var total_net_cost = '';
-		total_net_cost = parseFloat(net_cost) * parseFloat(qty_unit); 
-		$('#pcost').val(formatMoney(total_net_cost));
-		$('#net_cost').text(formatMoney(total_net_cost));	   
+		total_net_cost = parseFloat(net_cost) * parseFloat(qty_unit);
+
+		$('#pcost').val(total_net_cost);
+		$('#net_cost').text(formatMoney(total_net_cost));
     });
 	  
 	$(document).on('change','.rdiscount',function(){
@@ -1135,7 +1136,7 @@ function loadItems() {
 			
 			product_discount += parseFloat(item_discount * (qty_received == item_qty? item_qty:qty_received));
             unit_cost = (unit_cost-item_discount);
-            price = (item.row.price ? formatPurDecimal(item.row.price) : 0); 
+            price = (item.row.price ? formatPurDecimal(item.row.price) : 0);
             var pr_tax = item.tax_rate;
             var pr_tax_val = 0, pr_tax_rate = 0;
 			
