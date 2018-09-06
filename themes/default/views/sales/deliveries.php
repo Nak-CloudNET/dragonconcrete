@@ -66,7 +66,7 @@
             {column_number: 2, filter_default_label: "[<?=lang('do_no');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('so_no');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('address');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('salesman');?>]", filter_type: "text", data: []},
 			{column_number: 8, filter_default_label: "[<?=lang('status');?>]", filter_type: "text", data: []},
         ], "footer");
     });
@@ -138,7 +138,7 @@
             {column_number: 2, filter_default_label: "[<?=lang('do_no');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('sale_ref');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('address');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('salesman');?>]", filter_type: "text", data: []},
             {column_number: 6, filter_default_label: "[<?=lang('location');?>]", filter_type: "text", data: []},
 			{column_number: 9, filter_default_label: "[<?=lang('issue_invoice');?>]", filter_type: "text", data: []},
         ], "footer");
@@ -243,6 +243,29 @@
 	
 	
 </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#form').hide();
+        $('.toggle_down').click(function () {
+            $("#form").slideDown();
+            return false;
+        });
+        $('.toggle_up').click(function () {
+            $("#form").slideUp();
+            return false;
+        });
+        $("#product").autocomplete({
+            source: '<?= site_url('reports/suggestions'); ?>',
+            select: function (event, ui) {
+                $('#product_id').val(ui.item.id);
+                //$(this).val(ui.item.label);
+            },
+            minLength: 1,
+            autoFocus: false,
+            delay: 300,
+        });
+    });
+</script>
 <?php
 	$wh = str_replace(',', '-', $warehouse_id);
  	echo form_open('sales/delivery_actions/'.($wh ? $wh : ''), 'id="action-form"');?>
@@ -264,7 +287,7 @@
 								</a>
 							</li>
 						<?php }?>
-                        
+
 						<?php if ($Owner || $Admin || $GP['sales-export_delivery']) { ?>
 							<li><a href="#" id="excel" data-action="export_excel"><i
 										class="fa fa-file-excel-o"></i> <?= lang('export_to_excel') ?></a></li>
@@ -289,26 +312,104 @@
             <?php } ?>
             </ul>
         </div>
-		
+
 		<div class="box-icon">
-            <div class="form-group choose-date hidden-xs">
-                <div class="controls">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input type="text"
-                               value="<?= ($start ? $this->erp->hrld($start) : '') . ' - ' . ($end ? $this->erp->hrld($end) : ''); ?>"
-                               id="daterange" class="form-control">
-                        <span class="input-group-addon"><i class="fa fa-chevron-down"></i></span>
-                    </div>
-                </div>
-            </div>
+            <ul class="btn-tasks">
+                <li class="dropdown">
+                    <a href="#" class="toggle_up tip" title="<?= lang('hide_form') ?>">
+                        <i class="icon fa fa-toggle-up"></i>
+                    </a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="toggle_down tip" title="<?= lang('show_form') ?>">
+                        <i class="icon fa fa-toggle-down"></i>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
+
     <div class="box-content">
         <div class="row">
             <div class="col-lg-12">
                 <p class="introtext"><?= lang('list_results'); ?></p>
-				
+                <div id="form">
+
+                    <?php echo form_open("sales"); ?>
+                    <div class="row">
+
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="customer"><?= lang("customer"); ?></label>
+                                <?php echo form_input('customer', (isset($_POST['customer']) ? $_POST['customer'] : ""), 'class="form-control" id="customer" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("customer") . '"'); ?>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <?= lang("saleman", "saleman"); ?>
+                                <?php
+                                $salemans['0'] = lang("all");
+                                foreach($agencies as $agency){
+                                    $salemans[$agency->id] = $agency->username;
+                                }
+                                echo form_dropdown('saleman', $salemans, (isset($_POST['saleman']) ? $_POST['saleman'] : ""), 'id="saleman" class="form-control saleman"');
+                                ?>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="reference_no"><?= lang("reference_no"); ?></label>
+                                <?php echo form_input('reference_no', (isset($_POST['reference_no']) ? $_POST['reference_no'] : ""), 'class="form-control tip" id="reference_no"'); ?>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="user"><?= lang("SO No"); ?></label>
+                                <?php
+                                $us[""] = "";
+                                foreach ($users as $user) {
+                                    $us[$user->id] = $user->first_name . " " . $user->last_name;
+                                }
+                                echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');
+                                ?>
+                            </div>
+                        </div>
+
+
+
+                        <?php if($this->Settings->product_serial) { ?>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <?= lang('serial_no', 'serial'); ?>
+                                    <?= form_input('serial', '', 'class="form-control tip" id="serial"'); ?>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <?= lang("start_date", "start_date"); ?>
+                                <?php echo form_input('start_date', (isset($_POST['start_date']) ? $_POST['start_date'] : ""), 'class="form-control date" id="start_date"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <?= lang("end_date", "end_date"); ?>
+                                <?php echo form_input('end_date', (isset($_POST['end_date']) ? $_POST['end_date'] : ""), 'class="form-control date" id="end_date"'); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
+                    </div>
+                    <?php echo form_close(); ?>
+
+                </div>
 				<ul id="dbTab" class="nav nav-tabs">
 					<?php if ($Owner || $Admin || $GP['sales-deliveries']) { ?>
 						<?php if($Settings->delivery == 'invoice' || $Settings->delivery == 'both') { ?>
@@ -320,7 +421,7 @@
 						<?php } ?>
 					<?php } ?>
 				</ul>
-						
+
 				<div class="tab-content">
 					<div id="sales" class="tab-pane fade in">
 						<div class="row">
@@ -336,7 +437,7 @@
 											<th><?php echo $this->lang->line("do_no"); ?></th>
 											<th><?php echo $this->lang->line("sale_ref"); ?></th>
 											<th><?php echo $this->lang->line("customer"); ?></th>
-											<th style="width:220px"><?php echo $this->lang->line("address"); ?></th>
+											<th style="width:220px"><?php echo $this->lang->line("Sales Man"); ?></th>
 											<th><?php echo $this->lang->line("quantity_order"); ?></th>
 											<th><?php echo $this->lang->line("quantity"); ?></th>
 											<th><?php echo $this->lang->line("status"); ?></th>
@@ -381,10 +482,10 @@
 												<input class="checkbox checkft2" type="checkbox" name="check"/>
 											</th>
 											<th><?php echo $this->lang->line("date"); ?></th>
-											<th><?php echo $this->lang->line("do_no"); ?></th>
-											<th><?php echo $this->lang->line("so_no"); ?></th>
-											<th><?php echo $this->lang->line("customer"); ?></th>
-											<th style="width:220px"><?php echo $this->lang->line("address"); ?></th>
+											<th style="width:110px"><?php echo $this->lang->line("do_no"); ?></th>
+											<th style="width:110px"><?php echo $this->lang->line("so_no"); ?></th>
+											<th style="width:100px"><?php echo $this->lang->line("customer"); ?></th>
+											<th style="width:100px"><?php echo $this->lang->line("Sales Man"); ?></th>
 											<th><?php echo $this->lang->line("location"); ?></th>
 											<th><?php echo $this->lang->line("quantity_order"); ?></th>
 											<th><?php echo $this->lang->line("quantity"); ?></th>
