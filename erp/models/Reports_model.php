@@ -321,7 +321,7 @@ class Reports_model extends CI_Model
         return FALSE;
 	}
 	
-    public function getAlldelivery($reference_no,$customer,$driver,$start_date,$end_date,$warehouse,$offset,$limit){
+    public function getAlldelivery($reference_no,$customer,$driver,$start_date,$end_date,$warehouse,$offset,$limit,$id){
 		         
 		         $this->db->select("erp_deliveries.*,erp_companies.name as driver")
 		         ->join("erp_companies","erp_companies.id=erp_deliveries.delivery_by");
@@ -340,7 +340,12 @@ class Reports_model extends CI_Model
 				 if($warehouse){
 					 $this->db->join("erp_delivery_items","erp_delivery_items.delivery_id=erp_deliveries.id","LEFT");
 					 $this->db->where("erp_delivery_items.warehouse_id",$warehouse);
-				 } 
+				 }
+        if($id){
+
+            $this->db->where('erp_deliveries.id',$id);
+        }
+//				 $this->db->group_by('erp_deliveries.id');
 				 $this->db->order_by('erp_deliveries.id','DESC');
 				 $this->db->limit($limit, $offset); 
 				
