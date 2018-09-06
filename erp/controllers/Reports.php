@@ -16319,7 +16319,6 @@ function salesDetail_actions(){
             redirect($_SERVER["HTTP_REFERER"]);
         }
     }
-
 	function sales_actions()
 	{
 		$this->form_validation->set_rules('form_action', lang("form_action"), 'required');

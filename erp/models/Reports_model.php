@@ -342,6 +342,7 @@ class Reports_model extends CI_Model
 					 $this->db->where("erp_delivery_items.warehouse_id",$warehouse);
 				 }
         if($id){
+
             $this->db->where('erp_deliveries.id',$id);
         }
 //				 $this->db->group_by('erp_deliveries.id');

@@ -16514,8 +16514,6 @@ function salesDetail_actions(){
                 $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
                 $this->excel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
-
-
                 $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 $filename = 'sales_detail_report_' . date('Y_m_d_H_i_s');
                 if ($this->input->post('form_action') == 'export_pdf') {
