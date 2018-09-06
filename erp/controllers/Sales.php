@@ -7454,6 +7454,7 @@ class Sales extends MY_Controller
                         $this->data['reference'] = $this->site->getReference('so', $biller_id);
                         $this->data['payment_ref'] = $this->site->getReference('sp', $biller_id);
                         $this->data['setting'] = $this->site->get_setting();
+                        
                         $this->session->set_userdata('remove_s', 0);
                         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('add_sale')));
                         $meta = array('page_title' => lang('add_sale'), 'bc' => $bc);

@@ -2261,7 +2261,13 @@ function loadItems() {
 					$.each(combo_items, function() {
 					   if(parseFloat(this.quantity) < (parseFloat(this.qty)*item_qty) && this.type == 'standard') {
 						   $('#row_' + row_no).addClass('danger');
-						   if(site.settings.overselling != 1) { $('#add_sale, #edit_sale').attr('disabled', true); }
+						   	if(site.settings.overselling != 1) {
+						   		if($('#delivery_id').val()) {
+						   			$('#add_sale, #edit_sale').attr('disabled', false);
+						   		} else {
+						   			$('#add_sale, #edit_sale').attr('disabled', true);
+						   		}
+						   	}
 					   }
 				   });
 				}
