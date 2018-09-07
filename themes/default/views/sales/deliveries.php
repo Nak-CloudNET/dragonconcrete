@@ -291,7 +291,20 @@ if ($this->input->post('customer')) {
 <div class="box">
     <div class="box-header">
         <h2 class="blue"><i class="fa-fw fa fa-truck"></i><?= lang('list_deliveries'); ?></h2>
-
+        <div class="box-icon">
+            <ul class="btn-tasks">
+                <li class="dropdown">
+                    <a href="#" class="toggle_up tip" title="<?= lang('hide_form') ?>">
+                        <i class="icon fa fa-toggle-up"></i>
+                    </a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="toggle_down tip" title="<?= lang('show_form') ?>">
+                        <i class="icon fa fa-toggle-down"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <div class="box-icon">
             <ul class="btn-tasks">
            	<?php if ($Owner || $Admin || $GP['sales-add_delivery'] || $GP['sales-export_delivery'] || $GP['sales-combine_delivery']) { ?>
@@ -332,20 +345,7 @@ if ($this->input->post('customer')) {
             </ul>
         </div>
 
-		<div class="box-icon">
-            <ul class="btn-tasks">
-                <li class="dropdown">
-                    <a href="#" class="toggle_up tip" title="<?= lang('hide_form') ?>">
-                        <i class="icon fa fa-toggle-up"></i>
-                    </a>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="toggle_down tip" title="<?= lang('show_form') ?>">
-                        <i class="icon fa fa-toggle-down"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
+
     </div>
 
     <div style="display: none;">
