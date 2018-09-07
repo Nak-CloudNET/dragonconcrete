@@ -223,7 +223,7 @@ echo form_open('reports/delivery_actions', 'id="action-form"');
 						<thead>
 							<tr class="info-head">
 								<th style="min-width:30px; width: 30px; text-align: center;">
-									<input class="checkbox checkth" type="checkbox" name="val" />
+									<input class="checkbox checkth" type="checkbox" name="val" id="chk" />
 								</th>
 								<th style="width:200px;" class="center"><?= lang("item"); ?></th> 
 								<th style="width:130px;"><?= lang("warehouse"); ?></th> 
@@ -234,7 +234,11 @@ echo form_open('reports/delivery_actions', 'id="action-form"');
 								 									
 							</tr>
 						</thead>
-						<?php 
+                        <script>
+
+                        </script>
+						<?php
+
 						   $grand_total=0;
 						foreach($deliveries as $delivery){ 
 						       $queries="SELECT erp_delivery_items.product_name,erp_products.code,   erp_delivery_items.begining_balance as t_qty, erp_delivery_items.quantity_received, erp_delivery_items.ending_balance as balance , erp_warehouses.name as warehouse, erp_product_variants.name as variants  From erp_delivery_items

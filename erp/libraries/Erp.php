@@ -916,7 +916,7 @@ class Erp
 					{
 						# D / A = AX
 						$_qtyx = (int) ($_qty / $_unit_qty);
-						$_units[] = "$_qtyx <span style='color: #178228;'>$_unit_description</span>";
+						$_units[] = " <span style='color: #178228;'>$_unit_description</span>";
 
 						# D - (AX * A) = XA
 						$_xqty = $_qty - ($_qtyx * $_unit_qty);
@@ -938,8 +938,8 @@ class Erp
 					$_if_under_0 = "- (";
 					$en = ")";
 				}else{
-					$_if_under_0 = "(";
-					$en = ")";
+					$_if_under_0 ;
+
 				}
 			}
 			

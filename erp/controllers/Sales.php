@@ -381,7 +381,7 @@ class Sales extends MY_Controller
             (($this->Owner || $this->Admin) ? '<li>'.$add_payment_link.'</li>' : ($this->GP['sales-payments'] ? '<li>'.$add_payment_link.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li class="down_payment">'.$down_payment.'</li>' : ($this->GP['sales-payments'] ? '<li class="down_payment">'.$down_payment.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li class="edit_down_payment">'.$sale_edit_down_payment.'</li>' : ($this->GP['sales-payments'] ? '<li class="edit_down_payment">'.$sale_edit_down_payment.'</li>' : ''))
-            
+
             .(($this->Owner || $this->Admin) ? '<li class="edit">'.$edit_link.'</li>' : ($this->GP['sales-edit'] ? '<li class="edit">'.$edit_link.'</li>' : '')).
             (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export'] ? '<li>'.$pdf_link.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li>'.$return_link.'</li>' : ($this->GP['sales-return_sales'] ? '<li>'.$return_link.'</li>' : '')).
@@ -6806,6 +6806,7 @@ class Sales extends MY_Controller
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
+        $this->data['agencies'] = $this->site->getAllUsers();
         $this->page_construct('sales/deliveries', $meta, $this->data);
     }
 	
@@ -6918,7 +6919,47 @@ class Sales extends MY_Controller
 	
 	function getSaleOrderDeliveries($wh=null, $start = NULL, $end = NULL)
     {
+        if ($this->input->get('so_no')) {
+            $so_no = $this->input->get('so_no');
+        } else {
+            $so_no = NULL;
+        }
+        if ($this->input->get('Do_no')) {
+            $Do_no = $this->input->get('Do_no');
+        } else {
+            $Do_no = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+
+        if ($start_date) {
+            $start_date = $this->erp->fld($start_date);
+            $end_date = $this->erp->fld($end_date);
+        }
+        if ($this->input->get('saleman')) {
+            $saleman = $this->input->get('saleman');
+        } else {
+            $saleman = NULL;
+        }
+
+
+
+
         $this->erp->checkPermissions('deliveries');
+        $this->data['agencies'] = $this->site->getAllUsers();
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
         $detail_link = anchor('sales/view_delivery/$1', '<i class="fa fa-file-text-o"></i> ' . lang('delivery_details'), 'data-toggle="modal" data-target="#myModal"');
         $email_link = anchor('sales/email_delivery/$1', '<i class="fa fa-envelope"></i> ' . lang('email_delivery'), 'data-toggle="modal" data-target="#myModal"');
@@ -6959,23 +7000,48 @@ class Sales extends MY_Controller
             ->order_by('deliveries.id', 'desc');
         }else{
     		$this->datatables
-                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, users.username,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
                 ->from('deliveries')
                 ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
-    			->where('type','sale_order')
+    			->where('deliveries.type','sale_order')
                 ->join('delivery_items', 'delivery_items.delivery_id = deliveries.id', 'left')
     			->join('companies', 'companies.id = deliveries.customer_id', 'inner')
+                ->join('sale_order','sale_order.id = deliveries.sale_id','left')
+                ->join('users','users.id = sale_order.saleman_by','left')
                 ->group_by('deliveries.id')
     			->order_by('deliveries.id', 'desc');
         }
 
+        if($so_no) {
+            $this->datatables->where('deliveries.sale_reference_no', $so_no);
+        }
+        if($Do_no) {
+            $this->datatables->where('deliveries.do_reference_no', $Do_no);
+        }
+        if ($customer) {
+            $this->datatables->where('deliveries.customer_id', $customer);
+        }
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('deliveries.created_by', $this->session->userdata('user_id'));
         }
+        if($saleman){
+            $this->datatables->where('users.id', $saleman);
+        }
+        if ($start_date) {
+            $this->datatables->where($this->db->dbprefix('deliveries').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+        }
 
-		if($start && $end){
+
+        if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
+//        if ($start_date) {
+//            $this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+//        }
+
+
+
+
 		
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
