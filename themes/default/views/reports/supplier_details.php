@@ -223,6 +223,7 @@
 															}
 															$vqty =  abs($row1->quantity);
 														}
+
 														$product_cost = $row1->unit_cost;
 														?>
 														<tr>
@@ -233,7 +234,18 @@
 															<td><?=$row1->warehouse_name?></td>
 
 															<td class="text-right"><?=$this->erp->formatQuantity($vqty)?></td>
-                                                            <td ><?=$unit_q?></td>
+                                                            <td>
+                                                            <?php if ($unit_q = $unit_n->qty_unit != 0){
+                                                                echo ($unit_q = $unit_n->qty_unit);
+                                                            }else{
+                                                                echo $this->erp->formatQuantity($vqty);
+                                                            }
+
+
+
+                                                            ?>
+                                                            </td>
+
 															<td ><?=$unit_name?></td>
 
 															<td class="text-right"><?=$this->erp->formatMoney($row1->unit_cost)?></td>
