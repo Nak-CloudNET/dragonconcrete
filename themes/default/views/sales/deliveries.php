@@ -13,6 +13,25 @@
 	$start_date=date('Y-m-d',strtotime($start));
 	$rep_space_end=str_replace(' ','_',$end);
 	$end_date=str_replace(':','-',$rep_space_end);
+
+    if ($this->input->post('so_no')) {
+        $v .= "&so_no=" . $this->input->post('so_no');
+    }
+    if ($this->input->post('Do_no')) {
+    $v .= "&Do_no=" . $this->input->post('Do_no');
+    }
+    if ($this->input->post('start_date')) {
+    $v .= "&start_date=" . $this->input->post('start_date');
+    }
+    if ($this->input->post('end_date')) {
+    $v .= "&end_date=" . $this->input->post('end_date');
+   }
+   if ($this->input->post('saleman')) {
+    $v .= "&saleman=" . $this->input->post('saleman');
+   }
+if ($this->input->post('customer')) {
+    $v .= "&customer=" . $this->input->post('customer');
+}
 ?>
 
 <script>
@@ -85,7 +104,7 @@
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
             "iDisplayLength": <?= $Settings->rows_per_page ?>,
             'bProcessing': true, 'bServerSide': true,
-            'sAjaxSource': '<?= site_url('sales/getSaleOrderDeliveries').'/'.$start_date.'/'.$end_date ?>',
+            'sAjaxSource': '<?= site_url('sales/getSaleOrderDeliveries'.($warehouse_id ? '/' . $warehouse_id : '')).'/?v=1'.$v ?>',
             'fnServerData': function (sSource, aoData, fnCallback) {
                 aoData.push({
                     "name": "<?= $this->security->get_csrf_token_name() ?>",
@@ -329,13 +348,19 @@
         </div>
     </div>
 
+    <div style="display: none;">
+        <input type="hidden" name="form_action" value="" id="form_action"/>
+        <?=form_submit('performAction', 'performAction', 'id="action-form-submit"')?>
+    </div>
+    <?= form_close()?>
+
     <div class="box-content">
         <div class="row">
             <div class="col-lg-12">
                 <p class="introtext"><?= lang('list_results'); ?></p>
                 <div id="form">
 
-                    <?php echo form_open("sales"); ?>
+                    <?php echo form_open("sales/deliveries"); ?>
                     <div class="row">
 
 
@@ -343,6 +368,23 @@
                             <div class="form-group">
                                 <label class="control-label" for="customer"><?= lang("customer"); ?></label>
                                 <?php echo form_input('customer', (isset($_POST['customer']) ? $_POST['customer'] : ""), 'class="form-control" id="customer" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("customer") . '"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="so_no"><?= lang("so_no"); ?></label>
+                                <?php
+                                echo form_input('so_no', (isset($_POST['so_no']) ? $_POST['so_no'] : ""), 'class="form-control" id="so_no" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("so_no") . '"');
+                                ?>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="Do_no"><?= lang("Do_no"); ?></label>
+                                <?php echo form_input('Do_no', (isset($_POST['Do_no']) ? $_POST['Do_no'] : ""), 'class="form-control tip" id="Do_no"'); ?>
                             </div>
                         </div>
 
@@ -355,26 +397,6 @@
                                     $salemans[$agency->id] = $agency->username;
                                 }
                                 echo form_dropdown('saleman', $salemans, (isset($_POST['saleman']) ? $_POST['saleman'] : ""), 'id="saleman" class="form-control saleman"');
-                                ?>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label" for="reference_no"><?= lang("reference_no"); ?></label>
-                                <?php echo form_input('reference_no', (isset($_POST['reference_no']) ? $_POST['reference_no'] : ""), 'class="form-control tip" id="reference_no"'); ?>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label" for="user"><?= lang("SO No"); ?></label>
-                                <?php
-                                $us[""] = "";
-                                foreach ($users as $user) {
-                                    $us[$user->id] = $user->first_name . " " . $user->last_name;
-                                }
-                                echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');
                                 ?>
                             </div>
                         </div>

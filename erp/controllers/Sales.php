@@ -6806,6 +6806,7 @@ class Sales extends MY_Controller
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
+        $this->data['agencies'] = $this->site->getAllUsers();
         $this->page_construct('sales/deliveries', $meta, $this->data);
     }
 	
@@ -6918,7 +6919,47 @@ class Sales extends MY_Controller
 	
 	function getSaleOrderDeliveries($wh=null, $start = NULL, $end = NULL)
     {
+        if ($this->input->get('so_no')) {
+            $so_no = $this->input->get('so_no');
+        } else {
+            $so_no = NULL;
+        }
+        if ($this->input->get('Do_no')) {
+            $Do_no = $this->input->get('Do_no');
+        } else {
+            $Do_no = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+
+        if ($start_date) {
+            $start_date = $this->erp->fld($start_date);
+            $end_date = $this->erp->fld($end_date);
+        }
+        if ($this->input->get('saleman')) {
+            $saleman = $this->input->get('saleman');
+        } else {
+            $saleman = NULL;
+        }
+
+
+
+
         $this->erp->checkPermissions('deliveries');
+        $this->data['agencies'] = $this->site->getAllUsers();
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
         $detail_link = anchor('sales/view_delivery/$1', '<i class="fa fa-file-text-o"></i> ' . lang('delivery_details'), 'data-toggle="modal" data-target="#myModal"');
         $email_link = anchor('sales/email_delivery/$1', '<i class="fa fa-envelope"></i> ' . lang('email_delivery'), 'data-toggle="modal" data-target="#myModal"');
@@ -6971,13 +7012,36 @@ class Sales extends MY_Controller
     			->order_by('deliveries.id', 'desc');
         }
 
+        if($so_no) {
+            $this->datatables->where('deliveries.sale_reference_no', $so_no);
+        }
+        if($Do_no) {
+            $this->datatables->where('deliveries.do_reference_no', $Do_no);
+        }
+        if ($customer) {
+            $this->datatables->where('deliveries.customer_id', $customer);
+        }
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('deliveries.created_by', $this->session->userdata('user_id'));
         }
+        if($saleman){
+            $this->datatables->where('users.id', $saleman);
+        }
+        if ($start_date) {
+            $this->datatables->where($this->db->dbprefix('deliveries').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+        }
 
-		if($start && $end){
+
+        if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
+//        if ($start_date) {
+//            $this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+//        }
+
+
+
+
 		
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
