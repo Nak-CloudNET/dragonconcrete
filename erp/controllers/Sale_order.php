@@ -2510,10 +2510,10 @@ class Sale_order extends MY_Controller
                 $combo_items = FALSE;
                 if ($row->type == 'combo') {
                     $combo_items = $this->sales_model->getProductComboItems($row->id, $item->warehouse_id);
-                    $te = $combo_items;
+                    /*$te = $combo_items;
                     foreach ($combo_items as $combo_item) {
                         $combo_item->quantity =  $combo_item->qty*$item->quantity;
-                    }
+                    }*/
                 }
 				
 				
