@@ -88,7 +88,8 @@
             color:#fff;
         }
         .td_w{
-            width:25%;
+            width:10%;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -121,18 +122,16 @@
 
 <?php //$this->erp->print_arrays($invs); ?>
                 <div class="col-xs-6 cl_pd"  style="float: left;font-size:14px; margin-top: -30px !important;  ">
-                    <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;">
+                    <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;" >
                         <tr>
                             <td class="td_w">Customer</td>
                             <td >: <b><?=$invs->customer;?></b></td>
-                        </tr>
-                        <tr>
-                            <td class="td_w">Saleman</td>
-                            <td >: <b><?=$invs->uname;?></b></td>
+                            <td><b><?=$invs->uname;?></b></td>
                         </tr>
                         <tr>
                             <td class="td_w">Tel</td>
                             <td>: <b><?=$invs->phone?></b></td>
+                            <td></td>
                         </tr>
                     </table>
 
@@ -141,14 +140,14 @@
                 <div class="col-xs-6 cl_pd"  style="float: right;font-size:14px; margin-top: -30px !important; ">
                     <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;">
                         <tr>
-                            <td class="td_w">From</td>
-                            <td>: <b><?=$bill->biller;?></b></td>
+                            <td class="td_w">Reference No</td>
+                            <td>: <b><?=$bill->reference_no;?></b></td>
                         </tr>
                         <tr>
                             <td class="td_w">Date</td>
                             <td>: <b><?=$this->erp->hrsd($bill->date);?></b></td>
                         </tr>
-                        <tr><td><td><b>&nbsp;</b></td></td></tr>
+
                     </table>
                 </div>
             </div>
