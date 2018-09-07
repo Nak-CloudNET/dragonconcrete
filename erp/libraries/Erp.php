@@ -938,8 +938,8 @@ class Erp
 					$_if_under_0 = "- (";
 					$en = ")";
 				}else{
-					$_if_under_0 = "(";
-					$en = ")";
+					$_if_under_0 ;
+
 				}
 			}
 			
