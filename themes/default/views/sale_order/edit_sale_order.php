@@ -1,5 +1,5 @@
 <?php
-	// $this->erp->print_arrays($inv);
+	//$this->erp->print_arrays($inv_items);
 ?>
 <script type="text/javascript">
     var count = 1, an = 1, product_variant = 0, DT = <?= $Settings->default_tax_rate ?>,
