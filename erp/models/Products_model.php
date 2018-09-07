@@ -819,6 +819,7 @@ class Products_model extends CI_Model
 
         foreach($data as $item){
             $items_combo = $this->getProductComboItemsByID($item['id']);
+            
             if ($item['price'] != "" && $item['cost'] != "" ) {
                 $update = array(
                     'price' => $item['price'],
