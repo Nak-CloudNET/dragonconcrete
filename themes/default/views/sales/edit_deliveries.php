@@ -3,9 +3,9 @@
 ?>
 
 <script type="text/javascript">
-    
+
     $(document).ready(function () {
-		
+
 		$( "#slref" ).blur(function(){
 			var ref_no = $("#slref").val();
 			if(ref_no){
@@ -20,17 +20,17 @@
                     }
                 });
 			}
-			
+
 		});
-		
+
 		$( "#other" ).click(function() {
 			$( ".target" ).change();
 		});
-		
+
 		$(".balance").prop('disabled', true);
-		
+
 		$( ".quantity_received" ).keyup(function(e) {
-			
+
 			var tr = $(this).parent().parent();
 			var qty  = parseInt($(this).closest('tr').children('td:eq(3)').text());
 			var qty_received = parseInt($(this).val());
@@ -40,9 +40,9 @@
 			var balance = qty - (parseInt(totalQtyReceived) - parseInt(currentQtyReceived));
 			//var lastBalance = qty - (parseInt(totalQtyReceived) + (parseInt(lastQtyReceived) - parseInt(currentQtyReceived)));
 			//var currentBalanceQty = qty - totalQtyReceived;
-			
+
 			var new_balance = balance - parseInt(lastQtyReceived);
-			
+
 			if(qty>=qty_received && qty_received>0){
 				tr.find(".balance").text(new_balance);
 				tr.find(".h_balance").val(lastQtyReceived + (parseInt(totalQtyReceived) - parseInt(currentQtyReceived)));
@@ -62,14 +62,14 @@
 				tr.find(".h_balance").val(lastQtyReceived + (parseInt(totalQtyReceived) - parseInt(currentQtyReceived)));
 				$(this).select();
 			}
-			
+
 		});
-		
-		
+
+
 		$(".remove-row").click(function(){
 			$(this).closest('tr').remove();
 		});
-		
+
 		$("#sldate").datetimepicker({
 			format: site.dateFormats.js_ldate,
 			fontAwesome: true,
@@ -83,7 +83,7 @@
 		}).datetimepicker('update', new Date());
 
     });
-		
+
 
 </script>
 
@@ -97,6 +97,7 @@
 
                 <p class="introtext"><?php echo lang('enter_info'); ?></p>
                 <?php
+                //$this->erp->print_arrays($delivery);
                 $attrib = array('data-toggle' => 'validator', 'role' => 'form', 'class' => 'edit-so-form');
                 echo form_open_multipart("sales/save_edit_deliveries/".$delivery->id, $attrib)
                 ?>
@@ -106,11 +107,11 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <?= lang("date", "sldate"); ?>
-                                    <?php echo form_input('date',$this->erp->hrld($delivery->date), 'class="form-control input-tip datetime" id="sldate"'); ?>
+                                    <?php echo form_input('date',$this->erp->hrld($delivery->date), 'class="form-control input-tip datetime"'); ?>
 								</div>
                             </div>
                         <?php } ?>
-						
+
                         <div class="col-md-4">
 							<?= lang("delivery_reference", "delivery_reference"); ?>
 								<div class="form-group">
@@ -119,31 +120,31 @@
 								    <input type='hidden' name = 'customer_id' value ='<?=$customer_id?>'/>
                                 </div>
                         </div>
-						
+
                         <div class="col-md-4">
 							<?= lang("sale_reference", "sref"); ?>
 								<div class="form-group">
 									<?php echo form_input('sale_reference',$delivery->sale_reference_no,'class="form-control input-tip" id="sref" style="pointer-events:none"'); ?>
 								</div>
-								
+
                         </div>
-						
+
 						<div class="col-md-4">
 							<?= lang("customer", "cust"); ?>
 								<div class="form-group">
 									<?php echo form_input('cust',($delivery->name ? ($delivery->name .' '. ($delivery->company ? '('. $delivery->company .')':'')):$delivery->company),'class="form-control input-tip" id="cust" style="pointer-events:none"'); ?>
-									
+
 								</div>
-								
+
                         </div>
-						
+
 						<div class="col-md-4">
 							<?= lang("saleman_by", "saleman_by"); ?>
 								<div class="form-group">
 									<?php echo form_input('saleman_by',$user_name->username,'class="form-control input-tip saleman_by" id="saleman_by" style="pointer-events:none"'); ?>
 								</div>
                         </div>
-						
+
 						<div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("delivery_by", "delivery_by"); ?>
@@ -166,7 +167,7 @@
                         </div>
 
                         <div class="clearfix"></div>
-                        
+
                         <div class="col-md-12">
                             <div class="control-group table-group">
                                 <label class="table-label"><?= lang("order_items"); ?> *</label>
@@ -196,29 +197,29 @@
                                         </thead>
                                         <tbody>
 											<?php
-											
+
 												$number=0;
 											if (isset($quantity_recs)) {
 												foreach($quantity_recs as $quantity_rec) {
-													
+
 													$unit_qty = $this->site->getProductVariantByOptionID($quantity_rec['option_id']);
 													if($delivery->type == 'invoice') {
 														$order_items = $this->sales_model->getSaleItemDev($quantity_rec['item_id']);
 													} else {
 														$order_items = $this->sales_model->getSaleorderItemDev($quantity_rec['item_id']);
 													}
-												
+
 													$qty_order = (isset($order_items->quantity) - isset($order_items->quantity_received)) - 0;
-													
+
 													$totalQtyReceived  = ($quantity_rec['qty'] - $quantity_rec['balance']);
 													$quantity_reci     = ($quantity_rec['qty_received']);
-													$quantity_bal      = ($quantity_rec['balance']);														
-													
+													$quantity_bal      = ($quantity_rec['balance']);
+
 													$qty  = $totalQtyReceived;
 													$bqty = ($quantity_reci + $quantity_bal);
-													
+
 													$number++;
-													
+
 													echo '<tr style="height:45px;" id="'. $quantity_rec['id'] .'">
 															<td style="text-align:center;"  >'.$number.'</td>';
 															if($setting->show_code == 0){
@@ -260,12 +261,12 @@
 														  </tr>';
 												}
 											}
-												 
+
 											?>
-											
+
 										</tbody>
                                         <tfoot>
-											
+
 										</tfoot>
                                     </table>
                                 </div>
@@ -283,7 +284,7 @@
 						</div>
 						-->
 						<input type="hidden" name="delivery_status" id="delivery_status" value="<?= (($delivery && $delivery->delivery_status)? $delivery->delivery_status:'') ?>" required="required" />
-						
+
 						<div class="col-sm-12">
 
 							<div class="col-md-4">
@@ -292,14 +293,14 @@
 									<input id="document" type="file" name="document" data-show-upload="false" data-show-preview="false" class="form-control file">
 								</div>
 							</div>
-							
+
 							<div class="col-md-4">
 								<div class="form-group">
 									<?= lang("document", "document") ?>
 									<input id="document1" type="file" name="document1" data-show-upload="false" data-show-preview="false" class="form-control file">
 								</div>
 							</div>
-							
+
 							<div class="col-md-4">
 								<div class="form-group">
 									<?= lang("document", "document") ?>
@@ -317,7 +318,7 @@
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="col-md-12">
 								<div class="fprom-group"><?php echo form_submit('edit_sale', lang("submit"), 'id="edit_sale" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;"'); ?>
 									<button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
@@ -325,7 +326,7 @@
 							</div>
 						</div>
                 </div>
-                
+
                 <?php echo form_close(); ?>
 
             </div>
@@ -344,7 +345,7 @@
             </div>
             <div class="modal-body" id="pr_popover_content">
                 <form class="form-horizontal" role="form">
-                   
+
                     <?php if ($Settings->product_serial) { ?>
                         <div class="form-group">
                             <label for="pserial" class="col-sm-4 control-label"><?= lang('serial_no') ?></label>
@@ -377,7 +378,7 @@
 							<input type="hidden" name ="product_id" id ="product_id" value="">
                         </div>
                     </div>
-                   
+
                 </form>
             </div>
             <div class="modal-footer">
@@ -465,10 +466,10 @@
 			$("#slref").prop('disabled', true);
 			var temp = $("#temp_reference_no").val();
 			$("#slref").val(temp);
-			
+
 		  }
 		});
-		
+
 		$( "#slref" ).blur(function(){
 			var ref_no = $("#slref").val();
 			if(ref_no){
@@ -484,13 +485,13 @@
                 });
 			}
 		});
-		
+
 		$( "#other" ).click(function() {
 			$( ".target" ).change();
 		});
-		
+
 		$(".balance").prop('disabled', true);
-		
+
 		$( ".quantity_received" ).keyup(function(e) {
 			if ((e.which >= 48 && e.which <= 57) || (e.which >=96 && e.which <=105 || e.which ==13 || e.which == 8 || e.which == 46 || e.which == 190 || e.which == 110) ){
 				var str = $.trim($(this).val());
@@ -501,13 +502,13 @@
 					var rqty  = parseInt($(this).closest('tr').children('#rquantity').val());
 					var curQty = Number(str);
 					if(curQty >= 0 && curQty <= bqty){
-						var balance = bqty - curQty; 
+						var balance = bqty - curQty;
 						tr.find(".balance").text(balance);
 						tr.find('.cur_quantity_received').val(curQty);
 					}else if(curQty >= 0 && curQty > bqty){
 						tr.find("#quantity_received").val(bqty);
 					}
-					
+
 				}
 			}else{
 				var tr = $(this).parent().parent();
@@ -515,15 +516,15 @@
 				tr.find("#quantity_received").val(bqty);
 				alert("allow only number");
 			}
-			
+
 			// calculate balance
 			var quantity_balance = $('#bquantity').val();
 			var current_quantity = $(this).val();
 			var last_balance =  quantity_balance - current_quantity;
 			$('#balance').val();
-			
+
 		});
-		
+
 		$( ".piece" ).keyup(function(e) {
 			if ((e.which >= 48 && e.which <= 57) || (e.which >=96 && e.which <=105 || e.which ==13 || e.which == 8 || e.which == 46 || e.which == 190 || e.which == 110)){
 				var piece = $.trim($(this).val());
@@ -541,11 +542,11 @@
 						str = parseFloat(cur_piece * wpiece);
 						$(this).val(parseFloat(cur_piece));
 					}
-					
+
 					var curQty = str;
-					
+
 					if(curQty >= 0 && curQty <= bqty){
-						var balance = parseFloat(bqty - curQty); 
+						var balance = parseFloat(bqty - curQty);
 						tr.find(".balance").text(formatDecimal(balance));
 						$(this).closest('tr').find(".quantity_received").val(formatDecimal(curQty));
 						$(this).closest('tr').find('.cur_quantity_received').val(formatDecimal(curQty));
@@ -553,24 +554,24 @@
 						$(this).closest('tr').find(".quantity_received").val(formatDecimal(bqty));
 					}
 				}
-				
-				
+
+
 			}else{
 				var tr = $(this).parent().parent();
 				var bqty  = parseFloat($(this).closest('tr').find('#bquantity').val());
 				$(this).closest('tr').find(".quantity_received").val(formatDecimal(bqty));
 				alert("allow only number");
 			}
-			
+
 			// calculate balance
 			var quantity_balance = $('#bquantity').val();
 			var current_quantity = $(this).closest('tr').find(".quantity_received").val();
 			var last_balance =  parseFloat(quantity_balance - current_quantity);
 			$('#balance').val();
 		});
-		
+
 		$(document).on('click', '.edit', function () {
-			
+
 			var row = $(this).closest('tr');
 			var row_id = row.attr('id');
 			var real_qty =  row.find('#real_qty').val();
@@ -615,7 +616,7 @@
 								if(quantity % 1 != 0){
 									var qty = (quantity - (quantity));
 									//var qty = (quantity - (quantity % 1));
-									
+
 									 $('#pquantity').val(qty);
 									 $('#cquantity').val(real_qty);
 									 $('#item_quantity').val(real_qty);
@@ -624,7 +625,7 @@
 									 $('#cquantity').val(real_qty);
 									 $('#item_quantity').val(real_qty);
 								}
-								
+
 							}
 						});
 						$("#pro-option").trigger("change");
@@ -635,26 +636,26 @@
 						 $('#pquantity').val(qty);
 						 $('#cquantity').val(quantity);
 						 $('#item_quantity').val(quantity);
-						
+
 						 $("#pro-option").select2("val", "");
 						 $("#pro-option").empty();
 					}
 				}
 			});
-			
-			
+
+
 			$('#option').appendTo("body").modal('show');
 		});
-		
+
 		$('#editItem').click(function (){
-			
+
 		    var row = $('#' + $('#item_id').val());
-			
+
 			var item_id = $('#item_id').val();
 			var pro_name = $('#pro_name').val();
 			var quantity = $('#pquantity').val();
-			var element = $('#pro-option').find('option:selected'); 
-			var unit = element.attr("att"); 
+			var element = $('#pro-option').find('option:selected');
+			var unit = element.attr("att");
 			var option_id  = (element.val());
 			var total_quantity = (quantity*unit);
 			var balance_quantity = (($('#real_qty_change').val()));
@@ -670,8 +671,8 @@
 			row.find('#balance').text(formatDecimal(last_balance));
 			$('#option').modal('hide');
 		});
-		
-		
+
+
 		$("#pro-option").change(function(){
 			var product_id = localStorage.getItem('product_id');
 			var option_id = $(this).val();
@@ -682,19 +683,19 @@
 			var cal_qty  = (qty/qty_unit);
 			$("#pquantity").val((cal_qty));
 		});
-		
-		
-		
-		
+
+
+
+
 		$("#pquantity").keyup(function(){
 			var item_quantity = Number($('#item_quantity').val());
 			if($(this).val()>item_quantity){
 				$(this).val(item_quantity);
 			}
 		});
-			
-		
-		
+
+
+
 		$(".remove-row").click(function(){
 			$(this).closest('tr').remove();
 		});
@@ -702,21 +703,20 @@
 		$('#myModal').on('shown.bs.modal', function () {
 		  $('#myInput').focus();
 		});
-		
+
 		if (product_variant = localStorage.getItem('product_variant')) {
 			//var variants = JSON.parse(product_variant);
 			console.log(product_variant);
         }
-		
+
 		if (product_option = localStorage.getItem('product_option')) {
 			$('#option_id').val(product_option);
 		}
-		
-		
+
+
     });
-		
+
 
 </script>
 
 
-	
