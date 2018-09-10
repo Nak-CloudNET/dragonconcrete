@@ -993,13 +993,14 @@ class Sales extends MY_Controller
 	function view_customer_balance($user_id = NULL) 
 	{
 		
-        if (!$user_id && $_GET['d'] == null) {           
+        if (!$user_id && $_GET['d'] == null) {
             redirect($_SERVER["HTTP_REFERER"]);
-        }	
+        }
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
 		$this->data['date'] = date('Y-m-d');
         $this->data['user_id'] = $user_id;
 		$this->data['billers'] = $this->site->getAllCompanies('biller');
+        $this->data['agencies'] = $this->site->getAllUsers();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('customer_balance')));
         $meta = array('page_title' => lang('customer_balance'), 'bc' => $bc);
         $this->page_construct('sales/view_customer_balance', $meta, $this->data);
@@ -1423,6 +1424,12 @@ class Sales extends MY_Controller
         } else {
             $start_date = NULL;
         }
+        if ($this->input->get('saleman')) {
+            $saleman = $this->input->get('saleman');
+        } else {
+            $saleman = NULL;
+        }
+//       echo $this->erp->print_arrays($saleman);
 
         if ($this->input->get('end_date')) {
             $end_date = $this->input->get('end_date');
@@ -1495,7 +1502,7 @@ class Sales extends MY_Controller
                 
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller,companies.code, companies.name as customer, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller,companies.code, companies.name as customer,users.username, 
 						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
 						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
 						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
@@ -1506,6 +1513,7 @@ class Sales extends MY_Controller
 			->from('sales')
             ->join('companies', 'sales.customer_id = companies.id', 'left')
 			->join('payments', 'payments.sale_id = sales.id', 'left')
+                ->join('users','users.id= sales.saleman_by','left')
 			->where(array('payment_status !=' => 'paid'))
 			->where(array('sale_status !=' => 'ordered'))
 			->group_by('sales.id');
@@ -1515,8 +1523,8 @@ class Sales extends MY_Controller
 				$date =  date('Y-m-d', strtotime($date1));
 				
 				$this->datatables
-				->where("date >=", $date)
-				->where('DATE_SUB(date, INTERVAL 1 DAY) <= CURDATE()')
+				->where("sales.date >=", $date)
+				->where('DATE_SUB(erp_sales.date, INTERVAL 1 DAY) <= CURDATE()')
 				->where('sales.payment_term <>', 0);
 			}
         }        
@@ -1535,15 +1543,14 @@ class Sales extends MY_Controller
 		if ($reference_no) {
 			$this->datatables->where('sales.reference_no', $reference_no);
 		}
-		
-		if($this->session->userdata('biller_id') ) {
-			$this->datatables->where('sales.biller_id', $this->session->userdata('biller_id') );
-		}
-		
+
 		if ($biller) {
 			
 			$this->datatables->where('sales.biller_id', $biller);
 		}
+        if($saleman){
+            $this->datatables->where('sales.saleman_by', $saleman);
+        }
 		if ($start_date) {
 			$this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
 		}

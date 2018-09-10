@@ -21,6 +21,9 @@
 		if(isset($date)){
 			$v .= "&d=" . $date;
 		}
+        if ($this->input->post('saleman')) {
+            $v .= "&saleman=" . $this->input->post('saleman');
+        }
 	}
 ?>
 
@@ -31,7 +34,7 @@
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?=lang('all')?>"]],
             "iDisplayLength": <?=$Settings->rows_per_page?>,
             'bProcessing': true, 'bServerSide': true,
-			'sAjaxSource': '<?= site_url('sales/getSales_DuePayment/?v=1' .$v) ?>',
+			'sAjaxSource': '<?= site_url('sales/getSales_DuePayment/'.($warehouse_id ? '/' . $warehouse_id : '/')).'/?v=1'.$v ?>',
             'fnServerData': function (sSource, aoData, fnCallback) {
                 aoData.push({
                     "name": "<?=$this->security->get_csrf_token_name()?>",
@@ -48,33 +51,35 @@
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, {"mRender": fld}, {"mRender": fld}, null, null,null, null, {"mRender": row_status}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": row_status}, {"bSortable": false}],
+            }, {"mRender": fld}, {"mRender": fld}, null,null,null,null, null, {"mRender": row_status}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": row_status}, {"bSortable": false}],
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var gtotal = 0, paid = 0, balance = 0, tReturn = 0, tDeposit = 0, tDiscount = 0;
                 for (var i = 0; i < aaData.length; i++) {
-                    gtotal += parseFloat(aaData[aiDisplay[i]][7]);
-                    tReturn += parseFloat(aaData[aiDisplay[i]][8]);
-                    paid += parseFloat(aaData[aiDisplay[i]][9]);
-                    tDeposit += parseFloat(aaData[aiDisplay[i]][10]);
-                    tDiscount += parseFloat(aaData[aiDisplay[i]][11]);
-                    balance += parseFloat(aaData[aiDisplay[i]][12]);
+                    gtotal += parseFloat(aaData[aiDisplay[i]][9]);
+                    tReturn += parseFloat(aaData[aiDisplay[i]][10]);
+                    paid += parseFloat(aaData[aiDisplay[i]][11]);
+                    tDeposit += parseFloat(aaData[aiDisplay[i]][12]);
+                    tDiscount += parseFloat(aaData[aiDisplay[i]][13]);
+                    balance += parseFloat(aaData[aiDisplay[i]][14]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[7].innerHTML = currencyFormat(parseFloat(gtotal));
-                nCells[8].innerHTML = currencyFormat(parseFloat(tReturn));
-                nCells[9].innerHTML = currencyFormat(parseFloat(paid));
-                nCells[10].innerHTML = currencyFormat(parseFloat(tDeposit));
-                nCells[11].innerHTML = currencyFormat(parseFloat(tDiscount));
-                nCells[12].innerHTML = currencyFormat(parseFloat(balance));
+                nCells[9].innerHTML = currencyFormat(parseFloat(gtotal));
+                nCells[10].innerHTML = currencyFormat(parseFloat(tReturn));
+                nCells[11].innerHTML = currencyFormat(parseFloat(paid));
+                nCells[12].innerHTML = currencyFormat(parseFloat(tDeposit));
+                nCells[13].innerHTML = currencyFormat(parseFloat(tDiscount));
+                nCells[14].innerHTML = currencyFormat(parseFloat(balance));
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('due_date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('reference_no');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('shop');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
-            {column_number: 6, filter_default_label: "[<?=lang('sale_status');?>]", filter_type: "text", data: []},
-            {column_number: 13, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('code');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
+            {column_number: 7, filter_default_label: "[<?=lang('sale_name');?>]", filter_type: "text", data: []},
+            {column_number: 8, filter_default_label: "[<?=lang('sale_status');?>]", filter_type: "text", data: []},
+            {column_number: 15, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
         ], "footer");
 
         if (localStorage.getItem('remove_slls')) {
@@ -400,6 +405,18 @@
                                 ?>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <?= lang("saleman", "saleman"); ?>
+                                <?php
+                                $salemans['0'] = lang("all");
+                                foreach($agencies as $agency){
+                                    $salemans[$agency->id] = $agency->username;
+                                }
+                                echo form_dropdown('saleman', $salemans, (isset($_POST['saleman']) ? $_POST['saleman'] : ""), 'id="saleman" class="form-control saleman"');
+                                ?>
+                            </div>
+                        </div>
                     
                         <?php if($this->Settings->product_serial) { ?>
                             <div class="col-sm-4">
@@ -444,6 +461,7 @@
                             <th><?php echo $this->lang->line("shop"); ?></th>
                             <th><?php echo $this->lang->line("Code"); ?></th>
                             <th><?php echo $this->lang->line("customer"); ?></th>
+                            <th><?php echo $this->lang->line("Sale_man"); ?></th>
                             <th><?php echo $this->lang->line("sale_status"); ?></th>
                             <th><?php echo $this->lang->line("grand_total"); ?></th>
                             <th><?php echo $this->lang->line("return"); ?></th>
@@ -478,6 +496,7 @@
                             <th><?php echo $this->lang->line("grand_total"); ?></th>
                             <th><?php echo $this->lang->line("paid"); ?></th>
                             <th><?php echo $this->lang->line("balance"); ?></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th style="width:80px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th>
