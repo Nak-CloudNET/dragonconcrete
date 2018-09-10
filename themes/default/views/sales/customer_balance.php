@@ -168,8 +168,8 @@
 									<input class="checkbox checkth" type="checkbox" name="check"/>
 								</th>
 								<th><?= lang("company"); ?></th>
-								<th><?= lang("name"); ?></th>
                                 <th><?= lang("code"); ?></th>
+								<th><?= lang("name"); ?></th>
 								<th><?= lang("phone"); ?></th>
 								<th><?= lang("email_address"); ?></th>
 								<th><?= lang("total_sales"); ?></th>

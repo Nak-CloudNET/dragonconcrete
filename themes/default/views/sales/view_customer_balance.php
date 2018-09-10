@@ -48,7 +48,7 @@
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, {"mRender": fld}, {"mRender": fld}, null, null, null, {"mRender": row_status}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": row_status}, {"bSortable": false}],
+            }, {"mRender": fld}, {"mRender": fld}, null, null,null, null, {"mRender": row_status}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": row_status}, {"bSortable": false}],
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var gtotal = 0, paid = 0, balance = 0, tReturn = 0, tDeposit = 0, tDiscount = 0;
                 for (var i = 0; i < aaData.length; i++) {
@@ -442,6 +442,7 @@
                             <th><?php echo $this->lang->line("due_date"); ?></th>
                             <th><?php echo $this->lang->line("reference_no"); ?></th>
                             <th><?php echo $this->lang->line("shop"); ?></th>
+                            <th><?php echo $this->lang->line("Code"); ?></th>
                             <th><?php echo $this->lang->line("customer"); ?></th>
                             <th><?php echo $this->lang->line("sale_status"); ?></th>
                             <th><?php echo $this->lang->line("grand_total"); ?></th>
@@ -478,6 +479,7 @@
                             <th><?php echo $this->lang->line("paid"); ?></th>
                             <th><?php echo $this->lang->line("balance"); ?></th>
                             <th></th>
+                            <th></th>
                             <th style="width:80px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th>
                         </tr>
                         </tfoot>
@@ -489,18 +491,7 @@
 </div>
 <script>
 	$(document).ready(function(){
-		/*
-		$("#excel").click(function(e){
-			e.preventDefault();
-			window.location.href = "<?=site_url('Sales/getSalesAll/0/xls/')?>";
-			return false;
-		});
-		$('#pdf').click(function (event) {
-            event.preventDefault();
-            window.location.href = "<?=site_url('Sales/getSalesAll/pdf/?v=1'.$v)?>";
-            return false;
-        });
-		*/
+
 		
 		$('body').on('click', '#combine_pay', function() {
 			 if($('.checkbox').is(":checked") === false){

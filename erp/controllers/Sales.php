@@ -961,7 +961,7 @@ class Sales extends MY_Controller
 				) AS erp_total_return_sale";
 		
 		$this->load->library('datatables');
-		$this->datatables->select($this->db->dbprefix('companies') . ".id as idd, companies.company, companies.name, companies.code,
+		$this->datatables->select($this->db->dbprefix('companies') . ".id as idd, companies.company, companies.code, companies.name,
 					companies.phone, companies.email, count(" . $this->db->dbprefix('sales') . ".id) as total, 
 					COALESCE(SUM(erp_sales.grand_total), 0) as total_amount, 
 					SUM(COALESCE(erp_total_return_sale.return_sale, 0)) AS return_sale,
@@ -1495,7 +1495,7 @@ class Sales extends MY_Controller
                 
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller,companies.code, companies.name as customer, 
 						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
 						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
 						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
