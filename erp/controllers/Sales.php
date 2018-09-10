@@ -381,7 +381,7 @@ class Sales extends MY_Controller
             (($this->Owner || $this->Admin) ? '<li>'.$add_payment_link.'</li>' : ($this->GP['sales-payments'] ? '<li>'.$add_payment_link.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li class="down_payment">'.$down_payment.'</li>' : ($this->GP['sales-payments'] ? '<li class="down_payment">'.$down_payment.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li class="edit_down_payment">'.$sale_edit_down_payment.'</li>' : ($this->GP['sales-payments'] ? '<li class="edit_down_payment">'.$sale_edit_down_payment.'</li>' : ''))
-            
+
             .(($this->Owner || $this->Admin) ? '<li class="edit">'.$edit_link.'</li>' : ($this->GP['sales-edit'] ? '<li class="edit">'.$edit_link.'</li>' : '')).
             (($this->Owner || $this->Admin) ? '<li>'.$pdf_link.'</li>' : ($this->GP['sales-export'] ? '<li>'.$pdf_link.'</li>' : '')).
 			(($this->Owner || $this->Admin) ? '<li>'.$return_link.'</li>' : ($this->GP['sales-return_sales'] ? '<li>'.$return_link.'</li>' : '')).
@@ -520,7 +520,7 @@ class Sales extends MY_Controller
 	
 	function getSales_pending($warehouse_id = NULL, $dt = NULL)
     {
-        $this->erp->checkPermissions('index');
+        //$this->erp->checkPermissions('index');
 		
 		if ($this->input->get('user')) {
             $user_query = $this->input->get('user');
@@ -961,7 +961,7 @@ class Sales extends MY_Controller
 				) AS erp_total_return_sale";
 		
 		$this->load->library('datatables');
-		$this->datatables->select($this->db->dbprefix('companies') . ".id as idd, companies.company, companies.name, 
+		$this->datatables->select($this->db->dbprefix('companies') . ".id as idd, companies.company, companies.code, companies.name,
 					companies.phone, companies.email, count(" . $this->db->dbprefix('sales') . ".id) as total, 
 					COALESCE(SUM(erp_sales.grand_total), 0) as total_amount, 
 					SUM(COALESCE(erp_total_return_sale.return_sale, 0)) AS return_sale,
@@ -1495,7 +1495,7 @@ class Sales extends MY_Controller
                 
         } else {
 			$this->datatables
-			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller, companies.name as customer, 
+			->select("sales.id, sales.date, sales.due_date, sales.reference_no, sales.biller,companies.code, companies.name as customer, 
 						sales.sale_status, COALESCE(erp_sales.grand_total, 0) as grand_total,  
 						COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale, 
 						COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
@@ -2035,7 +2035,7 @@ class Sales extends MY_Controller
 
     function modal_view_ar($id = NULL, $type = NULL)
     {
-        $this->erp->checkPermissions('index', TRUE);
+        $this->erp->checkPermissions('list_ar_aging', NULL, 'account');
 
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
@@ -2044,7 +2044,7 @@ class Sales extends MY_Controller
         $this->data['pos'] = $this->pos_model->getSetting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $inv = $this->sales_model->getInvoiceByID($id);
-        $this->erp->view_rights($inv->created_by, TRUE);
+        //$this->erp->view_rights($inv->created_by, TRUE);
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
         $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
@@ -2062,7 +2062,7 @@ class Sales extends MY_Controller
 	
 	function modal_view($id = NULL)
     {
-        $this->erp->checkPermissions('index', null, 'sales');
+        //$this->erp->checkPermissions('index', null, 'sales');
 
         if($this->input->get('id')){
             $id = $this->input->get('id');
@@ -6806,6 +6806,7 @@ class Sales extends MY_Controller
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
+        $this->data['agencies'] = $this->site->getAllUsers();
         $this->page_construct('sales/deliveries', $meta, $this->data);
     }
 	
@@ -6918,7 +6919,47 @@ class Sales extends MY_Controller
 	
 	function getSaleOrderDeliveries($wh=null, $start = NULL, $end = NULL)
     {
+        if ($this->input->get('so_no')) {
+            $so_no = $this->input->get('so_no');
+        } else {
+            $so_no = NULL;
+        }
+        if ($this->input->get('Do_no')) {
+            $Do_no = $this->input->get('Do_no');
+        } else {
+            $Do_no = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+
+        if ($start_date) {
+            $start_date = $this->erp->fld($start_date);
+            $end_date = $this->erp->fld($end_date);
+        }
+        if ($this->input->get('saleman')) {
+            $saleman = $this->input->get('saleman');
+        } else {
+            $saleman = NULL;
+        }
+
+
+
+
         $this->erp->checkPermissions('deliveries');
+        $this->data['agencies'] = $this->site->getAllUsers();
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
         $detail_link = anchor('sales/view_delivery/$1', '<i class="fa fa-file-text-o"></i> ' . lang('delivery_details'), 'data-toggle="modal" data-target="#myModal"');
         $email_link = anchor('sales/email_delivery/$1', '<i class="fa fa-envelope"></i> ' . lang('email_delivery'), 'data-toggle="modal" data-target="#myModal"');
@@ -6959,23 +7000,48 @@ class Sales extends MY_Controller
             ->order_by('deliveries.id', 'desc');
         }else{
     		$this->datatables
-                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, deliveries.address,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
+                ->select("deliveries.id as id, deliveries.date, deliveries.do_reference_no, deliveries.sale_reference_no, companies.name as customer_name, users.username,deliveries.location,qty_order.qty AS qty_order,COALESCE(SUM(erp_delivery_items.quantity_received),0) as qty, deliveries.sale_status")
                 ->from('deliveries')
                 ->join('(SELECT erp_sale_order.id AS id,SUM(erp_sale_order_items.quantity) as qty FROM erp_sale_order LEFT JOIN erp_sale_order_items ON erp_sale_order_items.sale_order_id = erp_sale_order.id GROUP BY erp_sale_order.id) AS qty_order','erp_deliveries.sale_id = qty_order.id','left')
-    			->where('type','sale_order')
+    			->where('deliveries.type','sale_order')
                 ->join('delivery_items', 'delivery_items.delivery_id = deliveries.id', 'left')
     			->join('companies', 'companies.id = deliveries.customer_id', 'inner')
+                ->join('sale_order','sale_order.id = deliveries.sale_id','left')
+                ->join('users','users.id = sale_order.saleman_by','left')
                 ->group_by('deliveries.id')
     			->order_by('deliveries.id', 'desc');
         }
 
+        if($so_no) {
+            $this->datatables->where('deliveries.sale_reference_no', $so_no);
+        }
+        if($Do_no) {
+            $this->datatables->where('deliveries.do_reference_no', $Do_no);
+        }
+        if ($customer) {
+            $this->datatables->where('deliveries.customer_id', $customer);
+        }
         if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('deliveries.created_by', $this->session->userdata('user_id'));
         }
+        if($saleman){
+            $this->datatables->where('users.id', $saleman);
+        }
+        if ($start_date) {
+            $this->datatables->where($this->db->dbprefix('deliveries').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+        }
 
-		if($start && $end){
+
+        if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
+//        if ($start_date) {
+//            $this->datatables->where($this->db->dbprefix('sales').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+//        }
+
+
+
+
 		
         $this->datatables->add_column("Actions", $action, "id");
         echo $this->datatables->generate();
@@ -7454,6 +7520,7 @@ class Sales extends MY_Controller
                         $this->data['reference'] = $this->site->getReference('so', $biller_id);
                         $this->data['payment_ref'] = $this->site->getReference('sp', $biller_id);
                         $this->data['setting'] = $this->site->get_setting();
+                        
                         $this->session->set_userdata('remove_s', 0);
                         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('add_sale')));
                         $meta = array('page_title' => lang('add_sale'), 'bc' => $bc);
@@ -13468,6 +13535,7 @@ class Sales extends MY_Controller
 			$this->data['setting'] = $this->site->get_setting();
 			$this->data['drivers'] = $this->site->getDrivers();
 			$this->data['modal_js'] = $this->site->modal_js();
+
             $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('add_deliveries')));
             $meta = array('page_title' => lang('add_deliveries'), 'bc' => $bc);
             $this->page_construct('sales/delivery_added', $meta, $this->data);
@@ -13507,7 +13575,47 @@ class Sales extends MY_Controller
 	
 	function getSaleOrderitems($start = NULL, $end = NULL)
     {
-		
+        if ($this->input->get('so_no')) {
+            $so_no = $this->input->get('so_no');
+        } else {
+            $so_no = NULL;
+        }
+        if ($this->input->get('Do_no')) {
+            $Do_no = $this->input->get('Do_no');
+        } else {
+            $Do_no = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('biller')) {
+            $biller = $this->input->get('biller');
+        } else {
+            $biller = NULL;
+        }
+
+        if ($start_date) {
+            $start_date = $this->erp->fld($start_date);
+            $end_date = $this->erp->fld($end_date);
+        }
+        if ($this->input->get('saleman')) {
+            $saleman = $this->input->get('saleman');
+        } else {
+            $saleman = NULL;
+        }
+
         $this->erp->checkPermissions('deliveries');
 
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
@@ -13541,7 +13649,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
 
 		$this->datatables
-            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username, 
+            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username,
 					COALESCE(SUM(erp_sale_order_items.quantity),0) as qty, 
 					COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received, 
 					COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance, 
@@ -13553,8 +13661,33 @@ class Sales extends MY_Controller
 			->join('sale_order_items','sale_order.id=sale_order_items.sale_order_id','left')
 			->where('sale_order.order_status =', 'completed')
 			->where('sale_order.sale_status <>', 'sale')
+
 			
 			->group_by('sale_order.id');
+        if($so_no) {
+            $this->datatables->where('deliveries.sale_reference_no', $so_no);
+        }
+        if($Do_no) {
+            $this->datatables->where('deliveries.do_reference_no', $Do_no);
+        }
+        if ($customer) {
+            $this->datatables->where('deliveries.customer_id', $customer);
+        }
+        if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $this->datatables->where('deliveries.created_by', $this->session->userdata('user_id'));
+        }
+        if($saleman){
+            $this->datatables->where('users.id', $saleman);
+        }
+        if ($start_date) {
+            $this->datatables->where($this->db->dbprefix('deliveries').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+        }
+        if ($biller) {
+            $this->datatables->where('sale_order.biller_id', $biller);
+        }
+
+
+
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
@@ -13740,9 +13873,11 @@ class Sales extends MY_Controller
 
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
+        $this->data['agencies'] = $this->site->getAllUsers();
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
+        $this->data['billers'] 			= $this->site->getAllCompanies('biller');
         $this->page_construct('sales/add_deliveries', $meta, $this->data);
     }
 	
@@ -13750,7 +13885,6 @@ class Sales extends MY_Controller
 	{
         // get deliveries and add deliveries and add delivery_items
         $this->form_validation->set_rules('delivery_reference', lang("delivery_reference"), 'trim|required|is_unique[deliveries.do_reference_no]');
-
         if ($this->form_validation->run('sales/add_new_delivery') == true)
         {
             if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
@@ -13758,23 +13892,22 @@ class Sales extends MY_Controller
             } else {
 			    $date = date('Y-m-d H:i:s');
             }
-
-            $location = $this->input->post('add_item_location');
-
-			$sale_id = $this->input->post('sale_id');
-			$sale_reference_no = $this->input->post('sale_reference');
-			$customer_id = $this->input->post('customer_id');
-			$biller_id = $this->input->post('biller_id');
-			$customer = $this->site->getCompanyByID($customer_id);
-			$address = $customer->address .' '. $customer->city .' '. $customer->state .' '. $customer->postal_code .' '. $customer->country .'<br/> Tel: '. $customer->phone .' Email: '. $customer->email;
-			$note = $this->input->post('note');
-			$created_by = $this->input->post('saleman_by');
-			$pos = $this->input->post("pos");
-			$delivery_by = $this->input->post('delivery_by');
-			$do_reference_no = ($this->input->post('delivery_reference') ? $this->input->post('delivery_reference') : $this->site->getReference('do',$biller_id));
-			$type = $this->input->post('status');
-			$delivery_status = $this->input->post('delivery_status');
-			$delivery = array(
+            $sale_order_item_ids     = $this->input->post('delivery_id');
+            $location                = $this->input->post('add_item_location');
+			$sale_id                 = $this->input->post('sale_id');
+			$sale_reference_no       = $this->input->post('sale_reference');
+			$customer_id             = $this->input->post('customer_id');
+			$biller_id               = $this->input->post('biller_id');
+			$customer                = $this->site->getCompanyByID($customer_id);
+			$address                 = $customer->address .' '. $customer->city .' '. $customer->state .' '. $customer->postal_code .' '. $customer->country .'<br/> Tel: '. $customer->phone .' Email: '. $customer->email;
+			$note                    = $this->input->post('note');
+			$created_by              = $this->input->post('saleman_by');
+			$pos                     = $this->input->post("pos");
+			$delivery_by             = $this->input->post('delivery_by');
+			$do_reference_no         = ($this->input->post('delivery_reference') ? $this->input->post('delivery_reference') : $this->site->getReference('do',$biller_id));
+			$type                    = $this->input->post('status');
+			$delivery_status         = $this->input->post('delivery_status');
+			$delivery = array(   
 				'date'              => $date,
 				'sale_id'           => $sale_id,
 				'do_reference_no'   => $do_reference_no,
@@ -13793,30 +13926,33 @@ class Sales extends MY_Controller
                 'location'          => $location
 			);
 			
-			if($delivery){
+			if($delivery)
+			{
 				
-				$product_id     = $this->input->post('product_id');
-				$warehouse_id   = $this->input->post('warehouse_id');
-				$quantity       = $this->input->post('bquantity');  
-				$quantity_received = $this->input->post('cur_quantity_received');
-				$option_id = $this->input->post('option_id');
-				$sale_item_id = $this->input->post('delivery_id');
-				$product_id = $this->input->post('product_id');
-				$product_code = $this->input->post('product_code');
-				$product_name = $this->input->post('product_name');
-				$product_type = $this->input->post('product_type');
-				$items_id = $this->input->post('delivery_id');
-				$piece = $this->input->post('piece');
-				$wpiece = $this->input->post('wpiece');
+				$product_id         = $this->input->post('product_id');
+				$warehouse_id       = $this->input->post('warehouse_id');
+				$quantity           = $this->input->post('bquantity');
+				$quantity_received  = $this->input->post('cur_quantity_received');
+				$option_id          = $this->input->post('option_id');
+				$sale_item_id       = $this->input->post('delivery_id');
+				$product_id         = $this->input->post('product_id');
+				$product_code       = $this->input->post('product_code');
+				$product_name       = $this->input->post('product_name');
+				$product_type       = $this->input->post('product_type');
+				$items_id           = $this->input->post('delivery_id');
+				$piece              = $this->input->post('piece');
+				$wpiece             = $this->input->post('wpiece');
 				
 				$pro_num = sizeof($product_id);
-				for($i=0; $i<$pro_num; $i++) {
-					$rec_quantity = $quantity_received[$i];
-					$b_quantity = $quantity[$i];
+				for($i=0; $i<$pro_num; $i++)
+				{
+					$rec_quantity   = $quantity_received[$i];
+					$b_quantity     = $quantity[$i];
 					$ending_balance = $quantity[$i] - $quantity_received[$i];
-					$unit_cost = $this->sales_model->getCurCost($product_id[$i]);
-					$unit_qty = $this->site->getProductVariantByOptionID($option_id[$i]);
-					if($unit_qty){
+					$unit_cost      = $this->sales_model->getCurCost($product_id[$i]);
+					$unit_qty       = $this->site->getProductVariantByOptionID($option_id[$i]);
+					if($unit_qty)
+					{
 						$cost = ($unit_cost->cost*$unit_qty->qty_unit);
 					}else{
 						$cost = ($unit_cost->cost);
@@ -13838,7 +13974,8 @@ class Sales extends MY_Controller
 						'ending_balance'    => $ending_balance,
 						'created_by'        => $this->session->userdata('user_id'),
 					);
-					if($delivery_status == 'completed') {
+					if($delivery_status == 'completed')
+					{
 						$products[] = array(
 							'product_id' 		=> $product_id[$i],
 							'product_code' 		=> $product_code[$i],
@@ -13851,57 +13988,83 @@ class Sales extends MY_Controller
 						);
 					}
 				}
-				if($delivery_status == 'completed') {
+				if($delivery_status == 'completed')
+				{
 					$this->site->costing($products);
 				}
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
 				
-				if($delivery_id > 0){
+				if($delivery_id > 0)
+				{
 					
 					$invoice_status = false;
 					$sale_order_status = false;
 					
-					if($type == "invoice" || $pos == 1) {
+					if($type == "invoice" || $pos == 1)
+					{
 						$sale_item = $this->sales_model->getSItemsBySaleID($sale_id, $product_id);
 						for($i=0; $i< sizeof($sale_item); $i++){
-							$qtyReceived = $sale_item[$i]->quantity_received;
+							$qtyReceived     = $sale_item[$i]->quantity_received;
 							$lastQtyReceived = $qtyReceived + $quantity_received[$i];
-							$qty_received = array('quantity_received' => $lastQtyReceived);
-							$condition = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_id'=>$sale_id);
+							$qty_received    = array('quantity_received' => $lastQtyReceived);
+							$condition       = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_id'=>$sale_id);
 							if($this->sales_model->updateSaleItemQtyReceived($qty_received,$condition)){
 								$invoice_status = true;
 							}
 						}
 					}
 					
-					if($type=="sale_order" && $pos != 1) {
-						$sale_order_item = $this->sales_model->getSaleOrderItem($sale_id, $product_id);
-						for($i=0;$i<sizeof($sale_order_item);$i++){
-							$unit_qty = $this->site->getProductVariantByOptionID($sale_order_item[$i]->option_id);
-							$qtyReceived = $sale_order_item[$i]->quantity_received;
-							$lastQtyReceived = $qtyReceived + $quantity_received[$i];
-							$qty_received = array('quantity_received' => $lastQtyReceived);							
-							$condition = array('id' => $sale_item_id[$i],'product_id' => $product_id[$i],'product_name' => $product_name[$i], 'product_code' => $product_code[$i],'sale_order_id'=>$sale_id);
-							if($this->sales_model->updateSaleOrderQtyReceived($qty_received,$condition)){
-								$sale_order_status = true;
-							}
-						}
+					if($type=="sale_order" && $pos != 1)
+					{
+                        foreach ($sale_order_item_ids as $sale_order_item_id) 
+                        {
+                            $sale_order_item        = $this->sales_model->getSaleOrderItem($sale_order_item_id,$sale_id, $product_id);
+                                $unit_qty           = $this->site->getProductVariantByOptionID($sale_order_item->option_id);
+
+                                $qtyReceived        = $sale_order_item->quantity_received;
+                                foreach($deliverie_items as $val)
+                                {
+                                    if($val['item_id'] === $sale_order_item_id)
+                                    {
+                                        $qty_r = $val['quantity_received'];
+
+                                    }
+                                }
+                                $lastQtyReceived = $qtyReceived + $qty_r;
+
+                                $qty_received    = array('quantity_received' => $lastQtyReceived);                          
+                                $condition       = array
+                                                (
+                                                    'id'            => $sale_order_item_id,
+                                                    'product_id'    => $sale_order_item->product_id,
+                                                    'product_name'  => $sale_order_item->product_name, 
+                                                    'product_code'  => $sale_order_item->product_code,
+                                                    'sale_order_id' => $sale_id
+                                                );
+                                if($this->sales_model->updateSaleOrderQtyReceived($qty_received,$condition))
+                                {
+                                    $sale_order_status = true;
+                                }
+                        }
+					
 					}
 					
-					if($invoice_status == true) {
+					if($invoice_status == true)
+
+					{
 						// update delivery status
 						$getAllQty = $this->sales_model->getAllSaleItemQty($sale_id);
 						$updateStatus = false;
 						foreach($getAllQty as $qty){
 							if($qty->qty - $qty->qty_received > 0){
-								$status = array('delivery_status' => 'partial');
-								$condition = array('id'=>$sale_id);
+								$status     = array('delivery_status' => 'partial');
+								$condition  = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
 								$updateStatus = true;
 								
 							}elseif($qty->qty - $qty->qty_received == 0){
-								$status = array('delivery_status' => 'completed');
+								$status    = array('delivery_status' => 'completed');
 								$condition = array('id'=>$sale_id);
 								$this->db->where($condition);
 								$this->db->update('sales', $status);
@@ -13913,9 +14076,9 @@ class Sales extends MY_Controller
 						if($updateStatus == true) {
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
-								$delivery_quantity = $delivery_item['quantity_received'];
-								$getproduct = $this->site->getProductByID($delivery_item['product_id']);
-								$getsaleitem = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
+								$delivery_quantity  = $delivery_item['quantity_received'];
+								$getproduct         = $this->site->getProductByID($delivery_item['product_id']);
+								$getsaleitem        = $this->sales_model->getSaleItemByID($delivery_item['item_id']);
 								
 								$stock_info[] = array(
 									'product_id'        => $delivery_item['product_id'],
@@ -13997,27 +14160,27 @@ class Sales extends MY_Controller
 								$delivery_quantity = ($delivery_item['quantity_received']);
 								
 								$stock_info[] = array(
-									'product_id' => $delivery_item['product_id'],
-									'delivery_id' => $delivery_id,
-									'product_code' => $getproduct->code,
-									'product_name' => $delivery_item['product_name'],
-									'product_type' => $getproduct->type,
-									'option_id' => $delivery_item['option_id'],
-									'net_unit_price' => $getsaleitem->net_unit_price,
-									'unit_price' => $getsaleitem->unit_price,
-									'quantity' => $delivery_quantity,
-									'warehouse_id' => $delivery_item['warehouse_id'],
-									'item_tax' => $getsaleitem->item_tax,
-									'tax_rate_id' => $getsaleitem->tax_rate_id,
-									'tax' => $getsaleitem->tax,
-									'discount' => $getsaleitem->discount,
-									'item_discount' => $getsaleitem->item_discount,
-									'subtotal' => $getsaleitem->subtotal,
-									'serial_no' => $getsaleitem->serial_no,
-									'real_unit_price' => $getsaleitem->real_unit_price,
+									'product_id'        => $delivery_item['product_id'],
+									'delivery_id'       => $delivery_id,
+									'product_code'      => $getproduct->code,
+									'product_name'      => $delivery_item['product_name'],
+									'product_type'      => $getproduct->type,
+									'option_id'         => $delivery_item['option_id'],
+									'net_unit_price'    => $getsaleitem->net_unit_price,
+									'unit_price'        => $getsaleitem->unit_price,
+									'quantity'          => $delivery_quantity,
+									'warehouse_id'      => $delivery_item['warehouse_id'],
+									'item_tax'          => $getsaleitem->item_tax,
+									'tax_rate_id'       => $getsaleitem->tax_rate_id,
+									'tax'               => $getsaleitem->tax,
+									'discount'          => $getsaleitem->discount,
+									'item_discount'     => $getsaleitem->item_discount,
+									'subtotal'          => $getsaleitem->subtotal,
+									'serial_no'         => $getsaleitem->serial_no,
+									'real_unit_price'   => $getsaleitem->real_unit_price,
 									'transaction_type'  => 'DELIVERY',
 									'transaction_id'    => $getsaleitem->id,
-									'product_noted' => $getsaleitem->product_noted
+									'product_noted'     => $getsaleitem->product_noted
 								);
 								
 							}

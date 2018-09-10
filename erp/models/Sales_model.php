@@ -4688,11 +4688,12 @@ class Sales_model extends CI_Model
         return FALSE;
 	}
 	
-	public function getSaleOrderItem($sale_order_id, $product_id = array()){
+	public function getSaleOrderItem($sale_order_item_id,$sale_order_id, $product_id = array()){
 		$this->db->where_in('product_id', $product_id);
+		$this->db->where_in('id', $sale_order_item_id);
 		$q = $this->db->get_where('sale_order_items', array('sale_order_id' => $sale_order_id));
 		if($q->num_rows() > 0){
-			return $q->result();
+			return $q->row();
 		}
 		return false;
 		

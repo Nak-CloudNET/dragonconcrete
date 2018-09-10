@@ -249,7 +249,7 @@ class Products_model extends CI_Model
 
     public function getProductComboItems($pid)
     {
-        $this->db->select($this->db->dbprefix('products') . '.id as id, ' . $this->db->dbprefix('products') . '.code as code, ' . $this->db->dbprefix('combo_items') . '.quantity as qty, ' . $this->db->dbprefix('products') . '.name as name, ' . $this->db->dbprefix('combo_items') . '.unit_price as price, ' . $this->db->dbprefix('products') . '.cost as cost')->join('products', 'products.code=combo_items.item_code', 'left')->group_by('combo_items.id');
+        $this->db->select($this->db->dbprefix('products') . '.id as id, ' . $this->db->dbprefix('products') . '.code as code, ' . $this->db->dbprefix('combo_items') . '.quantity as qty, ' . $this->db->dbprefix('products') . '.name as name, ' . $this->db->dbprefix('combo_items') . '.unit_price as price, ' . $this->db->dbprefix('products') . '.cost ')->join('products', 'products.code=combo_items.item_code', 'left');
         $q = $this->db->get_where('combo_items', array('product_id' => $pid));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -260,6 +260,24 @@ class Products_model extends CI_Model
         }
         return FALSE;
     }
+
+    public function getProductComboItemsByID($pid)
+    {
+        $this->db->select($this->db->dbprefix('products') . '.id as id, ' . $this->db->dbprefix('products') . '.code as code, ' . $this->db->dbprefix('combo_items') . '.quantity as qty, ' . $this->db->dbprefix('products') . '.name as name, ' . $this->db->dbprefix('combo_items') . '.unit_price as price, ' . $this->db->dbprefix('products') . '.cost')
+        ->join('products', 'products.code=combo_items.item_code', 'left')
+        ->where('products.id', $pid);
+
+        $q = $this->db->get_where('combo_items');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+        return FALSE;
+    }
+
 	public function getProductDigitalItems($pid)
     {
         $this->db->select($this->db->dbprefix('products') . '.id as id, ' . $this->db->dbprefix('products') . '.code as code, ' . $this->db->dbprefix('products') . '.name as name')->join('products', 'products.id=erp_digital_items.product_id', 'left')->group_by('erp_digital_items.id');
@@ -392,6 +410,21 @@ class Products_model extends CI_Model
     {
 
         $q = $this->db->get_where('products', array('code' => $code), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+    }
+
+    public function getProductAndComboItemByCode($code)
+    {
+        $this->db->select('products.*, combo_items.product_id as combo_id, combo_items.quantity as combo_item_qty')
+        ->join('combo_items', 'products.code = combo_items.item_code', 'left')
+        ->where('products.code', $code)
+        ->limit(1);
+
+        $q = $this->db->get('products');
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -779,31 +812,41 @@ class Products_model extends CI_Model
 
     public function updatePrice($data = array())
     {
-		foreach($data as $item){
-			if ($item['price'] != "" && $item['cost'] != "" ) {
-				$update = array(
-					'price' => $item['price'],
-					'cost'	=> $item['cost']
-				);
-			} elseif ($item['price'] != "") {
-				$update = array(
-					'price' => $item['price']
-				);
-			} else if($item['cost'] != "") {
-				$update = array(
-					'cost'	=> $item['cost']
-				);
-			} 
-			
+        $total_combo_item_cost = 0;
+        foreach($data as $item){
+            $total_combo_item_cost += $item['combo_item_qty'] * $item['cost'];
+        }
+
+        foreach($data as $item){
+            $items_combo = $this->getProductComboItemsByID($item['id']);
+            
+            if ($item['price'] != "" && $item['cost'] != "" ) {
+                $update = array(
+                    'price' => $item['price'],
+                    'cost'  => $item['cost']
+                );
+            } elseif ($item['price'] != "") {
+                $update = array(
+                    'price' => $item['price']
+                );
+            } else if($item['cost'] != "") {
+                $update = array(
+                    'cost'  => $item['cost']
+                );
+            } 
+
+            $this->db->update('products', array('cost' => $total_combo_item_cost), array('id' => $item['combo_id']) );
 			$this->db->update('products', $update, array('id' => $item['id']) );
+
 			$variant = $this->getProductVariantByProId($item['id']);
-			foreach($variant as $var){
-				if($item['cost']){
-					$var_cost = $item['cost'] * $var->qty_unit;
-					$this->db->update('product_variants', array('cost' => $var_cost), array('id' => $item['id']) );
-				}
-			}
+            foreach($variant as $var){
+                if($item['cost']){
+                    $var_cost = $item['cost'] * $var->qty_unit;
+                    $this->db->update('product_variants', array('cost' => $var_cost), array('id' => $item['id']) );
+                }
+            }
 		}
+
     }
 	
 	public function getProductVariantByProId($id)

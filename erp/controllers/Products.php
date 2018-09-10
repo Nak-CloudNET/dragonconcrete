@@ -1847,12 +1847,16 @@ class Products extends MY_Controller
                 $rw = 2;
 				$i  = 0;
                 foreach ($final as $csv_pr) {
-					$item = $this->products_model->getProductByCode(trim($csv_pr['code']));
+                    $item = $this->products_model->getProductByCode(trim($csv_pr['code']));
+                    $item_combo = $this->products_model->getProductAndComboItemByCode(trim($csv_pr['code']));
+                    
                     if (!$item) {
                         $this->session->set_flashdata('message', lang("check_product_code") . " (" . $csv_pr['code'] . "). " . lang("code_x_exist") . " " . lang("line_no") . " " . $rw);
                         redirect("products/update_price");
                     }
-					$final[$i]['id'] = $item->id;
+                    $final[$i]['id'] = $item->id;
+                    $final[$i]['combo_id'] = $item_combo->combo_id;
+					$final[$i]['combo_item_qty'] = $item_combo->combo_item_qty;
 					$i++;
                     $rw++;
                 }

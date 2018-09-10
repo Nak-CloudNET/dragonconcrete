@@ -31,7 +31,7 @@
                 });
                 $.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
             },
-            "aoColumns": [{"bSortable": false, "mRender": checkbox}, null, null, null, null, {
+            "aoColumns": [{"bSortable": false, "mRender": checkbox}, null, null,null, null, null, {
                 "mRender": formatQuantity,
                 "bSearchable": false
             }, {"mRender": currencyFormat, "bSearchable": false}, {
@@ -41,31 +41,33 @@
 			"fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
 				var tSales = 0, tAmount = 0, tReturn = 0, tPaid = 0, balance = 0, tDeposit = 0, tDiscount = 0;
 				for (var i = 0; i < aaData.length; i++) {
-					tSales += parseFloat(aaData[aiDisplay[i]][5]);
-					tAmount += parseFloat(aaData[aiDisplay[i]][6]);
-					tReturn += parseFloat(aaData[aiDisplay[i]][7]);
-					tPaid += parseFloat(aaData[aiDisplay[i]][8]);
-					tDeposit += parseFloat(aaData[aiDisplay[i]][9]);
-					tDiscount += parseFloat(aaData[aiDisplay[i]][10]);
-					balance += parseFloat(aaData[aiDisplay[i]][11]);
+					tSales += parseFloat(aaData[aiDisplay[i]][6]);
+					tAmount += parseFloat(aaData[aiDisplay[i]][7]);
+					tReturn += parseFloat(aaData[aiDisplay[i]][8]);
+					tPaid += parseFloat(aaData[aiDisplay[i]][9]);
+					tDeposit += parseFloat(aaData[aiDisplay[i]][10]);
+					tDiscount += parseFloat(aaData[aiDisplay[i]][11]);
+					balance += parseFloat(aaData[aiDisplay[i]][12]);
 				}
 				var nCells = nRow.getElementsByTagName('th');
-				nCells[5].innerHTML = formatQuantity(parseFloat(tSales));
-				nCells[6].innerHTML = currencyFormat(parseFloat(tAmount));
-				nCells[7].innerHTML = currencyFormat(parseFloat(tReturn));
-				nCells[8].innerHTML = currencyFormat(parseFloat(tPaid));
-				nCells[9].innerHTML = currencyFormat(parseFloat(tDeposit));
-				nCells[10].innerHTML = currencyFormat(parseFloat(tDiscount));
-				nCells[11].innerHTML = currencyFormat(parseFloat(balance));
+				nCells[6].innerHTML = formatQuantity(parseFloat(tSales));
+				nCells[7].innerHTML = currencyFormat(parseFloat(tAmount));
+				nCells[8].innerHTML = currencyFormat(parseFloat(tReturn));
+				nCells[9].innerHTML = currencyFormat(parseFloat(tPaid));
+				nCells[10].innerHTML = currencyFormat(parseFloat(tDeposit));
+				nCells[11].innerHTML = currencyFormat(parseFloat(tDiscount));
+				nCells[12].innerHTML = currencyFormat(parseFloat(balance));
 			}
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('company');?>]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('name');?>]", filter_type: "text", data: []},
-            {column_number: 3, filter_default_label: "[<?=lang('phone');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
+            {column_number: 3, filter_default_label: "[<?=lang('code');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('phone');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
+
         ], "footer");
     });
-	
+
 	$(document).ready(function(){
 		$('#form').hide();
 		$('.toggle_down').click(function () {
@@ -76,10 +78,10 @@
             $("#form").slideUp();
             return false;
         });
-		
+
 	});
 </script>
-<?php 
+<?php
    echo form_open('reports/customers_actions/'.($warehouse_id ? $warehouse_id : ''), 'id="action-form"');
 ?>
 <div class="box">
@@ -166,6 +168,7 @@
 									<input class="checkbox checkth" type="checkbox" name="check"/>
 								</th>
 								<th><?= lang("company"); ?></th>
+                                <th><?= lang("code"); ?></th>
 								<th><?= lang("name"); ?></th>
 								<th><?= lang("phone"); ?></th>
 								<th><?= lang("email_address"); ?></th>
@@ -200,6 +203,7 @@
 								<th class="text-center"></th>
 								<th class="text-center"></th>
 								<th class="text-center"></th>
+                                <th class="text-center"></th>
 								<th style="width:85px; text-align: center;"><?= lang("actions"); ?></th>
 							</tr>
                         </tfoot>

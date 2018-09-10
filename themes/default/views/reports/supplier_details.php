@@ -1,13 +1,13 @@
 
 <style type="text/css" media="all">
-	#PRData{ 
-		white-space:nowrap; 
-		width:100%; 
+	#PRData{
+		white-space:nowrap;
+		width:100%;
 	}
     #PRData td:nth-child(6), #PRData td:nth-child(7) {
         text-align: right;
     }
- 
+
 </style>
 
 <div class="box">
@@ -38,7 +38,7 @@
 				</li>
             </ul>
         </div>
-        
+
     </div>
     <div class="box-content">
         <div class="row">
@@ -56,7 +56,7 @@
                             </div>
                         </div>
 
-                       
+
 						<div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label" for="cat"><?= lang("products"); ?></label>
@@ -69,7 +69,7 @@
                                 ?>
                             </div>
                         </div>
-						
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("warehouse", "warehouse") ?>
@@ -83,7 +83,7 @@
 
                             </div>
                         </div>
-						
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label" for="supplier"><?= lang("supplier"); ?></label>
@@ -96,7 +96,7 @@
                                 ?>
                             </div>
                         </div>
-                        
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <?= lang("from_date", "from_date"); ?>
@@ -109,14 +109,14 @@
                                 <?php echo form_input('to_date', (isset($_POST['to_date']) ? $_POST['to_date'] :$this->erp->hrsd($to_date)), 'class="form-control date" id="to_date"'); ?>
                             </div>
                         </div>
-						 
+
                     </div>
 					<div class="form-group">
                         <div
                             class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
                     </div>
                     <?php echo form_close(); ?>
-					
+
                 </div>
                 <div class="clearfix"></div>
 
@@ -129,11 +129,13 @@
 							<th class=""><?= lang("reference") ?></th>
 							<th class=""><?= lang("name") ?></th>
 							<th class=""><?= lang("warehouse") ?></th>
+
 							<th class=""><?= lang("qty") ?></th>
+                            <th class=""><?= lang("Quanlity_unit") ?></th>
 							<th class=""><?= lang("unit") ?></th>
 							<th class=""><?= lang("unit_cost") ?></th>
 							<th class=""><?= lang("amount") ?></th>
-							
+
                         </tr>
                         </thead>
                         <tbody>
@@ -150,7 +152,7 @@
 							if($reference){
 								$this->db->where("reference_no",$reference);
 							}
-							
+
 							if($product_id){
 								$this->db->where("product_id",$product_id);
 							}
@@ -173,6 +175,7 @@
 											?>
 											<tr>
 												<td colspan="9" style="background:#F0F8FF;"><b><?=$row->supplier?></b></td>
+												<td colspan="9" style="background:#F0F8FF;"></td>
 											</tr>
 											<?php
 												$this->db->select("product_id,product_name,erp_purchase_items.quantity,real_unit_cost,unit_cost,erp_purchases.supplier_id,reference_no,erp_purchase_items.date,transaction_type,option_id,unit,net_shipping,warehouses.name as warehouse_name")->join("erp_purchases","erp_purchases.id = erp_purchase_items.purchase_id","LEFT")->join("erp_products","erp_products.id = erp_purchase_items.product_id","LEFT")->where("erp_purchase_items.transaction_type = 'PURCHASE'");
@@ -197,13 +200,13 @@
 													}
 												}
 												$pur_items = $this->db->get("erp_purchase_items")->result();
-												$tqty = 0 ; 
+												$tqty = 0 ;
 												$amount = 0 ;
 												$totalshipping = 0 ;
 												$vqty = 0;
 												$unit_name = "";
 												$product_cost = 0;
-												
+
 											if(is_array($pur_items)){
 												foreach($pur_items as $row1){
 													if($row->supplier_id == $row1->supplier_id){
@@ -212,7 +215,7 @@
 															$unit_q = $unit_n->qty_unit;
 															//$unit_name = ' ( '.$this->erp->formatQuantity(( abs($row1->quantity)*$unit_q)/$unit_q).' '.$unit_n->name.' )';
 															$vqty = abs($row1->quantity)*$unit_q;
-															$unit_name = $this->erp->convert_unit_2_string($row1->product_id,$vqty);			
+															$unit_name = $this->erp->convert_unit_2_string($row1->product_id,$vqty);
 														}else{
 															$unit = $this->reports_model->getUn($row1->unit);
 															if($unit){
@@ -220,6 +223,7 @@
 															}
 															$vqty =  abs($row1->quantity);
 														}
+
 														$product_cost = $row1->unit_cost;
 														?>
 														<tr>
@@ -228,8 +232,22 @@
 															<td><?=$row1->reference_no?></td>
 															<td><?=$row1->product_name?></td>
 															<td><?=$row1->warehouse_name?></td>
+
 															<td class="text-right"><?=$this->erp->formatQuantity($vqty)?></td>
+                                                            <td>
+                                                            <?php if ($unit_q = $unit_n->qty_unit != 0){
+                                                                echo ($unit_q = $unit_n->qty_unit);
+                                                            }else{
+                                                                echo $this->erp->formatQuantity($vqty);
+                                                            }
+
+
+
+                                                            ?>
+                                                            </td>
+
 															<td ><?=$unit_name?></td>
+
 															<td class="text-right"><?=$this->erp->formatMoney($row1->unit_cost)?></td>
 															<td class="text-right"><b><?=$this->erp->formatMoney(abs($row1->quantity)*$product_cost)?></b></td>
 														</tr>
@@ -246,11 +264,12 @@
 										<td ></td>
 										<td ></td>
 										<td ></td>
+										<td ></td>
 										<td class="text-right"><b><?=$this->erp->formatQuantity($tqty)?></b></td>
 										<td ></td>
 										<td ></td>
 										<td class="text-right"><b><?=$this->erp->formatMoney($amount)?></b></td>
-										
+
 									</tr>
 									<?php
 									$grand +=$amount;
@@ -266,14 +285,15 @@
 								<td style="background:#4682B4;color:white;"></td>
 								<td style="background:#4682B4;color:white;"></td>
 								<td style="background:#4682B4;color:white;"></td>
+								<td style="background:#4682B4;color:white;"></td>
 								<td style="background:#4682B4;color:white;" class="text-right"><b><?=$this->erp->formatQuantity($gqty)?></b></td>
 								<td style="background:#4682B4;color:white;"></td>
 								<td style="background:#4682B4;color:white;"></td>
 								<td style="background:#4682B4;color:white;" class="text-right"><b><?=$this->erp->formatMoney($grand)?></b></td>
-								
+
 							</tr>
                         </tbody>
-                       
+
                     </table>
                 </div>
             </div>
@@ -282,7 +302,7 @@
 </div>
 
 <script type="text/javascript">
-    
+
 	$(document).ready(function(){
 		$('#form').hide();
 		$('.toggle_down').click(function () {
@@ -293,31 +313,31 @@
 			$("#form").slideUp();
 			return false;
 		});
-		/*
-		$("#excel").click(function(e){
-			e.preventDefault();
-			window.location.href = "<?=site_url('products/getProductAll/0/xls/')?>";
-			return false;
-		});
-		$('#pdf').click(function (event) {
-            event.preventDefault();
-            window.location.href = "<?=site_url('products/getProductAll/pdf/?v=1'.$v)?>";
-            return false;
-        });
-		*/
+		///*
+		//$("#excel").click(function(e){
+		//	e.preventDefault();
+		//	window.location.href = "<?//=site_url('products/getProductAll/0/xls/')?>//";
+		//	return false;
+		//});
+		//$('#pdf').click(function (event) {
+        //    event.preventDefault();
+        //    window.location.href = "<?//=site_url('products/getProductAll/pdf/?v=1'.$v)?>//";
+        //    return false;
+        //});
+		//*/
 		$('.date').datetimepicker({
-			format: site.dateFormats.js_sdate, 
-			fontAwesome: true, 
-			language: 'erp', 
-			todayBtn: 1, 
-			autoclose: 1, 
-			minView: 2 
+			format: site.dateFormats.js_sdate,
+			fontAwesome: true,
+			language: 'erp',
+			todayBtn: 1,
+			autoclose: 1,
+			minView: 2
 		});
-		
+
 		$(document).on('focus','.date', function(t) {
 			$(this).datetimepicker({format: site.dateFormats.js_sdate, fontAwesome: true, todayBtn: 1, autoclose: 1, minView: 2 });
 		});
-	
+
 		$('body').on('click', '#multi_adjust', function() {
 			 if($('.checkbox').is(":checked") === false){
 				alert('Please select at least one.');
@@ -327,7 +347,7 @@
 			$('.checkbox').each(function(i){
 				if($(this).is(":checked")){
 					if(this.value != ""){
-						arrItems[i] = $(this).val();   
+						arrItems[i] = $(this).val();
 					}
 				}
 			});
@@ -338,7 +358,7 @@
 			e.preventDefault();
 				window.location.href = "<?=site_url('reports/ProductsSuppliersReport/0/xls/'.$warehouse1.'/'.$supplier1.'/'.$reference1.'/'.$product_id1.'/'.$from_date1.'/'.$to_date1)?>";
 				return false;
-			
+
 		});
 		$('#pdf').on('click', function(e){
 			e.preventDefault();

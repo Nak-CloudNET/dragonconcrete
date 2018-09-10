@@ -523,6 +523,7 @@
                                 <?php echo form_hidden('so_id', (isset($sale_order->sale_id)?$sale_order->sale_id:0), 'class="form-control input-tip" id="so_id"'); ?>
                                 <?php echo form_hidden('d_type', $type, 'class="form-control input-tip" id="d_type"'); ?>
                                 <?php echo form_hidden('type_id', $type_id, 'class="form-control input-tip" id="type_id"'); ?>
+                                <input type="hidden" name="delivery_id" id="delivery_id" value="<?= $delivery_id?$delivery_id:0 ?>">
                             </div>
                         </div>
                         <div class="col-md-4" id="so_deposit" style="display:none;">
@@ -1480,7 +1481,6 @@
         });
 
 		$('#before_sub').click(function (e) {
-
 			e.preventDefault();
 			var message = '';
 			var help = false;
@@ -1513,6 +1513,7 @@
 			}
 
 			<?php if($setting->credit_limit == 1) {?>
+
 			var payment_status = $("#slpayment_status").val();
 			if(payment_status == 'due' || payment_status == 'partial'){
 				var customer_id = $('#slcustomer').val();
@@ -1531,6 +1532,7 @@
 				}
 			}
 			<?php } ?>
+
 			var GP = '<?= $GP['sales-discount'];?>';
             var Owner = '<?= $Owner?>';
             var Admin = '<?= $Admin?>';
