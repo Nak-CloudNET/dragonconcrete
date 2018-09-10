@@ -13575,7 +13575,47 @@ class Sales extends MY_Controller
 	
 	function getSaleOrderitems($start = NULL, $end = NULL)
     {
-		
+        if ($this->input->get('so_no')) {
+            $so_no = $this->input->get('so_no');
+        } else {
+            $so_no = NULL;
+        }
+        if ($this->input->get('Do_no')) {
+            $Do_no = $this->input->get('Do_no');
+        } else {
+            $Do_no = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('biller')) {
+            $biller = $this->input->get('biller');
+        } else {
+            $biller = NULL;
+        }
+
+        if ($start_date) {
+            $start_date = $this->erp->fld($start_date);
+            $end_date = $this->erp->fld($end_date);
+        }
+        if ($this->input->get('saleman')) {
+            $saleman = $this->input->get('saleman');
+        } else {
+            $saleman = NULL;
+        }
+
         $this->erp->checkPermissions('deliveries');
 
 		$print_cabon_link = anchor('sales/view_delivery_cabon/$1', '<i class="fa fa-file-text-o"></i> ' . lang('print_cabon'), 'data-toggle="modal" data-target="#myModal"');
@@ -13609,7 +13649,7 @@ class Sales extends MY_Controller
         //GROUP_CONCAT(CONCAT('Name: ', sale_items.product_name, ' Qty: ', sale_items.quantity ) SEPARATOR '<br>')
 
 		$this->datatables
-            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username, 
+            ->select("sale_order.id as id, sale_order.date, sale_order.reference_no, project.company, cust.name as customer, users.username,
 					COALESCE(SUM(erp_sale_order_items.quantity),0) as qty, 
 					COALESCE(SUM(erp_sale_order_items.quantity_received),0) as qty_received, 
 					COALESCE(SUM(erp_sale_order_items.quantity),0) - COALESCE(SUM(erp_sale_order_items.quantity_received),0) as balance, 
@@ -13621,8 +13661,33 @@ class Sales extends MY_Controller
 			->join('sale_order_items','sale_order.id=sale_order_items.sale_order_id','left')
 			->where('sale_order.order_status =', 'completed')
 			->where('sale_order.sale_status <>', 'sale')
+
 			
 			->group_by('sale_order.id');
+        if($so_no) {
+            $this->datatables->where('deliveries.sale_reference_no', $so_no);
+        }
+        if($Do_no) {
+            $this->datatables->where('deliveries.do_reference_no', $Do_no);
+        }
+        if ($customer) {
+            $this->datatables->where('deliveries.customer_id', $customer);
+        }
+        if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $this->datatables->where('deliveries.created_by', $this->session->userdata('user_id'));
+        }
+        if($saleman){
+            $this->datatables->where('users.id', $saleman);
+        }
+        if ($start_date) {
+            $this->datatables->where($this->db->dbprefix('deliveries').'.date BETWEEN "' . $start_date . ' 00:00:00" and "' . $end_date . '23:59:00"');
+        }
+        if ($biller) {
+            $this->datatables->where('sale_order.biller_id', $biller);
+        }
+
+
+
 		if($start && $end){
 			$this->datatables->where('date BETWEEN "' . $start . '" AND "' . $end . '"');
 		}
@@ -13808,9 +13873,11 @@ class Sales extends MY_Controller
 
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
+        $this->data['agencies'] = $this->site->getAllUsers();
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('deliveries')));
         $meta = array('page_title' => lang('deliveries'), 'bc' => $bc);
+        $this->data['billers'] 			= $this->site->getAllCompanies('biller');
         $this->page_construct('sales/add_deliveries', $meta, $this->data);
     }
 	

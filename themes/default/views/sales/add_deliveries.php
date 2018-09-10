@@ -3,6 +3,34 @@
 		cursor: pointer;
 	}
 </style>
+<?php
+$start_date=date('Y-m-d',strtotime($start));
+$rep_space_end=str_replace(' ','_',$end);
+$end_date=str_replace(':','-',$rep_space_end);
+
+if ($this->input->post('so_no')) {
+    $v .= "&so_no=" . $this->input->post('so_no');
+}
+if ($this->input->post('Do_no')) {
+    $v .= "&Do_no=" . $this->input->post('Do_no');
+}
+if ($this->input->post('start_date')) {
+    $v .= "&start_date=" . $this->input->post('start_date');
+}
+if ($this->input->post('end_date')) {
+    $v .= "&end_date=" . $this->input->post('end_date');
+}
+if ($this->input->post('saleman')) {
+    $v .= "&saleman=" . $this->input->post('saleman');
+}
+if ($this->input->post('customer')) {
+    $v .= "&customer=" . $this->input->post('customer');
+}
+if ($this->input->post('biller')) {
+    $v .= "&biller=" . $this->input->post('biller');
+}
+?>
+
 <script>
     $(document).ready(function () {
         var oTable = $('#DOData').dataTable({
@@ -58,7 +86,7 @@
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
             "iDisplayLength": <?= $Settings->rows_per_page ?>,
             'bProcessing': true, 'bServerSide': true,
-            'sAjaxSource': '<?= site_url('sales/getSaleOrderitems').'/'.(isset($start_date)?$start_date:"").'/'.(isset($end_date)?$end_date: "") ?>',
+            'sAjaxSource': '<?= site_url('sales/getSaleOrderitems').($warehouse_id ? '/' . $warehouse_id : '').'/?v=1'.$v ?>',
             'fnServerData': function (sSource, aoData, fnCallback) {
                 aoData.push({
                     "name": "<?= $this->security->get_csrf_token_name() ?>",
@@ -221,10 +249,30 @@
 
 
 
+<!--                                <div class="col-sm-4">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label class="control-label" for="Do_no">--><?//= lang("Do_no"); ?><!--</label>-->
+<!--                                        --><?php //echo form_input('Do_no', (isset($_POST['Do_no']) ? $_POST['Do_no'] : ""), 'class="form-control tip" id="Do_no"'); ?>
+<!--                                    </div>-->
+<!--                                </div>-->
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="control-label" for="Do_no"><?= lang("Do_no"); ?></label>
-                                        <?php echo form_input('Do_no', (isset($_POST['Do_no']) ? $_POST['Do_no'] : ""), 'class="form-control tip" id="Do_no"'); ?>
+                                        <label class="control-label" for="project"><?= lang("project"); ?></label>
+                                        <?php
+                                        if ($Owner || $Admin) {
+                                            $bl[""] = "";
+                                            foreach ($billers as $biller) {
+                                                $bl[$biller->id] = $biller->company != '-' ? $biller->company : $biller->name;
+                                            }
+                                            echo form_dropdown('biller', $bl, (isset($_POST['biller']) ? $_POST['biller'] : ""), 'class="form-control" id="biller" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("biller") . '"');
+                                        } else {
+                                            $user_pro[""] = "";
+                                            foreach ($user_billers as $user_biller) {
+                                                $user_pro[$user_biller->id] = $user_biller->company;
+                                            }
+                                            echo form_dropdown('biller', $user_pro, (isset($_POST['biller']) ? $_POST['biller'] : ''), 'class="form-control" id="biller" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("biller") . '"');
+                                        }
+                                        ?>
                                     </div>
                                 </div>
 
