@@ -1517,17 +1517,8 @@ class Sales extends MY_Controller
 			->where(array('payment_status !=' => 'paid'))
 			->where(array('sale_status !=' => 'ordered'))
 			->group_by('sales.id');
-			if(isset($_REQUEST['d'])){
-				$date = $_GET['d'];
-				$date1 = str_replace("/", "-", $date);
-				$date =  date('Y-m-d', strtotime($date1));
-				
-				$this->datatables
-				->where("sales.date >=", $date)
-				->where('DATE_SUB(erp_sales.date, INTERVAL 1 DAY) <= CURDATE()')
-				->where('sales.payment_term <>', 0);
-			}
-        }        
+
+        }
         if ($this->permission['sales-index'] = ''){
             if (!$this->Customer && !$this->Supplier && !$this->Owner && !$this->Admin) {
                 $this->datatables->where('created_by', $this->session->userdata('user_id'));
