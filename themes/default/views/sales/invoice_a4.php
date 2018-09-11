@@ -196,9 +196,9 @@
 
                         </div>
                     </div>
-                    <div class="row box " style="text-align: left;">
-                        <div class="col-sm-7 col-xs-7  ">
-                            <table class="line " style="border: 1px solid black " >
+                    <div class="row box  " style="text-align: left;">
+                        <div class="col-sm-7 col-xs-7  " style="border-radius: 5px">
+                            <table class="line " style="border: 1px solid black   " >
 
 
                                     <tr>
@@ -227,33 +227,38 @@
                         <div class="col-sm-5 col-xs-5 ">
                             <table  class="line" style="border: 1px solid black"  >
                                 <tr>
-                                    <td style="width: 45%;">លេខរៀង / N<sup>o</sup></sup></td>
+                                    <td style="width: 45%;">From </sup></td>
+                                    <td style="width: %;">:</td>
+                                    <td style="width: 50%;"><?= $biller->company ?></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 45%;">Invoice N<sup>o</sup></sup></td>
                                     <td style="width: %;">:</td>
                                     <td style="width: 50%;"><?= $invs->reference_no ?></td>
                                 </tr>
                                 <tr>
-                                    <td>កាលបរិច្ឆេទ / Date</td>
+                                    <td>Date</td>
                                     <td>:</td>
                                     <td><?= $this->erp->hrld($invs->date); ?></td>
                                 </tr>
                                 <tr>
-                                    <td>អ្នកលក់ / Sale Man</td>
+                                    <td>Credit term</td>
                                     <td>:</td>
                                     <td><?= $invs->saleman; ?></td>
                                 </tr>
 
-                                <?php if ($invs->payment_term) { ?>
+
                                     <tr>
-                                        <td>រយៈពេលបង់ប្រាក់ </td>
+                                        <td>Sale man </td>
                                         <td>:</td>
-                                        <td><?= $invs->payment_term ?></td>
+                                        <td><?= $invs->saleman; ?></td>
                                     </tr>
-                                    <tr>
+                                   <!-- <tr>
                                         <td style="width: 30% !important">កាលបរិច្ឆេទនៃការបង់ប្រាក់ </td>
                                         <td>:</td>
                                         <td><?= $this->erp->hrsd($invs->due_date) ?></td>
-                                    </tr>
-                                <?php } ?>
+                                    </tr>-->
+
                             </table>
                         </div>
                     </div>
