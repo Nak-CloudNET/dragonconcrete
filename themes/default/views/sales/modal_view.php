@@ -563,12 +563,12 @@
                                 <span class="hidden-sm hidden-xs"><?= lang('Invoice_Combine_Item') ?></span>
                             </a>
                         </div>
-					<!--	<div class="btn-group">
-                            <a href="<?= site_url('sales/sales_invoice_a5/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('sales_invoice_a5') ?>">
+						<div class="btn-group">
+                            <a href="<?= site_url('sales/invoice_a4/' . $inv->id) ?>" target="_blank" class="tip btn btn-primary" title="<?= lang('sales_invoice') ?>">
                                 <i class="fa fa-download"></i>
-                                <span class="hidden-sm hidden-xs"><?= lang('sales_invoice_a5') ?></span>
+                                <span class="hidden-sm hidden-xs"><?= lang('sales_invoice') ?></span>
                             </a>
-                        </div>-->
+                        </div>
 				<!--
                         <?php if($inv->deposit_so_id != 0){?>
 				        <div class="btn-group  ">

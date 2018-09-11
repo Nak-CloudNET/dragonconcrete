@@ -4581,7 +4581,7 @@ class Site extends CI_Model
 	
 	public function getUserWarehouses()
     {
-		$query = $this->db->query('
+        $query = $this->db->query('
 			SELECT
 				*
 			FROM

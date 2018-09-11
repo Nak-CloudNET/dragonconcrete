@@ -1,6 +1,6 @@
 <script type="text/javascript">
 $(document).ready(function(){
-	
+
 	$('body').on('click', '#excel1', function(e) {
 	   e.preventDefault();
 	   var k = false;
@@ -15,7 +15,7 @@ $(document).ready(function(){
 	   e.preventDefault();
 	   var k = false;
 	   $.each($("input[name='val[]']:checked"), function(){
-	    
+
 	    k = true;
 	   });
 	   $('#form_action').val($('#pdf1').attr('data-action'));
@@ -56,7 +56,7 @@ $(document).ready(function(){
 					</a>
 				</li>
             </ul>
-        </div>       
+        </div>
     </div>
     <div class="box-content">
         <div class="row">
@@ -78,14 +78,14 @@ $(document).ready(function(){
                                 }
                                 echo form_dropdown('product', $pro, (isset($_POST['product']) ? $_POST['product'] : $product2), 'class="form-control" id="product" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("producte") . '"');
                                 ?>
-								
+
                             </div>
                         </div>
 						<?php if(isset($biller_idd)){?>
 						<!--<div class="col-sm-4">
 						 <div class="form-group">
                                     <?= lang("biller", "biller"); ?>
-                                    <?php 
+                                    <?php
 									$str = "";
 									$q = $this->db->get_where("companies",array("id"=>$biller_idd),1);
 									 if ($q->num_rows() > 0) {
@@ -105,7 +105,7 @@ $(document).ready(function(){
                                     $waee[$wa->id] = $wa->code.' / '.$wa->name;
                                 }
                                 echo form_dropdown('warehouse', $waee, (isset($_POST['warehouse']) ? $_POST['warehouse'] : ''), 'class="form-control select" id="warehouse" placeholder="' . lang("select") . " " . lang("warehouse") . '" style="width:100%"')
-							
+
                                 ?>
 
                             </div>
@@ -146,16 +146,16 @@ $(document).ready(function(){
                                 <?= lang("to_date", "to_date"); ?>
                                 <?php echo form_input('to_date', (isset($_POST['to_date']) ? $_POST['to_date'] : $this->erp->hrsd($to_date2)), 'class="form-control date" id="to_date"'); ?>
                             </div>
-                        </div>		
-					
-						
+                        </div>
+
+
 						</div>
 					<div class="form-group">
                         <div
                             class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary sub"'); ?> </div>
                     </div>
                     <?php echo form_close(); ?>
-					
+
                 </div>
                 <div class="clearfix"></div>
 				<?php
@@ -172,7 +172,7 @@ $(document).ready(function(){
 						}
 					}
 					}
-					
+
 					$num2 = $this->reports_model->getTransuctionsPurOUT($product2,$warehouse2,$from_date2,$to_date2,$biller2);
 					$k2 = 0;
 					if(is_array($num2)){
@@ -189,7 +189,7 @@ $(document).ready(function(){
                 <div class="table-responsive" style="width:100%;overflow:auto;">
                     <table id="tbstock" class="table table-condensed table-bordered table-hover table-striped" >
                         <thead>
-							<tr>							
+							<tr>
 								<th rowspan="2">Location <span style="color:orange;">/</span> Category <span style="color:orange;">/</span> Item</th>
 								<th rowspan="2"><?= lang("begin") ?></th>
 								<?php if($k){?>
@@ -203,7 +203,7 @@ $(document).ready(function(){
 								<th rowspan="2"><?= lang("balance") ?></th>
 							</tr>
 							<tr class="shead">
-								
+
 								<?php
 									if(is_array($num)){
 									foreach($num as $tr){
@@ -222,14 +222,14 @@ $(document).ready(function(){
 									}
 									}
 								?>
-								
+
 							</tr>
 						</thead>
                         <tbody>
 							<?php
 							if(is_array($ware)){
 								foreach($ware as $rw){
-							?>		
+							?>
 								<tr>
 									<td colspan="<?=$k+$k2+5?>" style="color:green;"><span style="font-size:17px;"><b><?=$rw->name;?> /</b></span></td>
 								</tr>
@@ -242,7 +242,7 @@ $(document).ready(function(){
 									$total_in_cate_w = array();
 									$total_out_cate_w = array();
 									foreach($procat as $rc){
-								
+
 								?>
 									<tr>
 									<td colspan="<?=$k+$k2+5?>" style="color:orange;">&nbsp;&nbsp;&nbsp;<span style="font-size:15px;"><b><?=$rc->name;?> /</b></span></td>
@@ -258,11 +258,11 @@ $(document).ready(function(){
 									$total_out_cate = array();
 									$propur = $this->reports_model->getProPur($rw->id,$rc->id,$product2,$biller2);
 									foreach($propur as $rp){
-										$beginINqty = $this->reports_model->getBeginQtyINALL($rp->product_id,$rw->id,$from_date2,$to_date2,$biller2);
+										$beginINqty = $this->reports_model->getBeginQtyINALL($rp->product_id,$rw->id,   $from_date2,$to_date2,$biller2);
 										$beginOUTqty = $this->reports_model->getBeginQtyOUTALL($rp->product_id,$rw->id,$from_date2,$to_date2,$biller2);
 										$btotal_qty = $beginINqty->bqty-$beginOUTqty->bqty;
 										$begin_qty = $this->reports_model->getBeginQtyALL($rp->product_id,$rw->id,$from_date2,$to_date2,$biller2);
-										
+
 								?>
 										<tr>
 											<td >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=$rp->name?$rp->name:$rp->product_id;?><?=" (".$rp->name_unit.")"?></td>
@@ -273,10 +273,10 @@ $(document).ready(function(){
 												if($begin_qty->bqty){
 													echo  $this->erp->convert_unit_2_string($rp->product_id,$begin_qty->bqty);
 												}
-												
+
 											}
 												?>
-												
+
 											</td>
 										<?php
 										$total_in = 0;
@@ -301,26 +301,26 @@ $(document).ready(function(){
 
 											<?php
 													 $total_in +=$allqty->bqty;
-												
+
 													// $total_in_cate[$tr->transaction_type] +=$allqty->bqty;
-												
+
 												}
 											}
 											}?>
 											<td style='text-align:right;'>
-											
+
 											<b><?=$this->erp->formatDecimal($total_in?$total_in:'')?></b>
-											
+
 											</td>
 											<?php
 											if(is_array($num2)){
-											
+
 											foreach($num2 as $tr2){
-												
+
 													if($tr2->transaction_type){
 													$allqty2 = $this->reports_model->getQtyOUTALL($rp->product_id,$rw->id,$tr2->transaction_type,$from_date2,$to_date2,$biller2);
 														$qty_unit2 = $this->reports_model->getQtyUnitOUTALL($rp->product_id,$rw->id,$tr2->transaction_type,$from_date2,$to_date2,$biller2);?>
-														
+
 													 <td style='text-align:right;'>
 													 <?php if($allqty2->bqty){?>
 													 <span style="color:blue;"><?=$this->erp->formatDecimal($allqty2->bqty)?></span><br>
@@ -331,34 +331,34 @@ $(document).ready(function(){
 													 }
 													?>
 													 </td>
-													 
+
 											<?php
 													 $total_out+=$allqty2->bqty;
-														
+
 													/*	if(in_array($tr2->transaction_type,$total_out_cate)){
 															$total_out_cate[$tr2->transaction_type] +=$allqty2->bqty;
 														}*/
 												 }
-												
+
 											}
 											}
 											//$qty_unit3 = $this->reports_model->getQtyUnitALL($rp->product_id,$rw->id,$from_date2,$to_date2);
-											$am = ($total_in-$total_out);
+											$am = $btotal_qty+($total_in-$total_out);
 											?>
 											<td style='text-align:right;'><b><?=$this->erp->formatDecimal($total_out?$total_out:'')?></b> </td>
 											<td style='text-align:right;'><span><b><?=$this->erp->formatDecimal($am?$am:'')?></b></span><br>
 											<?php
-											
+
 													 if($am){
-														
+
 															echo   $this->erp->convert_unit_2_string($rp->product_id,$am);
-														 
+
 													}
 													?>
 											</td>
 										</tr>
-										
-							<?php	
+
+							<?php
 										$balance+=$am;
 										$begin_balance+=$btotal_qty;
 										$total_inn +=$total_in;
@@ -375,30 +375,30 @@ $(document).ready(function(){
 											foreach($num as $tr){
 												if($tr->transaction_type){
 													$amount_qty = $this->reports_model->getAmountQtyINALL($product2,$rw->id,$tr->transaction_type,$rc->id,$from_date2,$to_date2,$biller2);
-													 
+
 													 echo "<td style='text-align:right;background:#F0F8FF;'><b>".$this->erp->formatDecimal($amount_qty->bqty?$amount_qty->bqty:'')."</b></td>";
-												
+
 													 //$total_in_cate_w[$tr->transaction_type] += $total_in_cate[$tr->transaction_type];
-											
-													 
+
+
 												}
 											}
 										}?>
 										<td style='text-align:right;background:#F0F8FF;'><b><?=$this->erp->formatDecimal($total_inn?$total_inn:'')?></b></td>
 										<?php
 										if(is_array($num2)){
-										
+
 											foreach($num2 as $tr2){
-												 
+
 													if($tr2->transaction_type){
 													 $amount_qty2 = $this->reports_model->getAmountQtyOUTALL($product2,$rw->id,$tr2->transaction_type,$rc->id,$from_date2,$to_date2,$biller2);
-														
+
 														 echo "<td style='text-align:right;background:#F0F8FF;'><b>".$this->erp->formatDecimal($amount_qty2->bqty?$amount_qty2->bqty:'')."</b></td>";
 														// $total_out_cate_w[$tr2->transaction_type] += $total_out_cate[$tr2->transaction_type];
-														
-													
+
+
 													}
-												
+
 											}
 										}
 											?>
@@ -411,7 +411,7 @@ $(document).ready(function(){
 									$total2_inn +=$total_inn;
 									$total2_outt +=$total_outt;
 									}
-							?>		
+							?>
 								<tr>
 									<td  style="text-align:right; background:#428BCA;color:white;border-color: #357EBD;"><b>Grand Total >> <?=$rw->name;?>:</b></td>
 									<td style="text-align:right; background:#428BCA;color:white;border-color: #357EBD;"><b><?=$this->erp->formatDecimal($total_begin_balance?$total_begin_balance:'')?></b></td>
@@ -420,25 +420,25 @@ $(document).ready(function(){
 											foreach($num as $tr){
 												if($tr->transaction_type){
 													$amount_qty_cat = $this->reports_model->getAmountQtyINALLCAT($product2,$rw->id,$tr->transaction_type,$category2,$from_date2,$to_date2,$biller2);
-													
+
 													 echo "<td style='text-align:right; background:#428BCA;color:white;border-color: #357EBD;'><b>".$this->erp->formatDecimal($amount_qty_cat->bqty?$amount_qty_cat->bqty:'')."</b></td>";
-												
+
 												}
 											}
 										}?>
 										<td style="text-align:right; background:#428BCA;color:white;border-color: #357EBD;"><b><?=$this->erp->formatDecimal($total2_inn?$total2_inn:'')?></b></td>
-										
+
 										<?php
 										if(is_array($num2)){
 											foreach($num2 as $tr2){
-												
+
 												if($tr2->transaction_type){
 													 $amount_qty_cat2 = $this->reports_model->getAmountQtyOUTALLCAT($product2,$rw->id,$tr2->transaction_type,$category2,$from_date2,$to_date2,$biller2);
-													
+
 													 echo "<td style='text-align:right; background:#428BCA;color:white;border-color: #357EBD;'><b>".$this->erp->formatDecimal($amount_qty_cat2->bqty?$amount_qty_cat2->bqty:'')."</b></td>";
-													
+
 												}
-												 
+
 											}
 										}
 											?>
@@ -449,10 +449,10 @@ $(document).ready(function(){
 								}
 							}
 							?>
-                        </tbody>                       
+                        </tbody>
                     </table>
                 </div>
-				
+
             </div>
         </div>
     </div>
@@ -492,9 +492,9 @@ $(document).ready(function () {
             window.location.href = "<?= site_url('reports/inventoryInoutReport/pdf/0/'.$product1.'/'.$category1.'/'.$warehouse1.'/'.$from_date2.'/'.$to_date2) ?>";
             return false;
 		}
-	});	
+	});
 });
 
 
-		
+
 </script>
