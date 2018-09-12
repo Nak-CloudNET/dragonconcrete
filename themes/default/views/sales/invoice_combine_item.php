@@ -382,13 +382,17 @@
         </div>
 
     </div>
+    <div class="clear-both">
+        <div style="width:100%;height:80px"></div>
+    </div>
+    <div style="width: 63%;margin: 0 auto;">
+        <a class="btn btn-warning no-print" href="<?= site_url('sales'); ?>">
+            <i class="fa fa-hand-o-left" aria-hidden="true"></i>&nbsp;<?= lang("back"); ?>
+        </a>
+    </div>
 </div>
 <br>
-<div style="width: 63%;margin: 0 auto;">
-    <a class="btn btn-warning no-print" href="<?= site_url('sales'); ?>">
-        <i class="fa fa-hand-o-left" aria-hidden="true"></i>&nbsp;<?= lang("back"); ?>
-    </a>
-</div>
+
 <br>
 <div></div>
 <!--<div style="margin-bottom:50px;">
