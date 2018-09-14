@@ -717,7 +717,7 @@ class Products_model extends CI_Model
 
     public function updateProduct($id, $data, $items, $product_attributes, $photos, $update_variants, $related_products=NULL,$items2)
     {
-		//$this->erp->print_arrays($product_attributes);
+		//$this->erp->print_arrays($data['code']);
         if ($this->db->update('products', $data, array('id' => $id))) {
 
             if ($items) {
@@ -733,6 +733,9 @@ class Products_model extends CI_Model
                     $item2['digital_pro_id'] = $id;
                     $this->db->insert('erp_digital_items', $item2);
                 }
+            }
+            if ($data['code']){
+                $this->site->updateComboCost($data['code']);
             }
 			//============== Add To Warehouse ================//
 			$warehouses = $this->site->getAllWarehouses();
