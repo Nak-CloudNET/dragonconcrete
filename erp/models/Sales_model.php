@@ -1107,13 +1107,14 @@ class Sales_model extends CI_Model
 	public function getInvoiceByID($id=null,$wh=null)
     {
 		$this->db
-			 ->select("sales.*, companies.phone, companies.email, quotes.reference_no as quote_no, users.username as saleman,deliveries.location as loc(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit, (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, companies.invoice_footer as invoice_footer, group_areas.areas_group")
+			 ->select("sales.*, companies.phone, companies.email, quotes.reference_no as quote_no, users.username as saleman,deliveries.location as loc, (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit, (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, companies.invoice_footer as invoice_footer, group_areas.areas_group")
 			 ->join('companies', 'sales.biller_id = companies.id', 'left')
 			 ->join('quotes', 'sales.quote_id = quotes.id', 'left')
 			 ->join('payments', 'payments.sale_id = sales.id', 'left')
 			 ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
 			 ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
-			 ->join('users', 'sales.saleman_by = users.id', 'left');
+			 ->join('users', 'sales.saleman_by = users.id', 'left')
+			 ->join('deliveries', 'sales.delivery_by = deliveries.sale_id', 'left');
 			 if($wh){
 			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
 			 }

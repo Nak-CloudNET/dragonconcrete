@@ -19,7 +19,7 @@
         }
         .container {
             width: 50%;
-            margin: 20px auto;
+            margin: 10px auto;
             padding: 10px;
             font-size: 14px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -42,12 +42,7 @@
             border: 1px solid #000 !important;
         }
         @media print{
-            .cl_pd:nth-child(1){
-                /*margin-left: -15px;*/
-            }
-            .cl_pd:nth-child(2){
-                /*margin-right: -15px;*/
-            }
+
             .page {
                 page-break-after: always;
             }
@@ -113,74 +108,32 @@
             <div class="row padding10" style="margin-top: -20px !important">
 
                 <?php //$this->erp->print_arrays($invs); ?>
-                <div class="col-xs-6 cl_pd"  style="float: left;font-size:14px; margin-top: -30px !important;  ">
-                    <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;" >
-
-
-
-                            <tr>
-                                <td>អតិថិជន / Customer :
+                <div class="col-xs-6"  style="float: left;font-size:14px; margin-top: -30px !important;border-radius: 6px;border: 1px solid black;height: 151px;">
+                                <p>អតិថិជន / Customer :
                                     <?php if(($customer->name_kh)) { ?>
                                         <?= $customer->name_kh ?>
                                     <?php }else { ?>
                                         <?= $customer->name ?>
-                                    <?php } ?></td>
-                            </tr>
-                            <tr>
-                                <td>អាសយដ្ឋាន / Address:
+                                    <?php } ?></p>
+
+                                <p>អាសយដ្ឋាន / Address:
 
                                     <?php if(!empty($customer->address_kh)) { ?>
                                         <?= $customer->address_kh?>
                                     <?php }else { ?>
-                                    <?= $customer->address ?></td>
+                                    <?= $customer->address ?></p>
                                 <?php } ?>
-                            </tr>
-                            <tr>
-                                <td>ទូរស័ព្ទលេខ (Tel):
-                                    <?= $customer->phone ?></td>
-                            </tr>
 
-                    </table>
-
+                                <p>ទូរស័ព្ទលេខ (Tel):
+                                    <?= $customer->phone ?></p>
                 </div>
 
-                <div class="col-xs-6 cl_pd"  style="float: right;font-size:14px; margin-top: -30px !important; ">
-                    <table class="trtd" style=" width:100%;border:solid 1px #000; padding-left:10px !important;">
-                        <tr>
-                            <td style="width: 45%;">From </sup></td>
-                            <td style="width: %;">:</td>
-                            <td style="width: 50%;"><?= $biller->company ?></td>
-                        </tr>
-                        <tr>
-                            <td style="width: 45%;">Invoice N<sup>o</sup></sup></td>
-                            <td style="width: %;">:</td>
-                            <td style="width: 50%;"><?= $invs->reference_no ?></td>
-                        </tr>
-                        <tr>
-                            <td>Date</td>
-                            <td>:</td>
-                            <td><?= $this->erp->hrld($invs->date); ?></td>
-                        </tr>
-                        <tr>
-                            <td>Credit term</td>
-                            <td>:</td>
-                            <td><?= $invs->saleman; ?></td>
-                        </tr>
-
-
-                        <tr>
-                            <td>Sale man </td>
-                            <td>:</td>
-                            <td><?= $invs->saleman; ?></td>
-                        </tr>
-                        <!-- <tr>
-                                        <td style="width: 30% !important">កាលបរិច្ឆេទនៃការបង់ប្រាក់ </td>
-                                        <td>:</td>
-                                        <td><?= $this->erp->hrsd($invs->due_date) ?></td>
-                                    </tr>-->
-
-
-                    </table>
+                <div class="col-xs-6"  style="float: right;font-size:14px; margin-top: -30px !important;border: 1px solid black;border-radius: 6px; ">
+                            <p style="width: 50%;">From :<?= $biller->company ?></p>
+                            <p style="width: 60%;">Invoice N<sup>o</sup></sup>:<?= $invs->reference_no ?></p>
+                            <p>Date :<?= $this->erp->hrld($invs->date); ?></p>
+                            <p>Credit term :<?= $invs->saleman; ?></p>
+                            <p>Sale man :<?= $invs->saleman; ?></p>
                 </div>
             </div>
             <div class="clearfix"></div>
