@@ -15222,8 +15222,9 @@ class Sales extends MY_Controller
         $this->data['setting'] = $this->site->get_setting();
         $this->data['pos'] = $this->pos_model->getSetting();
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        $this->data['invs'] = $this->sales_model->getSaleByDeliveryID($id);
-        $this->data['bill'] = $this->sales_model->getSaleByDeliveryIDBill($id);
+
+        $this->data['rows'] = $this->sales_model->getAllSaleCombineByDeliveryIDs($id);
+
         $inv = $this->sales_model->getInvoiceByID($id);
         $this->data['barcode'] = "<img src='" . site_url('products/gen_barcode/' . $inv->reference_no) . "' alt='" .$inv->reference_no . "' class='pull-left' />";
         $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);

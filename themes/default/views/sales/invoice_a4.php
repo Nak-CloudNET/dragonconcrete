@@ -20,7 +20,7 @@
         .container {
             width: 50%;
             margin: 10px auto;
-            padding: 10px;
+            padding: 40px;
             font-size: 14px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             position:relative;
@@ -42,7 +42,9 @@
             border: 1px solid #000 !important;
         }
         @media print{
+            .left{
 
+            }
             .page {
                 page-break-after: always;
             }
@@ -104,11 +106,12 @@
             <br>
             <br>
             <br>
-            <br>
-            <div class="row padding10" style="margin-top: -20px !important">
+
+            <div class="row " style="margin-top: -20px !important">
 
                 <?php //$this->erp->print_arrays($invs); ?>
-                <div class="col-xs-6"  style="float: left;font-size:14px; margin-top: -30px !important;border-radius: 6px;border: 1px solid black;height: 151px;">
+
+                <div class="col-xs-6 left"  style="font-size:14px; margin-top: -30px !important;border-radius: 6px;border: 1px solid black;height: 190px !important;margin-left: 14px;">
                                 <p>អតិថិជន / Customer :
                                     <?php if(($customer->name_kh)) { ?>
                                         <?= $customer->name_kh ?>
@@ -128,13 +131,14 @@
                                     <?= $customer->phone ?></p>
                 </div>
 
-                <div class="col-xs-6"  style="float: right;font-size:14px; margin-top: -30px !important;border: 1px solid black;border-radius: 6px; ">
+                <div class="col-xs-5"  style="float: right;font-size:14px; margin-top: -30px !important;border: 1px solid black;border-radius: 6px;margin-right: 14px; ">
                             <p style="width: 50%;">From :<?= $biller->company ?></p>
                             <p style="width: 60%;">Invoice N<sup>o</sup></sup>:<?= $invs->reference_no ?></p>
                             <p>Date :<?= $this->erp->hrld($invs->date); ?></p>
                             <p>Credit term :<?= $invs->saleman; ?></p>
                             <p>Sale man :<?= $invs->saleman; ?></p>
                 </div>
+
             </div>
             <div class="clearfix"></div>
             <div><br/></div>
@@ -187,7 +191,7 @@
                                                  ' . $this->erp->hrsd($row->date1) . '
                                             </td>
                 
-                                            <td>' . $row->location . ' </td>
+                                            <td>' . $row->loc . ' </td>
                                             <td style="text-align:left;">' . $row->product_name . '</td>
                                             <td>' . $this->erp->formatDecimal($row->quantity) . '</td>
                                             <td>' . $this->erp->formatMoney($row->unit_price) . ' $</td>';
