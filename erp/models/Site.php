@@ -4559,10 +4559,11 @@ class Site extends CI_Model
 	
 	public function getComboCost($id)
 	{
-		$this->db->select("SUM(erp_products.cost * erp_combo_items.quantity) AS p_cost")
-				 ->from('combo_items')
-				 ->join('products', 'products.code = combo_items.item_code', 'left')
-				 ->where('product_id', $id);
+	    //$this->db->select("SUM(erp_products.cost) AS p_cost")
+        $this->db->select("SUM(erp_products.cost * erp_combo_items.quantity) AS p_cost")
+            ->from('combo_items')
+            ->join('products', 'products.code = combo_items.item_code', 'left')
+            ->where('product_id', $id);
 		$q = $this->db->get();
         if ($q->num_rows() > 0) {
             return $q->row();
@@ -4573,10 +4574,12 @@ class Site extends CI_Model
 	public function updateComboCost($code)
 	{
 		$combo_id = $this->getComboId($code);
+		if($combo_id){
 		foreach($combo_id as $combo){
 			$comcost = $this->getComboCost($combo->product_id);
 			$this->db->update('products', array('cost' => $comcost->p_cost), array('id' => $combo->product_id));
 		}
+        }
 	}
 	
 	public function getUserWarehouses()
