@@ -1882,6 +1882,7 @@ function loadItems() {
 		}
 		
 		var no=1;
+		//console.log(slitems);
 		$.each(slitems, function () {
 			var item = this;
 			//console.log(this);
@@ -1926,7 +1927,12 @@ function loadItems() {
 				wpiece 			= item.row.wpiece,
 				w_piece 		= item.row.w_piece,
 				oqty			= item.row.oqty,
+                delivery_date			= item.delivery_date,
+                location			= item.location,
 				digital_id 		= item.row.digital_id?item.row.digital_id:0;
+			//alert(item.delivery_date);
+
+
 				var unit_price = parseFloat(item.row.real_unit_price);
 				var real_unit_price = parseFloat(item.row.real_unit_price);
 		
@@ -2146,7 +2152,23 @@ function loadItems() {
 			tr_html ='<td class="text-center"><span class="text-center">#'+no+'</span></td>';
 			if(site.settings.show_code == 1 && site.settings.separate_code == 1) {
 				tr_html+='<td class="text-left"><span class="text-left">'+ (digital_id?digital_code:item_code) +'</span></td>';
-				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="slaeid[]" type="hidden" class="slaeid" value="' + slaeid + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
+				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '">' +
+					'			<input name="product_id[]" type="hidden" class="rid" value="' + product_id + '">' +
+					'			<input name="slaeid[]" type="hidden" class="slaeid" value="' + slaeid + '">' +
+					'			<input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '">' +
+					'			<input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '">' +
+					'			<input name="product_name[]" type="hidden" class="rname" value="' + item_name + '">' +
+					'			<input name="piece[]" type="hidden" class="piece" value="' + piece + '">' +
+					'			<input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '">' +
+					'			<input name="product_option[]" type="hidden" class="roption" value="' + item_option + '">' +
+					'			<input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '">' +
+					'			<input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '">' +
+                    '			<input name="delivery_date[]" type="hidden" class="delivery_date" value="' + delivery_date + '">' +
+                    '			<input name="location[]" type="hidden" class="location" value="' + location + '">' +
+					'			<input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '">' +
+					'			<input name="product_note[]" type="hidden" class="rnote" value="' + pn + '">' +
+					'			<input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]">' +
+									'<span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
 			}
 			if(site.settings.show_code == 1 && site.settings.separate_code == 0) {
 				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) + ' (' + (digital_id?digital_code:item_code) + ')'+(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';

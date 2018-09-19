@@ -2155,7 +2155,7 @@ class Sale_order extends MY_Controller
             $biller = $biller_details->company != '-' ? $biller_details->company : $biller_details->name;
             $note = $this->input->post('note');
             $staff_note = $this->input->post('staff_note');
-			
+
 			$amout_paid = $this->input->post('amount-paid');
 
             $total = 0;
@@ -2174,6 +2174,8 @@ class Sale_order extends MY_Controller
                 $item_code = $_POST['product_code'][$r];
                 $item_name = $_POST['product_name'][$r];
 				$item_peice     = $_POST['piece'][$r];
+				$so_id     = $_POST['so_id'][$r];
+
 				$item_wpeice	= $_POST['wpiece'][$r];
 				$group_price_id = $_POST['group_price_id'][$r];
                 $item_option = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' ? $_POST['product_option'][$r] : NULL;
@@ -2248,6 +2250,7 @@ class Sale_order extends MY_Controller
                     $subtotal = (($item_net_price * $item_quantity) + $item_tax * $item_quantity);
 					
                     $products[] = array(
+                        'id' => $so_id,
                         'product_id' => $item_id,
                         'digital_id' => $digital_id,
                         'product_code' => $item_code,
@@ -2275,6 +2278,7 @@ class Sale_order extends MY_Controller
 					$ord_qty += $item_quantity;
 					$rec_qty += (($item_qty_received == NaN) ? 0 : $item_qty_received);
                 }
+
             }
 			
             if (empty($products)) {
@@ -2355,7 +2359,7 @@ class Sale_order extends MY_Controller
 				'saleman_by' => $saleman_by,
 				'delivery_by' => $delivery_by
             );
-			
+
             if ($_FILES['document']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->digital_upload_path;
@@ -2415,12 +2419,13 @@ class Sale_order extends MY_Controller
             $this->session->set_flashdata('message', lang("sale order update succefully."));
             redirect("sale_order/list_sale_order");
 			
-        } else {
+        }
+        else {
 			
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
 			$inv = $this->sale_order_model->getSaleOrder($id);
             $inv_items = $this->sale_order_model->getSaleOrderItems($id);
-            
+            //$this->erp->print_arrays($inv_items);
             $this->data['inv'] = $inv;
 			$this->data['quote'] = $this->quotes_model->getQuoteByID($inv->quote_id);
 			$customer = $this->site->getCompanyByID($inv->customer_id);
@@ -2521,9 +2526,9 @@ class Sale_order extends MY_Controller
                 $ri = $this->Settings->item_addition ? $row->id : $c;
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
-                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options,'makeup_cost' => 0,'group_price'=>$group_price,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices);
+                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options,'makeup_cost' => 0,'group_price'=>$group_price,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices,'so_id' => $item->id);
                 } else {
-                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,'makeup_cost' => 0,'group_price'=>$group_price,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices);
+                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,'makeup_cost' => 0,'group_price'=>$group_price,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices,'so_id' => $item->id);
                 }
                 $c++;
 			

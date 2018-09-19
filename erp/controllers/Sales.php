@@ -3067,6 +3067,9 @@ class Sales extends MY_Controller
 				$item_cost		= $_POST['item_cost'][$r];
 				$item_peice     = $_POST['piece'][$r];
 				$item_wpeice	= $_POST['wpiece'][$r];
+				$location	= $_POST['location'][$r];
+				$delivery_date	= $_POST['delivery_date'][$r];
+
                 $item_option 	= isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' ? $_POST['product_option'][$r] : NULL;
 				$expire_date_id = isset($_POST['expdate'][$r]) && $_POST['expdate'][$r] != 'false' ? $_POST['expdate'][$r] : null;
 				$expdate = $this->sales_model->getPurchaseItemExDateByID($expire_date_id)->expiry;
@@ -3171,6 +3174,8 @@ class Sales extends MY_Controller
                         'tax_rate_id' 		=> $pr_tax,
 						'piece'				=> $item_peice,
 						'wpiece'			=> $item_wpeice,
+						'delivery_date'		=> $delivery_date,
+						'location'			=> $location,
 						//'unit_cost'			=> $item_cost,
                         'tax' 				=> $tax,
                         'discount' 			=> $item_discount,
@@ -3188,7 +3193,7 @@ class Sales extends MY_Controller
 					$total 		+= $subtotal;
                 }
             }
-				
+				//$this->erp->print_arrays($products);
             if (empty($products)) {
                 $this->form_validation->set_rules('product', lang("order_items"), 'required');
             } else {
@@ -7403,7 +7408,7 @@ class Sales extends MY_Controller
                         $this->data['sale_order'] = $sale_order;
                         $this->data['refer'] = $sale_order->sale_reference_no;
                         $items = $this->sales_model->getDeliveryItemsByItemIds($delivery_id);
-                        
+
                         $deli_gp_id = "";
                         for($i=0;$i<count($delivery_id);$i++)
                         {
@@ -7691,7 +7696,7 @@ class Sales extends MY_Controller
                         $this->data['sale_order'] = $sale_order;
                         $this->data['refer'] = $sale_order->sale_reference_no;
                         $items = $this->sales_model->getDeliveryItemsByItemIds($delivery_id);
-                        
+                        //$this->erp->print_arrays($items);
                         $deli_gp_id = "";
                         for($i=0;$i<count($delivery_id);$i++)
                         {
@@ -7707,7 +7712,12 @@ class Sales extends MY_Controller
                         $this->data['type_id'] = $deli_gp_id;
                         $customer = $this->site->getCompanyByID($sale_order->customer_id);
                         $c = rand(100000, 9999999);
+                        //===================================================================
+                        //===================================================================
+                        //===================================================================
+                        //===================================================================
                         foreach ($items as $item) {
+                            //$this->erp->print_arrays($item);
                             $row = $this->site->getProductByID($item->product_id);
 							$dig = $this->site->getProductByID($item->digital_id);
                             if (!$row) {
@@ -7727,7 +7737,7 @@ class Sales extends MY_Controller
                             $row->code = $item->product_code;
                             //$row->name = $item->product_name;
                             $row->type = $item->product_type;
-                            $row->qty = $item->dqty_received;
+                            $row->qty = $item->quantity;
                             $row->discount = $item->discount ? $item->discount : '0';
                             $row->price = $this->erp->formatDecimal($item->net_unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity));
                             $row->unit_price = $row->tax_method ? $item->unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity)+$this->erp->formatDecimal($item->item_tax/$item->quantity) : $item->unit_price+($item->item_discount/$item->quantity);
@@ -7774,13 +7784,14 @@ class Sales extends MY_Controller
                             $ri = $this->Settings->item_addition ? $row->id : $c;
                             if ($row->tax_rate) {
                                 $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
-                                $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'makeup_cost' => 0,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices);
+                                $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'makeup_cost' => 0,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices, 'delivery_date' => $item->date, 'location' => $item->location);
                             } else {
-                                $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'makeup_cost' => 0,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices);
+                                $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'makeup_cost' => 0,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices,'delivery_date' => $item->date, 'location' => $item->location);
                             }
                             $c++;
+                            //$this->erp->print_arrays($pr);
                         }
-                        //$this->erp->print_arrays($pr);
+
                         $this->data['sale_order_items'] = json_encode($pr);
                         
                         if ($this->session->userdata('biller_id')) {
@@ -13940,7 +13951,8 @@ class Sales extends MY_Controller
 				$items_id           = $this->input->post('delivery_id');
 				$piece              = $this->input->post('piece');
 				$wpiece             = $this->input->post('wpiece');
-				
+				$net_unit_price             = $this->input->post('net_unit_price');
+
 				$pro_num = sizeof($product_id);
 				for($i=0; $i<$pro_num; $i++)
 				{
@@ -13964,6 +13976,7 @@ class Sales extends MY_Controller
 						'product_type'      => $product_type[$i],
 						'option_id'         => $option_id[$i],
 						'warehouse_id'      => $warehouse_id[$i],
+						'unit_price'      => $net_unit_price[$i],
 						'begining_balance'  => $b_quantity,
 						'cost'				=> $cost,
 						'piece'				=> $piece[$i],
@@ -14084,7 +14097,7 @@ class Sales extends MY_Controller
 									'product_name'      => $delivery_item['product_name'],
 									'product_type'      => $getproduct->type,
 									'option_id'         => $delivery_item['option_id'],
-									'net_unit_price'    => $getsaleitem->net_unit_price,
+									'net_unit_price'    => $delivery_item['net_unit_price'],
 									'unit_price'        => $getsaleitem->unit_price,
 									'quantity'          => $delivery_quantity,
 									'warehouse_id'      => $delivery_item['warehouse_id'],
@@ -14333,7 +14346,8 @@ class Sales extends MY_Controller
 				$product_name = $this->input->post('product_name');
 				$product_type = $this->input->post('product_type');
 				$items_id = $this->input->post('delivery_id');
-				
+				$net_unit_price = $this->input->post('net_unit_price');
+
 				$pro_num = sizeof($product_id);
 					for($i=0; $i<$pro_num; $i++) {
 						$rec_quantity = $quantity_received[$i];
@@ -14357,6 +14371,7 @@ class Sales extends MY_Controller
 							'product_type'      => $product_type[$i],
 							'option_id'         => $option_id[$i],
 							'warehouse_id'      => $warehouse_id[$i],
+							'unit_price'      => $net_unit_price[$i],
 							'begining_balance'  => $b_quantity,
 							'cost'				=> $cost,
 							'quantity_received' => $rec_quantity,

@@ -1548,29 +1548,29 @@ function loadItems() {
 			var item_id = site.settings.item_addition == 1 ? item.item_id : item.id;
 			sloitems[item_id] = item;
 
-			var product_id = item.row.id, 
-			item_type = item.row.type, 
-			item_promotion = item.row.promotion, 
-			item_pro_price = item.row.promo_price, 
-			combo_items = item.combo_items, 
-			item_price = item.row.price, 
-			item_qty = item.row.qty, 
+			var product_id = item.row.id,
+			item_type = item.row.type,
+			item_promotion = item.row.promotion,
+			item_pro_price = item.row.promo_price,
+			combo_items = item.combo_items,
+			item_price = item.row.price,
+			item_qty = item.row.qty,
 			item_qoh = item.row.qoh,
-			item_aqty = item.row.quantity, 
-			item_tax_method = item.row.tax_method, 
-			item_ds = item.row.discount, 
-			item_discount = 0, 
-			item_option = item.row.option, 
+			item_aqty = item.row.quantity,
+			item_tax_method = item.row.tax_method,
+			item_ds = item.row.discount,
+			item_discount = 0,
+			item_option = item.row.option,
 			group_prices = item.group_prices,
 			all_group_price = item.all_group_price,
 			price_id = item.row.price_id,
-			group_price_id = item.row.group_price_id, 
-			item_code = item.row.code, 
-			item_serial = item.row.serial, 
-			item_note = item.row.note, 
-			item_name = item.row.name.replace(/"/g, "&#034;").replace(/'/g, "&#039;"), 
+			group_price_id = item.row.group_price_id,
+			item_code = item.row.code,
+			item_serial = item.row.serial,
+			item_note = item.row.note,
+			item_name = item.row.name.replace(/"/g, "&#034;").replace(/'/g, "&#039;"),
 			sep = item.row.sep;
-			
+
 			var unit_price = item.row.real_unit_price;
 			var real_unit_price = item.row.real_unit_price;
 			var exchange_rate = $("#exchange_rate").val();

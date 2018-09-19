@@ -184,14 +184,14 @@
                         $i = 1;
                         $stotal = 0;
                         $tqty = 0;
-//                        $this->erp->print_arrays($rows);
+                        //$this->erp->print_arrays($rows);
                         $product_standard="";
                         $product_service="";
                         foreach($rows as $row){
                             $amt=$row->quantity*$row->unit_price;
 
                         $unit_price = $this->sales_model->getSaleByDeliveryID2($idd,$row->product_id);
-                                if($row->product_type=='combo' ||$row->product_type=='standard') {
+                                if($row->product_type=='combo' ||$row->product_type=='standard' || $row->product_type=='service') {
 
                                     $product_standard .= '
                                          <tr>
@@ -222,43 +222,43 @@
                                     
                                     ';
                                 }
-                                if($row->product_type=='service'){
-                                    $product_service .= '
-                                         <tr>
-
-                                            <td class="no"></td>
-                
-                                            <td>';
-                                                 $this->erp->hrsd($row->date1);
-                                            $product_service.='</td>
-                
-                                            <td> </td>
-                                            <td style="text-align:left;">' . $row->product_name . '</td>
-                                            <td>' . $this->erp->formatDecimal($row->quantity) . '</td>
-                                            <td>' . $this->erp->formatMoney($row->unit_price) . ' $</td>';
-
-                                    if ($dis > 0) {
-                                        $product_service .= '<td>' . $this->erp->formatMoney($row->discount) . ' $</td>';
-                                        $amt -= $row->discount;
-                                    }
-
-                                    if ($tax > 0) {
-                                        $product_service .= '<td>' . $this->erp->formatMoney($row->item_tax) . ' $</td>';
-                                        $amt += $row->item_tax;
-                                    }
-
-                                    $product_service .= '<td style="text-align:right;">' . $this->erp->formatMoney($amt) . ' $</td>
-                                        </tr>
-                                    
-                                    ';
-                                }
+//                                if($row->product_type=='service'){
+//                                    $product_service .= '
+//                                         <tr>
+//
+//                                            <td class="no"></td>
+//                                            <td>'.$this->erp->hrsd($row->date1).'</td>
+//                                            <td>'.$row->location.'</td>
+//                                            <td style="text-align:left;">' . $row->product_name . '</td>
+//                                            <td>' . $this->erp->formatDecimal($row->quantity) . '</td>
+//                                            <td>' . $this->erp->formatMoney($row->unit_price) . ' $</td>';
+//
+//                                    if ($dis > 0) {
+//                                        $product_service .= '<td>' . $this->erp->formatMoney($row->discount) . ' $</td>';
+//                                        $amt -= $row->discount;
+//                                    }
+//
+//                                    if ($tax > 0) {
+//                                        $product_service .= '<td>' . $this->erp->formatMoney($row->item_tax) . ' $</td>';
+//                                        $amt += $row->item_tax;
+//                                    }
+//
+//                                    $product_service .= '<td style="text-align:right;">' . $this->erp->formatMoney($amt) . ' $</td>
+//                                        </tr>
+//
+//                                    ';
+//                                }
 
                             $i++;
                         ?>
 
                         <?php
-                        $tqty +=$row->quantity;
-                        $stotal +=$row->quantity*$row->unit_price;
+
+                        if($row->product_type=='combo' ||$row->product_type=='standard'){
+                            $tqty +=$row->quantity;
+
+                        }
+                            $stotal +=$row->quantity*$row->unit_price;
                         }
                         echo $product_standard.$product_service;
                         $co=15-($i-1);

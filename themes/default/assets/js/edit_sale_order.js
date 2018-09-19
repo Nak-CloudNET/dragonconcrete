@@ -1767,6 +1767,7 @@ function loadItems() {
 			price_id 			= item.row.price_id,
 			group_price_id 		= item.row.price_id, 
 			item_code 			= item.row.code, 
+			so_id 			= item.so_id,
 			digital_code 		= item.row.digital_code,
 			item_serial 		= item.row.serial, 
 			item_note 			= item.row.note, 
@@ -1777,8 +1778,7 @@ function loadItems() {
 			digital_id 			= item.row.digital_id?item.row.digital_id:0,
 			sep 				= item.row.sep;
 			piece 				= item.row.piece; 	
-			wpiece 				= item.row.wpiece; 
-			// alert(JSON.stringify(item.row.price));
+			wpiece 				= item.row.wpiece;
 
 			if(item.row.start_date) {
 				var start_date = moment(item.row.start_date).format('DD/MM/YYYY');
@@ -2007,7 +2007,17 @@ function loadItems() {
 			tr_html ='<td class="text-center"><span class="text-center">#'+no+'</span></td>';
 			if(site.settings.show_code == 1 && site.settings.separate_code == 1) {
 				tr_html+='<td class="text-left"><span class="text-left">'+ (digital_id?digital_code:item_code) +'</span></td>';
-				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="group_price_id[]" type="hidden" class="group_price_id" value="' + group_price_id + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' (<span id="get_not">' + pn + '</span>)' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
+				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '">' +
+					'<input name="product_id[]" type="hidden" class="rid" value="' + product_id + '">' +
+					'<input name="so_id[]" type="hidden" class="so_id" value="' + so_id + '">' +
+					'<input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '">' +
+					'<input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '">' +
+					'<input name="product_name[]" type="hidden" class="rname" value="' + item_name + '">' +
+					'<input name="piece[]" type="hidden" class="piece" value="' + piece + '">' +
+					'<input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '">' +
+					'<input name="product_option[]" type="hidden" class="roption" value="' + item_option + '">' +
+					'<input name="group_price_id[]" type="hidden" class="group_price_id" value="' + group_price_id + '">' +
+					'<input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' (<span id="get_not">' + pn + '</span>)' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
 			}
 			if(site.settings.show_code == 1 && site.settings.separate_code == 0) {
 				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="group_price_id[]" type="hidden" class="group_price_id" value="' + group_price_id + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) + ' (' + (digital_id?digital_code:item_code) + ')'+(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' (<span id="get_not">' + pn + '</span>)' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
