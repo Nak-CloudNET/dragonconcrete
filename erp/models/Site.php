@@ -2888,12 +2888,13 @@ class Site extends CI_Model
 
     public function item_costing($item, $pi = NULL) 
 	{
+
 		$item_quantity = $pi ? $item['aquantity'] : $item['quantity'];
         if (!isset($item['option_id']) || $item['option_id'] == 'null') {
             $item['option_id'] = NULL;
         }
-		
-		
+
+
         if ($this->Settings->accounting_method != 2 && !$this->Settings->overselling) {
 			
 			if ($this->site->getProductByID($item['product_id'])) {
@@ -2988,16 +2989,23 @@ class Site extends CI_Model
 				);
             }
         } else {
-			
+
             if ($this->site->getProductByID($item['product_id'])) {
+
                 if ($item['product_type'] == 'standard') {
+
                     $cost = $this->site->calculateAVCost($item['product_id'], $item['warehouse_id'], $item['net_unit_price'], $item['unit_price'], $item['quantity'], $item['product_name'], $item['option_id'], $item_quantity, (isset($item['transaction_type'])?$item['transaction_type']:''), (isset($item['transaction_id'])?$item['transaction_id']:''),(isset($item['status'])?$item['status']:''),$item['expiry']?$item['expiry']:NULL, $item['old_sqty']);
+
                 } elseif ($item['product_type'] == 'combo') {
+
                     $combo_items = $this->getProductComboItems($item['product_id'], $item['warehouse_id']);
+
                     foreach ($combo_items as $combo_item) {
+
                         $cost = $this->site->calculateAVCost($combo_item->id, $item['warehouse_id'], ($combo_item->qty * $item['quantity']), $item['unit_price'], $item['quantity'], $item['product_name'], $item['option_id'], $item_quantity, (isset($item['transaction_type'])?$item['transaction_type']:''), (isset($item['transaction_id'])?$item['transaction_id']:''),(isset($item['status'])?$item['status']:''),$item['expiry']?$item['expiry']:NULL);
                     }
                 } else {
+
                     $cost = array(
 						array(
 							'date' 						=> date('Y-m-d'), 
@@ -3098,12 +3106,15 @@ class Site extends CI_Model
                 }
             }
         }
-        
+
         $cost = array();
         foreach ($citems as $item) {
             $item['aquantity'] = $citems['p' . $item['product_id'] . 'o' . $item['option_id']]['aquantity'];
+
             $cost[] = $this->item_costing($item, TRUE);
+
         }
+
         return $cost;
     }
 	

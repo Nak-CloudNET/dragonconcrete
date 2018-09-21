@@ -3075,7 +3075,7 @@ class Sales extends MY_Controller
 				$expdate = $this->sales_model->getPurchaseItemExDateByID($expire_date_id)->expiry;
 				$item_quantity 	= (isset($_POST['received'][$r])? $_POST['received'][$r]:$_POST['quantity'][$r]);
 				$real_item_quantity = $item_quantity;
-				
+
                 $real_unit_price = $this->erp->formatDecimal($_POST['real_unit_price'][$r]);
                 $unit_price = $this->erp->formatDecimal($_POST['unit_price'][$r]);
 				$net_price = $this->erp->formatDecimal($_POST['net_price'][$r]);
@@ -3438,7 +3438,9 @@ class Sales extends MY_Controller
         }
 		
         if ($this->form_validation->run() == true) {
+
 			$sale_id = $this->sales_model->addSale($data, $products, $payment, $loans, $delivery_update);
+
 			if($sale_id > 0){
 				//add deposit
 				if($paid_by == "deposit"){
@@ -13892,11 +13894,13 @@ class Sales extends MY_Controller
 	
 	function add_new_delivery()
 	{
+
         // get deliveries and add deliveries and add delivery_items
         $this->form_validation->set_rules('delivery_reference', lang("delivery_reference"), 'trim|required|is_unique[deliveries.do_reference_no]');
         if ($this->form_validation->run('sales/add_new_delivery') == true)
         {
-            if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
+            if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1)
+            {
                 $date = $this->erp->fld($this->input->post('date'));
             } else {
 			    $date = date('Y-m-d H:i:s');
@@ -13934,7 +13938,7 @@ class Sales extends MY_Controller
 				'pos'				=> $pos,
                 'location'          => $location
 			);
-			
+
 			if($delivery)
 			{
 				
@@ -13985,6 +13989,7 @@ class Sales extends MY_Controller
 						'ending_balance'    => $ending_balance,
 						'created_by'        => $this->session->userdata('user_id'),
 					);
+
 					if($delivery_status == 'completed')
 					{
 						$products[] = array(
@@ -13999,10 +14004,12 @@ class Sales extends MY_Controller
 						);
 					}
 				}
+
 				if($delivery_status == 'completed')
 				{
 					$this->site->costing($products);
 				}
+
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
 				
 				if($delivery_id > 0)

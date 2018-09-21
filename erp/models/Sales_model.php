@@ -1642,9 +1642,11 @@ class Sales_model extends CI_Model
     }
 	public function addSale($data = array(), $items = array(), $payment = array(), $loans = array(),$deliver_id_muti=NULL)
 	{
+
 		if ($data['sale_status'] == 'completed') {
 			$cost = $this->site->costing($items);
 		}
+
 		$deposit_customer_id = $data['deposit_customer_id'];
 		unset($data['deposit_customer_id']);
 		$data['total_cost'] = 0;

@@ -2107,7 +2107,9 @@ class Sale_order extends MY_Controller
 	/*===================================chin local updated===========================================*/
 	function edit_sale_order($id = NULL)
     {
+
 		$this->erp->checkPermissions('edit', null, 'sale_order');
+
 		
 		if(($this->sale_order_model->getSaleOrder($id)->order_status) == 'completed'){
 			$this->session->set_flashdata('error', lang("sale_order_p_approved"));
@@ -2124,7 +2126,7 @@ class Sale_order extends MY_Controller
         $this->form_validation->set_rules('biller', lang("biller"), 'required');
 
         if ($this->form_validation->run() == true) {
-			
+
 			if ($this->Owner || $this->Admin || $this->Settings->allow_change_date == 1) {
                 $date = $this->erp->fld($this->input->post('date'));
             } else {
@@ -2512,15 +2514,19 @@ class Sale_order extends MY_Controller
 				$row->item_load 	  =1;
 				$row->rate_item_cur   = ($curr_by_item ? $curr_by_item->rate : 0);
 
-                $combo_items = FALSE;
+                $combo_items = false;
                 if ($row->type == 'combo') {
                     $combo_items = $this->sales_model->getProductComboItems($row->id, $item->warehouse_id);
-                    /*$te = $combo_items;
                     foreach ($combo_items as $combo_item) {
-                        $combo_item->quantity =  $combo_item->qty*$item->quantity;
-                    }*/
+                        //$this->erp->print_arrays($combo_item);
+//                    if(1){
+//                          $this->session->set_flashdata('error', lang("The quantity out of stock for").$combo_item->name);
+//                          redirect($_SERVER["HTTP_REFERER"]);
+//                      }
+
+                    }
                 }
-				
+
 				
 				
                 $ri = $this->Settings->item_addition ? $row->id : $c;
@@ -2531,7 +2537,7 @@ class Sale_order extends MY_Controller
                     $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options,'makeup_cost' => 0,'group_price'=>$group_price,'group_prices'=>$group_prices, 'all_group_price' => $all_group_prices,'so_id' => $item->id);
                 }
                 $c++;
-			
+
             }
 			$this->load->model('purchases_model');
 			$this->data['exchange_rate'] = $this->site->getCurrencyByCode('KHM');
