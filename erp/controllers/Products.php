@@ -1943,10 +1943,12 @@ class Products extends MY_Controller
 
 
                 foreach ($arrResult as $key => $value) {
-
+                   // $this->erp->print_arrays($value);
 					$qty_unit=0;
-				    $qty_variant =$this->products_model->getProduct_variant($value[2]);
+				    $qty_variant =$this->products_model->getProduct_variantQ($value[2],$value[0]);
+				    //echo $qty_variant->qty_unit;exit;
 					$quantity  = $qty_variant->qty_unit ? $value[1] * $qty_variant->qty_unit : $value[1];
+                    
 					$value[1] = $quantity;
 					$temp_product = $value;
 					$temp_warehouse = $value;
@@ -2015,6 +2017,7 @@ class Products extends MY_Controller
 			$this->products_model->updateQuantityExcelWarehouse($final_ware_product);
 			$this->products_model->updateQuantityExcelVar($final_var);
 			$this->products_model->insertGlTran($total_cost);
+
 			$check  = $this->products_model->updateQuantityExcelPurchase($final_purchase_item);
             if($check)
             {

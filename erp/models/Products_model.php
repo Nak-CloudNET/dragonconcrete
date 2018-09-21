@@ -546,6 +546,18 @@ class Products_model extends CI_Model
         }
         return FALSE;
 	}
+
+	public function getProduct_variantQ($id,$code)
+	{
+		$this->db->select("erp_product_variants.qty_unit")
+		->join('erp_product_variants','erp_product_variants.name=erp_variants.name','left')
+		->join('erp_products','erp_product_variants.product_id=erp_products.id','left');
+		$q = $this->db->get_where('erp_variants',array('erp_variants.id'=>$id , 'erp_products.code' =>$code));
+		 if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+	}
     
 	public function add_products($products = array())
     {
@@ -913,7 +925,7 @@ class Products_model extends CI_Model
 	
 	public function updateQuantityExcelPurchase($data = array())
     {
-
+        //$this->erp->print_arrays($data);
 		foreach($data as $value){
     
 			$this->db->select('*');

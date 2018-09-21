@@ -2086,7 +2086,7 @@ class Site extends CI_Model
 	}
 	
     public function syncProductQty($product_id, $warehouse_id) {
-        $balance_qty = $this->getBalanceQuantity($product_id);
+        $balance_qty        = $this->getBalanceQuantity($product_id);
         $wh_balance_qty = $this->getBalanceQuantity($product_id, $warehouse_id);
 
         if ($this->db->update('products', array('quantity' => $balance_qty), array('id' => $product_id))) {
