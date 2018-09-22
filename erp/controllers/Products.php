@@ -1948,7 +1948,7 @@ class Products extends MY_Controller
 				    $qty_variant =$this->products_model->getProduct_variantQ($value[2],$value[0]);
 				    //echo $qty_variant->qty_unit;exit;
 					$quantity  = $qty_variant->qty_unit ? $value[1] * $qty_variant->qty_unit : $value[1];
-                    
+
 					$value[1] = $quantity;
 					$temp_product = $value;
 					$temp_warehouse = $value;

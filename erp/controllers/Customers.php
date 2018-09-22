@@ -383,13 +383,13 @@ class Customers extends MY_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('company', 'name','email', 'phone', 'address', 'city', 'state', 'postal_code', 'country','group_areas_id', 'customer_group_id','vat_no', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5', 'cf6');
+                $keys = array('company', 'code','name','email', 'phone', 'address', 'city', 'state', 'postal_code', 'country','group_areas_id', 'customer_group_id','vat_no', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5', 'cf6');
 
                 $final = array();
                 foreach ($arrResult as $key => $value) {
                     $final[] = array_combine($keys, $value);
                 }
-               
+               //$this->erp->print_arrays($final);
                 /*$rw = 2;
                 foreach ($final as $csv) {
                     if ($this->companies_model->getCompanyByCode($csv['code'])) {
@@ -407,12 +407,18 @@ class Customers extends MY_Controller
                 }
 
                 foreach ($final as $record) {
+                    //$this->erp->print_arrays($record['code']);
 					$customer_group = $this->site->get_customer_groups($record['customer_group_id']);
                     $record['group_id'] = 3;
                     $record['group_name'] = 'customer';
                     $record['customer_group_id'] = $customer_group->id;
                     $record['customer_group_name'] = $customer_group->name;
-                    $record['code'] = $this->data['reference'] = $this->site->getReference('cus', $biller_id);
+                    if($record['code'] != ''){
+                        $record['code'] ;
+                    }else{
+                        $record['code'] = $this->data['reference'] = $this->site->getReference('cus', $biller_id);
+                    }
+
                     $data[] = $record;
                     $this->site->updateReference('cus');
                 }

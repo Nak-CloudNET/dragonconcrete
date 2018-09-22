@@ -192,6 +192,7 @@ class Companies_model extends CI_Model
 
     public function addCompanies($data = array())
     {
+       
         if ($this->db->insert_batch('companies', $data)) {
             return true;
         }
