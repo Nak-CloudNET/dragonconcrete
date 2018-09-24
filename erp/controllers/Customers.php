@@ -406,8 +406,28 @@ class Customers extends MY_Controller
                     $biller_id = $setting->default_biller;
                 }
 
+
                 foreach ($final as $record) {
                     //$this->erp->print_arrays($record['code']);
+
+
+                    $cusid=$this->companies_model->getCustomerID();
+
+                    $ke=array();
+                    $i=0;
+                    foreach ($cusid as $cusids){
+                        $ke[$i] = $cusids->code;
+                        $i++;
+                    }
+
+                    $customer_code = array_search($record['code'], $ke);
+                    //echo $customer_code;exit;
+                    if($customer_code!=''){
+                        $this->session->set_flashdata('error', $this->lang->line("Customer code does not exist "));
+                        redirect("customers");
+                    }
+
+
 					$customer_group = $this->site->get_customer_groups($record['customer_group_id']);
                     $record['group_id'] = 3;
                     $record['group_name'] = 'customer';
@@ -428,6 +448,7 @@ class Customers extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect('customers');
         }
+
 
         if ($this->form_validation->run() == true && !empty($data)) {
 			
