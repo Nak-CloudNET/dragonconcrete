@@ -390,14 +390,14 @@ class Customers extends MY_Controller
                     $final[] = array_combine($keys, $value);
                 }
                //$this->erp->print_arrays($final);
-                /*$rw = 2;
+               $rw = 2;
                 foreach ($final as $csv) {
                     if ($this->companies_model->getCompanyByCode($csv['code'])) {
                         $this->session->set_flashdata('error', lang("check_customer_code") . " (" . $csv['code'] . "). " . lang("customer_already_exist") . " (" . lang("line_no") . " " . $rw . ")");
                         redirect("customers");
                     }
                     $rw++;
-                }*/
+                }
 
                 $setting = $this->site->get_setting();
                 if($this->session->userdata('biller_id')) {
@@ -409,24 +409,6 @@ class Customers extends MY_Controller
 
                 foreach ($final as $record) {
                     //$this->erp->print_arrays($record['code']);
-
-
-                    $cusid=$this->companies_model->getCustomerID();
-
-                    $ke=array();
-                    $i=0;
-                    foreach ($cusid as $cusids){
-                        $ke[$i] = $cusids->code;
-                        $i++;
-                    }
-
-                    $customer_code = array_search($record['code'], $ke);
-                    //echo $customer_code;exit;
-                    if($customer_code!=''){
-                        $this->session->set_flashdata('error', $this->lang->line("Customer code does not exist "));
-                        redirect("customers");
-                    }
-
 
 					$customer_group = $this->site->get_customer_groups($record['customer_group_id']);
                     $record['group_id'] = 3;
