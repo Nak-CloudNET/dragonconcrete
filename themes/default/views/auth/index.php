@@ -17,17 +17,19 @@
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, null, null, null, null, null, null, {"mRender": user_status}, {"bSortable": false}]
+            }, null, null, null, null, null, null,null, {"mRender": user_status}, {"bSortable": false}]
         }).fnSetFilteringDelay().dtFilter([
 			{column_number: 1, filter_default_label: "[<?=lang('id');?>]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('first_name');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('last_name');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('company');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('username');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
           
-            {column_number: 6, filter_default_label: "[<?=lang('group');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('company');?>]", filter_type: "text", data: []},
+            {column_number: 7, filter_default_label: "[<?=lang('group');?>]", filter_type: "text", data: []},
+
             {
-                column_number: 7, select_type: 'select2',
+                column_number: 8, select_type: 'select2',
                 select_type_options: {
                     placeholder: '<?=lang('status');?>',
                     width: '100%',
@@ -93,6 +95,7 @@
 								<th class="col-xs-2"><?php echo lang('id'); ?></th>
 								<th class="col-xs-2"><?php echo lang('first_name'); ?></th>
 								<th class="col-xs-2"><?php echo lang('last_name'); ?></th>
+								<th class="col-xs-2"><?php echo lang('username'); ?></th>
 								<th class="col-xs-2"><?php echo lang('email_address'); ?></th>
 								<th class="col-xs-2"><?php echo lang('company'); ?></th>
 								
@@ -111,6 +114,7 @@
 								<th style="min-width:30px; width: 30px; text-align: center;">
 									<input class="checkbox checkft" type="checkbox" name="check"/>
 								</th>
+								<th></th>
 								<th></th>
 								<th></th>
 								<th></th>
