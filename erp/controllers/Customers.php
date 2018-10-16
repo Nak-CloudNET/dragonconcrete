@@ -405,8 +405,6 @@ class Customers extends MY_Controller
                 }else {
                     $biller_id = $setting->default_biller;
                 }
-
-
                 foreach ($final as $record) {
                     //$this->erp->print_arrays($record['code']);
 
