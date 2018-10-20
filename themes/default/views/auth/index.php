@@ -98,7 +98,6 @@
 								<th class="col-xs-2"><?php echo lang('username'); ?></th>
 								<th class="col-xs-2"><?php echo lang('email_address'); ?></th>
 								<th class="col-xs-2"><?php echo lang('company'); ?></th>
-								
 								<th class="col-xs-1"><?php echo lang('group'); ?></th>
 								<th style="width:100px;"><?php echo lang('status'); ?></th>
 								<th style="width:80px;"><?php echo lang('actions'); ?></th>

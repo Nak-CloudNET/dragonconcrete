@@ -37,7 +37,7 @@ if ($this->input->post('customer')) {
 <script>
 
     $(document).ready(function () {
-    	
+
         var oTable = $('#sale_item').dataTable({
             "aaSorting": [[0, "desc"]],
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
@@ -54,20 +54,23 @@ if ($this->input->post('customer')) {
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, {"mRender": fld}, 
-			null, 
-			null, 
-			{"bSearchable": false}, 
-			{"bSearchable": false}, 
+            }, {"mRender": fld},
+			null,
+			null,
+			{"bSearchable": false},
+			{"bSearchable": false},
 			{"mRender": formatQuantity, "bSearchable": false},
 			{"mRender": formatQuantity, "bSearchable": false},
-			{"mRender": deliveries_status, "bSearchable": false}, 
+			{"mRender": deliveries_status, "bSearchable": false},
 			{"bSortable": false}],
 			'fnRowCallback': function (nRow, aData, iDisplayIndex) {
                 var oSettings = oTable.fnSettings();
                 nRow.id = aData[0];
                 nRow.className = "delivery_inv_link";
                 return nRow;
+
+
+
             },
 			"fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var gtotal = 0;
@@ -89,7 +92,7 @@ if ($this->input->post('customer')) {
 			{column_number: 8, filter_default_label: "[<?=lang('status');?>]", filter_type: "text", data: []},
         ], "footer");
     });
-	
+
 	function deliveries_status(x){
 		if(x == 'completed') {
 			return '<div class="text-center"><span class="label label-success"><a href="'+site.base_url+'pos" style="text-decoration:none;color:#fff;">'+lang[x]+'</a></span></div>';
@@ -97,7 +100,7 @@ if ($this->input->post('customer')) {
 			return '<div class="text-center"><span class="label label-warning">'+lang['pending']+'</span></div>';
 		}
 	}
-	
+
 	$(document).ready(function () {
         var oTable = $('#sale_order').dataTable({
             "aaSorting": [[0, "desc"]],
@@ -115,30 +118,35 @@ if ($this->input->post('customer')) {
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox2
-            }, 
+            },
             {"mRender": fld},
             null,
-            null, 
-            null, 
-            null, 
+            null,
+            null,
+            null,
             null,
             {"mRender": formatQuantity, "bSearchable": false},
             {"mRender": formatQuantity, "bSearchable": false},
 
-            {"mRender": delivery_status, "bSearchable": false}, 
+            {"mRender": delivery_status, "bSearchable": false},
             {"bSortable": false}],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
                 var oSettings = oTable.fnSettings();
+
                 nRow.id = aData[0];
 				$('td:eq(3)', nRow).addClass('so_num');
                 nRow.className = "delivery_so_link";
-				if (aData[8] == 'completed') {
-					 $('td:eq(9)', nRow).find('.edit_deli').remove();
-					 $('td:eq(9)', nRow).find('.add_deli').remove();
-					 $('td:eq(9)', nRow).find('.add_sale').remove();
-				}
-				
+				if (aData[9] == 'completed') {
+					 $('td:eq(10)', nRow).find('.edit_deli').remove();
+					 $('td:eq(10)', nRow).find('.add_deli').remove();
+					 //$('td:eq(10)', nRow).find('.add_sale').remove();
+				}else{
+                    $('td:eq(10)', nRow).find('.edit_deli').addClass('.edit_deli');
+                }
+                nRow.className = "delivery_inv_link";
                 return nRow;
+
+
             },
 			"fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
 				var gtotal = 0;
@@ -151,7 +159,7 @@ if ($this->input->post('customer')) {
                 nCells[7].innerHTML = currencyFormat(parseFloat(qtotal));
                 nCells[8].innerHTML = currencyFormat(parseFloat(gtotal));
             }
-			
+
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('do_no');?>]", filter_type: "text", data: []},
@@ -161,7 +169,7 @@ if ($this->input->post('customer')) {
             {column_number: 6, filter_default_label: "[<?=lang('location');?>]", filter_type: "text", data: []},
 			{column_number: 9, filter_default_label: "[<?=lang('issue_invoice');?>]", filter_type: "text", data: []},
         ], "footer");
-		
+
 		function delivery_status(x) {
 			if(x == null) {
 				return '';
@@ -172,12 +180,12 @@ if ($this->input->post('customer')) {
 			} else {
 				 return '<div class="text-center"><span class="label label-info">'+lang[x]+'</span></div>';
 			}
-		}	
-		
-		
+		}
+
+
 		$('body').on('click', '#add_sale_combine_deliveries', function(e) {
 	        e.preventDefault();
-			
+
 			var i = 0;
 				var items = [];
 				//var first = 1;
@@ -189,7 +197,7 @@ if ($this->input->post('customer')) {
 					/*var parent = $(this).parent().parent().parent().parent();
 					var refer_s = parent.find('td:nth-child(4)').html();
 					var status = parent.find('td:nth-child(8)').html();
-					
+
 					alert(status.find('.text-center'));
 					if(first == 1){
 						refer_f = refer_s;
@@ -233,22 +241,22 @@ if ($this->input->post('customer')) {
 					bootbox.alert('Sale Order  is  completed!');
 					return false;
 				}
-			
+
 	        $('#form_action').val($('#add_sale_combine_deliveries').attr('data-action'));
 	        $('#action-form-submit').trigger('click');
     	});
     	<?php if($Settings->delivery == 'both'){?>
 			$("#status_").val('1');
-			
+
 	 		$("#dbTab #action1").on("click",function(){
 	 			var x = $("#action1").attr("class");
 				$("#status_").val('1');
-				
+
 	 		});
 	 		$("#dbTab #action2").on("click",function(){
 	 			var x = $("#action2").attr("class");
 				$("#status_").val('2');
-				
+
 	 		});
 	 	<?php }?>
 	 	<?php if($Settings->delivery == 'invoice'){?>
@@ -258,9 +266,9 @@ if ($this->input->post('customer')) {
 	 		$("#status_").val('2');
 		<?php }?>
     });
-	
-	
-	
+
+
+
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -492,7 +500,7 @@ if ($this->input->post('customer')) {
 							</div>
 						</div>
 					</div>
-					
+
 					<div id="quotes" class="tab-pane fade in">
 						<div class="row">
 							<div class="col-sm-12">
@@ -542,7 +550,7 @@ if ($this->input->post('customer')) {
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
             </div>
         </div>
@@ -554,7 +562,7 @@ if ($this->input->post('customer')) {
     <?= form_submit('perform_action', 'perform_action', 'id="action-form-submit"') ?>
 </div>
 <?= form_close() ?>
-    
+
 
 <script type="text/javascript">
 
@@ -590,7 +598,7 @@ function checkbox2(x) {
 			   return false;
 		   }
 		}
-	});	
+	});
  });
- 
+
 </script>

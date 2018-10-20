@@ -5363,7 +5363,7 @@ class Sales_model extends CI_Model
 		return false;
 	}
 	public function getSaleByDeliveryID($id){
-		$this->db->select('erp_sales.*,erp_companies.company,erp_companies.phone,erp_companies.address,erp_companies.email,CONCAT(erp_users.first_name," ",erp_users.last_name) as uname, erp_group_areas.areas_group as group_area,erp_sales.sale_status as status')
+		$this->db->select('erp_sales.*,erp_companies.company,erp_companies.phone,erp_companies.address,erp_companies.email,erp_users.username as uname, erp_group_areas.areas_group as group_area,erp_sales.sale_status as status')
 		->join('erp_companies','erp_companies.id=erp_sales.customer_id ','left')
 		->join('erp_users','erp_users.id=erp_sales.saleman_by ','left')
 		->join('erp_group_areas', 'erp_companies.group_areas_id = erp_group_areas.areas_g_code', 'left')
