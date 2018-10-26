@@ -80,7 +80,7 @@
 			todayHighlight: 1,
 			startView: 2,
 			forceParse: 0
-		}).datetimepicker('update', new Date());
+		}).datetimepicker();
 
     });
 
@@ -107,7 +107,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <?= lang("date", "sldate"); ?>
-                                    <?php echo form_input('date',$this->erp->hrld($delivery->date), 'class="form-control input-tip datetime"'); ?>
+                                    <?php echo form_input('date',$this->erp->hrld($delivery->date), 'class="form-control input-tip datetime" id="sldate"'); ?>
 								</div>
                             </div>
                         <?php } ?>
