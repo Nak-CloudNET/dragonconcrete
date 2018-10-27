@@ -1794,6 +1794,7 @@ class Purchases_model extends CI_Model
 	
 	public function addPurchase($data, $items, $payment, $quote_id, $amount_o, $order_id = '')
     {
+        //$this->erp->print_arrays($items);
 		unset($data['total_qty']);
 		$stotal = $data['stotal'];
 		unset($data['stotal']);
@@ -1836,6 +1837,7 @@ class Purchases_model extends CI_Model
                     $item['quantity_balance'] = 0;
 					$this->db->insert('purchase_items', $item);
 					$purchase_items_id = $this->db->insert_id();
+
 					$this->site->updatePurItem($purchase_items_id);
 					$pcost = $this->db->get_where('products',array('id'=>$item['product_id']),1)->row()->cost;
 					$this->db->update("inventory_valuation_details",array('cost'=>$pcost,'avg_cost'=>$pcost),array('field_id'=>$purchase_items_id));
@@ -1844,8 +1846,10 @@ class Purchases_model extends CI_Model
 					
 					$this->db->insert('purchase_items', $item);
 					$purchase_items_id = $this->db->insert_id();
+
 					$this->site->updatePurItem($purchase_items_id);
 					$pcost = $this->db->get_where('products',array('id'=>$item['product_id']),1)->row()->cost;
+                    //$this->erp->print_arrays($pcost);
 					$this->db->update("inventory_valuation_details",array('cost'=>$pcost,'avg_cost'=>$pcost),array('field_id'=>$purchase_items_id));
 					
 				}

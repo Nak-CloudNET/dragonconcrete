@@ -2706,7 +2706,7 @@ class Purchases extends MY_Controller
 			}
 			//$this->erp->print_arrays($data, $products);
 		}
-		
+
         if ($this->form_validation->run() == true && $this->purchases_model->addPurchase($data, $products, $payment, $purchase_order_id, $amount_o)) {
 			if ($sale_order_id) {
                 $this->db->update('sale_order', array('sale_status' => 'purchase'), array('id' => $sale_order_id));

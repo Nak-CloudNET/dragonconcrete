@@ -387,12 +387,12 @@
 		/*
 		$("#excel").click(function(e){
 			e.preventDefault();
-			window.location.href = "<?=site_url('products/getProductAll/0/xls/')?>";
+			window.location.href ="site_url('products/getProductAll/0/xls/')?>";
 			return false;
 		});
 		$('#pdf').click(function (event) {
             event.preventDefault();
-            window.location.href = "<?=site_url('products/getProductAll/pdf/?v=1'.$v)?>";
+            window.location.href = "site_url('products/getProductAll/pdf/?v=1'.$v)?>";
             return false;
         });
 		*/

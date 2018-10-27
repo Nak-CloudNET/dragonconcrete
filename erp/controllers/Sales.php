@@ -13984,6 +13984,7 @@ class Sales extends MY_Controller
 						'begining_balance'  => $b_quantity,
 						'cost'				=> $cost,
 						'piece'				=> $piece[$i],
+                       // 'transaction_type' 	=> 'DELIVERY',
 						'wpiece'			=> $wpiece[$i],
 						'quantity_received' => $rec_quantity,
 						'ending_balance'    => $ending_balance,
@@ -14000,6 +14001,8 @@ class Sales extends MY_Controller
 							'option_id' 		=> $option_id[$i],
 							'quantity' 			=> $rec_quantity,
 							'quantity_balance' 	=> $rec_quantity,
+                            'transaction_type'  => 'DELIVERY',
+                            'transaction_id'  =>$items_id[$i],
 							'warehouse_id' 		=> $warehouse_id[$i]
 						);
 					}
@@ -14009,7 +14012,7 @@ class Sales extends MY_Controller
 				{
 					$this->site->costing($products);
 				}
-
+//$this->erp->print_arrays($delivery);
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
 				
 				if($delivery_id > 0)
@@ -14090,7 +14093,7 @@ class Sales extends MY_Controller
 							}
 
 						}
-						
+
 						if($updateStatus == true) {
 							// update stock here....
 							foreach($deliverie_items as $delivery_item){
@@ -14123,10 +14126,11 @@ class Sales extends MY_Controller
 								);
 								
 							}
-							
+
 							if(sizeof($stock_info) >0){
 								if($delivery_status == "completed") {
 									$cost = $this->site->costing($stock_info);
+                                    //$this->erp->print_arrays($cost);
 									$this->site->syncPurchaseItems_delivery($cost,$delivery_id);
 									$this->site->syncQuantity(NULL, NULL, NULL, NULL, NULL, NULL, $stock_info);
 								}

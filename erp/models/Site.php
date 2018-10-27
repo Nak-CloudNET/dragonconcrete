@@ -2888,7 +2888,7 @@ class Site extends CI_Model
 
     public function item_costing($item, $pi = NULL) 
 	{
-
+        //$this->erp->print_arrays($item);
 		$item_quantity = $pi ? $item['aquantity'] : $item['quantity'];
         if (!isset($item['option_id']) || $item['option_id'] == 'null') {
             $item['option_id'] = NULL;
@@ -3057,7 +3057,7 @@ class Site extends CI_Model
 
     public function costing($items) 
 	{
-       
+        //$this->erp->print_arrays($items);
 	   $citems = array();
         foreach ($items as $item) {
             $pr = $this->getProductByID($item['product_id']);
@@ -3098,7 +3098,7 @@ class Site extends CI_Model
                                 $net_unit_price = $combo_item->unit_price;
                                 $unit_price = $combo_item->unit_price;
                             }
-                            $cproduct = array('product_id' => $combo_item->id, 'product_name' => $cpr->name, 'product_type' => $combo_item->type, 'quantity' => ($combo_item->qty*$item['quantity']), 'net_unit_price' => $net_unit_price, 'unit_price' => $unit_price, 'warehouse_id' => $item['warehouse_id'], 'item_tax' => $item_tax, 'tax_rate_id' => $cpr->tax_rate, 'tax' => ($cpr_tax->type == 1 ? $cpr_tax->rate.'%' : $cpr_tax->rate), 'option_id' => NULL);
+                            $cproduct = array('product_id' => $combo_item->id, 'product_name' => $cpr->name, 'product_type' => $combo_item->type, 'quantity' => ($combo_item->qty*$item['quantity']), 'net_unit_price' => $net_unit_price, 'unit_price' => $unit_price, 'warehouse_id' => $item['warehouse_id'],'transaction_type' => $item['transaction_type'],'transaction_id' => $item['transaction_id'], 'item_tax' => $item_tax, 'tax_rate_id' => $cpr->tax_rate, 'tax' => ($cpr_tax->type == 1 ? $cpr_tax->rate.'%' : $cpr_tax->rate), 'option_id' => NULL);
                             $citems['p' . $combo_item->id . 'o' . $item['option_id']. 'e' . $item['expiry']] = $cproduct;
                             $citems['p' . $combo_item->id . 'o' . $item['option_id']. 'e' . $item['expiry']]['aquantity'] = ($combo_item->qty*$item['quantity']);
                         }
@@ -3109,6 +3109,7 @@ class Site extends CI_Model
 
         $cost = array();
         foreach ($citems as $item) {
+            //$this->erp->print_arrays($item);
             $item['aquantity'] = $citems['p' . $item['product_id'] . 'o' . $item['option_id']]['aquantity'];
 
             $cost[] = $this->item_costing($item, TRUE);
@@ -3608,6 +3609,7 @@ class Site extends CI_Model
 	public function syncPurchaseItems_delivery($data = array(), $delivery_id = NULL)
 	{
 		if (!empty($data)) {
+		   //$this->erp->print_arrays($data);
             foreach ($data as $items) {
                 foreach ($items as $item) {
 					$product = $this->getProductByID($item['product_id']);

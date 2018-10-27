@@ -3891,6 +3891,7 @@ class Sales_model extends CI_Model
 
     public function add_delivery($delivery, $delivery_items)
     {
+        //$this->erp->print_arrays($delivery_items);
         $pos = $delivery['pos'];
         unset($delivery['pos']);
 
