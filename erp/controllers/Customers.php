@@ -390,14 +390,14 @@ class Customers extends MY_Controller
                     $final[] = array_combine($keys, $value);
                 }
                //$this->erp->print_arrays($final);
-                /*$rw = 2;
+               $rw = 2;
                 foreach ($final as $csv) {
                     if ($this->companies_model->getCompanyByCode($csv['code'])) {
                         $this->session->set_flashdata('error', lang("check_customer_code") . " (" . $csv['code'] . "). " . lang("customer_already_exist") . " (" . lang("line_no") . " " . $rw . ")");
                         redirect("customers");
                     }
                     $rw++;
-                }*/
+                }
 
                 $setting = $this->site->get_setting();
                 if($this->session->userdata('biller_id')) {
@@ -405,9 +405,9 @@ class Customers extends MY_Controller
                 }else {
                     $biller_id = $setting->default_biller;
                 }
-
                 foreach ($final as $record) {
                     //$this->erp->print_arrays($record['code']);
+
 					$customer_group = $this->site->get_customer_groups($record['customer_group_id']);
                     $record['group_id'] = 3;
                     $record['group_name'] = 'customer';
@@ -428,6 +428,7 @@ class Customers extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect('customers');
         }
+
 
         if ($this->form_validation->run() == true && !empty($data)) {
 			

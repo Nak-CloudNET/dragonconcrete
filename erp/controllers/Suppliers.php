@@ -376,7 +376,7 @@ class Suppliers extends MY_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('code', 'company', 'name', 'email', 'phone', 'address', 'city', 'state', 'postal_code', 'country', 'vat_no', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5', 'cf6');
+                $keys = array( 'company','code', 'name', 'email', 'phone', 'address', 'city', 'state', 'postal_code', 'country', 'vat_no', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5', 'cf6');
 
                 $final = array();
 

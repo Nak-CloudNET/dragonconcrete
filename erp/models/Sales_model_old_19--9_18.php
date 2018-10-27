@@ -1642,11 +1642,9 @@ class Sales_model extends CI_Model
     }
 	public function addSale($data = array(), $items = array(), $payment = array(), $loans = array(),$deliver_id_muti=NULL)
 	{
-
-//		if ($data['sale_status'] == 'completed') {
-//			$cost = $this->site->costing($items);
-//		}
-
+		if ($data['sale_status'] == 'completed') {
+			$cost = $this->site->costing($items);
+		}
 		$deposit_customer_id = $data['deposit_customer_id'];
 		unset($data['deposit_customer_id']);
 		$data['total_cost'] = 0;
@@ -2242,18 +2240,11 @@ class Sales_model extends CI_Model
 	
 	public function updateSaleOrder($id, $data, $items = array())
     {
-        //$this->erp->print_arrays($items);
-        if ($this->db->update('erp_sale_order', $data, array('id' => $id))) {
-
+        if ($this->db->update('erp_sale_order', $data, array('id' => $id)) && $this->db->delete('erp_sale_order_items', array('sale_order_id' => $id))) {
+            
 			foreach ($items as $item) {
                 $item['sale_order_id'] = $id;
-                if($item['id']!='undefined'){
-                    $this->db->update('erp_sale_order_items', $item , $item['id']);
-                }else{
-                    unset($item['id']);
-                    $this->db->insert('erp_sale_order_items', $item);
-                }
-
+                $this->db->insert('erp_sale_order_items', $item);
             }
             return true;
         }
@@ -3891,7 +3882,6 @@ class Sales_model extends CI_Model
 
     public function add_delivery($delivery, $delivery_items)
     {
-        //$this->erp->print_arrays($delivery_items);
         $pos = $delivery['pos'];
         unset($delivery['pos']);
 
@@ -5166,52 +5156,55 @@ class Sales_model extends CI_Model
 		
 		
 		$response = $this->db
-                 ->query(' SELECT
-                    sum(erp_delivery_items.quantity_received) as quantity_received ,
-                    sum(erp_delivery_items.quantity_received) as quantity ,
-                    sum(erp_delivery_items.quantity_received) as piece ,
-                    erp_delivery_items.ending_balance,
-                    erp_sale_order_items.unit_price,
-                    erp_sale_order_items.item_tax,
-                    erp_sale_order_items.tax_rate_id,
-                    erp_sale_order_items.tax,
-                    erp_sale_order_items.discount,
-                    erp_sale_order_items.item_discount,
-                    erp_deliveries.date,
-                    erp_deliveries.location,
-                    erp_sale_order_items.product_id,
-                        `erp_sale_order_items`.`product_code`,
-                        `erp_sale_order_items`.`product_name`,
-                        `erp_sale_order_items`.`product_type`,
-                        `erp_sale_order_items`.`wpiece`,
-                        erp_sale_order_items.digital_id,
-                        erp_sale_order_items.warehouse_id,
-                          erp_sale_order_items.option_id,
-                        erp_sale_order_items.net_unit_price, erp_sale_order_items.real_unit_price
-                    FROM
-                    erp_delivery_items
-                    INNER JOIN erp_sale_order_items ON erp_delivery_items.item_id = erp_sale_order_items.id
-                    INNER JOIN erp_deliveries ON erp_deliveries.id = erp_delivery_items.delivery_id
-                    WHERE erp_delivery_items.delivery_id in ('.$iids.')
-                    GROUP BY erp_delivery_items.ending_balance,
-                    erp_sale_order_items.unit_price,
-                    erp_sale_order_items.item_tax,
-                    erp_sale_order_items.tax_rate_id,
-                    erp_sale_order_items.tax,
-                        erp_sale_order_items.discount,
-                        erp_sale_order_items.item_discount,
-                        erp_deliveries.date,
-                        erp_deliveries.location,
-                        erp_sale_order_items.product_id,
-                            `erp_sale_order_items`.`product_code`,
-                            `erp_sale_order_items`.`product_name`,
-                            `erp_sale_order_items`.`product_type`,
-                            `erp_sale_order_items`.`wpiece`
-                     ;');
+                 ->select('erp_sale_order_items.id,
+						   erp_sale_order_items.sale_order_id,
+						   erp_sale_order_items.product_id,
+						   erp_sale_order_items.product_code,
+						   erp_sale_order_items.product_name,
+						   erp_sale_order_items.product_type,
+						   erp_sale_order_items.wpiece,
+						   erp_sale_order_items.option_id,
+					       erp_sale_order_items.net_unit_price,
+					       erp_sale_order_items.unit_price,
+						   erp_sale_order_items.quantity_received,
+						   erp_sale_order_items.quantity,
+					       erp_sale_order_items.warehouse_id,
+						   erp_sale_order_items.item_tax,
+					       erp_sale_order_items.tax_rate_id,
+					       erp_sale_order_items.tax,
+					       erp_sale_order_items.discount,
+					       erp_sale_order_items.item_discount,
+						   erp_sale_order_items.subtotal,
+						   erp_sale_order_items.serial_no,
+						   erp_sale_order_items.real_unit_price,
+					       erp_sale_order_items.product_noted,
+					       erp_sale_order_items.group_price_id,
+					       erp_sale_order_items.digital_id,
+						   
+						   COALESCE((
+								SELECT
+									SUM(
+										erp_delivery_items.piece
+									) AS qty_received
+								FROM
+									erp_delivery_items
+								WHERE
+									erp_delivery_items.product_id = erp_sale_order_items.product_id
+								AND
+									erp_delivery_items.wpiece = erp_sale_order_items.wpiece
+								AND
+									erp_delivery_items.delivery_id IN ('.$iids.')
+							), 0) AS piece')
+                 ->where_in('erp_delivery_items.delivery_id',$ids)
+				 ->join('erp_delivery_items','erp_delivery_items.sale_id = erp_sale_order_items.sale_order_id AND erp_delivery_items.product_id = erp_sale_order_items.product_id', 'left')
+                 ->from('erp_sale_order_items')
+				 ->group_by('erp_sale_order_items.id')
+				 ->order_by('erp_delivery_items.delivery_id')
+                 ->get()
+                 ->result();
 		
-		if(sizeof($response->result())>0){
-		    //$this->erp->print_arrays($response->result());
-			return $response->result();
+		if(sizeof($response)>0){
+			return $response;
 		}else{
 			return false;
 		}
@@ -5364,7 +5357,7 @@ class Sales_model extends CI_Model
 		return false;
 	}
 	public function getSaleByDeliveryID($id){
-		$this->db->select('erp_sales.*,erp_companies.company,erp_companies.phone,erp_companies.address,erp_companies.email,erp_users.username as uname, erp_group_areas.areas_group as group_area,erp_sales.sale_status as status')
+		$this->db->select('erp_sales.*,erp_companies.company,erp_companies.phone,erp_companies.address,erp_companies.email,CONCAT(erp_users.first_name," ",erp_users.last_name) as uname, erp_group_areas.areas_group as group_area,erp_sales.sale_status as status')
 		->join('erp_companies','erp_companies.id=erp_sales.customer_id ','left')
 		->join('erp_users','erp_users.id=erp_sales.saleman_by ','left')
 		->join('erp_group_areas', 'erp_companies.group_areas_id = erp_group_areas.areas_g_code', 'left')
@@ -5497,72 +5490,77 @@ class Sales_model extends CI_Model
 
 
 
-         $query = $this->db->query("SELECT
-                                    `erp_sale_items`.`unit_price`,
-                                    `erp_sale_items`.`product_type`,
-                                    `erp_delivery_items`.`product_name`,
-                                    ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
-                                    `erp_deliveries`.`location`,
-                                    DATE_FORMAT( erp_deliveries.date, '%Y-%m-%d' ) AS date1,
-                                    `erp_sale_items`.`item_tax`,
-                                    `erp_sale_items`.`discount` 
-                                FROM
-                                    `erp_deliveries`
-                                    LEFT JOIN `erp_sale_items` ON `erp_deliveries`.`issued_sale_id` = `erp_sale_items`.`sale_id`
-                                    LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` 
-                                    AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id` 
-                                WHERE
-                                    `erp_sale_items`.`product_type` = 'standard' 
-                                    AND `erp_sale_items`.`sale_id` = $id 
-                                GROUP BY
-                                    `erp_delivery_items`.`product_id`,
-                                    `erp_deliveries`.`location`,
-                                    DATE_FORMAT( erp_deliveries.date, '%Y-%m-%d' ) UNION
-                                SELECT
-                                    `erp_sale_items`.`unit_price`,
-                                    `erp_sale_items`.`product_type`,
-                                    `erp_sale_items`.`product_name`,
-                                    sum(erp_sale_items.quantity) AS quantity,
-                                    `erp_sale_items`.`location`,
-                                    DATE_FORMAT( erp_sale_items.delivery_date, '%Y-%m-%d' ) AS date1,
-                                    `erp_sale_items`.`item_tax`,
-                                    `erp_sale_items`.`discount` 
-                                FROM
-                                    `erp_sale_items` 
-                                WHERE
-                                    `erp_sale_items`.`product_type` = 'combo' 
-                                    AND `erp_sale_items`.`sale_id` = $id
-                                GROUP BY 
+         $query = $this->db->query("
+                            SELECT
                                 `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
+                                `erp_delivery_items`.`product_name`,
+                                ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                `erp_deliveries`.`location`,
+                                DATE_FORMAT( erp_deliveries.date, '%Y-%m-%d'  ) AS date1,
+                                `erp_sale_items`.`item_tax`,
+                                `erp_sale_items`.`discount` 
+                            FROM
+                                `erp_deliveries`
+                                LEFT JOIN `erp_sale_items` ON `erp_deliveries`.`issued_sale_id` = `erp_sale_items`.`sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` 
+                                AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id` 
+                            WHERE
+                                `erp_sale_items`.`product_type` = 'standard' AND 
+                                `erp_sale_items`.`sale_id` = $id 
+                            GROUP BY
+                                `erp_delivery_items`.`product_id`,
+                                `erp_deliveries`.`location`,
+                                DATE_FORMAT( erp_deliveries.date, '%Y-%m-%d' ) 
+                         
+                            UNION
+                            SELECT
+                                `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
                                 `erp_sale_items`.`product_name`,
-                                `erp_sale_items`.`location`,
-                                DATE_FORMAT( erp_sale_items.delivery_date, '%Y-%m-%d' )
-                                UNION
-                                SELECT
-                                    `erp_sale_items`.`unit_price`,
-                                    `erp_sale_items`.`product_type`,
-                                    `erp_sale_items`.`product_name`,
-                                    ( CASE WHEN erp_sale_items.quantity_received > 0 THEN SUM( erp_sale_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
-                                    erp_sale_items.location,
-                                    erp_sale_items.delivery_date as date1,
-                                    `erp_sale_items`.`item_tax`,
-                                    `erp_sale_items`.`discount` 
-                                FROM
-                                    `erp_sales`
-                                    LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id`
-                                    LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id` = `erp_deliveries`.`issued_sale_id`
-                                    LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` = `erp_delivery_items`.`delivery_id` 
-                                WHERE
-                                    `erp_sale_items`.`product_type` = 'service' 
-                                    AND `erp_sale_items`.`sale_id` = $id 
-                                GROUP BY
-                                    `erp_sale_items`.`product_type`,
-	                                `erp_sale_items`.`product_id`  
-                                ORDER BY
-                                    date1 ASC,
-                                    location ASC,
-                                    quantity ASC,
-                                    unit_price ASC"
+                                 ( CASE WHEN erp_delivery_items.quantity_received > 0 THEN SUM( erp_delivery_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                 `erp_deliveries`.`location`,
+                                 DATE_FORMAT( erp_deliveries.date, '%Y-%m-%d'  ) AS date1,
+                                `erp_sale_items`.`item_tax`,
+                                `erp_sale_items`.`discount` 
+                            FROM
+                                `erp_sales`
+                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
+                                LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_delivery_items`.`delivery_id` = `erp_deliveries`.`id` AND `erp_delivery_items`.`product_id` = `erp_sale_items`.`product_id`
+                            WHERE
+                                `erp_sale_items`.`product_type` = 'combo' AND 
+                                `erp_sale_items`.`sale_id` = $id
+                                
+                            GROUP BY
+                                `erp_delivery_items`.`product_id`,
+                                `erp_deliveries`.`location`,
+                                DATE_FORMAT( erp_deliveries.date, '%Y-%m-%d' )
+                             UNION
+                            SELECT
+                                `erp_sale_items`.`unit_price`,
+                                `erp_sale_items`.`product_type`,
+                                `erp_sale_items`.`product_name`,
+                                 ( CASE WHEN erp_sale_items.quantity_received > 0 THEN SUM( erp_sale_items.quantity_received ) ELSE erp_sale_items.quantity END ) AS quantity,
+                                '' AS location,
+                                 '' AS date1,
+                                `erp_sale_items`.`item_tax`,
+                                `erp_sale_items`.`discount` 
+                            FROM
+                                `erp_sales`
+                                LEFT JOIN `erp_sale_items` ON `erp_sales`.`id` = `erp_sale_items`.`sale_id` 
+                                LEFT JOIN `erp_deliveries` ON `erp_sale_items`.`sale_id`= `erp_deliveries`.`issued_sale_id`
+                                LEFT JOIN `erp_delivery_items` ON `erp_deliveries`.`id` =`erp_delivery_items`.`delivery_id`
+                                
+                            WHERE
+                                `erp_sale_items`.`product_type` = 'service' AND 
+                                `erp_sale_items`.`sale_id` = $id
+                                
+                            GROUP BY
+                                `erp_sale_items`.`product_type` 
+                                
+                              ORDER BY  date1 ASC , location ASC,quantity ASC,unit_price ASC
+                            "
          );
         //$this->erp->print_arrays($query->result());
         return $query->result();

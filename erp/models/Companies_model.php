@@ -324,7 +324,6 @@ class Companies_model extends CI_Model
         $this->db->where('customer_id', $id)->from('sales');
         return $this->db->count_all_results();
     }
-
     public function getBillerSales($id)
     {
         $this->db->where('biller_id', $id)->from('sales');

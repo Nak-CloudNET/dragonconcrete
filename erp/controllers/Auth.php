@@ -48,7 +48,7 @@ class Auth extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('users').'.id as id,'. $this->db->dbprefix('users').".id as idd,  first_name, last_name, email, company, " . $this->db->dbprefix('groups') . ".name, active")
+            ->select($this->db->dbprefix('users').'.id as id,'. $this->db->dbprefix('users').".id as idd,  first_name, last_name,username as username, email, company, " . $this->db->dbprefix('groups') . ".name, active")
             ->from("users")
             ->join('groups', 'users.group_id = groups.id', 'left')
             ->group_by('users.id')
