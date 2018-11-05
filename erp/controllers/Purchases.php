@@ -4940,10 +4940,11 @@ class Purchases extends MY_Controller
 				
 			}
 			else{
-				
+
 				$ac_ap   		= $this->purchases_model->ACC_AP();
 				$ac_tax   		= $this->purchases_model->ACC_Pur_Tax();
 				$ac_old_transno = $this->input->post('old_transno');
+
 				$account_code 	= $this->input->post('account_section');
 				$reference_no 	= $this->input->post('reference_no');
 				$debit 			= $this->input->post('debit');
@@ -4954,7 +4955,7 @@ class Purchases extends MY_Controller
 				$i 				= 0;
 				$data 			= array();
 				$total 			= 0;
-				
+
 				$data[] =  array(
 						'tran_type' 	=> 'PURCHASE EXPENSE',
 						'tran_no' 		=> $ac_old_transno,
@@ -5018,7 +5019,7 @@ class Purchases extends MY_Controller
 							);
 					}
 				}
-		
+
 				$this->purchases_model->updateJournal($reference_no, $data);
 				 
 				if ($this->Settings->tax2 != 0) {
