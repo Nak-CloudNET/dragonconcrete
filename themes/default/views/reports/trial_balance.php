@@ -90,10 +90,11 @@
 							$total_C = 0;
 							$total_D = 0;
 							foreach($data10->result() as $row10){
+
 								if ($row10->amount>0){ ?>
 								<tr>
 									<td  style="padding-left:30px">
-										<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$from_st.$to_st.'&account='.$row10->account_code) ?>">
+										<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$start.$end.'&account='.$row10->account_code) ?>">
 											<?php echo $row10->account_code;?> - <?php echo $row10->accountname;?>
 										</a>
 									</td>
@@ -108,7 +109,7 @@
 							<?php } else { ?>
 								<tr>
 									<td  style="padding-left:30px">
-										<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$from_st.$to_st.'&account='.$row10->account_code) ?>">
+										<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$start.$end.'&account='.$row10->account_code) ?>">
 											<?php echo $row10->account_code;?> - <?php echo $row10->accountname;?>
 										</a>
 									</td>
@@ -127,6 +128,7 @@
 							<?php
 								$total_11 = 0;
 								foreach($data11->result() as $row11){
+
 									if ($row11->amount>0){
 							?>
 								<tr>
@@ -162,17 +164,18 @@
 
 						<?php
 							$total_20 = 0;
+                        $total_D=0;
 							foreach($data20->result() as $row20){
 								if ($row20->amount>0){
 						?>
 
 							<tr>
 								<td  style="padding-left:30px">
-									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$from_st.$to_st.'&account='.$row20->account_code) ?>">
+									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$start.$end.'&account='.$row20->account_code) ?>">
 										<?php echo $row20->account_code;?> - <?php echo $row20->accountname;?>
 									</a>
 								</td>
-								<td><span class="pull-right"><?php echo number_format(abs($row20->amount),2); $total_C += $row20->amount;?></span></td>
+								<td><span class="pull-right"><?php echo number_format(abs($row20->amount),2); $total_C += $row20->amount; ?></span></td>
 								<td></td>
 							</tr>
 						<?php
@@ -180,13 +183,13 @@
 						?>
 							<tr>
 								<td style="padding-left:30px">
-									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$from_st.$to_st.'&account='.$row20->account_code) ?>">
+									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1 '.$start.'-'.$end.' &account='.$row20->account_code) ?>">
 										<?php echo $row20->account_code;?> - <?php echo $row20->accountname;?>
 									</a>
 								</td>
-								<td></td>
-								<td><span class="pull-right"><?php echo number_format(abs($row20->amount),2); $total_D += $row20->amount;?></span></td>
-							</tr>
+                                <td></td>
+                                <td><span class="pull-right"><?php echo number_format(abs($row20->amount),2); $total_D += $row20->amount; ?></span></td>
+                            </tr>
 
 						<?php
 								}
@@ -402,6 +405,7 @@
 								<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$from_st.$to_st.'&account='.$row70->account_code) ?>">
 									<?php echo $row70->account_code;?> - <?php echo $row70->accountname;?>
 								</a>
+
 							</td>
 							<td></td>
 							<td><span class="pull-right"><?php echo number_format(abs($row70->amount),2);$total_D += $row70->amount;?></span></td>
