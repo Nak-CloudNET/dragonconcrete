@@ -2888,7 +2888,7 @@ class Site extends CI_Model
 
     public function item_costing($item, $pi = NULL) 
 	{
-        //$this->erp->print_arrays($item);
+
 		$item_quantity = $pi ? $item['aquantity'] : $item['quantity'];
         if (!isset($item['option_id']) || $item['option_id'] == 'null') {
             $item['option_id'] = NULL;
@@ -2939,7 +2939,7 @@ class Site extends CI_Model
 									'quantity_balance' 		 => NULL, 
 									'inventory' 			 => NULL,
 									'transaction_type' 		 => $item['transaction_type'], 
-									'transaction_type' 		 => $item['transaction_id'],
+									'transaction_id' 		 => $item['transaction_id'],
 									'status' 				 => $item['status']
 								)
 							);
@@ -2963,7 +2963,7 @@ class Site extends CI_Model
 							'quantity_balance' 			=> NULL, 
 							'inventory' 				=> NULL,
 							'transaction_type' 			=> $item['transaction_type'], 
-							'transaction_type' 			=> $item['transaction_id'],
+							'transaction_id' 			=> $item['transaction_id'],
 							'status' 					=> $item['status']
 						)
 					);
@@ -2983,7 +2983,7 @@ class Site extends CI_Model
 						'quantity_balance' 			=> NULL, 
 						'inventory' 				=> NULL,
 						'transaction_type' 			=> $item['transaction_type'], 
-						'transaction_type' 			=> $item['transaction_id'],
+						'transaction_id' 			=> $item['transaction_id'],
 						'status' 					=> $item['status']
 					)
 				);
@@ -3025,7 +3025,7 @@ class Site extends CI_Model
 							'quantity_balance' 			=> NULL, 
 							'inventory' 				=> NULL,
 							'transaction_type' 			=> $item['transaction_type'], 
-							'transaction_type' 			=> $item['transaction_id'],
+							'transaction_id' 			=> $item['transaction_id'],
 							'status' 					=> $item['status']
 						)
 					);
@@ -3045,7 +3045,7 @@ class Site extends CI_Model
 						'quantity_balance' 			=> NULL, 
 						'inventory' 				=> NULL,
 						'transaction_type' 			=> $item['transaction_type'], 
-						'transaction_type' 			=> $item['transaction_id'],
+						'transaction_id' 			=> $item['transaction_id'],
 						'status' 					=> $item['status']
 					)
 				);
@@ -3057,7 +3057,7 @@ class Site extends CI_Model
 
     public function costing($items) 
 	{
-        //$this->erp->print_arrays($items);
+
 	   $citems = array();
         foreach ($items as $item) {
             $pr = $this->getProductByID($item['product_id']);
