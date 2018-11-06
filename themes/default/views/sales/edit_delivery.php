@@ -5,6 +5,7 @@
             </button>
             <h4 class="modal-title" id="myModalLabel"><?php echo lang('edit_delivery'); ?></h4>
         </div>
+
         <?php $attrib = array('data-toggle' => 'validator', 'role' => 'form');
         echo form_open("sales/edit_delivery/" . $delivery->id, $attrib); ?>
         <div class="modal-body">

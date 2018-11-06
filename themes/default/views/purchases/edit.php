@@ -5,21 +5,21 @@
 </style>
 <!--Costomize Javascript-->
 <script type="text/javascript">
- $(document).ready(function () {	
+ $(document).ready(function () {
 	var MaxInputs       = 30;
 	var InputsWrapper   = jQuery(".journalContainer");
 	var AddButton       = jQuery("#addDescription");
-	
+
 	var InputCount = jQuery(".journal-list");
 	var x = InputCount.length;
-	
+
 	var FieldCount=2;
 
 	$(AddButton).click(function (e)
-	{     
-		if(x <= MaxInputs) 
-		{ 
-			FieldCount++; 
+	{
+		if(x <= MaxInputs)
+		{
+			FieldCount++;
 			var div = '<div class="col-md-12 journal-list divwrap'+FieldCount+'">';
 			div += '	<div class="col-md-6">';
 			div += '			<div class="form-group company">';
@@ -30,13 +30,13 @@
 			div += '				</select>';
 			div += '			</div>';
 			div += '		</div>';
-			
+
 			div += '		<div class="col-md-5">';
 			div += '			<div class="form-group">';
 			div += '				<input type="text" name="debit[]" value="" class="form-control debit'+FieldCount+'" id="debit"> ';
 			div += '			</div>';
 			div += '		</div>';
-					
+
 			div += '		<div class="col-md-1">';
 			div += '			<button type="button" data="'+FieldCount+'" class="removefile btn btn-danger">&times;</button>';
 			div += '		</div>';
@@ -52,11 +52,11 @@
 		var v_debit = 0;
 		var i = 1;
 		var expense_tax = 0;
-		
+
 		$('[name^=debit]').each(function(i, item) {
 			v_debit +=  parseFloat($(item).val()) || 0;
 		});
-		
+
 		if (site.settings.tax2 != 0) {
             if (potax2 = localStorage.getItem('potax2')) {
                 $.each(tax_rates, function () {
@@ -71,17 +71,17 @@
                 });
             }
         }
-		
+
 		$("#calDebit").text(v_debit);
 		$("#in_calDebit").val(v_debit);
 		$('#total').text(formatPurDecimal(v_debit));
 		$('#ttax2').text(formatPurDecimal(expense_tax));
 		$('#in_calOrdTax').val(expense_tax);
-		
+
 		var v_grand_total = v_debit + expense_tax;
 		$('#gtotal').text(formatPurDecimal(v_grand_total));
 	}
-	
+
 	$('#potax2').change(function() {
 		var type = $('#poexpance').val();
 		if(type == 'exp') {
@@ -89,13 +89,13 @@
 			AutoDebit();
 		}
 	});
-	
+
 	$(document).ready(function () {
 		/*
 		$("#potax2").on("change",function()
 		{
 			var Debit_t = $("#calDebit").html()-0;
-			
+
 			if (site.settings.tax2 != 0) {
 				if (potax2 = localStorage.getItem('potax2')) {
 					$.each(tax_rates, function () {
@@ -107,7 +107,7 @@
 								invoice_tax = parseFloat(((Debit_t) * this.rate) / 100);
 							}
 						}
-						
+
 					});
 				}
 			}
@@ -115,27 +115,27 @@
 			if (site.settings.tax2 != 0) {
             $('#ttax2').text(formatPurDecimal(invoice_tax));
 			}
-			
+
 			var gtotal = (parseFloat(Debit_t) + formatPurDecimal(invoice_tax));
 			$('#gtotal').text(formatPurDecimal(gtotal));
 		});
 		*/
-		
-		
+
+
 		$('.removefile').live('click', function(){
 			var divId 	= $(this).attr('data');
 			if( FieldCount == 2 ) {
 				bootbox.alert('Journal must be at least two transaction!');
-				
+
 				return false;
 			}else{
 				$('.divwrap'+divId+'').remove();
 			}
 		});
-		
-		$('input[name="debit[]"], input[name="credit[]"]').live('change keyup paste',function(){	
+
+		$('input[name="debit[]"], input[name="credit[]"]').live('change keyup paste',function(){
 			AutoDebit();
-			
+
 
 			if($("#calDebit").text() != $("#calCredit").text()){
 				$("#calDebit").addClass('error');
@@ -145,14 +145,14 @@
 				$("#calCredit").removeClass('error');
 			}
 		});
-		
+
 		$("#checkSave").click(function(){
 			if($("#calDebit").text() != $("#calCredit").text()){
 				bootbox.alert('Your Debit Credit is difference ! \nPlease check your amount');
 				return false;
 			}
 		});
-        
+
         $(".datetime").datetimepicker({
             format: site.dateFormats.js_ldate,
             fontAwesome: true,
@@ -164,7 +164,7 @@
             startView: 2,
             forceParse: 0
         }).datetimepicker('update', '<?= $this->erp->hrld($purchase->date);?>');
-		
+
 		function chart_account(){
 			$('#account_section').bind("change", function(){
 				$(".sub_textbox").show();
@@ -192,9 +192,9 @@
 					});
 				}
 				$('#modal-loading').hide();
-			});		
-		}		
-		chart_account();	
+			});
+		}
+		chart_account();
 	});
  });
 </script>
@@ -208,7 +208,7 @@
     $(window).bind("load", function() {
         <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show();' : '$(".rec_con").hide();'; ?>
     });
-	
+
     $(document).ready(function () {
 		$(window).load(function(){
 			$("#slbiller").attr('readonly',true);
@@ -232,16 +232,16 @@
 						return false;
 					}
 				}
-				
+
 				if(am1<=0){
 					bootbox.alert('Total amount can not less than 0.');
 					return false;
 				}
 			}
-			
+
 			$('#edit_pruchase').trigger('click');
 		});
-		
+
         <?= ($inv->status == 'received' || $inv->status == 'partial') ? '$(".rec_con").show();' : '$(".rec_con").hide();'; ?>
         $('#postatus').change(function(){
             var st = $(this).val();
@@ -252,13 +252,13 @@
             }
         });
         <?php if ($inv) {  ?>
-		
+
 		 if (localStorage.getItem('posupplier')) {
 			 localStorage.removeItem('posupplier');
 		 }
 		 if (localStorage.getItem('poid')) {
 			 localStorage.removeItem('poid');
-		 }		
+		 }
         localStorage.setItem('podate', '<?= date($dateFormats['php_ldate'], strtotime($inv->date))?>');
 		localStorage.setItem('poexpance','<?=$inv->type_of_po?>');
         localStorage.setItem('posupplier', '<?=$inv->supplier_id?>');
@@ -278,14 +278,14 @@
         }
         //localStorage.setItem('posupplier', '<?=$inv->supplier_id?>');
 		 <?php if ($inv->type_of_po=='po') { ?>
-		
+
         localStorage.setItem('poitems', JSON.stringify(<?=$inv_items;?>));
-		
-		 <?php 
+
+		 <?php
 			}
-		 } 
+		 }
 		 ?>
-		
+
 		$("#podate").datetimepicker({
 			format: site.dateFormats.js_ldate,
 			fontAwesome: true,
@@ -297,7 +297,7 @@
 			startView: 2,
 			forceParse: 0
 		}).datetimepicker('update', new Date());
-		
+
         $(document).on('change', '#podate', function (e) {
             localStorage.setItem('podate', $(this).val());
         });
@@ -434,11 +434,11 @@
             $(window).unbind('beforeunload');
             $('form.edit-po-form').submit();
         });
-			
+
 		$(window).load(function(){
 			$("#poexpance").trigger("change");
 		});
-			
+
 		$("#poexpance").change(function()
 		{
 			if($(this).val()=='po')
@@ -463,9 +463,9 @@
               $(".shipping").css("display", "none");
               $(".postatus").css("display", "none");
 			}
-			
+
 		});
-		
+
 		$("#pocustomer").change(function()
 		{
 		 var v = $(this).val();
@@ -477,7 +477,7 @@
 						url: "<?= site_url('account/getCustomerInvoices') ?>/" + v,
 						dataType: "json",
 						success: function (scdata) {
-							
+
 							if (scdata != null) {
 								$("#pocustomer_no").select2("destroy").empty().attr("placeholder", "<?= lang('select_customer_invoice') ?>").select2({
 									placeholder: "<?= lang('select_customer_to_load') ?>",
@@ -507,9 +507,9 @@
 					});
 				}
 		   $('#modal-loading').hide();
-		
+
 		}).trigger("change");
-		
+
     });
 
 
@@ -520,7 +520,7 @@
     <div class="box-header">
         <h2 class="blue"><i class="fa-fw fa fa-edit"></i><?= lang('edit_purchase'); ?></h2>
     </div>
-    
+
 	<div class="box-content">
         <div class="row">
             <div class="col-lg-12">
@@ -541,7 +541,7 @@
                                 </div>
                             </div>
                         <?php } ?>
-						
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <?= lang("reference_no", "poref"); ?>
@@ -549,7 +549,7 @@
 								<input type="hidden"  name="quote_id"  id="quote_id" value="<?= $quote_id?$quote_id:'' ?>" />
 							</div>
                         </div>
-						
+
 						<?php if($inv->order_ref){ ?>
 							<div class="col-md-4">
 								<div class="form-group">
@@ -558,7 +558,7 @@
 								</div>
 							</div>
 						<?php } ?>
-						
+
 						<?php if ($Owner || $Admin || !$this->session->userdata('biller_id')) { ?>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -581,7 +581,7 @@
                             );
                             echo form_input($biller_input);
                         } ?>
-                        
+
 						<div class="col-md-4 powarehouse_o" >
                             <div class="form-group">
                                 <?= lang("warehouse", "powarehouse"); ?>
@@ -594,7 +594,7 @@
                                 ?>
                             </div>
                         </div>
-                        
+
 						<div class="customers">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -627,14 +627,14 @@
 									}else{
 										$exp['exp']   = 'Expense';
 									}
-								 
-								 
-						 
+
+
+
 								echo form_dropdown('expance', $exp,(isset($_POST['expense']) ? $_POST['expense'] : $inv->type_of_po), 'id="poexpance" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("expance") . '"  style="width:100%;" ');
 								?>
 							</div>
                         </div>
-						
+
 						<div class="customers_info">
 							<div class="col-md-4">
                                 <div class="form-group">
@@ -649,12 +649,12 @@
                                 <div
                                     class="panel-heading"><?= lang('please_select_these_before_adding_product') ?>
 								</div>
-							
+
                                 <div class="panel-body" style="padding: 5px;">
 									<div class="col-sm-4">
 										<div class="form-group">
 										<?= lang("supplier", "posupplier"); ?>
-										<?php 
+										<?php
 											$sup[''] = '';
 											foreach($suppliers as $supplier){
 												$sup[$supplier->id] = $supplier->code .'-'. $supplier->username;
@@ -668,7 +668,7 @@
 										<input type="hidden" name="supplier_id" value="" id="supplier_id" class="form-control">
 										</div>
 									</div>
-									
+
                                     <!--<div class="col-md-4">
                                         <div class="form-group">
                                             <?= lang("supplier", "posupplier"); ?>
@@ -714,12 +714,12 @@
                                         <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
                                             <i class="fa fa-2x fa-barcode addIcon"></i></div>
                                         <?php
-										
+
 											if($this->input->get('editpur')){
-											
+
 											$q = $this->db->get_where('erp_products',array('id'=>$this->input->get('editpur')),1);
 											$pcode = $q->row()->code;
-											
+
 										}
 										echo form_input('add_item', isset($pcode) ? $pcode : '', 'class="form-control input-lg" id="add_item" placeholder="' . $this->lang->line("add_product_to_order") . '"'); ?>
                                         <div class="input-group-addon" style="padding-left: 10px; padding-right: 10px;">
@@ -760,7 +760,7 @@
 												}
                                             ?>
                                             <th class="col-md-1"><?= lang("quantity"); ?></th>
-											
+
 											<th class="col-md-1"><?= lang("stock_in_hand"); ?></th>
                                             <?php
                                             if ($Settings->product_discount) {
@@ -786,16 +786,16 @@
                                 </div>
                             </div>
                         </div>
-                        
+
 						<div class="clearfix"></div>
                         <input type="hidden" name="total_items" value="" id="total_items" required="required"/>
-						
+
 						<!--Customize Form Expance-->
-						
+
 						<div class="clearfix"></div>
-						
+
 						<div class="exp_form">
-							
+
 							<?php $attrib = array('data-toggle' => 'validator', 'role' => 'form');
 							echo form_open_multipart("account/save_journal", $attrib); ?>
 							<div class="panel-body">
@@ -806,22 +806,23 @@
 										$old_transno=0;
 										foreach($journals as $journal1){
 											$old_transno = $journal1->tran_no;
+
 											if($journal1->description != ""){
-											
+
 												$description = $journal1->description;
 											}
 										}
 									}
 									?>
-								
+
 									<div class="col-md-8"></div>
-									
+
 									<div class="col-md-12">
 										<div class="form-group">
 											<button style="margin-right: 30px;" type="button" class="btn btn-primary pull-right" id="addDescription"><i class="fa fa-plus-circle"></i></button>
 										</div>
 									</div>
-									
+
 								</div>
 								<div class="col-md-12">
 									<div class="col-md-12">
@@ -838,7 +839,7 @@
 											<div class="form-group margin-b-5"><?= lang("chart_account", "chart_account"); ?></div>
 										</div>
 										<div class="col-md-6"><div class="form-group margin-b-5"><?= lang("amount", "amount"); ?></div></div>
-										<input type="hidden" name="old_transno" value="<?= isset($old_transno); ?>">
+										<input type="hidden" name="old_transno" value="<?= isset($old_transno)?$old_transno:''; ?>">
 									</div>
 									<?php
 									$n = 1;
@@ -846,9 +847,9 @@
 									$credit = 0;
 									if(isset($journals)){
 										foreach($journals as $journal){
-											
+
 											if($journal->debit != 0 && $acc_setting->default_purchase_tax != $journal->account_code){
-											
+
 										?>
 											<div class="col-md-12 journal-list">
 												<div class="col-md-6">
@@ -856,6 +857,7 @@
 														<?php
 														$acc_section = array(""=>"");
 														foreach($sectionacc as $section){
+
 															$acc_section[$section->accountcode] = $section->accountcode.' | '.$section->accountname;
 														}
 														echo form_dropdown('account_section[]', $acc_section, $journal->account_code,'', 'id="account_section" class="form-control input-tip select" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("Account") . ' ' . $this->lang->line("Section") . '" required="required" style="width: 100% !important;"');
@@ -863,12 +865,12 @@
 														<input type="hidden" name="tran_id[]" value="<?= $journal->tran_id ?>">
 													</div>
 												</div>
-												
+
 												<div class="col-md-5">
-													<div class="form-group">
-														<?php echo form_input('debit[]', ($journal->debit!=0?$journal->debit:$journal->credit), 'class="form-control debit" id="debit debit'.$n.'"'); ?>
-													</div>
-												</div>
+                                                    <div class="form-group">
+                                                        <?php echo form_input('debit[]', ($journal->debit!=0?$journal->debit:$journal->credit), 'class="form-control debit" id="debit debit'.$n.'"'); ?>
+                                                    </div>
+                                                </div>
 
 												<div class="col-md-1">
 													<div class="form-group ">
@@ -876,15 +878,15 @@
 													</div>
 												</div>
 											</div>
-											
-											<?php 
+
+											<?php
 											$debit += $journal->debit;
 											$n++;
 											}
 										}
 									}
 									?>
-									
+
 								</div>
 								<div class="col-md-6"></div>
 								<div class="col-md-5">
@@ -897,17 +899,17 @@
 							</div>
 						</div>
 					</div>
-				</div>	
-						
+				</div>
+
 				<!--End Customize Form Expance-->
-				
+
 				<div class="col-md-12">
 					<div class="form-group">
 						<input type="checkbox" class="checkbox" id="extras" value=""/>
 						<label for="extras" class="padding05"><?= lang('more_options') ?></label>
 					</div>
 					<div class="row" id="extras-con" style="display: none;">
-						
+
 						<div class="col-md-4 pr_form">
 							<div class="form-group">
 								<?= lang("discount_label", "podiscount"); ?>
@@ -921,7 +923,7 @@
 								<?php echo form_input('shipping', '', 'class="form-control input-tip" id="poshipping"'); ?>
 							</div>
 						</div>
-						
+
 						<?php if ($Settings->tax1) { ?>
 							<div class="col-md-4">
 								<div class="form-group">
@@ -940,8 +942,8 @@
 							<div class="col-sm-4">
 								<div class="form-group">
 									<?= lang("purchase_status", "postatus"); ?>
-									
-									<?php 
+
+									<?php
 									$sst = array('received' => lang('received'), 'pending' => lang('pending'));
 									echo form_dropdown('purchase_status', $sst, '', 'class="form-control input-tip" required="required" id="postatus"'); ?>
 								</div>
@@ -951,7 +953,7 @@
 						<div class="col-sm-4">
 							<div class="form-group">
 								<?= lang("payment_term", "slpayment_term"); ?>
-								<?php 
+								<?php
 									$pt[''] = '';
 									foreach($payment_term as $pterm){
 										$pt[$pterm->id] = $pterm->description;
@@ -966,7 +968,7 @@
 								<?= lang("payment_status", "slpayment_status"); ?>
 								<?php $pst = array('pending' => lang('pending'), 'due' => lang('due'), 'partial' => lang('partial'), 'paid' => lang('paid'));
 								echo form_dropdown('payment_status', $pst, $purchase->payment_status, 'class="form-control input-tip" id="slpayment_status"'); ?>
-								
+
 							</div>
 						</div>-->
 					</div>
@@ -978,7 +980,7 @@
 					</div>
 
 				</div>
-				
+
 				<div class="col-md-12">
 					<div
 						class="from-group"><?php echo form_submit('edit_pruchase', $this->lang->line("submit"), 'id="edit_pruchase" class="btn btn-primary" style="padding: 6px 15px; margin:15px 0;display:none;"'); ?>
@@ -986,7 +988,7 @@
 						<button type="button" class="btn btn-danger" id="reset"><?= lang('reset') ?></button>
 					</div>
 				</div>
-                
+
 				<div class="clearfix"></div>
 				<div id="bottom-total" class="well well-sm" style="margin-bottom: 0;">
 					<table class="table table-bordered table-condensed totals" style="margin-bottom:0;">
@@ -1002,11 +1004,11 @@
 						</tr>
 					</table>
 				</div>
-				
+
 			</div>
-			
+
 		</div>
-		
+
 
         <?php echo form_close(); ?>
 
@@ -1028,7 +1030,7 @@
 						<label class="col-sm-4 control-label"><?= lang('suppliers') ?></label>
 						<div class="col-sm-8">
 						   <input type="hidden" name="psupplier[]" value="" id="psupplier"class="form-control" style="width:100%;" placeholder="<?= lang("select") . ' ' . lang("supplier") ?>">
-							
+
 						</div>
 					</div>
                     <?php if ($Settings->tax1) { ?>
@@ -1037,7 +1039,7 @@
                             <div class="col-sm-8">
                                 <?php
 									$tm = array(
-										'0' => lang('exclusive'), 
+										'0' => lang('exclusive'),
 										'1' => lang('inclusive')
 									);
 									echo form_dropdown('tax_method', $tm, '', 'class="form-control select" id="tax_method" style="width:100%"')
@@ -1148,7 +1150,7 @@
 			}
 			$(".request_").text("Please input required fields (*)");
 		});
-		
+
 	   $("#subcategory").select2("destroy").empty().attr("placeholder", "<?= lang('select_category_to_load') ?>").select2({
             placeholder: "<?= lang('select_category_to_load') ?>", data: [
                 {id: '', text: '<?= lang('select_category_to_load') ?>'}
@@ -1165,7 +1167,8 @@
                     dataType: "json",
                     success: function (scdata) {
                         if (scdata != null) {
-                            $("#subcategory").select2("destroy").empty().attr("placeholder", "<?= lang('select_subcategory') ?>").select2({
+                            $("#subcategory").
+                            ("destroy").empty().attr("placeholder", "<?= lang('select_subcategory') ?>").select2({
                                 placeholder: "<?= lang('select_category_to_load') ?>",
                                 data: scdata
                             });
@@ -1189,20 +1192,20 @@
             }
             $('#modal-loading').hide();
         });
-		
-	   
-	
-        
 
-		
-		 
+
+
+
+
+
+
     });
-	
-$(window).load(function(){	
+
+$(window).load(function(){
 		var al = '<?php echo $this->input->get('editpur');?>';
-		
+
 		if(al){
-			
+
 			var test = $("#add_item").val();
 				$.ajax({
 					type: 'get',
@@ -1218,12 +1221,12 @@ $(window).load(function(){
 							comment = data[i];
 							add_purchase_item(comment);
 						  }
-						 $("#add_item").val('');	
+						 $("#add_item").val('');
 						//var url = $(".gos").attr('href');
 						//window.location.href = url;
-						
+
 					}
-				});   
+				});
 				 if (localStorage.getItem('posupplier')) {
 					//localStorage.removeItem('posupplier');
 				}
@@ -1232,5 +1235,5 @@ $(window).load(function(){
 				}
 		}
     });
-	
+
 </script>

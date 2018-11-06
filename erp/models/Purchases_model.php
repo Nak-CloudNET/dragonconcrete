@@ -158,6 +158,8 @@ class Purchases_model extends CI_Model
 		$this->db->from('purchases');
 		$this->db->join('gl_trans','erp_gl_trans.reference_no = erp_purchases.reference_no AND erp_purchases.biller_id = erp_gl_trans.biller_id','inner');
 		$this->db->where('purchases.id', $id);
+        $this->db->where('tran_type', 'PURCHASE EXPENSE');
+        $this->db->group_by('tran_type');
 		$q = $this->db->get();
 		if($q->num_rows() > 0){
 			return  $q->row();

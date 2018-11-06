@@ -4040,6 +4040,8 @@ class Sales extends MY_Controller
 							'option_id' 		=> $option_id[$i],
 							'quantity' 			=> $qty_received[$i],
 							'quantity_balance' 	=> $qty_received[$i],
+                            'transaction_type'  => 'DELIVERY',
+                            'transaction_id'    => $item_id[$i],
 							'warehouse_id' 		=> $warehouse_id[$i],
 							'old_sqty'			=> $delivery_item->quantity_received
 						);
@@ -4127,6 +4129,8 @@ class Sales extends MY_Controller
 								'serial_no' => $getsaleitem->serial_no,
 								'real_unit_price' => $getsaleitem->real_unit_price,
 								'product_noted' => $getsaleitem->product_noted,
+                                'transaction_type'  => 'DELIVERY',
+                                'transaction_id'    => $getsaleitem->id,
 								'old_sqty' => $delivery_item['old_sqty']
 							);
 							
@@ -4192,6 +4196,8 @@ class Sales extends MY_Controller
 								'serial_no' => $getsaleitem->serial_no,
 								'real_unit_price' => $getsaleitem->real_unit_price,
 								'product_noted' => $getsaleitem->product_noted,
+                                'transaction_type'  => 'DELIVERY',
+                                'transaction_id'    => $getsaleitem->id,
 								'old_sqty' => $delivery_item['old_sqty']
 							);
 							
