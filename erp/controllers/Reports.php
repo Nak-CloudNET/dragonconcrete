@@ -12255,50 +12255,44 @@ class Reports extends MY_Controller
     {
         $this->erp->checkPermissions('trail_balance',NULL,'account_report');
 
-		if (!$start_date) {
+        if (!$start_date) {
             $start = $this->db->escape(date('Y-m') . '-1');
-            $start_date = date('Y-m'. '-01' .' H:i') ;
-
+            $start_date = date('Y-m') . '-1';
         } else {
             $start = $this->db->escape(urldecode($start_date));
-            $start_date=null;
-
         }
-
         if (!$end_date) {
             $end = $this->db->escape(date('Y-m-d H:i'));
             $end_date = date('Y-m-d H:i');
         } else {
             $end = $this->db->escape(urldecode($end_date));
-            $end_date=null;
         }
-
-		$user = $this->site->getUser();
-		if($biller_id != NULL){
-			$this->data['biller_id'] = $biller_id;
-		}else{
-			$this->data['biller_id'] = "";
-		}
-		if(!$this->Owner && !$this->Admin) {
-			if($user->biller_id){
-				$this->data['billers'] = $this->site->getCompanyByArray($user->biller_id);
-			}else{
-				$this->data['billers'] = $this->site->getAllCompanies('biller');
-			}
-		}else{
-			$this->data['billers'] = $this->site->getAllCompanies('biller');
-		}
-
+        $user = $this->site->getUser();
+        if($biller_id != NULL){
+            $this->data['biller_id'] = $biller_id;
+        }else{
+            $this->data['biller_id'] = "";
+        }
+        if(!$this->Owner && !$this->Admin) {
+            if($user->biller_id){
+                $this->data['billers'] = $this->site->getCompanyByArray($user->biller_id);
+            }else{
+                $this->data['billers'] = $this->site->getAllCompanies('biller');
+            }
+        }else{
+            $this->data['billers'] = $this->site->getAllCompanies('biller');
+        }
+        $this->data['start'] = urldecode($start_date);
+        $this->data['end'] = urldecode($end_date);
 
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports/trial_balance')));
         $meta = array('page_title' => lang('trial_balance'), 'bc' => $bc);
-		$from_date = date('Y-m-d H:m',strtotime(urldecode($start_date)));//'2014-08-01';
+		$from_date = date('Y-m-dcash_books',strtotime(urldecode($start_date)));//'2014-08-01';
 		$to_date = date('Y-m-d H:m',strtotime(urldecode($end_date)));//'2015-09-01';
 
-        $this->data['start'] = urldecode($from_date);
-        $this->data['end'] = urldecode($to_date);
+
 
 		$data10 = $this->accounts_model->getStatementByDate('10',$from_date,$to_date,$biller_id);
 		$this->data['data10'] = $data10;
@@ -13421,6 +13415,13 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
+        if ($this->Owner || $this->Admin || !$this->session->userdata('user_id')) {
+            $this->data['paid_by'] = $this->accounts_model->getAllChartAccountBank();
+
+        } else {
+            $user_id = $this->session->userdata('user_id');
+            $this->data['paid_by'] = $this->accounts_model->getChartAccountBankByID($user_id);
+        }
 
 		if ($pdf != NULL && $biller_id == NULL) {
             $html = $this->load->view($this->theme . 'reports/cash_books', $this->data, true);

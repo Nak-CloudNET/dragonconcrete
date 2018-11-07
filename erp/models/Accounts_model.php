@@ -799,6 +799,20 @@ class Accounts_model extends CI_Model
         return FALSE;
 	}
 
+	public function getChartAccountBankByID($user_id){
+		$this->db->select('gl_charts.accountcode,gl_charts.accountname,gl_charts.parent_acc,gl_charts.sectionid');
+		$this->db->from('gl_charts');
+        $this->db->join('erp_users_bank_account', 'erp_users_bank_account.bankaccount_code=erp_gl_charts.accountcode', 'left');
+		$this->db->where('bank', 1);
+		$this->db->where('erp_users_bank_account.user_id',$user_id);
+		$q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+
+        return FALSE;
+	}
+
 	public function updateJournal($rows, $old_reference_no = NULL) {
 		//$ids = '';
 		//$ref = '';
@@ -1579,7 +1593,7 @@ class Accounts_model extends CI_Model
 		}
 		$where_date = '';
 		if($from_date && $to_date){
-			$where_date = " AND erp_gl_trans.tran_date BETWEEN '$from_date'
+			$where_date = " AND erp_gl_trans.tran_date BETWEEN '$from_date 00:00'
 			AND '$to_date' ";
 		}
 

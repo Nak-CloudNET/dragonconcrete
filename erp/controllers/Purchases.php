@@ -6878,7 +6878,14 @@ class Purchases extends MY_Controller
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['exnumber'] = '';
 			$this->data['chart_accounts'] = $this->accounts_model->getAllChartAccountIn('50,60,80');
-			$this->data['paid_by'] = $this->accounts_model->getAllChartAccountBank();
+            if ($this->Owner || $this->Admin || !$this->session->userdata('user_id')) {
+                $this->data['paid_by'] = $this->accounts_model->getAllChartAccountBank();
+
+            } else {
+                $user_id = $this->session->userdata('user_id');
+                $this->data['paid_by'] = $this->accounts_model->getChartAccountBankByID($user_id);
+            }
+
 			$this->data['currency'] = $this->site->getCurrency();
 			$this->data['customers'] = $this->site->getCustomers();
 			$this->data['invoices'] = $this->site->getCustomerInvoices();
@@ -6972,7 +6979,13 @@ class Purchases extends MY_Controller
             $this->data['modal_js'] = $this->site->modal_js();
 			$this->data['currency'] = $this->site->getCurrency();
 			$this->data['chart_accounts'] = $this->accounts_model->getAllChartAccountIn('30,50,60,80');
-			$this->data['paid_by'] = $this->accounts_model->getAllChartAccountBank();
+            if ($this->Owner || $this->Admin || !$this->session->userdata('user_id')) {
+                $this->data['paid_by'] = $this->accounts_model->getAllChartAccountBank();
+
+            } else {
+                $user_id = $this->session->userdata('user_id');
+                $this->data['paid_by'] = $this->accounts_model->getChartAccountBankByID($user_id);
+            }
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 			$this->data['customers'] = $this->site->getCustomers();
 			$this->data['invoices'] = $this->site->getCustomerInvoices();

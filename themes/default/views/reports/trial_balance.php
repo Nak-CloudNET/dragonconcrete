@@ -171,7 +171,7 @@
 
 							<tr>
 								<td  style="padding-left:30px">
-									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$start.$end.'&account='.$row20->account_code) ?>">
+									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1'.$from_st.$to_st.'&account='.$row20->account_code) ?>">
 										<?php echo $row20->account_code;?> - <?php echo $row20->accountname;?>
 									</a>
 								</td>
@@ -183,7 +183,7 @@
 						?>
 							<tr>
 								<td style="padding-left:30px">
-									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1 '.$start.'-'.$end.' &account='.$row20->account_code) ?>">
+									<a href="<?= site_url('reports/ledger/0/0/'.$biller_id.'?w=1 '.$from_st.$to_st.' &account='.$row20->account_code) ?>">
 										<?php echo $row20->account_code;?> - <?php echo $row20->accountname;?>
 									</a>
 								</td>

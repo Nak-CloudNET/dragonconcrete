@@ -86,9 +86,9 @@
                                             <label class="control-label" for="user"><?= lang("account_name"); ?></label>
                                             <?php
                                             $accounntCode = $this->db;
-                                            $accOption = $accounntCode->select('*')->from('gl_charts')->where('bank', 1)->get()->result();
+                                            //$accOption = $accounntCode->select('*')->from('gl_charts')->where('bank', 1)->get()->result();
                                             $account_[""] = " ";
-                                            foreach ($accOption as $a) {
+                                            foreach ($paid_by as $a) {
                                                 $account_[$a->accountcode] = $a->accountcode . " " . $a->accountname;
                                             }
                                             echo form_dropdown('account', $account_, (isset($_POST['account']) ? $_POST['account'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("account") . '"');
@@ -164,7 +164,9 @@
                                                 $startAmount = $gl_tranStart->get()->row();
 
                                                 $endAccountBalance = 0;
-                                                $getListGLTran = $this->db->select("gl_trans.*, users.username as cashier")->from('gl_trans')->join('users', 'gl_trans.created_by = users.id', 'left')->where('account_code =', $val->accountcode);
+                                                $getListGLTran = $this->db->select("gl_trans.*, users.username as cashier")
+                                                    ->from('gl_trans')->join('users', 'gl_trans.created_by = users.id', 'left')
+                                                    ->where('account_code =', $val->accountcode);
 
                                                 $getListGLTran->where('date_format(tran_date,"%Y-%m-%d") >="'.$start_date2.'" AND date_format(tran_date,"%Y-%m-%d") <="'.$end_date2.'"');
 
