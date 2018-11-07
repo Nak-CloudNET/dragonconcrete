@@ -3910,8 +3910,6 @@ class Sales_model extends CI_Model
             $delivery_id = $this->db->insert_id();
 
             if($delivery_id > 0){
-                //$this->db->update("erp_sales",array('sale_status'=>'completed'),array('id'=>$delivery['sale_id']));
-                //$this->erp->print_arrays($this->site->getReference('do',$delivery['biller_id']),$delivery['do_reference_no']);
                 if ($this->site->getReference('do',$delivery['biller_id']) == $delivery['do_reference_no']) {
                     $this->site->updateReference('do',$delivery['biller_id']);
                 }
@@ -3922,11 +3920,8 @@ class Sales_model extends CI_Model
                         unset($delivery_item['option_id']);
                     }
 
-                    $this->db->update('sales', array('sale_status' => 'completed'), array('id' => $delivery['sale_id']));
-
-                    /*if ($delivery_item['sale_id']) {
-                        $abc = $this->db->update('sales', array('so_id' => $delivery_item['sale_id']), array('sale_id' => $delivery_item['sale_id']));
-                    }*/
+                    //don't know what it is
+                    //$this->db->update('sales', array('sale_status' => 'completed'), array('id' => $delivery['sale_id']));
 
                     $this->db->insert('delivery_items',$delivery_item);
                     $delivery_item_id = $this->db->insert_id();

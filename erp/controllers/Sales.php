@@ -14018,7 +14018,7 @@ class Sales extends MY_Controller
 				{
 					$this->site->costing($products);
 				}
-//$this->erp->print_arrays($delivery);
+
 				$delivery_id = $this->sales_model->add_delivery($delivery, $deliverie_items);
 				
 				if($delivery_id > 0)
