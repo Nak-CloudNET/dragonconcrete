@@ -151,7 +151,19 @@
                                             $startDate=date('Y-m-d',strtotime($start_date2 . " - $numday day"));
 
                                             $accounntCode = $this->db;
+
+                                        if ($this->Owner || $this->Admin || !$this->session->userdata('user_id')) {
                                             $accounntCode->select('*')->from('gl_charts')->where('bank', 1);
+
+                                        } else {
+                                            $user_id = $this->session->userdata('user_id');
+                                            $accounntCode->select('*')->from('gl_charts')->join('erp_users_bank_account', 'erp_users_bank_account.bankaccount_code=erp_gl_charts.accountcode', 'left')->where('bank', 1);
+                                            $accounntCode->where('erp_users_bank_account.user_id', $user_id);
+                                        }
+
+
+                                            
+
                                             if ($this->input->post('account') ) {
                                                 $accounntCode->where('accountcode', $this->input->post('account'));
                                             }
