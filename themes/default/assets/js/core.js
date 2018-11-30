@@ -658,6 +658,23 @@ $(document).ready(function() {
     refreshPage(start.format('YYYY-MM-DD HH:mm'), end.format('YYYY-MM-DD HH:mm'));
 });
 });
+$(document).ready(function() {
+    $('#dateonlyrange').daterangepicker({
+        timePicker: true,
+        format: (site.dateFormats.js_sdate).toUpperCase()+' HH:mm',
+        ranges: {
+         'Today': [moment().hours(0).minutes(0).seconds(0), moment()],
+         'Yesterday': [moment().subtract('days', 1).hours(0).minutes(0).seconds(0), moment().subtract('days', 1).hours(23).minutes(59).seconds(59)],
+         'Last 7 Days': [moment().subtract('days', 6).hours(0).minutes(0).seconds(0), moment().hours(23).minutes(59).seconds(59)],
+         'Last 30 Days': [moment().subtract('days', 29).hours(0).minutes(0).seconds(0), moment().hours(23).minutes(59).seconds(59)],
+         'This Month': [moment().startOf('month').hours(0).minutes(0).seconds(0), moment().endOf('month').hours(23).minutes(59).seconds(59)],
+         'Last Month': [moment().subtract('month', 1).startOf('month').hours(0).minutes(0).seconds(0), moment().subtract('month', 1).endOf('month').hours(23).minutes(59).seconds(59)]
+     }
+ },
+ function(start, end) {
+    refreshPage(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+});
+});
 
 function refreshPage(start, end) {
     window.location.replace(CURI + '/' + encodeURIComponent(start) + '/' + encodeURIComponent(end));

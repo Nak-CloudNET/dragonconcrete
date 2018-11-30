@@ -1587,14 +1587,15 @@ class Accounts_model extends CI_Model
 		return $query;
 	}
 	public function getStatementByDate($section = NULL,$from_date= NULL,$to_date = NULL,$biller_id = NULL){
+        //$this->erp->print_arrays($from_date);
 		$where_biller = '';
 		if($biller_id != NULL){
 			$where_biller = " AND erp_gl_trans.biller_id IN($biller_id) ";
 		}
 		$where_date = '';
 		if($from_date && $to_date){
-			$where_date = " AND erp_gl_trans.tran_date BETWEEN '$from_date 00:00'
-			AND '$to_date' ";
+			$where_date = " AND date_format(erp_gl_trans.tran_date,'%Y-%m-%d') BETWEEN date_format('$from_date','%Y-%m-%d')
+			AND date_format('$to_date','%Y-%m-%d') ";
 		}
 
 		$this->db->query('SET SQL_BIG_SELECTS=1');

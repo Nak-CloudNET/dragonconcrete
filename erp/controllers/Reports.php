@@ -12256,16 +12256,17 @@ class Reports extends MY_Controller
         $this->erp->checkPermissions('trail_balance',NULL,'account_report');
 
         if (!$start_date) {
-            $start = $this->db->escape(date('Y-m') . '-1');
-            $start_date = date('Y-m') . '-1';
+            $start = date('Y-m') . '-01';
+            $start_date = date('Y-m') . '-01';
         } else {
-            $start = $this->db->escape(urldecode($start_date));
+            $start =$start_date;
         }
+    
         if (!$end_date) {
-            $end = $this->db->escape(date('Y-m-d H:i'));
-            $end_date = date('Y-m-d H:i');
+            $end = 'Y-m-d';
+            $end_date = date('Y-m-d');
         } else {
-            $end = $this->db->escape(urldecode($end_date));
+            $end = $end_date;
         }
         $user = $this->site->getUser();
         if($biller_id != NULL){
@@ -12289,10 +12290,9 @@ class Reports extends MY_Controller
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('reports/trial_balance')));
         $meta = array('page_title' => lang('trial_balance'), 'bc' => $bc);
-		$from_date = date('Y-m-dcash_books',strtotime(urldecode($start_date)));//'2014-08-01';
-		$to_date = date('Y-m-d H:m',strtotime(urldecode($end_date)));//'2015-09-01';
-
-
+		$from_date    = $start_date;//'2014-08-01';
+		$to_date      = $end_date;//'2015-09-01';
+        //$this->erp->print_arrays($from_date);
 
 		$data10 = $this->accounts_model->getStatementByDate('10',$from_date,$to_date,$biller_id);
 		$this->data['data10'] = $data10;

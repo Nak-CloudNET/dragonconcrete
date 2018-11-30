@@ -350,10 +350,9 @@ class Sales extends MY_Controller
         }
 
         if ((! $this->Owner || ! $this->Admin) && ! $warehouse_id) {
-            //$user = $this->site->getUser();
-            //$warehouse_id = $user->warehouse_id;
+            $user = $this->site->getUser();
+            $warehouse_id = $user->warehouse_id;
         }
-		
 		
 		$down_payment = anchor('sales/down_payment/$1', '<i class="fa fa-money"></i> ' . lang('down_payment'), '');
 		$sale_edit_down_payment = anchor('sales/edit_down_payment/$1', '<i class="fa fa-money"></i> ' . lang('sale_edit_down_payment'), '');
